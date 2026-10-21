@@ -3,6 +3,16 @@ App.ParamGet('User parameter:BaseApp/Preferences/Document').SetBool('CreateBacku
 OUT=os.path.abspath(os.environ.get('GR180_OUT', os.getcwd())); os.makedirs(OUT,exist_ok=True)   # was hard-coded ~/Desktop/GR180-3D
 for f in glob.glob(os.path.join(OUT,'*.FCBak')): os.remove(f)
 V=App.Vector
+# ======== v13A (2026-10-21): Option A - Rutten drawing stack restored (docs/04_drawings_vs_cad.md) ========
+FAST=os.environ.get('GR180_FAST','0')=='1'   # 1 = plain cylinders instead of helical threads (quick builds / checks)
+ROT=+1                 # rotor turns CLOCKWISE seen from the intake (+theta about +x): diffuser vanes (drawing + photo), NGV/turbine angles
+X_RSTEP=97.30          # tunnel rear bore step: preload spring holds the rear 608 outer ring on it (loaded state)
+SH_L=175.5             # shaft length: drawing 175 + 0.5 so an 8 mm turbine nut has 1 mm thread proud
+SH_OFF=X_RSTEP-145.0   # shaft local 145 (rear shoulder) on the rear 608 front face
+X_FB0=SH_OFF+58.0-7.0  # front 608 front face (inner ring against the front shoulder, shaft local 58)
+XTB=X_RSTEP+7.0        # turbine hub front face on the rear 608 inner ring (14.0 mm pilot on the Ø8 seat)
+TIP_CL_T=0.20          # turbine radial tip clearance (drawing 0.10; 0.20 for 24/7 life - confirm with FEA growth)
+XCC=18.79              # CC liners start (Engine complete section; was 21.6)
 def profile_sketch(body,name,pts):
     sk=body.newObject('Sketcher::SketchObject',name)
     xy=[f for f in body.Origin.OriginFeatures if f.Role=='XY_Plane'][0]
@@ -38,18 +48,18 @@ def save(doc,body,fname):
 
 # ---- Shaft (silversteel), x=0 at front (compressor) end
 d=App.newDocument('GR180_Shaft'); b=d.addObject('PartDesign::Body','Shaft')
-t=math.tan(math.radians(7)); rm=7.0; re=rm-18*t
-pts=[(0,0),(0,3),(15,3),(15,3.5),(49,3.5),(49,4),(60.1,4),(60.1,re),(76,rm),(127,rm),(145,re),(145,4),(166,4),(166,3),(179.8,3),(179.8,0)]
+rm=15.5/2; re=11.0/2   # v13A drawing: body Ø15.5 (drawn), shoulders Ø11 (drawn), 7° tapers 18 long
+pts=[(0,0),(0,3),(15,3),(15,3.5),(49,3.5),(49,4),(58,4),(58,re),(76,rm),(127,rm),(145,re),(145,4),(166,4),(166,3),(SH_L,3),(SH_L,0)]
 sk=profile_sketch(b,'ShaftProfile',pts); rv=revolve(b,sk,'ShaftRevolve')
-b.Label='Shaft (Pos2, silversteel) - threads cosmetic: front M6 LH x15, rear M6 LH x13.8 v11 (left-hand per GR130 practice)'
+b.Label='Shaft (Pos2) v13A drawing: L%.1f, body Ø15.5, shoulders Ø11; front M6 LH x15, rear M6 RH'%SH_L
 d.recompute(); ss=save(d,b,'GR180_Shaft')
 # nose cone as separate body
 nb=d.addObject('PartDesign::Body','NoseCone'); nb.Label='Nose cone nut (M6 LH, cosmetic thread)'
 r0=17.9/2; rt=r0-24.1*math.tan(math.radians(15))
 npts=[(0,5),(0,r0),(24.1,rt),(24.1,0),(15,0),(15,2.5),(2,2.5),(2,5)]
 nsk=profile_sketch(nb,'NoseProfile',npts); revolve(nb,nsk,'NoseRevolve')
-ch=nb.newObject('PartDesign::SubtractiveCylinder','CrossHole'); ch.Radius=1.0; ch.Height=20
-ch.Placement=App.Placement(V(21.5,-10,0),App.Rotation(V(1,0,0),-90))
+ch=nb.newObject('PartDesign::SubtractiveCylinder','CrossHole'); ch.Radius=1.5; ch.Height=20   # v13A drawing: Ø3 at 20.8
+ch.Placement=App.Placement(V(20.8,-10,0),App.Rotation(V(1,0,0),-90))
 for _nm,_y in (('MagnetPocket_D2_1',6.5),('BalancePocket_D2_1',-6.5)):
     _c=nb.newObject('PartDesign::SubtractiveCylinder',_nm); _c.Radius=1.05; _c.Height=2.1
     _c.Placement=App.Placement(V(0,_y,0),App.Rotation(V(0,1,0),90)); nb.Tip=_c
@@ -62,12 +72,12 @@ Part.makeCompound([ss,ns]).exportStep(os.path.join(OUT,'GR180_Shaft_with_nose.st
 # ---- Shaft tunnel (aluminium), x=0 at front face
 d2=App.newDocument('GR180_Shaft_tunnel'); tb=d2.addObject('PartDesign::Body','ShaftTunnel')
 tb.Label='Shaft tunnel (Pos3, aluminium)'
-XF=0.1    # tunnel flange face (was 2.0 + 2mm spigot): diffuser plate 4.4 front at -4.3 = 0.5 behind compressor back face (spacer 4.8 on 608 inner ring)
-tp=[(XF,13),(XF,20),(7.3,20),(16.8,10.5),(95.3,10.5),(97.3,13),(99.3,13),(99.3,19),(103.3,19),(103.3,13),(107.3,13),
-    (107.3,11),(97.3,11),(97.3,8.5),(11.3,8.5),(11.3,11),(XF,11)]
+XF=2.0    # v13A: flange face behind the restored Ø26x2 front spigot (drawing). v7-v12 note: tunnel flange face (was 2.0 + 2mm spigot): diffuser plate 4.4 front at -4.3 = 0.5 behind compressor back face (spacer 4.8 on 608 inner ring)
+tp=[(0,11),(0,12.99),(XF,12.99),(XF,20),(7.03,20),(16.53,10.5),(92.96,10.5),(95.3,13),(99.3,13),(99.3,19),(103.3,19),(103.3,13),(107.3,13),
+    (107.3,11),(X_RSTEP,11),(X_RSTEP,8.5),(11.3,8.5),(11.3,11)]   # v13A: spigot Ø25.98x2 pilots the diffuser bore, flange 5.0, rear cone per drawing
 tsk=profile_sketch(tb,'TunnelProfile',tp); revolve(tb,tsk,'TunnelRevolve'); d2.recompute()
 hole_pattern(d2,tb,None,'FrontHole_M3',XF,9,34,2.5,6)
-hole_pattern(d2,tb,None,'RearHole',99.0,4.6,32,3.2,6)
+hole_pattern(d2,tb,None,'RearHole_M3',99.3,4.0,32,2.5,6)   # v13A: M3 tapped PCD32 (NGV holes moved to PCD32)
 ts=save(d2,tb,'GR180_Shaft_tunnel')
 
 # ---- checks: radii at stations
@@ -82,11 +92,11 @@ for x in (1,5,50,105,101): print('tunnel x',x,'OD',2*radius_at(ts,x))
 # ---- Diffuser (Pos4, aluminium). x=0 = front face of vanes, plate front x=7, plate back x=11.4, rim to x=17
 d4=App.newDocument('GR180_Diffuser'); db=d4.addObject('PartDesign::Body','Diffuser'); db.Label='Diffuser (Pos4, aluminium)'
 T=4.4
-dp=[(7,13),(7,45.5),(17,45.5),(17,44.5),(7+T,44.5),(7+T,13)]
+dp=[(9,13),(9,37.2),(7,37.2),(7,53.5),(17,53.5),(17,44.5),(9,44.5),(9,39.7),(7+T,38.2),(7+T,13)]   # v13A: Ø74.4x2 recess, rear boss Ø76.4+30° cone, 2.0 plate, solid ring Ø89-107 (axial channels cut later)
 dsk=profile_sketch(db,'PlateRimProfile',dp); revolve(db,dsk,'PlateRimRevolve'); d4.recompute()
 # one vane, front view sketch on YZ plane (sketch x->Y, sketch y->Z), padded +X 0..7.2 (0.2 into plate)
 yz=[f for f in db.Origin.OriginFeatures if f.Role=='YZ_Plane'][0]
-r0,r1,beta,wedge,t0=38.2,53.5,math.radians(70),math.radians(12),1.0
+r0,r1,beta,wedge,t0=38.0,53.5,math.radians(66),math.radians(14),0.0   # v13A drawing: sharp LE Ø76.0, flanks 66°/80°, wedge 14°
 dx,dy=math.cos(beta),math.sin(beta)
 def s_at(rr,ox=0,oy=0,ux=dx,uy=dy):
     # distance along (ux,uy) from point (r0+ox,oy) to circle radius rr
@@ -102,10 +112,10 @@ vs=db.newObject('Sketcher::SketchObject','VaneSketch')
 try: vs.AttachmentSupport=[(yz,'')]
 except Exception: vs.Support=(yz,[''])
 vs.MapMode='FlatFace'
-P=[A,B,C,D]
-for k in range(4):
-    a,b=P[k],P[(k+1)%4]; vs.addGeometry(Part.LineSegment(V(a[0],a[1],0),V(b[0],b[1],0)))
-for k in range(4): vs.addConstraint(Sketcher.Constraint('Coincident',k,2,(k+1)%4,1))
+P=[A,B,C,D] if t0>0 else [A,B,C]
+for k in range(len(P)):
+    a,b=P[k],P[(k+1)%len(P)]; vs.addGeometry(Part.LineSegment(V(a[0],a[1],0),V(b[0],b[1],0)))
+for k in range(len(P)): vs.addConstraint(Sketcher.Constraint('Coincident',k,2,(k+1)%len(P),1))
 pad=db.newObject('PartDesign::Pad','Vane'); pad.Profile=vs; pad.Length=7.2; vs.Visibility=False; d4.recompute()
 if pad.Shape.BoundBox.XMin<-0.1: pad.Reversed=True; d4.recompute()
 xax=[f for f in db.Origin.OriginFeatures if f.Role=='X_Axis'][0]
@@ -122,7 +132,7 @@ def hp(name,x0,L,rad_y,rad_z,dia,n):
     c.Placement=App.Placement(V(x0,rad_y,rad_z),App.Rotation(V(0,1,0),90)); d4.recompute()
     p=db.newObject('PartDesign::PolarPattern',name+'_x%d'%n); p.Originals=[c]; p.Axis=(xax,['']); p.Angle=360; p.Occurrences=n; c.Visibility=False; db.Tip=p; d4.recompute()
 hp('Hole_PCD34_D3_2',6,7,17,0,3.2,6)
-hp('Hole_PCD60_D3',6,7,0,30,3.0,3)
+hp('Hole_PCD60_M3',6,7,0,30,2.5,3)   # v13A: 3x M3 (puller) in the recess
 rr=46.5
 for _ in range(30):
     sm=s_at(rr); wm=t0+sm*math.tan(wedge); hy,hz=r0+sm*dx+nx*wm/2, sm*dy+ny*wm/2
@@ -138,7 +148,7 @@ def hole1(doc,body,name,x0,L,ang,rad,dia):
     c=body.newObject('PartDesign::SubtractiveCylinder',name); c.Radius=dia/2; c.Height=L
     c.Placement=App.Placement(V(x0,rad*math.cos(ang),rad*math.sin(ang)),App.Rotation(V(0,1,0),90)); body.Tip=c; doc.recompute(); return c
 for k in range(13):
-    if k in SUP_VANES: hole1(d4,db,'SupplyLine_D3_2_vane%d'%k,-0.5,8.5,sup_ang0+k*STEP13,R_SUP,3.2)
+    if k in SUP_VANES: hole1(d4,db,'SupplyLine_D3_2_vane%d'%k,-0.5,18.0,sup_ang0+k*STEP13,R_SUP,3.2)
     else: hole1(d4,db,'VaneScrew_D2_5_vane%d'%k,-0.5,8.5,vane_ang+k*STEP13,46.5,2.5)
 ds=save(d4,db,'GR180_Diffuser')
 print('diffuser vane screw PCD %.2f'%(2*math.hypot(hy,hz)))
@@ -159,7 +169,7 @@ inner=arcpts(10,38.15,10,180,270)            # bellmouth flow surface R10: (0,38
 end_dr=Rs-math.sqrt(Rs*Rs-(L_in-xt)**2)
 shroud=[(xt+Rs*math.sin(math.radians(a)), rin+Rs-Rs*math.cos(math.radians(a))) for a in [k*math.degrees(math.asin((L_in-xt)/Rs))/16 for k in range(17)]]
 outer=arcpts(10,38.15,38.15-rout,270,180)    # bellmouth outer R8.35: (10,29.75)->(1.65,38.15)
-prof=inner+[(xt,rin)]+shroud[1:]+[(L_in,38.0),(xf1,38.0),(xf1,44.0),(xf0,44.0),(xf0,38.0),(xt,rout)]+outer
+prof=inner+[(xt,rin)]+shroud[1:]+[(L_in,38.0),(xf1,38.0),(xf1,44.0),(xf0,44.0),(xf0,35.0),(xt,rout)]+outer   # v13A: outer cone 34° to Ø70 (drawing)
 isk=profile_sketch(ib,'IntakeProfile',prof); revolve(ib,isk,'IntakeRevolve'); ib.Tip=ib.Group[-1]; d5.recompute()
 subcyl_pattern(d5,ib,'FlangeHole_D3_PCD82',xf0-0.5,3,math.pi/2,82,3.0,6)
 ins=save(d5,ib,'GR180_Intake')
@@ -176,13 +186,13 @@ for k in range(13):
         hole1(d6,ob,'SupplyLine_D3_2_v%d'%k,5.5,3,sup_ang0+k*STEP13,R_SUP,3.2)
         hole1(d6,ob,'Oring_recess_D6_2x1_5_v%d'%k,5.5,2.0,sup_ang0+k*STEP13,R_SUP,6.2)
     else:
-        hole1(d6,ob,'VaneScrew_D2_6_v%d'%k,5.5,3,vane_ang+k*STEP13,46.5,2.6)
-        hole1(d6,ob,'VaneScrew_cbore_D4_5_v%d'%k,5.5,1.5,vane_ang+k*STEP13,46.5,4.5)
+        hole1(d6,ob,'VaneScrew_D3_2_v%d'%k,5.5,3,vane_ang+k*STEP13,46.5,3.2)
+        hole1(d6,ob,'VaneScrew_cbore_D6_v%d'%k,5.5,1.5,vane_ang+k*STEP13,46.5,6.0)
 ous=save(d6,ob,'GR180_Intake_outer')
 
 # ---- Combustion chamber (SS316 sheet t=0.5), modelled directly in tunnel/assembly coordinates (x=0 tunnel front face)
 d7=App.newDocument('GR180_Combustion_chamber'); TS=0.5
-XCC=21.6                                  # CC front (from assembly drawing scale)
+# XCC: set in the v13A block (Engine complete section 18.79; was 21.6)
 def radial_holes(doc,body,name,x,ang_deg,r_mid,dia,n):
     c=body.newObject('PartDesign::SubtractiveCylinder',name); c.Radius=dia/2; c.Height=4
     a=math.radians(ang_deg); dvec=V(0,math.cos(a),math.sin(a))
@@ -270,8 +280,9 @@ sup=[sup_ang0+k*STEP13 for k in SUP_VANES]   # angles of the 3 supply lines
 A_FUEL,A_OIL,A_GAS=sup
 # --- supply lines (3x Ø3x0.5 brass) + O-rings 6x1.5 + washers Ø5.8x0.65 + push-in fittings (placeholder)
 xw=XO+6                                      # intake-outer wall front face
-XM=15.0                                       # manifold plane (6.6 ahead of the cap face)
-fuel=tube_path([P(XM,64.0,A_FUEL),P(XM,rv+1.0,A_FUEL)],4.0,3.0)   # v10 natural gas: Ø8x1 radial feed through casing (vane Ø3 lines too small)
+XM=XCC-TS-6.6                                 # manifold plane 6.6 ahead of the cap face (v13A: follows the CC)
+X_FEED=14.9                                   # v13A: gas feed/bulkhead plane: hex flats clear the diffuser ring (to 7.6), Ø6 tube clears the cap (18.29)
+fuel=tube_path([P(X_FEED,64.0,A_FUEL),P(X_FEED,50.0,A_FUEL),P(XM,rv+1.0,A_FUEL)],3.0,2.25)   # v13A: Ø6x0.75 feed with joggle to the ring (recuperated cycle needs ~2.5 g/s; fuel system is redesigned in phase 3)
 # v10 natural-gas manifold ring Ø5x0.5 (was Ø3x0.5 brass (annealed, bent) at x=15, r=42.1; 12 hypodermic needles Ø0.8, 10 deep into each vaporiser mouth
 man=Part.makeTorus(rv,2.5,V(XM,0,0),V(1,0,0)).cut(Part.makeTorus(rv,2.0,V(XM,0,0),V(1,0,0)))
 XN_END=XCC-TS-1.0+10.0
@@ -305,13 +316,22 @@ ts=save(d2,tb,'GR180_Shaft_tunnel')
 save_part('GR180_Shaft_tunnel','Shaft tunnel (Pos3) incl. front O-ring groove',ts)
 fb_oring=Part.makeTorus(11.6,0.55,V(3.5,0,0),V(1,0,0))
 # wheel-rim relief per diffuser sheet Ø74.4 / Ø76 (depth 0.5 assumed): keeps 0.5 back gap on the plate face inside Ø74.4
-ds=ds.cut(Part.makeCylinder(38.0,0.5,V(7,0,0),V(1,0,0)).cut(Part.makeCylinder(37.2,0.5,V(7,0,0),V(1,0,0)))).removeSplitter()
-save_part('GR180_Diffuser','Diffuser (Pos4) incl. Ø74.4/Ø76 rim relief',ds)
+def _sector(r_in,r_out,a0,a1,x0,L,n=16):
+    pts=[V(x0,r_out*math.cos(a0+(a1-a0)*i/n),r_out*math.sin(a0+(a1-a0)*i/n)) for i in range(n+1)]+[V(x0,r_in*math.cos(a1-(a1-a0)*i/n),r_in*math.sin(a1-(a1-a0)*i/n)) for i in range(n+1)]
+    return Part.Face(Part.makePolygon(pts+[pts[0]])).extrude(V(L,0,0))
+_dth=113.63/(0.5*(53.5**2-45.5**2))           # v13A: 13 axial de-swirl channels Ø91..Ø107 (113.63 mm² each, drawing), between the vane screws
+for k in range(13):
+    a_=vane_ang+(k+0.5)*STEP13; ds=ds.cut(_sector(45.5,53.6,a_-_dth/2,a_+_dth/2,6.9,10.2))
+for k in range(6):                              # 90° countersinks for ISO 10642 M3 flush heads in the 2.4 mm recess floor
+    a_=math.radians(60*k); ds=ds.cut(Part.makeCone(3.1,1.6,1.5,V(9.0,17*math.cos(a_),17*math.sin(a_)),V(1,0,0)))
+ds=ds.removeSplitter()
+save_part('GR180_Diffuser','Diffuser (Pos4) v13A: Ø74.4x2 recess, 13 axial channels, drawing vanes',ds)
 # --- blade/vane helper: thin cambered blade lofted between two radii (sections on cylinders), x axial
 def cam_blade(x0,chord,r_list,ang_in,ang_out,thk,theta0,n=24):
     secs=[]
     for i,r in enumerate(r_list):
         bi,bo,t,c=ang_in[i],ang_out[i],thk[i],chord[i]
+        xi=x0[i] if isinstance(x0,(list,tuple)) else x0
         pts=[];y=0.0;prev=None
         cl=[]
         for k in range(n+1):
@@ -324,43 +344,44 @@ def cam_blade(x0,chord,r_list,ang_in,ang_out,thk,theta0,n=24):
             top.append((u,y+h)); bot.append((u,y-h))
         ring=top+bot[::-1]
         ct,st_=math.cos(theta0),math.sin(theta0)
-        w=[V(x0+u,r*ct-yy*st_,r*st_+yy*ct) for (u,yy) in ring]   # planar section tangent at radius r
+        w=[V(xi+u,r*ct-yy*st_,r*st_+yy*ct) for (u,yy) in ring]   # planar section tangent at radius r
         secs.append(Part.makePolygon(w+[w[0]]))
     return Part.makeLoft(secs,True,False)
 # --- NGV (GR180 Turbine + NGV.pdf; JetMax NGV70blank: 15 vanes). local u=0 front, XN = web front on tunnel rear face 103.3
 XN=103.3-8.5
 def rv(pts): return Part.Face(Part.makePolygon([V(XN+u,r,0) for u,r in pts]+[V(XN+pts[0][0],pts[0][1],0)])).revolve(V(0,0,0),V(1,0,0),360)
-ch=1.67*math.tan(math.radians(26))
-outer=rv([(0,35.25+ch),(0,36.35),(20,36.35),(20,37.95),(24,37.95),(24,35.25),(1.67,35.25)])    # 26° entry chamfer, shroud bore Ø70.5, Ø72.7, flange Ø75.9 x4.0
-inner=rv([(0,21.25),(0,22.25),(14.5,22.25),(14.5,21.25)])                                          # inner shroud Ø44.5/42.5 x14.5
+ch=2.03*math.tan(math.radians(26)); NGV_RB=35.15+TIP_CL_T   # v13A: chamfer 26° x2.03 (drawing), bore = turbine tip + clearance
+outer=rv([(0,NGV_RB+ch),(0,36.35),(14.5,36.35),(14.5,37.95),(16.0,37.95),(16.0,36.35),(24,36.35),(24,NGV_RB),(2.03,NGV_RB)])   # v13A: Ø75.9x1.5 rib at 14.5-16 (drawing), not a flange    # 26° entry chamfer, shroud bore Ø70.5, Ø72.7, flange Ø75.9 x4.0
+inner=rv([(0,21.25),(0,22.25),(15.0,22.25),(15.0,21.25)])   # v13A: inner ring 15.0 (drawing)                                          # inner shroud Ø44.5/42.5 x14.5
 web=rv([(8.5,13.0),(8.5,21.3),(10.0,21.3),(10.0,13.0)])                                            # web 1.5 at 8.5, bore Ø26
 NGV_N=15
 _vr=lambda r: 10.67+(10.0-10.67)*(r-21.9)/(35.6-21.9)
-_ann=Part.makeCylinder(36.65,30,V(XN,0,0),V(1,0,0)).cut(Part.makeCylinder(21.5,30,V(XN,0,0),V(1,0,0)))   # v11: vanes embedded 0.3 into both rings
-vanes=[cam_blade(XN+2.5,[_vr(19.5),_vr(38.5)],[19.5,38.5],[0,0],[68,64],[1.25,0.95],2*math.pi*k/NGV_N).common(_ann) for k in range(NGV_N)]
+_ann=Part.makeCylinder(NGV_RB+0.3,30,V(XN,0,0),V(1,0,0)).cut(Part.makeCylinder(21.95,30,V(XN,0,0),V(1,0,0)))   # v13A: vanes embedded 0.3 into both rings (v11 stuck out of the OD)   # v11: vanes embedded 0.3 into both rings
+_le=lambda r: 4.0+(3.0-4.0)*(r-22.25)/13.0; _te=lambda r: 12.7+(14.0-12.7)*(r-22.25)/13.0   # v13A drawing: LE 4.0/3.0, TE 12.7/14.0 (hub/tip)
+vanes=[cam_blade([XN+_le(19.5),XN+_le(38.5)],[_te(19.5)-_le(19.5),_te(38.5)-_le(38.5)],[19.5,38.5],[0,0],[68,64],[1.25,0.95],2*math.pi*k/NGV_N).common(_ann) for k in range(NGV_N)]
 ngv=outer.fuse([inner,web]+vanes)
 for k in range(6):
-    a=math.radians(90+60*k); ngv=ngv.cut(Part.makeCylinder(1.6,3,P(XN+8,17,a),V(1,0,0)))
+    a=math.radians(60*k); ngv=ngv.cut(Part.makeCylinder(1.6,3,P(XN+8,16,a),V(1,0,0)))   # v13A: PCD32, clocked with the tunnel M3 holes
 ngv=ngv.removeSplitter()
 print('NGV solids',len(ngv.Solids),'valid',ngv.isValid(),'shells',len(ngv.Shells))
 save_part('GR180_NGV','NGV DA70 (Inconel): GR180 Turbine+NGV sheet, 15 vanes (JetMax NGV70 blank), exit angle assumed 68/64 deg',ngv)
 # --- Turbine wheel (TW70blank + GR180 sheet): front face on rear 608 inner ring (x107.3)
-XTB=107.3
-tprof=[(0,4),(0,6.6),(6.0,6.6),(6.2,8.5),(7.6,12),(7.6,17),(6.2,19.8),(6.2,22.1),(13.4,22.1),(13.4,19.8),(10.6,17),(10.6,12),(14.51,8.5),(14.51,4)]
+# XTB set in the v13A block (on the rear 608 inner ring)
+tprof=[(0,4),(0,6.4),(4.3,6.4),(4.6,8.0),(8.0,17.5),(6.3,19.8),(6.3,22.1),(13.0,22.1),(13.0,19.8),(10.5,17.5),(11.5,8.0),(13.46,6.5),(14.51,6.5),(14.51,4)]   # v13A drawing: sleeve Ø12.8x4.3, tapered web 6.9->2.5, rim 6.3-13.0, rear boss Ø13
 tw=Part.Face(Part.makePolygon([V(XTB+u,r,0) for u,r in tprof]+[V(XTB,4,0)])).revolve(V(0,0,0),V(1,0,0),360)
 TW_N=23
-tbl=[cam_blade(XTB+6.2,[7.2,6.7],[21.6,35.15],[35,40],[-58,-52],[2.0,0.8],2*math.pi*k/TW_N) for k in range(TW_N)]
+tbl=[cam_blade(XTB+6.31,[6.69,6.2],[21.6,35.15],[35,40],[-58,-52],[2.0,0.8],2*math.pi*k/TW_N) for k in range(TW_N)]
 tw=tw.fuse(tbl).common(Part.makeCylinder(35.15,30,V(100,0,0),V(1,0,0))).cut(Part.makeCylinder(4,30,V(100,0,0),V(1,0,0))).removeSplitter()
-nut=Part.makeCylinder(5.0,6.0,V(XTB+14.51,0,0),V(1,0,0)).cut(Part.makeCylinder(3,6,V(XTB+14.51,0,0),V(1,0,0)))
-save_part('GR180_Turbine','Turbine wheel DA 70.3 (Inconel), 23 blades (TW70blank), hub 14.51, blade 7.2->6.7',tw)
-save_part('GR180_TurbineNut','M6 LH nut 10x6 (v11: 6 mm engagement, shaft 1 mm proud)',nut)
+nut=Part.makeCylinder(5.0,8.0,V(XTB+14.51,0,0),V(1,0,0)).cut(Part.makeCylinder(3,8,V(XTB+14.51,0,0),V(1,0,0)))
+save_part('GR180_Turbine','Turbine wheel DA 70.3 (Inconel) v13A, 23 blades, hub 14.51, blade 6.7->6.2 (drawing)',tw)
+save_part('GR180_TurbineNut','M6 RH nut 10AF x8 (v13A)',nut)
 # --- Exhaust (GR130 method scaled x75.9/68.5): SS 0.5 sheet
 k_=75.9/68.5; XE=112.8
 L_str=28*k_; L_tot=59*k_; r_out=50*k_/2
 pr=[(XE,38.0),(XE,38.5),(XE+6+L_str,38.5),(XE+L_tot,r_out+0.5),(XE+L_tot,r_out),(XE+6+L_str,38.0)]
 w=Part.makePolygon([V(x,r,0) for x,r in pr]+[V(pr[0][0],pr[0][1],0)])
 exo=Part.Face(w).revolve(V(0,0,0),V(1,0,0),360)
-XC=122.5; ca,cb_=38*k_,47*k_/2      # inner cone: base Ø52, length 42
+XC=XTB+14.51+1.5; ca,cb_=38*k_,47*k_/2      # inner cone: base Ø52, length 42
 def half_ellipse(a,b,n=40): return [V(XC+a*math.sin(t*math.pi/2/n),b*math.cos(t*math.pi/2/n),0) for t in range(n+1)]
 po=half_ellipse(ca,cb_); pi2=half_ellipse(ca-0.5,cb_-0.5)
 w2=Part.makePolygon(po+pi2[::-1]+[po[0]]); cone=Part.Face(w2).revolve(V(0,0,0),V(1,0,0),360)
@@ -379,11 +400,11 @@ _rf=Part.makeCylinder(44,1.0,V(_cx1+_Rf+8-1.0,0,0),V(1,0,0)).cut(Part.makeCylind
 casing=casing.fuse(_rf)
 for k in range(6):
     a_=math.radians(30+60*k); casing=casing.cut(Part.makeCylinder(1.6,3,P(XO+9.2,52.5,a_),V(0,math.cos(a_),math.sin(a_))))
-casing=casing.cut(Part.makeCylinder(4.1,4,P(XM,51.5,A_FUEL),V(0,math.cos(A_FUEL),math.sin(A_FUEL))))   # v10 Ø8.2 gas inlet
+casing=casing.cut(Part.makeCylinder(4.1,4,P(X_FEED,51.5,A_FUEL),V(0,math.cos(A_FUEL),math.sin(A_FUEL))))   # v10 Ø8.2 gas inlet
 casing=casing.removeSplitter()
 save_part('GR180_Casing','Casing CV470 can (PHOTO-BASED, no drawing): ID107 t0.3, 6 radial M3 into intake outer, rear flange',casing)
 # --- Starter (Startermotor300.pdf): Permax 280BB, plastic body, Bendix cup, 3 struts to intake lip
-XS=-66.0; ax_=V(-1,0,0)
+XS=((XF-(7+T))-7.93+6-xf1)+xt-12.93-0.6-24.1-4.1; ax_=V(-1,0,0)   # v13A: Bendix cup 4.1 ahead of the nose-cone tip
 st=Part.makeCylinder(8.25,14,V(XS,0,0),ax_).cut(Part.makeCylinder(7.25,14,V(XS,0,0),ax_))            # cup Ø16.5/14.5 x14
 st=st.fuse(Part.makeCone(8.25,12,6,V(XS-14,0,0),ax_)).fuse(Part.makeCylinder(12,15,V(XS-20,0,0),ax_))  # 44° flare + Ø24 x15 hub
 body=Part.makeCylinder(12.2,32.7-12.2,V(XS-35,0,0),ax_).fuse(Part.makeSphere(12.2,V(XS-35-(32.7-12.2),0,0)).common(Part.makeBox(13,30,30,V(XS-35-(32.7-12.2)-13,-15,-15))))
@@ -395,30 +416,43 @@ starter=Part.makeCompound([st.removeSplitter(),body]+spokes)
 save_part('GR180_Starter','Starter: Permax 280BB in plastic body, Bendix cup, 3 Ø4 struts (Startermotor300.pdf)',starter)
 # ---- Compressor wheel: Schwitzer 316954 turned to Ø74 ("GR180 Compressor.pdf"), modelled in ASSEMBLY coords (flow +x)
 # integrated spacer Ø13 x2.5 (bore Ø8) rests on front 608 inner ring at x=0; back face x=-2.5; nose x=-38.4 (overall 38.4)
-CW_R2=37.0; CW_BACK=-4.8; CW_NOSE=CW_BACK-33.0; CW_HUB_RIM=-7.68; CW_LE=CW_NOSE+5.6; CW_RN=17.9/2; CW_TIPCL=0.3
-XS_T=((XF-(7+T))-7.93+6-xf1)+xt; RS_C=rin+Rs   # intake shroud arc centre (assembly x, r)
-def cw_tip_r(x):          # blade tip = intake shroud offset inward by CW_TIPCL
-    if x<=XS_T: return rin-CW_TIPCL
-    return RS_C-math.sqrt((Rs+CW_TIPCL)**2-(x-XS_T)**2)
-CW_TIPX=XS_T+math.sqrt((Rs+CW_TIPCL)**2-(RS_C-CW_R2)**2)   # where tip line reaches r37
-def cw_hub(m):            # quarter ellipse, axial at nose -> radial at rim
-    t=m*math.pi/2; return (CW_LE+(CW_HUB_RIM-CW_LE)*math.sin(t), CW_R2-(CW_R2-CW_RN)*math.cos(t))
-def cw_tip(m): x=CW_LE+(CW_TIPX-CW_LE)*m; return (x,min(cw_tip_r(x),CW_R2))
-hubp=[(CW_NOSE,3.5),(CW_NOSE,CW_RN)]+[cw_hub(k/40) for k in range(41)]+[(CW_BACK,CW_R2),(CW_BACK,21.9/2),(-2.5,21.9/2),(-2.5,6.5),(0.0,6.5),(0.0,4.0),(-2.5,4.0),(-2.5,3.5)]
+# v13A (GR180 Compressor.pdf): LE plane -> back face 33, nose boss 0.6 ahead of LE, inducer Ø55.9 straight 12.93, tip arc R13 concentric
+# with the intake shroud R12.8 (~0.15 clearance), tip at rim 7.68 ahead of the back face, b2 6.48, disc 1.2 at the rim, hub Ø17.9 cyl 7.49 from the nose
+CW_R2=37.0; CW_RN=17.9/2; CW_RI=55.9/2
+XS_T=((XF-(7+T))-7.93+6-xf1)+xt                  # intake shroud R12.8 tangent point (assembly x)
+CW_LE=XS_T-12.93                                  # wheel tip-arc tangent on the shroud-arc tangent -> concentric arcs
+CW_BACK=CW_LE+33.0; CW_NOSE=CW_LE-0.6
+CW_TIPX=CW_BACK-7.68; CW_HUB_RIM=CW_BACK-1.2; CW_ARC_C=(CW_LE+12.93,CW_RI+13.0)
+CW_SP_END=X_FB0                                   # integrated spacer end on the front 608 inner ring
+CW_SP_L=CW_SP_END-(CW_BACK+2.3)                   # nominal 2.5; grind to this length at assembly (sets the shroud alignment)
+print('v13A compressor: LE %.2f back %.2f tip@rim %.2f hub@rim %.2f b2 %.2f | spacer %.2f (nominal 2.5 -> grind %.2f)'%(CW_LE,CW_BACK,CW_TIPX,CW_HUB_RIM,CW_HUB_RIM-CW_TIPX,CW_SP_L,2.5-CW_SP_L))
+def _cum(pts):
+    c=[0.0]
+    for i in range(1,len(pts)): c.append(c[-1]+math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]))
+    return c
+def _at(pts,cum,s_):
+    for i in range(len(pts)-1):
+        if cum[i+1]>=s_:
+            f=(s_-cum[i])/max(cum[i+1]-cum[i],1e-12); return (pts[i][0]+f*(pts[i+1][0]-pts[i][0]),pts[i][1]+f*(pts[i+1][1]-pts[i][1]))
+    return pts[-1]
+_t_end=math.acos((CW_ARC_C[1]-CW_R2)/13.0)
+_tipc=[(CW_LE+12.93*k/20,CW_RI) for k in range(20)]+[(CW_ARC_C[0]+13*math.sin(_t_end*j/40),CW_ARC_C[1]-13*math.cos(_t_end*j/40)) for j in range(41)]
+_x0h=CW_NOSE+7.49; _ah=CW_HUB_RIM-_x0h; _bh=33.4-CW_RN
+_hubc=[(CW_LE+(_x0h-CW_LE)*k/10,CW_RN) for k in range(10)]+[(_x0h+_ah*math.sin(math.pi/2*j/40),33.4-_bh*math.cos(math.pi/2*j/40)) for j in range(41)]+[(CW_HUB_RIM,33.4+3.6*j/6) for j in range(1,7)]
+_cumt,_cumh=_cum(_tipc),_cum(_hubc)
+def cw_tip(m): return _at(_tipc,_cumt,m*_cumt[-1])
+def cw_hub_in(m,d=0.6):      # hub point sunk 0.6 along the inward normal (radial on the cylinder, axial on the disc face) for a clean fuse
+    s_=m*_cumh[-1]; x1,r1=_at(_hubc,_cumh,max(s_-0.05,0)); x2,r2=_at(_hubc,_cumh,min(s_+0.05,_cumh[-1])); L_=math.hypot(x2-x1,r2-r1)
+    x,r=_at(_hubc,_cumh,s_); return (x+d*(r2-r1)/L_, r-d*(x2-x1)/L_)
+hubp=[(CW_NOSE,3.5),(CW_NOSE,CW_RN)]+_hubc+[(CW_BACK,CW_R2),(CW_BACK,21.9/2),(CW_BACK+2.3,21.9/2),(CW_BACK+2.3,6.5),(CW_SP_END,6.5),(CW_SP_END,4.0),(CW_SP_END-2.2,4.0),(CW_SP_END-2.2,3.5)]
 hub=Part.Face(Part.makePolygon([V(x,r,0) for x,r in hubp]+[V(CW_NOSE,3.5,0)])).revolve(V(0,0,0),V(1,0,0),360)
-def cw_theta(m): return 1.15*m-0.5*m*m        # wrap 37°, steep inducer, ~backswept exducer
+def cw_theta(m): return -ROT*(1.15*m-0.5*m*m)     # wrap 37°: inducer leans against rotation, backswept exducer (rotation +theta)
 def cw_blade(a0,m0,th_h,th_t):
     secs=[]
     for k in range(25):
         m=m0+(1-m0)*k/24; th=a0+cw_theta(m)
-        (xh,rh),(xt_,rt)=cw_hub(m),cw_tip(m)
-        rh2=rh-0.6*(1 if m<0.98 else 0)                          # sink into hub for a clean fuse
-        if m>=0.98: xh=xh-0.0
-        pts=[]
-        for (x,r,t_) in [(xh,rh2,th_h),(xt_,rt,th_t)]:
-            pts.append((x,r,t_))
-        w=[P(pts[0][0],pts[0][1],th-pts[0][2]/2/pts[0][1]),P(pts[1][0],pts[1][1],th-pts[1][2]/2/pts[1][1]),
-           P(pts[1][0],pts[1][1],th+pts[1][2]/2/pts[1][1]),P(pts[0][0],pts[0][1],th+pts[0][2]/2/pts[0][1])]
+        (xh,rh),(xt_,rt)=cw_hub_in(m),cw_tip(m)
+        w=[P(xh,rh,th-th_h/2/rh),P(xt_,rt,th-th_t/2/rt),P(xt_,rt,th+th_t/2/rt),P(xh,rh,th+th_h/2/rh)]
         secs.append(Part.makePolygon(w+[w[0]]))
     return Part.makeLoft(secs,True,False)
 CW_NB=7   # 7 main + 7 splitters, counted on user photo (14 exducer tips)
@@ -445,7 +479,7 @@ def rad_cyl(x,r0,r1,a,dia): return Part.makeCylinder(dia/2,r1-r0,P(x,r0,a),D_(a)
 def tube_d(r,L,p,d): return Part.makeCylinder(r,L,p,d)
 # --- 1) RPM: Allegro A1120EUA (SIP-3) Hall switch on Ø2.5 SS arm through an M3 boss in the intake wall (angle 90°),
 #        diametral NdFeB Ø2x2 magnet in an axial pocket in the nose-cone rear face (r6.5), brass Ø2x2 balance slug opposite
-A_RPM=math.radians(90); X_RPM=-39.3; xl_rpm=X_RPM-XI
+A_RPM=math.radians(90); X_RPM=CW_NOSE-1.5; xl_rpm=X_RPM-XI   # v13A: follows the nose-cone base
 ins=ins.fuse(Part.makeCylinder(3.5,4.1,V(xl_rpm,0,0)+D_(A_RPM)*29.4,D_(A_RPM)))
 ins=ins.cut(Part.makeCylinder(1.25,8,V(xl_rpm,0,0)+D_(A_RPM)*27.0,D_(A_RPM)))          # M3 tap Ø2.5
 # --- 2) starter mount ring on the bellmouth back (turned, r33..47, local x1.6..5.5) with 6x M3 (2 per strut foot)
@@ -456,7 +490,9 @@ for a in ST_ANG:
     for s_ in (-1,1):
         aa=a+s_*T_OFF/R_FT; ins=ins.cut(Part.makeCylinder(1.25,4.5,P(1.6,R_FT,aa),V(1,0,0)))
 ins=ins.removeSplitter()
-save_part('GR180_Intake','Intake + v11 starter mount ring (6x M3 tapped, r43) + RPM sensor M3 boss',ins)
+A_AIR=math.radians(210); _na=(0.5554,-0.8316)   # v13A: M5 air-start port (Intake.pdf): tap drill Ø4.2 normal to the 34° cone, 3.4 wall
+ins=ins.cut(Part.makeCylinder(2.1,6.0,V(29.94,0,0)+D_(A_AIR)*33.10,V(_na[0],0,0)+D_(A_AIR)*_na[1])).removeSplitter()
+save_part('GR180_Intake','Intake v13A + starter mount ring + RPM boss + M5 air-start port',ins)
 x_tab=XI+1.6
 spokes=[]; st_fast=[]
 for a in ST_ANG:
@@ -476,7 +512,7 @@ rpm_head=Part.makeBox(3.0,4.1,1.6,V(X_RPM-1.5,-2.05,9.6))      # A1120 'UA' body
 rpm_sleeve=rad_cyl(X_RPM,11.2,14.0,A_RPM,5.0)
 rpm_nut=rad_cyl(X_RPM,33.5,35.9,A_RPM,5.5).cut(rad_cyl(X_RPM,33.5,35.9,A_RPM,2.5))
 rpm_sensor=Part.makeCompound([rpm_head,rpm_sleeve.cut(rad_cyl(X_RPM,11.2,14.0,A_RPM,2.5)),rpm_arm,rpm_nut])
-XN0=-4.8-33.0
+XN0=CW_NOSE
 rpm_mag=Part.makeCylinder(1.0,2.0,V(XN0-2.1,-6.5,0),V(1,0,0))
 bal_slug=Part.makeCylinder(1.0,2.0,V(XN0-2.1,6.5,0),V(1,0,0))
 save_part('GR180_RPM_sensor','A1120EUA Hall switch on Ø2.5 SS arm, M3 boss in intake wall, gap 0.9 to nose cone',rpm_sensor)
@@ -498,10 +534,10 @@ supply=Part.makeCompound([fuel_sys,oil,oil2])
 save_part('GR180_Supply_lines','Supply: gas Ø8 feed+ring+12 needles, oil to rear (tunnel x18), v11 oil Ø3 to front-bearing jet',supply)
 save_part('GR180_Supply_seals','O-rings 6x1.5, washers, 2 push-in fittings, v11 plug in the unused boss',Part.makeCompound(seals))
 # --- 5) gas bulkhead fitting M12x1 (sleeve Ø12, bore 8) at the casing, inner locknut + outer hex + compression nut
-casing=casing.cut(Part.makeCylinder(6.1,4,P(XM,51.5,A_FUEL),D_(A_FUEL)))
+casing=casing.cut(Part.makeCylinder(6.1,4,P(X_FEED,51.5,A_FUEL),D_(A_FUEL)))
 dF=D_(A_FUEL)
-bulk=Part.makeCylinder(6,9.5,P(XM,48.8,A_FUEL),dF).fuse(hexprism(P(XM,48.8,A_FUEL),dF,14,4)).fuse(hexprism(P(XM,54.3,A_FUEL),dF,14,4))   # hex flats clear of the Ø107 can curvature
-bulk=bulk.fuse(hexprism(P(XM,58.3,A_FUEL),dF,12,4.5)).cut(Part.makeCylinder(4.0,15,P(XM,48.8,A_FUEL),dF))
+bulk=Part.makeCylinder(6,9.5,P(X_FEED,48.8,A_FUEL),dF).fuse(hexprism(P(X_FEED,48.8,A_FUEL),dF,14,4)).fuse(hexprism(P(X_FEED,54.3,A_FUEL),dF,14,4))   # hex flats clear of the Ø107 can curvature
+bulk=bulk.fuse(hexprism(P(X_FEED,58.3,A_FUEL),dF,12,4.5)).cut(Part.makeCylinder(4.0,15,P(X_FEED,48.8,A_FUEL),dF))
 # --- 6) spark igniter 1/4-32 UNEF (RCEXL CM-6 type) in a weld boss on the casing, tip between 2 vaporisers
 cand=[math.radians(30*k) for k in range(12)]
 def adist(a,b): return abs((a-b+math.pi)%(2*math.pi)-math.pi)
@@ -519,7 +555,7 @@ exh=exh.fuse(Part.makeCylinder(48,3,V(_x0+1,0,0),V(1,0,0)).cut(Part.makeCylinder
 for a in FL_ANG: exh=exh.cut(Part.makeCylinder(1.25,3,P(_x0+1,44,a),V(1,0,0)))
 fl_fast=[Part.makeCylinder(2.75,3,P(_x0-3,44,a),V(1,0,0)).fuse(Part.makeCylinder(1.25,4.5,P(_x0,44,a),V(1,0,0))) for a in FL_ANG]
 # --- 8) EGT: type-K Ø1.5 sheathed probe, M4 compression fitting in a Ø8 weld boss on the exhaust duct, x=127, mid-way between struts
-X_EGT=127.0; A_EGT=math.radians(30)
+X_EGT=XC+3.5; A_EGT=math.radians(30)   # v13A: fitting hex clears the casing/exhaust flange ring (to 119.0)
 exh=exh.fuse(rad_cyl(X_EGT,38.2,42.5,A_EGT,8.0)).cut(rad_cyl(X_EGT,38.6,42.6,A_EGT,3.3)).cut(rad_cyl(X_EGT,37.5,39.6,A_EGT,1.6)).removeSplitter()
 save_part('GR180_Exhaust','Exhaust (SS 0.5) + v11 rear ring 3mm 4xM3, EGT M4 weld boss at x127',exh)
 dE=D_(A_EGT)
@@ -533,13 +569,15 @@ dI=D_(A_IGN)
 ign=rad_cyl(X_IGN,48.2,58.6,A_IGN,6.35).fuse(hexprism(P(X_IGN,58.6,A_IGN),dI,8,4)).fuse(rad_cyl(X_IGN,62.6,70.6,A_IGN,4.0))
 ign=ign.fuse(rad_cyl(X_IGN,45.0,48.2,A_IGN,4.0)).fuse(rad_cyl(X_IGN,43.5,45.0,A_IGN,1.0))
 save_part('GR180_Igniter','Spark igniter 1/4-32 UNEF (RCEXL CM-6 class), gap tip at r44 between vaporisers, 12 mm behind cap',ign)
-rear_spacer=Part.makeCylinder(6.05,6.3,V(94.0,0,0),V(1,0,0)).cut(Part.makeCylinder(4,6.3,V(94.0,0,0),V(1,0,0)))
+rear_spacer=None   # v13A: removed - turbine back on the rear 608 (drawing)
 fasteners=Part.makeCompound(st_fast+fl_fast)
 print('v11 angles deg: igniter %.1f  fuel %.1f oil %.1f gas(oil2) %.1f'%tuple(math.degrees(x)%360 for x in (A_IGN,A_FUEL,A_OIL,A_GAS)))
 # ======== v12: helical threads, oil-feed rings both bearings, front O-ring 22x1 FKM, real sensor/igniter hardware ========
 AX=V(1,0,0)
 def thread_rod(p0,dvec,L,d,p,lh=False,core=True,ext=0.0):
     """ISO 60deg (trapezoid-approx) helical thread solid from p0 along dvec, length L; ext>0 = tap tool (radial clearance)."""
+    if FAST:
+        c_=Part.makeCylinder(d/2+ext,L,V(0,0,0),V(0,0,1)); dv_=V(dvec); dv_.normalize(); c_.transformShape(App.Placement(p0,App.Rotation(V(0,0,1),dv_)).toMatrix(),True); return c_
     rM=d/2+ext; rm=d/2-0.6134*p+ext; s=0.05
     h=Part.makeHelix(p,L+2*p,rm-s,0,lh); h.translate(V(0,0,-p))
     wb=0.875*p; wt=0.125*p
@@ -573,16 +611,20 @@ def tap(shape,p0,dvec,L,d,p,lh=False):
 THREADS=[]   # (location, size, hand, engagement, material)
 def unit(v): w=V(v); w.normalize(); return w
 # --- shaft & nose cone in assembly coords: M6x1 LH both ends (rotor turns CCW seen from the intake: backswept exducer wrap +theta)
-sh_asm=ss.copy(); sh_asm.translate(V(-51,0,0))
-sh_asm=sh_asm.cut(Part.makeCylinder(3.2,15,V(-51,0,0),AX)).fuse(thread_rod(V(-51,0,0),AX,15,6,1.0,True))
-sh_asm=sh_asm.cut(Part.makeCylinder(3.2,13.8,V(115,0,0),AX)).fuse(thread_rod(V(115,0,0),AX,13.8,6,1.0,True))
-save_part('GR180_Shaft','Shaft (assembly coords) M6x1 LH helical threads: front 15, rear 13.8',sh_asm)
-no_asm=ns.copy(); no_asm.transformShape(App.Placement(V(-37.8,0,0),App.Rotation(V(0,0,1),180)).toMatrix())
-no_asm=tap(no_asm,V(-51,0,0),AX,11,6,1.0,True)   # identical helix to the shaft rod (phase-exact)
-save_part('GR180_NoseCone','Nose cone nut (assembly coords) M6x1 LH internal, 11.2 engaged',no_asm)
-THREADS+= [('Shaft front / nose cone','M6x1','LH','11.2 mm (1.9d) in Al','starter torque tightens'),('Shaft rear / turbine nut','M6x1','LH','6.0 mm (1.0d) in steel','air drag on nut tightens')]
-nut=hexprism(V(XTB+14.51,0,0),AX,10,6); nut=tapcut(nut,V(115,0,0),AX,13.8,6,1.0,True)
-save_part('GR180_TurbineNut','Turbine nut M6x1 LH, 10 AF x 6, A4/Inconel, helical thread',nut)
+sh_asm=ss.copy(); sh_asm.translate(V(SH_OFF,0,0))
+SH_RT=SH_L-166.0
+sh_asm=sh_asm.cut(Part.makeCylinder(3.2,15,V(SH_OFF,0,0),AX)).fuse(thread_rod(V(SH_OFF,0,0),AX,15,6,1.0,True))                  # front M6x1 LH (drawing)
+sh_asm=sh_asm.cut(Part.makeCylinder(3.2,SH_RT,V(SH_OFF+166,0,0),AX)).fuse(thread_rod(V(SH_OFF+166,0,0),AX,SH_RT,6,1.0,False))   # rear M6x1 RH
+save_part('GR180_Shaft','Shaft v13A (drawing: body Ø15.5, shoulders Ø11, L%.1f) M6x1 LH front 15 / RH rear %.1f'%(SH_L,SH_RT),sh_asm)
+no_asm=ns.copy(); no_asm.transformShape(App.Placement(V(CW_NOSE,0,0),App.Rotation(V(0,0,1),180)).toMatrix())
+NOSE_ENG=(CW_NOSE-2.0)-SH_OFF
+no_asm=tap(no_asm,V(SH_OFF,0,0),AX,NOSE_ENG,6,1.0,True)   # full thread up to the recess bottom, phase-exact with the shaft rod
+save_part('GR180_NoseCone','Nose cone nut v13A M6x1 LH internal, %.1f engaged'%NOSE_ENG,no_asm)
+THREADS+= [('Shaft front / nose cone','M6x1','LH','%.1f mm (%.1fd) in Al'%(NOSE_ENG,NOSE_ENG/6),'running drag tightens (CW rotor); starter must drive a pinned/keyed cup or use the air-start port'),
+           ('Shaft rear / turbine nut','M6x1','RH','8.0 mm (1.33d) steel, 1.0 proud','running drag tightens (CW rotor)')]
+NUT_H=8.0
+nut=hexprism(V(XTB+14.51,0,0),AX,10,NUT_H); nut=tapcut(nut,V(SH_OFF+166,0,0),AX,SH_RT,6,1.0,False)
+save_part('GR180_TurbineNut','Turbine nut v13A M6x1 RH, 10 AF x 8, A4/Inconel',nut)
 # --- oil-feed rings (static, press-fit H7/p6 + Loctite 641) upstream of each 608, groove + 4x Ø0.45 jets at ball pitch r7.55
 def oil_ring(x0,t,g0,g1):
     r=Part.makeCylinder(11,t,V(x0,0,0),AX).cut(Part.makeCylinder(6.5,t,V(x0,0,0),AX))
@@ -591,26 +633,27 @@ def oil_ring(x0,t,g0,g1):
         a=math.radians(45+90*k); pa=P((g0+g1)/2,10.5,a); pb=P(x0+t,7.55,a); d_=pb.sub(pa); u_=unit(d_)
         r=r.cut(Part.makeCylinder(0.225,d_.Length+0.6,pa.sub(u_*0.3),u_))
     return r
-oilring_f=oil_ring(0.1,2.0,0.6,1.6); oilring_r=oil_ring(97.3,3.0,97.3,98.8)
-front_shim=Part.makeCylinder(6.05,2.1,V(0,0,0),AX).cut(Part.makeCylinder(4,2.1,V(0,0,0),AX))
+# v13A: v12 oil-feed rings removed (no room in the drawing stack) - jets drilled through the tunnel wall instead
+front_shim=None   # v13A: removed (wheel spacer on the bearing, drawing)
 # feed drillings Ø0.8 + Ø3.1 tube seats
 A_F1=math.radians(285.0)
 def drill(sh_,po,pi_,a,seat_back,seat_fwd):
     Po=P(po[0],po[1],a); Pi=P(pi_[0],pi_[1],a); u_=unit(Pi.sub(Po)); L_=Pi.sub(Po).Length
     sh_=sh_.cut(Part.makeCylinder(0.4,L_+0.6,Po.sub(u_*0.5),u_)).cut(Part.makeCylinder(1.55,seat_back+seat_fwd,Po.sub(u_*seat_back),u_))
     return sh_,Po,u_
-ts,Pf,uf=drill(ts,(6.8,20.0),(1.1,10.5),A_F1,3.0,1.5)
-ts,Pr,ur=drill(ts,(96.3,11.75),(98.2,10.35),A_OIL,3.0,1.0)
-ts=ts.cut(Part.makeCylinder(11.8,1.4,V(4.9,0,0),AX).cut(Part.makeCylinder(11,1.4,V(4.9,0,0),AX)))     # O-ring gland 22x1: depth 0.8 (20% squeeze), width 1.4 (fill 70%)
+ts,Pf,uf=drill(ts,(11.8,15.23),(11.0,11.0),A_F1,3.0,1.0)   # v13A front jet: cone surface -> Ø22 bore behind the front 608, aimed fwd at the cage (r~7.3)
+ts,Pr,ur=drill(ts,(90.27,10.5),(93.6,8.5),A_OIL,3.0,1.0)   # v13A rear jet: tube OD -> Ø17 bore ahead of the rear 608, aimed aft at the inner-ring/cage gap
+_xo=X_FB0+3.5
+ts=ts.cut(Part.makeCylinder(12.45,2.4,V(_xo-1.2,0,0),AX).cut(Part.makeCylinder(11,2.4,V(_xo-1.2,0,0),AX)))     # v13A O-ring gland Ø24.9x2.4 at the front-608 mid-plane: cord 1.78 FKM (drawing), squeeze ~18 %
 for k in range(6): ts=tap(ts,P(XF,17,math.radians(60*k)),AX,8.5,3,0.5)
-save_part('GR180_Shaft_tunnel','Shaft tunnel v12: O-ring gland 22x1, 2 oil drillings Ø0.8+seat, 6x M3 helical tapped',ts)
-oil=tube_path([P(-30,R_SUP,A_OIL),P(9,R_SUP,A_OIL),P(18,16.5,A_OIL),Pr.sub(ur*8.0),Pr.add(ur*0.8)],1.5,1.0)
-oil2=tube_path([P(-30,R_SUP,A_GAS),P(8.5,R_SUP,A_GAS),Pf.sub(uf*6.0),Pf.add(uf*1.2)],1.5,1.0)
+for k in range(6): ts=tap(ts,P(103.3,16,math.radians(60*k)),V(-1,0,0),4.0,3,0.5)   # v13A: rear flange M3 for the NGV (PCD32)
+save_part('GR180_Shaft_tunnel','Shaft tunnel v13A: Ø26 spigot, O-ring gland Ø24.9x2.4, oil jets front/rear Ø0.8+seat, M3 front PCD34 / rear PCD32',ts)
+oil=tube_path([P(-30,R_SUP,A_OIL),P(9.5,R_SUP,A_OIL),P(17,15.0,A_OIL),P(84,13.6,A_OIL),Pr.sub(ur*3.0),Pr.add(ur*0.8)],1.5,1.0)
+oil2=tube_path([P(-30,R_SUP,A_GAS),P(9.5,R_SUP,A_GAS),P(12.9,24,A_F1),Pf.sub(uf*3.0),Pf.add(uf*0.8)],1.5,1.0)
 supply=Part.makeCompound([fuel_sys,oil,oil2])
 save_part('GR180_Supply_lines','Supply v12: gas Ø8 feed+ring+needles; oil Ø3x0.5 -> rear oil ring (A_OIL), -> front oil ring (A_GAS boss, entry 285°)',supply)
-_e=Part.Ellipse(V(5.6+0.625,11.4,0),V(5.6,11.8,0),V(5.6,11.4,0))
-fb_oring=Part.Face(Part.Wire(_e.toShape())).revolve(V(0,0,0),AX,360)
-save_part('GR180_FrontBearing_Oring','O-ring 22x1.0 FKM 75 (installed, 20% squeeze, ellipse section)',fb_oring)
+fb_oring=Part.makeTorus(11.725,0.72,V(_xo,0,0),AX)
+save_part('GR180_FrontBearing_Oring','O-ring cord 1.78 FKM 75 (installed in Ø24.9 gland, 18% squeeze) - v13A',fb_oring)
 # --- M3 tapped holes: intake outer 6x, diffuser vane screws 10x, starter ring 6x (through, 4.5), exhaust ring 4x
 for k in range(6): ous=tap(ous,P(6.0,41,math.pi/2+k*math.pi/3),AX,1.9,3,0.5)
 save_part('GR180_Intake_outer','Intake outer v12: 6x M3 helical tapped (PCD82)',ous)
@@ -619,7 +662,7 @@ for k in range(13):
 save_part('GR180_Diffuser','Diffuser v12: 10x M3 helical tapped vane screw holes',ds)
 for a in ST_ANG:
     for s_ in (-1,1): ins=tap(ins,P(1.6,R_FT,a+s_*T_OFF/R_FT),AX,4.5,3,0.5)
-ins=tap(ins,V(xl_rpm,0,0)+D_(A_RPM)*28.5,D_(A_RPM),5.0,3,0.5)
+ins=tap(ins,V(xl_rpm,0,0)+D_(A_RPM)*28.0,D_(A_RPM),5.5,3,0.5)   # v13A: tap from the bore (rod starts at r28)
 save_part('GR180_Intake','Intake v12: starter ring 4.5 thick 6x M3 tapped, RPM boss M3 tapped',ins)
 for a in FL_ANG: exh=tap(exh,P(_x0+1,44,a),AX,3.0,3,0.5)
 # EGT boss M4x0.7
@@ -634,11 +677,11 @@ for a in FL_ANG: scr.append(Part.makeCylinder(2.75,3,P(_x0-3,44,a),AX).fuse(thre
 fasteners=Part.makeCompound(scr)
 save_part('GR180_Fasteners','ISO 4762 M3x6 (6, starter) + M3x5 (4, rear flange) A2, helical',fasteners)
 # --- casing igniter boss 1/4-32 UNEF tapped (boss 7 high: 7.3 engaged = 1.15d steel)
-casing=tap(casing,P(X_IGN,51.0+4*25.4/32,A_IGN),D_(A_IGN),60.6-(51.0+4*25.4/32),6.35,25.4/32)
+casing=tap(casing,P(X_IGN,53.5,A_IGN),D_(A_IGN),60.6-53.5,6.35,25.4/32)   # v13A: tapped from the casing ID (rod starts there too)
 save_part('GR180_Casing','Casing v12: igniter boss 1/4-32 UNEF helical tapped',casing)
 # --- igniter (RCEXL CM-6 class 1/4-32 UNEF RH): shank, thread, hex 8, terminal, ceramic, centre electrode, ground strap gap 0.7
 dI=D_(A_IGN); tI=V(0,-math.sin(A_IGN),math.cos(A_IGN)); pI=25.4/32
-r_t0=51.0+3*pI
+r_t0=53.5   # v13A: thread starts at the casing ID (was inside the Ø5.5 hole -> interference)
 ign=rad_cyl(X_IGN,48.2,r_t0,A_IGN,5.0).fuse(thread_rod(P(X_IGN,r_t0,A_IGN),dI,60.6-r_t0,6.35,pI))
 ign=ign.fuse(hexprism(P(X_IGN,60.6,A_IGN),dI,8,4)).fuse(rad_cyl(X_IGN,64.6,72.6,A_IGN,4.0))
 ign=ign.fuse(rad_cyl(X_IGN,45.0,48.2,A_IGN,4.0)).fuse(rad_cyl(X_IGN,43.5,45.0,A_IGN,1.0))
@@ -656,10 +699,11 @@ rpm_ln=tapcut(hexprism(P(X_RPM,33.5,A_RPM),D_(A_RPM),5.5,1.8),P(X_RPM,28.0,A_RPM
 rpm_sensor=Part.makeCompound([rpm_head,rpm_sleeve.cut(rad_cyl(X_RPM,11.2,14.0,A_RPM,2.5)),rad_cyl(X_RPM,11.2,28.0,A_RPM,2.5),rpm_th,rpm_ln])
 save_part('GR180_RPM_sensor','A1120EUA on Ø2.5 arm, M3x0.5 RH thread in intake boss + DIN 439 lock nut',rpm_sensor)
 # --- gas bulkhead M12x1 RH: body (thread + 14AF collar), tapped locknut 14AF x4, tapped compression nut 12AF x4.5
-b0=P(XM,48.8,A_FUEL)
-bulk_body=thread_rod(b0,dF,14.0,12,1.0).fuse(hexprism(P(XM,54.3,A_FUEL),dF,14,4)).cut(Part.makeCylinder(4.0,15,b0,dF))
+b0=P(X_FEED,48.8,A_FUEL)
+bulk_body=thread_rod(b0,dF,14.0,12,1.0).fuse(hexprism(P(X_FEED,54.3,A_FUEL),dF,14,4)).cut(Part.makeCylinder(4.0,15,b0,dF))
 bulk_ln=tapcut(hexprism(b0,dF,14,4),b0,dF,14,12,1.0)
-bulk_cn=tapcut(hexprism(P(XM,58.3,A_FUEL),dF,12,4.5),b0,dF,14,12,1.0)
+if bulk_ln.BoundBox.XLength>14.2: bulk_ln.rotate(b0,dF,30)   # v13A: flats axial (±7) so the inner locknut clears the diffuser ring
+bulk_cn=tapcut(hexprism(P(X_FEED,58.3,A_FUEL),dF,12,4.5),b0,dF,14,12,1.0)
 bulk=Part.makeCompound([bulk_body,bulk_ln,bulk_cn])
 save_part('GR180_GasBulkhead','Gas bulkhead M12x1 RH (helical) body + locknut + compression nut, bore Ø8',bulk)
 THREADS+= [('Igniter / casing boss','1/4-32 UNEF','RH','6.4 mm (1.0d) steel',''),('EGT fitting / exhaust boss','M4x0.7','RH','3.2-4.3 mm (~1d) steel',''),
@@ -671,7 +715,7 @@ print('v12 vols: shaft %.0f nose %.0f nut %.0f tunnel %.0f'%(sh_asm.Volume,no_as
 # ---- assembly
 d3=App.newDocument('GR180_Shaft_assembly')
 a=d3.addObject('Part::Feature','ShaftTunnel'); a.Shape=ts
-o=-51.0  # shaft front bearing shoulder (shaft x58) at tunnel x7 -> front 608 sits at tunnel x0-7
+o=SH_OFF  # v13A: shaft offset from the rear 608 on the bore step
 s1=d3.addObject('Part::Feature','Shaft'); s1.Shape=sh_asm
 n1=d3.addObject('Part::Feature','NoseCone'); n1.Shape=no_asm
 pass  # v12: nose already in assembly coords
@@ -684,21 +728,21 @@ def bearing608(nm,x):
     for k in range(7):
         a_=2*math.pi*k/7; sh.append(Part.makeSphere(3.969/2,V(x+3.5,7.55*math.cos(a_),7.55*math.sin(a_))))
     o_=d3.addObject('Part::Feature',nm); o_.Shape=Part.makeCompound(sh); return o_
-bearing608('FrontBearing_608_hybrid_8x22x7',2.1)
-bearing608('RearBearing_608_hybrid_8x22x7',100.3)
+bearing608('FrontBearing_608_hybrid_8x22x7',X_FB0)
+bearing608('RearBearing_608_hybrid_8x22x7',X_RSTEP)
 # wave spring modelled as a wavy single-turn ring (3 waves), envelope 21.8/16.2, installed height 2.8 (x8.5-11.3)
 import Part as _P
 pts=[];N=180
 for k in range(N+1):
-    t_=2*math.pi*k/N; pts.append(V(9.1+1.1+0.6*math.cos(3*t_),10.4*math.cos(t_),10.4*math.sin(t_)))
+    t_=2*math.pi*k/N; pts.append(V(X_FB0+7.5+0.28*math.cos(3*t_),10.4*math.cos(t_),10.4*math.sin(t_)))   # v13A: 1.0 installed (front 608 -> bore step)
 path=_P.BSplineCurve(); path.interpolate(pts[:-1],PeriodicFlag=True)
 prof=_P.Face(_P.Wire(_P.makePolygon([V(0,-1.35,-0.125),V(0,1.35,-0.125),V(0,1.35,0.125),V(0,-1.35,0.125),V(0,-1.35,-0.125)])))
 pe=path.toShape()
 try:
-    sw=_P.Wire(pe).makePipeShell([_P.Wire(_P.makeCircle(0.5,pts[0],path.tangent(path.FirstParameter)[0]))],True,True)
+    sw=_P.Wire(pe).makePipeShell([_P.Wire(_P.makeCircle(0.2,pts[0],path.tangent(path.FirstParameter)[0]))],True,True)
     ws=sw
 except Exception as e:
-    print('wave pipe failed',e); ws=Part.makeCylinder(10.9,2.8,V(8.5,0,0),V(1,0,0)).cut(Part.makeCylinder(8.1,2.8,V(8.5,0,0),V(1,0,0)))
+    print('wave pipe failed',e); ws=Part.makeCylinder(10.9,1.0,V(X_FB0+7,0,0),V(1,0,0)).cut(Part.makeCylinder(8.1,1.0,V(X_FB0+7,0,0),V(1,0,0)))
 wo=d3.addObject('Part::Feature','WaveSpring_22x16_free3_0_inst2_8'); wo.Shape=ws
 dfo=d3.addObject('Part::Feature','Diffuser'); dfo.Shape=ds; dfo.Placement=App.Placement(V(XF-(7+T),0,0),App.Rotation())
 xd=XF-(7+T)              # diffuser vane front face in assembly
@@ -709,10 +753,13 @@ xi=xo+6-xf1
 inf=d3.addObject('Part::Feature','Intake'); inf.Shape=ins; inf.Placement=App.Placement(V(xi,0,0),App.Rotation())
 for k,v in cc_parts.items():
     o_=d3.addObject('Part::Feature',k); o_.Shape=v
-for k,v in [('SupplyLines',supply),('SupplySeals',Part.makeCompound(seals)),('NGV',ngv),('Turbine',tw),('TurbineNut',nut),('Exhaust',exh),('Casing',casing),('Starter',starter),('Compressor',cw),('FrontBearing_Oring',fb_oring),('RPM_Sensor',rpm_sensor),('RPM_Magnet',rpm_mag),('Balance_Slug',bal_slug),('Igniter',ign),('EGT_Probe',egt),('GasBulkhead',bulk),('Fasteners',fasteners),('RearSpacer_8x12x6_3',rear_spacer),('OilRing_Front',oilring_f),('OilRing_Rear',oilring_r),('FrontShim_8x12x2_1',front_shim)]:
+for k,v in [('SupplyLines',supply),('SupplySeals',Part.makeCompound(seals)),('NGV',ngv),('Turbine',tw),('TurbineNut',nut),('Exhaust',exh),('Casing',casing),('Starter',starter),('Compressor',cw),('FrontBearing_Oring',fb_oring),('RPM_Sensor',rpm_sensor),('RPM_Magnet',rpm_mag),('Balance_Slug',bal_slug),('Igniter',ign),('EGT_Probe',egt),('GasBulkhead',bulk),('Fasteners',fasteners)]:
     o_=d3.addObject('Part::Feature',k); o_.Shape=v
 d3.recompute(); d3.saveAs(os.path.join(OUT,'GR180_Shaft_assembly.FCStd'))
 Part.makeCompound([o_.Shape for o_ in d3.Objects]).exportStep(os.path.join(OUT,'GR180_Shaft_assembly.step'))
+os.makedirs(os.path.join(OUT,'asm_parts'),exist_ok=True)   # v13A: per-part STEP (assembly coords) for checks / CFD / FEA
+for o_ in d3.Objects:
+    if o_.Shape.Volume>0: o_.Shape.exportStep(os.path.join(OUT,'asm_parts',o_.Name+'.step'))
 def gs_(o_): return o_.Shape
 objs=[o_ for o_ in d3.Objects]
 import sys; sys.stdout.flush()

@@ -1,0 +1,82 @@
+
+1. PMG / active rectifier window
+--------------------------------
+v1 DC power into the inverter PV port: 24.0 kW (shaft 25.6 kW x PMG 0.95 x rectifier 0.985)
+  2-pole PMG: f_e = 833 / 1000 / 1083 / 1192 Hz at 50k / 60k / 65k / 71.5k rpm -> f_sw >= 30 x f_e = 32 kHz
+  4-pole PMG: f_e = 1667 / 2000 / 2167 / 2383 Hz at 50k / 60k / 65k / 71.5k rpm -> f_sw >= 30 x f_e = 65 kHz
+E_LL = 360 V rms @60k -> phase current at 30 kW DC: 49.8 A rms
+   60.0k rpm: E_ph,pk 294 V, |E + jwLI|pk 297 V vs SVPWM limit 416 V at 720 V DC -> modulation 0.72; diode-rectified EMF peak 509 V (< DC link -> NO passive braking)
+   65.0k rpm: E_ph,pk 318 V, |E + jwLI|pk 322 V vs SVPWM limit 416 V at 720 V DC -> modulation 0.77; diode-rectified EMF peak 552 V (< DC link -> NO passive braking)
+   71.5k rpm: E_ph,pk 350 V, |E + jwLI|pk 354 V vs SVPWM limit 416 V at 720 V DC -> modulation 0.85; diode-rectified EMF peak 607 V (< DC link -> NO passive braking)
+  DC current at 24.0 kW, 720 V: 33.3 A -> 1 MPPT input(s) of 36 A
+  DC current at 30.0 kW, 720 V: 41.7 A -> 2 MPPT input(s) of 36 A
+
+2. FPT load loss: overspeed with NO electrical braking
+------------------------------------------------------
+J (FPT + PMG + shaft) = 8.0e-04 kg m^2 (assumed); stored energy at 60k = 15.8 kJ
+  P = 25.6 kW: time to 105 % speed =   63 ms
+  P = 25.6 kW: time to 110 % speed =  130 ms
+  P = 25.6 kW: time to 120 % speed =  271 ms
+  P = 30.0 kW: time to 105 % speed =   54 ms
+  P = 30.0 kW: time to 110 % speed =  111 ms
+  P = 30.0 kW: time to 120 % speed =  232 ms
+  after fuel cut the hot recuperator keeps driving the gas generator and the FPT; energy E = P0 x tau:
+    tau  1.0 s: E    26 kJ -> runaway bound 97k rpm (162 %), windage/turbine torque roll-off ignored
+    tau  3.0 s: E    77 kJ -> runaway bound 145k rpm (242 %), windage/turbine torque roll-off ignored
+    tau 10.0 s: E   256 kJ -> runaway bound 249k rpm (415 %), windage/turbine torque roll-off ignored
+  => braking must be local hardware (< 20 ms), continuous, and redundant (DC chopper + independent PMG brake).
+
+3. Dump (braking) resistor on the DC link + independent PMG brake
+-----------------------------------------------------------------
+R_DC = V_on^2 / P_peak = 800^2 / 36 kW = 17.8 ohm -> 2 x 36 ohm in parallel = 18 ohm
+  at 800 V: 35.6 kW
+  at 830 V: 38.3 kW
+  at 900 V: 45.0 kW
+  load rejection, fuel to idle in 2 s, inverter back after 30 s (idle FPT ~4 kW)      146 kJ
+  start: FPT held at GG idle until inverter accepts PV (300 s x 4 kW)                1200 kJ
+  ESD from full load, recuperator soak tau 10 s                                       256 kJ
+  rating: 36 kW peak (10 s), >= 400 kJ adiabatic, 6 kW continuous, IP23 + rain hood, NC thermal switch
+  independent PMG brake (diode bridge + chopper, R 8 ohm): 60.0k rpm -> 486 V DC -> 29.5 kW
+  independent PMG brake (diode bridge + chopper, R 8 ohm): 66.0k rpm -> 535 V DC -> 35.7 kW
+  independent PMG brake (diode bridge + chopper, R 8 ohm): 71.5k rpm -> 579 V DC -> 41.9 kW
+
+4. DC pre-charge (rectifier DC link -> inverter PV input)
+---------------------------------------------------------
+C = 600 uF, R_pre = 100 ohm: tau 60 ms, 5 tau 300 ms, I_peak 7.2 A, energy in R 156 J (= 1/2 C V^2)
+  close the main contactor when |V_B3 - V_inv| < 20 V; pre-charge resistor: 2 x 50 ohm 50 W, pulse >= 300 J
+
+5. Inverter surge check (30 kW, 1.5x for 10 s)
+----------------------------------------------
+rated 43.5 A/phase, surge 65.2 A/phase; pump FLC 6.1 A; base load 25.4 A/phase
+  3 kW pump DOL (LRC 6.5 x FLC)                                  start  39.9 A -> phase  65.3 A = 1.50 x rated (EXCEEDS SURGE)
+  3 kW pump star (LRC/3)                                         start  13.3 A -> phase  38.7 A = 0.89 x rated (OK)
+  3 kW pump star->delta open transition spike (~6 x, 1-2 cycles) start  36.8 A -> phase  62.2 A = 1.43 x rated (surge window)
+  3 kW pump on VFD (<= 1.1 x FLC)                                start   6.8 A -> phase  32.1 A = 0.74 x rated (OK)
+  24k BTU split fixed-speed (LRA, one phase)                     start  50.0 A -> phase  75.4 A = 1.73 x rated (EXCEEDS SURGE)
+  same + compressor soft starter (-65 %)                         start  17.5 A -> phase  42.9 A = 0.99 x rated (OK)
+  inverter-type (DC inverter) split                              start  10.0 A -> phase  35.4 A = 0.81 x rated (OK)
+  two fixed-speed splits on one phase at once                    start 100.0 A -> phase 125.4 A = 2.88 x rated (EXCEEDS SURGE)
+
+6. HV battery: power, not energy, sets the size
+-----------------------------------------------
+turbine trip at full company load: battery carries 22.5 kW for <= 60 s (load shedding), then <= 10 kW critical load
+  10.2 kWh LFP: 1C continuous 10.2 kW, 1.5C/60 s peak 15.3 kW -> too small for a full-load trip
+  15.4 kWh LFP: 1C continuous 15.4 kW, 1.5C/60 s peak 23.1 kW -> too small for a full-load trip
+  20.5 kWh LFP: 1C continuous 20.5 kW, 1.5C/60 s peak 30.8 kW -> OK (>= 1.2 x trip load)
+  25.6 kWh LFP: 1C continuous 25.6 kW, 1.5C/60 s peak 38.4 kW -> OK (>= 1.2 x trip load)
+  energy reserve for a restart: 15 min start at ~4 kW + 30 min critical load 5 kW = 3.5 kWh; SOC window 20-90 %
+
+7. 48 V essential bus (DC-UPS, independent of HV battery and inverter)
+----------------------------------------------------------------------
+running load 665 W; blackout (post-lube + vent + controls) 405 W; starter 2 kW x 90 s = 50 Wh
+  48 V 50 Ah LFP: 2.0 kWh usable -> 3.1 h at running load, 5.1 h blackout
+  48 V 100 Ah LFP: 4.1 kWh usable -> 6.2 h at running load, 10.1 h blackout
+
+8. Cable voltage drop (copper 0.0206 ohm mm^2/m at 70 C)
+--------------------------------------------------------
+  DC 750 V roof->ER, 2 x 1 x 10 mm2, 41.7 A            dV  5.15 V = 0.72 %  loss  215 W
+  DC 750 V roof->ER, 2 x 1 x 16 mm2, 41.7 A            dV  3.22 V = 0.45 %  loss  134 W
+  AC 400 V ER->hall, 5G10, 43.5 A                      dV  0.93 V = 0.23 %  loss   70 W
+  AC 400 V ER->roof aux, 5G6, 10 A                     dV  1.78 V = 0.45 %  loss   31 W
+  48 V ER->roof, 2 x 1 x 25 mm2, starter peak 58 A     dV  2.87 V = 5.97 %  loss  166 W
+  48 V ER->roof, 2 x 1 x 25 mm2, steady 15 A           dV  0.74 V = 1.54 %  loss   11 W

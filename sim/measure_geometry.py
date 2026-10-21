@@ -5,7 +5,8 @@ import FreeCAD as App, Part, math, os, sys, json, time
 V = App.Vector
 ROOT = os.environ.get('GR180_ROOT', os.getcwd())
 ASM = os.path.join(ROOT, 'asm_parts')
-OUTF = os.path.join(ROOT, 'sim', 'geometry_measured.json')
+OUTF = os.environ.get('GR180_MEAS_OUT', os.path.join(ROOT, 'sim', 'geometry_measured.json'))
+RB_NGV = float(os.environ.get('GR180_NGV_RB', '35.25'))   # NGV shroud bore radius (v12 35.25, v13A 35.35)
 def pr(*a): print(*a); sys.stdout.flush()
 def load(n):
     s = Part.Shape(); s.read(os.path.join(ASM, n + '.step')); return s
@@ -32,21 +33,24 @@ t0 = time.time()
 # ---- NGV: vanes between inner shroud r22.25 and shroud bore r35.25 (v12)
 ngv = load('NGV')
 rr = [22.6 + k * (34.9 - 22.6) / 8 for k in range(9)]
-rows, A = blade_row_throat(ngv, rr, 94.8, 118.8, 15, 'NGV')
-A_full = A * (35.25 - 22.25) / (rr[-1] - rr[0])
-res['NGV'] = {'rows': rows, 'throat_area_mm2': A_full, 'annulus_mm2': math.pi * (35.25**2 - 22.25**2)}
+bb = ngv.BoundBox
+rows, A = blade_row_throat(ngv, rr, bb.XMin, bb.XMax, 15, 'NGV')
+A_full = A * (RB_NGV - 22.25) / (rr[-1] - rr[0])
+res['NGV'] = {'rows': rows, 'throat_area_mm2': A_full, 'annulus_mm2': math.pi * (RB_NGV**2 - 22.25**2)}
 pr('NGV throat area %.0f mm2 (annulus %.0f), eff. exit angle %.1f deg' % (A_full, res['NGV']['annulus_mm2'], math.degrees(math.acos(A_full / res['NGV']['annulus_mm2']))))
 # ---- Turbine rotor: blades r22.1 (rim) .. r35.15 (tip)
 tw = load('Turbine')
 rr = [22.5 + k * (34.9 - 22.5) / 8 for k in range(9)]
-rows, A = blade_row_throat(tw, rr, 107.3, 121.9, 23, 'TURB')
+bb = tw.BoundBox
+rows, A = blade_row_throat(tw, rr, bb.XMin, bb.XMax, 23, 'TURB')
 A_full = A * (35.15 - 22.1) / (rr[-1] - rr[0])
 res['Turbine'] = {'rows': rows, 'throat_area_mm2': A_full, 'annulus_mm2': math.pi * (35.15**2 - 22.1**2)}
 pr('Turbine throat area %.0f mm2 (annulus %.0f), eff. exit angle %.1f deg' % (A_full, res['Turbine']['annulus_mm2'], math.degrees(math.acos(A_full / res['Turbine']['annulus_mm2']))))
 # ---- Diffuser: vane passage x -11.3 .. -4.3 (height 7.0); slice with thin axial slabs
 dif = load('Diffuser')
 drows = []
-for x in (-10.8, -7.8, -4.8):
+bbd = dif.BoundBox
+for x in [bbd.XMin + f for f in (0.5, 3.5, 6.5)]:   # vane passage: local ax 0.5 / 3.5 / 6.5
     slab = Part.makeCylinder(60, 0.1, V(x - 0.05, 0, 0), V(1, 0, 0)).cut(Part.makeCylinder(37.5, 0.1, V(x - 0.05, 0, 0), V(1, 0, 0)))
     sols = [s for s in dif.common(slab).Solids if s.Volume > 1e-3]
     sols = sorted(sols, key=lambda s: math.atan2(s.CenterOfMass.z, s.CenterOfMass.y))
@@ -65,6 +69,7 @@ RHO = {'Shaft': 7.85e-3, 'NoseCone': 2.70e-3, 'Compressor': 2.76e-3, 'Turbine': 
        'RearSpacer_8x12x6_3': 7.85e-3, 'FrontShim_8x12x2_1': 7.85e-3, 'RPM_Magnet': 7.50e-3, 'Balance_Slug': 8.50e-3}
 mp = {}
 for n, rho in RHO.items():
+    if not os.path.exists(os.path.join(ASM, n + '.step')): continue
     s = load(n)
     sol = s.Solids
     Vt = sum(x.Volume for x in sol)

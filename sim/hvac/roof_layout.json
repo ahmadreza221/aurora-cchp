@@ -1,0 +1,404 @@
+{
+ "equipment": {
+  "IF-1": {
+   "label": "intake louver + G4/F8 filters + CHW coil CC-1",
+   "kind": "rect",
+   "x": 0.4,
+   "y": 7.6,
+   "w": 0.9,
+   "d": 0.9,
+   "h": 1.4,
+   "kg": 150,
+   "group": "engine"
+  },
+  "EP-1": {
+   "label": "engine package GR180+FPT+PMG+recuperator",
+   "kind": "rect",
+   "x": 1.3,
+   "y": 7.6,
+   "w": 1.4,
+   "d": 0.9,
+   "h": 1.3,
+   "kg": 450,
+   "group": "engine"
+  },
+  "DC-1": {
+   "label": "aux glycol dry cooler (engine interface)",
+   "kind": "rect",
+   "x": 0.4,
+   "y": 5.6,
+   "w": 1.2,
+   "d": 0.6,
+   "h": 1.0,
+   "kg": 90,
+   "group": "engine"
+  },
+  "D-101": {
+   "label": "exhaust diverter damper",
+   "kind": "rect",
+   "x": 4.6,
+   "y": 7.8,
+   "w": 0.5,
+   "d": 0.5,
+   "h": 0.9,
+   "kg": 60,
+   "group": "exhaust"
+  },
+  "HX-1": {
+   "label": "exhaust/water HX (vertical up-flow)",
+   "kind": "rect",
+   "x": 5.1,
+   "y": 7.6,
+   "w": 0.8,
+   "d": 0.9,
+   "h": 1.8,
+   "kg": 349,
+   "group": "exhaust"
+  },
+  "ST-1": {
+   "label": "stack DN250 double wall, top +4.0 m",
+   "kind": "circle",
+   "x": 5.5,
+   "y": 8.05,
+   "w": 0.35,
+   "d": 0.35,
+   "h": 4.0,
+   "kg": 80,
+   "group": "exhaust"
+  },
+  "LLH-1": {
+   "label": "HW low-loss header / buffer 200 L",
+   "kind": "circle",
+   "x": 6.6,
+   "y": 7.3,
+   "w": 0.5,
+   "d": 0.5,
+   "h": 1.4,
+   "kg": 280,
+   "group": "tank"
+  },
+  "BOP-R": {
+   "label": "roof BOP/MCC panel (B6-R), sun canopy",
+   "kind": "rect",
+   "x": 7.0,
+   "y": 9.2,
+   "w": 1.2,
+   "d": 0.45,
+   "h": 2.0,
+   "kg": 220,
+   "group": "elec"
+  },
+  "PS-1": {
+   "label": "hydronic pump skid P-1..P-5, ET-1/2, AS-1/2",
+   "kind": "rect",
+   "x": 2.8,
+   "y": 5.2,
+   "w": 2.8,
+   "d": 1.1,
+   "h": 1.2,
+   "kg": 750,
+   "group": "pump"
+  },
+  "CH-1": {
+   "label": "absorption chiller SC10 class",
+   "kind": "rect",
+   "x": 4.4,
+   "y": 2.5,
+   "w": 0.76,
+   "d": 0.97,
+   "h": 1.9,
+   "kg": 560,
+   "group": "chiller"
+  },
+  "CH-2": {
+   "label": "absorption chiller SC5 class",
+   "kind": "rect",
+   "x": 2.8,
+   "y": 2.6,
+   "w": 0.594,
+   "d": 0.744,
+   "h": 1.76,
+   "kg": 420,
+   "group": "chiller"
+  },
+  "TK-1": {
+   "label": "CHW buffer / decoupler 500 L",
+   "kind": "circle",
+   "x": 6.4,
+   "y": 3.6,
+   "w": 0.75,
+   "d": 0.75,
+   "h": 1.7,
+   "kg": 650,
+   "group": "tank"
+  },
+  "CT-1": {
+   "label": "cooling tower, FRP round, 40 ton class",
+   "kind": "circle",
+   "x": 8.4,
+   "y": 1.8,
+   "w": 1.6,
+   "d": 1.6,
+   "h": 1.95,
+   "kg": 600,
+   "group": "tower"
+  },
+  "PS-2": {
+   "label": "CW pump skid P-6A/B + basket strainer",
+   "kind": "rect",
+   "x": 5.0,
+   "y": 0.4,
+   "w": 1.4,
+   "d": 0.9,
+   "h": 1.0,
+   "kg": 380,
+   "group": "pump"
+  },
+  "WT-1": {
+   "label": "water treatment: dosing x3 in bund, EC ctrl, side-stream sep.",
+   "kind": "rect",
+   "x": 8.3,
+   "y": 4.0,
+   "w": 1.2,
+   "d": 0.7,
+   "h": 1.3,
+   "kg": 300,
+   "group": "water"
+  },
+  "RS-1": {
+   "label": "riser + roof penetration to hall (CHW, DHW, drains)",
+   "kind": "rect",
+   "x": 9.3,
+   "y": 6.3,
+   "w": 0.4,
+   "d": 0.4,
+   "h": 0.5,
+   "kg": 60,
+   "group": "pipe"
+  },
+  "HATCH": {
+   "label": "roof access hatch / stair (ASSUMED)",
+   "kind": "rect",
+   "x": 0.4,
+   "y": 0.4,
+   "w": 0.8,
+   "d": 0.8,
+   "h": 0.0,
+   "kg": 0,
+   "group": "access"
+  }
+ },
+ "weights": [
+  {
+   "tag": "IF-1",
+   "label": "intake louver + G4/F8 filters + CHW coil CC-1",
+   "kg": 150,
+   "area": 0.81,
+   "kg_m2": 185.18518518518516,
+   "cx": 0.8500000000000001,
+   "cy": 8.049999999999999
+  },
+  {
+   "tag": "EP-1",
+   "label": "engine package GR180+FPT+PMG+recuperator",
+   "kg": 450,
+   "area": 1.26,
+   "kg_m2": 357.14285714285717,
+   "cx": 2.0,
+   "cy": 8.049999999999999
+  },
+  {
+   "tag": "DC-1",
+   "label": "aux glycol dry cooler (engine interface)",
+   "kg": 90,
+   "area": 0.72,
+   "kg_m2": 125.0,
+   "cx": 1.0,
+   "cy": 5.8999999999999995
+  },
+  {
+   "tag": "D-101",
+   "label": "exhaust diverter damper",
+   "kg": 60,
+   "area": 0.25,
+   "kg_m2": 240.0,
+   "cx": 4.85,
+   "cy": 8.05
+  },
+  {
+   "tag": "HX-1",
+   "label": "exhaust/water HX (vertical up-flow)",
+   "kg": 349,
+   "area": 0.7200000000000001,
+   "kg_m2": 484.7222222222222,
+   "cx": 5.5,
+   "cy": 8.049999999999999
+  },
+  {
+   "tag": "ST-1",
+   "label": "stack DN250 double wall, top +4.0 m",
+   "kg": 80,
+   "area": 0.09621127501618741,
+   "kg_m2": 831.5033761535757,
+   "cx": 5.5,
+   "cy": 8.05
+  },
+  {
+   "tag": "LLH-1",
+   "label": "HW low-loss header / buffer 200 L",
+   "kg": 280,
+   "area": 0.19634954084936207,
+   "kg_m2": 1426.0282901033822,
+   "cx": 6.6,
+   "cy": 7.3
+  },
+  {
+   "tag": "BOP-R",
+   "label": "roof BOP/MCC panel (B6-R), sun canopy",
+   "kg": 220,
+   "area": 0.54,
+   "kg_m2": 407.4074074074074,
+   "cx": 7.6,
+   "cy": 9.424999999999999
+  },
+  {
+   "tag": "PS-1",
+   "label": "hydronic pump skid P-1..P-5, ET-1/2, AS-1/2",
+   "kg": 750,
+   "area": 3.08,
+   "kg_m2": 243.5064935064935,
+   "cx": 4.199999999999999,
+   "cy": 5.75
+  },
+  {
+   "tag": "CH-1",
+   "label": "absorption chiller SC10 class",
+   "kg": 560,
+   "area": 0.7372,
+   "kg_m2": 759.631036353771,
+   "cx": 4.78,
+   "cy": 2.985
+  },
+  {
+   "tag": "CH-2",
+   "label": "absorption chiller SC5 class",
+   "kg": 420,
+   "area": 0.441936,
+   "kg_m2": 950.36385358966,
+   "cx": 3.097,
+   "cy": 2.972
+  },
+  {
+   "tag": "TK-1",
+   "label": "CHW buffer / decoupler 500 L",
+   "kg": 650,
+   "area": 0.44178646691106466,
+   "kg_m2": 1471.2990294717436,
+   "cx": 6.4,
+   "cy": 3.6
+  },
+  {
+   "tag": "CT-1",
+   "label": "cooling tower, FRP round, 40 ton class",
+   "kg": 600,
+   "area": 2.0106192982974678,
+   "kg_m2": 298.4155182973037,
+   "cx": 8.4,
+   "cy": 1.8
+  },
+  {
+   "tag": "PS-2",
+   "label": "CW pump skid P-6A/B + basket strainer",
+   "kg": 380,
+   "area": 1.26,
+   "kg_m2": 301.58730158730157,
+   "cx": 5.7,
+   "cy": 0.8500000000000001
+  },
+  {
+   "tag": "WT-1",
+   "label": "water treatment: dosing x3 in bund, EC ctrl, side-stream sep.",
+   "kg": 300,
+   "area": 0.84,
+   "kg_m2": 357.14285714285717,
+   "cx": 8.9,
+   "cy": 4.35
+  },
+  {
+   "tag": "RS-1",
+   "label": "riser + roof penetration to hall (CHW, DHW, drains)",
+   "kg": 60,
+   "area": 0.16000000000000003,
+   "kg_m2": 374.99999999999994,
+   "cx": 9.5,
+   "cy": 6.5
+  }
+ ],
+ "distributed": {
+  "roof piping, filled, + supports": 450,
+  "galvanised steel dunnage / skid frames": 900,
+  "cable trays, insulation, cladding, walkways": 250
+ },
+ "total_kg": 6999.0,
+ "cg": [
+  5.289547078154022,
+  4.870022860408629
+ ],
+ "checks": [
+  {
+   "name": "engine intake -> exhaust stack (horizontal)",
+   "value": 5.1,
+   "min": 4.6,
+   "ref": "ASHRAE 62.1 T5-1 combustion exhaust 15 ft"
+  },
+  {
+   "name": "stack top above intake top",
+   "value": 2.6,
+   "min": 2.0,
+   "ref": "plume clears the louver"
+  },
+  {
+   "name": "engine intake -> cooling tower",
+   "value": 10.151970252123476,
+   "min": 7.6,
+   "ref": "ASHRAE 62.1 T5-1 cooling-tower exhaust 25 ft"
+  },
+  {
+   "name": "exhaust stack -> cooling tower",
+   "value": 6.890029027515051,
+   "min": 5.0,
+   "ref": "no hot exhaust into tower inlet"
+  },
+  {
+   "name": "stack top above tower top",
+   "value": 2.05,
+   "min": 1.0,
+   "ref": "exhaust above tower plume"
+  },
+  {
+   "name": "engine intake -> dry-cooler discharge",
+   "value": 2.232151428554971,
+   "min": 2.0,
+   "ref": "vertical discharge, downwind (SE) of intake"
+  },
+  {
+   "name": "stack -> BOP panel (nearest edge)",
+   "value": 1.8901058171435792,
+   "min": 1.5,
+   "ref": "radiant heat on the panel"
+  },
+  {
+   "name": "tower -> roof edge",
+   "value": 0.7999999999999994,
+   "min": 0.8,
+   "ref": "parapet, maintenance"
+  },
+  {
+   "name": "tower air-inlet ring: nearest equipment (PS-2)",
+   "value": 2.0615528128088303,
+   "min": 1.8,
+   "ref": ">= 1 m clear around louvres"
+  }
+ ],
+ "conflicts": []
+}

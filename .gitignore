@@ -16,3 +16,4 @@ Icon?
 sim/cfd/**/processor*/
 sim/cfd/**/[0-9]*/
 graphify-out/cache/
+cad_out/

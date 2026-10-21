@@ -82,3 +82,16 @@ Backup: build_gr180_v9_backup.py
 - Oil-feed rings (static, press fit + Loctite 641): front Ø22/Ø13 x2.0 at x0.1–2.1, rear Ø22/Ø13 x3.0 at x97.3–100.3 (on bore step); groove/rebate + 4x Ø0.45 jets exiting at ball pitch r7.55. Feed drillings Ø0.8 + Ø3.1 tube seats (front 285° from boss 274.5°; rear at A_OIL, old x18 hole removed).
 - Front stack: compressor spacer → shim Ø12/Ø8x2.1 → 608 at x2.1–9.1 → shaft shoulder moved to shaft x60.1; old 1.5 spacer removed; wave spring 9.1–11.3.
 - Front O-ring 22x1.0 FKM 75: gland Ø23.6 x1.4 at x4.9–6.3 (squeeze 20 %, fill 70 %). Rear: none (temperature > FKM limit, bearing must slide for thermal growth).
+
+## v13A (2026-10-21) – Option A: Rutten drawing stack restored (details: docs/04_drawings_vs_cad.md, docs/05_phase1_core_v13A.md)
+- Output now goes to `$GR180_OUT` (or the working folder); `GR180_FAST=1` builds with plain cylinders instead of helical threads. Build into `cad_out/v13A/`.
+- Rotation: **clockwise seen from the intake** (+θ). Diffuser vanes, NGV and turbine already matched; the compressor blade wrap was mirrored and is fixed. Threads: front M6x1 **LH**, rear M6x1 **RH** (running drag tightens both).
+- Compressor per drawing: LE plane → back face 33, nose 0.6 ahead of the LE, inducer Ø55.9 straight 12.93 + tip arc R13 concentric with the intake R12.8 (0.15 clearance), **b2 6.48**, disc 1.2 at the rim. The integrated spacer is ground 2.5 → **2.12** at assembly to set the arcs concentric.
+- Diffuser per drawing: Ø74.4×2 recess (back gap 0.72), sharp vanes LE Ø76.0, flanks 66°/80°, wedge 14° (throat 13×7.35×7 = 669 mm²), 13 axial de-swirl channels (113.63 mm²) in the Ø91–107 ring, countersunk M3 to the tunnel, 3×M3 puller holes.
+- Tunnel: Ø26×2 front spigot restored (diffuser pilot), flange 5.0, rear M3 tapped on PCD32 (NGV holes moved to PCD32 and clocked to match).
+- Shaft per drawing: body Ø15.5, shoulders Ø11, length 175.5 (+0.5 for an 8 mm nut). Rear 608 sits on the bore step at 97.30 (loaded state); bearing span 94.0. Front 608 at 3.30–10.30, wave washer 1.0 installed, O-ring cord 1.78 FKM in a Ø24.9×2.4 gland.
+- Turbine back on the rear 608 (hub 104.30, Ø8 pilot 14.0, blades fully inside the NGV shroud, NGV–rotor gap 3.1/2.0). Blade width 6.69/6.2. Turbine tip clearance 0.20 (NGV bore Ø70.7).
+- Removed: v12 oil rings, front shim, rear spacer. Oil jets are now drilled through the tunnel wall: front behind the 608 aimed at the cage, rear ahead of the 608.
+- NGV: Ø75.9×1.5 rib at 14.5–16 (not a flange), inner ring 15.0, LE/TE per drawing. Intake: outer cone 34° to Ø70 and an M5 air-start port. Intake outer: vane-screw holes Ø3.2 + Ø6 c'bore.
+- CC moved to x = 18.79 (drawing). Gas manifold 6.6 ahead of the cap, Ø6 feed with a joggle at x = 14.9. The combustor/casing/exhaust remain placeholders for phase 3 (recuperated CCHP).
+- Rotor dynamics with the drawing shaft: 3rd forward mode at 130–140k rpm (was 110–126k), so there is 13–22 % margin at the 115k continuous rating.

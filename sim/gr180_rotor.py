@@ -19,22 +19,24 @@ E_STEEL, RHO_STEEL = 205e9, 7850.0
 N_RUN = 120000.0
 
 # shaft outer profile (shaft local x, radius) from build_gr180.py, assembly offset -51 mm
-t7 = math.tan(math.radians(7)); rm = 7.0; re_ = rm - 18 * t7
-PROFILE = [(0, 3), (15, 3), (15, 3.5), (49, 3.5), (49, 4), (60.1, 4), (60.1, re_), (76, rm), (127, rm), (145, re_), (145, 4), (166, 4), (166, 3), (179.8, 3)]
-OFF = -51.0
+# v13A (Rutten drawing): body Ø15.5, shoulders Ø11, L 175.5; rear 608 on the bore step 97.30 -> shaft offset -47.70, bearing span 94.0
+rm, re_ = 7.75, 5.5
+PROFILE = [(0, 3), (15, 3), (15, 3.5), (49, 3.5), (49, 4), (58, 4), (58, re_), (76, rm), (127, rm), (145, re_), (145, 4), (166, 4), (166, 3), (175.5, 3)]
+OFF = -47.70
+X_BF, X_BR = 6.80, 100.80          # bearing centres (front 608 3.30-10.30, rear 97.30-104.30)
 def shaft_r(xa):
     x = xa - OFF
     for (x0, r0), (x1, r1) in zip(PROFILE[:-1], PROFILE[1:]):
         if x0 <= x <= x1 and x1 > x0: return r0 + (r1 - r0) * (x - x0) / (x1 - x0)
     return 3.0
-THREAD_EFF = {(-51.0, -36.0): 2.46, (115.0, 128.8): 2.46}   # M6x1 minor radius ~ effective bending radius
+THREAD_EFF = {(-47.70, -32.70): 2.46, (118.30, 127.80): 2.46}   # M6x1 minor radius ~ effective bending radius
 # clamped stacks (nose-cone nut -> compressor -> shim -> front 608 IR; turbine nut -> turbine hub -> rear 608 IR -> spacer):
 # preloaded hubs add bending stiffness. 'clamped' = shaft section replaced by an equivalent radius (judgement, ~half of hub wall)
-CLAMPED = {(-36.0, 9.1): 5.5, (94.0, 121.8): 5.0}
+CLAMPED = {(-34.72, 10.30): 5.5, (97.30, 118.81): 5.0}
 
 # ---- lumped disks: name -> (mass kg, x_cg mm, Ip kg m2, It kg m2)
 def disks_from_json():
-    f = os.path.join(HERE, 'geometry_measured.json')
+    f = os.environ.get('GR180_GEOM', os.path.join(HERE, 'geometry_measured.json'))
     D = {}
     if os.path.exists(f):
         mp = json.load(open(f))['rotor_parts']
@@ -46,18 +48,18 @@ def disks_from_json():
              'NoseCone': (0.006, -45.0, 2.0e-7, 3.0e-7), 'TurbineNut': (0.003, 124.8, 6e-8, 6e-8)}
     # bearing inner rings Ø12.1/8 x7 + half the balls, steel (not in asm_parts as separate solids)
     m_ir = RHO_STEEL * math.pi / 4 * (12.1e-3**2 - 8e-3**2) * 7e-3 + 0.5 * 7 * 3300 * math.pi / 6 * (3.969e-3)**3
-    for n, x in (('FrontBearing_IR', 5.6), ('RearBearing_IR', 103.8)):
+    for n, x in (('FrontBearing_IR', X_BF), ('RearBearing_IR', X_BR)):
         D[n] = (m_ir, x, 0.5 * m_ir * (6.05e-3**2 + 4e-3**2), m_ir * (3 * (6.05e-3**2 + 4e-3**2) + 7e-3**2) / 12)
     return D
 
-def gen_rotor(length_mm=30.0, d_mm=22.0, gap_mm=6.0, x_front=-61.9):
+def gen_rotor(length_mm=30.0, d_mm=22.0, gap_mm=6.0, x_front=-58.82):
     """PM rotor (NdFeB + carbon sleeve) overhung in front of the nose cone, solid cylinder approximation."""
     r = d_mm / 2e3; L = length_mm / 1e3; m = 7600 * math.pi * r**2 * L
     x_cg = x_front - gap_mm - length_mm / 2
     return m, x_cg, 0.5 * m * r**2, m * (3 * r**2 + L**2) / 12, x_front - gap_mm - length_mm
 
-def build(D, kb_front, kb_rear, x_start=-51.0, x_end=128.8, clamped=False):
-    xs = sorted(set([x_start, x_end] + [round(d[1], 3) for d in D.values()] + [5.6, 103.8] +
+def build(D, kb_front, kb_rear, x_start=-47.70, x_end=127.80, clamped=False):
+    xs = sorted(set([x_start, x_end] + [round(d[1], 3) for d in D.values()] + [X_BF, X_BR] +
                     [OFF + p[0] for p in PROFILE if x_start <= OFF + p[0] <= x_end]))
     fine = []
     for a, b in zip(xs[:-1], xs[1:]):
@@ -74,7 +76,7 @@ def build(D, kb_front, kb_rear, x_start=-51.0, x_end=128.8, clamped=False):
         if clamped:
             for (a, b), rr in CLAMPED.items():
                 if a <= xm <= b: r = max(r, rr * 1e-3)
-        if xm < -51.0: r = 4.0e-3                                   # generator stub shaft (variant only)
+        if xm < OFF: r = 4.0e-3                                   # generator stub shaft (variant only)
         A = math.pi * r**2; I = math.pi * r**4 / 4
         k = E_STEEL * I / L**3 * np.array([[12, 6*L, -12, 6*L], [6*L, 4*L*L, -6*L, 2*L*L], [-12, -6*L, 12, -6*L], [6*L, 2*L*L, -6*L, 4*L*L]])
         m = RHO_STEEL * A * L / 420 * np.array([[156, 22*L, 54, -13*L], [22*L, 4*L*L, 13*L, -3*L*L], [54, 13*L, 156, -22*L], [-13*L, -3*L*L, -22*L, 4*L*L]])
@@ -84,7 +86,7 @@ def build(D, kb_front, kb_rear, x_start=-51.0, x_end=128.8, clamped=False):
     def node(xmm): return int(np.argmin(abs(xs - xmm * 1e-3)))
     for n, (m, x, Ip, It) in D.items():
         i = node(x); M[2*i, 2*i] += m; M[2*i+1, 2*i+1] += It; P[2*i+1, 2*i+1] += Ip
-    K[2*node(5.6), 2*node(5.6)] += kb_front; K[2*node(103.8), 2*node(103.8)] += kb_rear
+    K[2*node(X_BF), 2*node(X_BF)] += kb_front; K[2*node(X_BR), 2*node(X_BR)] += kb_rear
     return xs, K, M, P
 
 def whirl(K, M, P, Omega):
@@ -111,7 +113,7 @@ def main():
     D = disks_from_json()
     print('Rotor parts (mass g, x_cg mm):', ', '.join('%s %.1f@%.1f' % (n, d[0] * 1e3, d[1]) for n, d in D.items()))
     print('Total rotor mass %.0f g; bearing span %.1f mm; turbine overhang %.1f mm; compressor overhang %.1f mm'
-          % (sum(d[0] for d in D.values()) * 1e3 + RHO_STEEL * 1e-9 * 15331.4 * 1e3, 103.8 - 5.6, D['Turbine'][1] - 103.8, 5.6 - D['Compressor'][1]))
+          % (sum(d[0] for d in D.values()) * 1e3, X_BR - X_BF, D['Turbine'][1] - X_BR, X_BF - D['Compressor'][1]))
     cases = [('soft front (O-ring 0.5 N/um), rear 10 N/um', 0.5e6, 10e6), ('stiff both 10 N/um', 10e6, 10e6),
              ('very stiff 30 N/um', 30e6, 30e6), ('soft both 1 N/um', 1e6, 1e6)]
     res = {}
