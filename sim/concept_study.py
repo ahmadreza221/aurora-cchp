@@ -26,10 +26,11 @@ def cycle(c):
     ma, PR, T3 = c['ma'], c['PR'], c['TIT']
     eps = c.get('eps', 0.0)
     dp_rc, dp_rh = (0.025, 0.035) if eps > 0 else (0.0, 0.0)
-    T1, P1 = T0, P0 * (1 - 0.01)
+    Ta, Pa = c.get('T_amb', T0), c.get('P_amb', P0)
+    T1, P1 = Ta, Pa * (1 - 0.01)
     T2 = T1 * (1 + (PR ** EX_A - 1) / c['eta_c']); w_c = CP_A * (T2 - T1)
     P2 = P1 * PR; P2r = P2 * (1 - dp_rc); P3 = P2r * (1 - 0.045)
-    P_exit = P0 * (1 + dp_rh + 0.015 + 0.005)               # recuperator hot side + CHP water HX + stack
+    P_exit = Pa * (1 + dp_rh + 0.015 + 0.005)               # recuperator hot side + CHP water HX + stack
     T_hot_in = 900.0
     for _ in range(60):
         T2r = T2 + eps * (T_hot_in - T2)
@@ -50,11 +51,11 @@ def cycle(c):
     T_after_rec = T_hot - ma * CP_A * (T2r - T2) / (mg * CP_G)
     mf = ma * f
     P_el_gross = P_shaft * 0.95 * 0.96                        # high-speed PMG 95 % x active rectifier + 3-ph inverter 96 %
-    P_aux = gas_booster_kW(mf, P3 / 1e5 + 1.0) * 1e3 + 450.0  # booster + oil pump, ECU, fans, water pump
+    P_aux = (gas_booster_kW(mf, P3 / 1e5 + 1.0) * 1e3 if c.get('booster', True) else 0.0) + 450.0  # booster + oil pump, ECU, fans, water pump
     P_net = P_el_gross - P_aux
     Q_fuel = mf * LHV
     Q_chp = mg * CP_G_LOW * max(T_after_rec - 363.0, 0) * 0.90  # water HX to 90 C stack, 10 % HX/piping losses
-    return dict(P_shaft=P_shaft, P_el=P_net, P_aux=P_aux, eta_el=P_net / Q_fuel, Q_chp=Q_chp,
+    return dict(P3=P3, P_shaft=P_shaft, P_el=P_net, P_aux=P_aux, eta_el=P_net / Q_fuel, Q_chp=Q_chp,
                 eta_tot=(P_net + Q_chp) / Q_fuel, mf=mf, T2r=T2r, T_hot=T_hot, T_stack_in=T_after_rec, Q_fuel=Q_fuel,
                 Q_rec=ma * CP_A * (T2r - T2), T2=T2)
 

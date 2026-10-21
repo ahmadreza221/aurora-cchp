@@ -37,9 +37,12 @@ def creep_hours(sig, T_metal_K):
 
 EFF = {'target': dict(eta_c=0.73, eta_t=0.82, eta_pt=0.78), 'as-is': dict(eta_c=0.70, eta_t=0.80, eta_pt=0.75)}
 
-def point(N, TIT_C, eff='target', eps=0.90):
-    PR, ma = line(N)
-    r = cs.cycle(dict(EFF[eff], arch='fpt', ma=ma, PR=PR, TIT=TIT_C + 273.15, eps=eps))
+def point(N, TIT_C, eff='target', eps=0.90, T_amb_C=15.0, alt_m=0.0, booster=True):
+    """Compressor runs on corrected speed N/sqrt(theta); physical flow = corrected flow * delta/sqrt(theta)."""
+    th = (T_amb_C + 273.15) / 288.15; de = (1 - 2.25577e-5 * alt_m) ** 5.25588
+    PR, ma_c = line(N / math.sqrt(th)); ma = ma_c * de / math.sqrt(th)
+    r = cs.cycle(dict(EFF[eff], arch='fpt', ma=ma, PR=PR, TIT=TIT_C + 273.15, eps=eps,
+                      T_amb=T_amb_C + 273.15, P_amb=101325.0 * de, booster=booster))
     sb = 283.0 * (N / 120e3) ** 2
     r.update(N=N, PR=PR, ma=ma, sig_blade=sb, sig_bore=640.0 * (N / 120e3) ** 2,
              life_blade=creep_hours(1.5 * sb, TIT_C + 273.15 - 70), T4=None)
@@ -62,5 +65,20 @@ def main():
         r = point(N, T, 'as-is')
         print('  N1 %3.0fk TIT %d C: P_el %.1f kW, eta_el %.1f %%' % (N / 1e3, T, r['P_el'] / 1e3, r['eta_el'] * 100))
 
+def site():
+    """Customer site: 50 m altitude, intake air held at <= 30 C, city gas 4 barg (no booster)."""
+    print('SITE: 50 m, intake 30 C, no gas booster, recuperator eps 0.90')
+    print('%5s %5s %5s | %6s %6s %6s | %6s %6s | %7s %9s' % ('N1 k', 'TIT', 'eff', 'air', 'PR', 'P3bar', 'P_el', 'eta_el', 'sig_bl', 'blade h'))
+    for eff in ('target', 'as-is'):
+        for N in (110e3, 115e3, 119e3):
+            for T in (800, 825, 850):
+                r = point(N, T, eff, T_amb_C=30.0, alt_m=50.0, booster=False)
+                print('%5.0f %5d %6s | %6.3f %6.2f %6.2f | %6.1f %6.1f | %7.0f %9.0f' % (N / 1e3, T, eff, r['ma'], r['PR'], r['P3'] / 1e5,
+                      r['P_el'] / 1e3, r['eta_el'] * 100, r['sig_blade'], min(r['life_blade'], 9.99e6)))
+    for Tin in (15.0, 20.0, 25.0, 30.0):
+        r = point(115e3, 800, 'target', T_amb_C=Tin, alt_m=50.0, booster=False)
+        print('  intake %2.0f C, 115k/800 C target: %.1f kW, %.1f %%' % (Tin, r['P_el'] / 1e3, r['eta_el'] * 100))
+
 if __name__ == '__main__':
-    main()
+    import sys
+    site() if 'site' in sys.argv else main()
