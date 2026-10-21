@@ -1,5 +1,5 @@
 # GR180-3D: shaft, shaft tunnel and diffuser (FreeCAD models)
-Rebuild everything with: freecadcmd -c "exec(open('build_gr180.py').read())"
+Rebuild everything (run from the project folder; output goes to $GR180_OUT or the current folder): freecadcmd -c "exec(open('build_gr180.py').read())"
 All dimensions are in mm. The axial origin of the assembly is the front face of the tunnel (front spigot).
 
 ## Bearings and preload (as decided by the user)

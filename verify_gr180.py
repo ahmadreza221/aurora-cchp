@@ -1,7 +1,7 @@
 # GR180 assembly verification: static pairwise interference, key gaps, rotor rotation sweep, per-part STEP export
 import FreeCAD as App, Part, math, os, sys, time
 V=App.Vector
-OUT=os.path.expanduser('~/Desktop/GR180-3D')
+OUT=os.path.abspath(os.environ.get('GR180_OUT', os.getcwd()))   # was hard-coded ~/Desktop/GR180-3D
 try: d3
 except NameError: d3=App.openDocument(os.path.join(OUT,'GR180_Shaft_assembly.FCStd'))
 def pr(*a): print(*a); sys.stdout.flush()

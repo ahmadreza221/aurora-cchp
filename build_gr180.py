@@ -1,7 +1,7 @@
 import FreeCAD as App, Part, Sketcher, Mesh, os, math, glob
 App.ParamGet('User parameter:BaseApp/Preferences/Document').SetBool('CreateBackupFiles',False)
-for f in glob.glob(os.path.expanduser('~/Desktop/GR180-3D/*.FCBak')): os.remove(f)
-OUT=os.path.expanduser('~/Desktop/GR180-3D'); os.makedirs(OUT,exist_ok=True)
+OUT=os.path.abspath(os.environ.get('GR180_OUT', os.getcwd())); os.makedirs(OUT,exist_ok=True)   # was hard-coded ~/Desktop/GR180-3D
+for f in glob.glob(os.path.join(OUT,'*.FCBak')): os.remove(f)
 V=App.Vector
 def profile_sketch(body,name,pts):
     sk=body.newObject('Sketcher::SketchObject',name)
