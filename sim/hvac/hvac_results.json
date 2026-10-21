@@ -256,6 +256,14 @@
    "approach": 2.9823506388131094
   },
   "fan_kW": 1.1,
+  "hx4": {
+   "Q": 3.5,
+   "V": 1.0074237536129333,
+   "LMTD": 3.915230377942435,
+   "UA": 893.9448415904839,
+   "Tc": 31.577226972763548,
+   "Q_tot": 112.07885304089977
+  },
   "dia": 1.6,
   "height": 1.95,
   "op_kg": 600,
@@ -1175,13 +1183,13 @@
     "board": "B6-R"
    },
    {
-    "tag": "D-101",
+    "tag": "D-801",
     "item": "exhaust diverter actuator (spring return)",
     "conn": 0.02,
     "summer": 0.01,
     "winter": 0.01,
-    "supply": "24 VAC via B1 safety relay",
-    "board": "B6-R/B1"
+    "supply": "24 VAC via SR1 safety output",
+    "board": "B4/SR1"
    },
    {
     "tag": "WT-1",
@@ -1229,7 +1237,7 @@
     "board": "B6-E"
    },
    {
-    "tag": "EH-301",
+    "tag": "EH-1301",
     "item": "tower basin heater (freeze, standby)",
     "conn": 1.5,
     "summer": 0,
@@ -1252,6 +1260,15 @@
     "conn": 0.08,
     "summer": 0.08,
     "winter": 0.06,
+    "supply": "1~230 V",
+    "board": "B6-R"
+   },
+   {
+    "tag": "DC-1",
+    "item": "aux glycol dry cooler EC fans (winter / backup)",
+    "conn": 0.35,
+    "summer": 0.05,
+    "winter": 0.15,
     "supply": "1~230 V",
     "board": "B6-R"
    },
@@ -1301,15 +1318,15 @@
     "board": "B6-E"
    }
   ],
-  "conn": 13.169845637721993,
-  "summer": 6.215408264000775,
-  "winter": 1.3407138741489555,
-  "plant_summer": 5.883408264000774,
-  "plant_winter": 1.1367138741489555,
+  "conn": 13.519845637721993,
+  "summer": 6.265408264000775,
+  "winter": 1.4907138741489556,
+  "plant_summer": 5.933408264000774,
+  "plant_winter": 1.2867138741489554,
   "assumed": 1.3,
   "P_net_doc": 21.27975516433551,
-  "P_net_corr": 16.696346900334735,
-  "annual_MWh": 38.02399957636183,
+  "P_net_corr": 16.646346900334734,
+  "annual_MWh": 38.66399957636183,
   "bldg_cool": 25.405252129475645,
   "split_saved": 9.771250819029094
  }

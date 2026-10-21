@@ -27,7 +27,7 @@ EQ = {
     'IF-1':  ('intake louver + G4/F8 filters + CHW coil CC-1', 'rect', 0.40, 7.60, 0.90, 0.90, 1.40, 150, 'engine', [('W', 0.0)]),
     'EP-1':  ('engine package GR180+FPT+PMG+recuperator', 'rect', 1.30, 7.60, 1.40, 0.90, 1.30, 450, 'engine', [('N', 1.0), ('S', 1.0)]),
     'DC-1':  ('aux glycol dry cooler (engine interface)', 'rect', 0.40, 5.60, 1.20, 0.60, 1.00, 90, 'engine', [('S', 0.6)]),
-    'D-101': ('exhaust diverter damper', 'rect', 4.60, 7.80, 0.50, 0.50, 0.90, 60, 'exhaust', []),
+    'D-801': ('exhaust diverter damper', 'rect', 4.60, 7.80, 0.50, 0.50, 0.90, 60, 'exhaust', []),
     'HX-1':  ('exhaust/water HX (vertical up-flow)', 'rect', 5.10, 7.60, 0.80, 0.90, 1.80, HX_KG, 'exhaust', [('N', 0.8), ('S', 0.8)]),
     'ST-1':  ('stack DN250 double wall, top +4.0 m', 'circle', 5.50, 8.05, 0.35, 0.35, 4.00, 80, 'exhaust', []),
     'LLH-1': ('HW low-loss header / buffer 200 L', 'circle', 6.60, 7.30, 0.50, 0.50, 1.40, 280, 'tank', []),

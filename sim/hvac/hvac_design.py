@@ -454,7 +454,17 @@ def main():
     print('  RO-blend option (circ <= 800 uS/cm at %.1f cycles): make-up %.0f uS/cm, RO share %.0f %%, RO permeate %.0f..%.0f L/h,'
           ' city water %.0f..%.0f L/h' % (cyc_ro, ec_blend, x_ro * 100, ro_rows[0]['perm'], ro_rows[1]['perm'],
                                           ro_rows[0]['city'], ro_rows[1]['city']))
-    out['tower'] = dict(sel=sel, fan_kW=fan_kW, dia=dia, height=hgt, op_kg=op_kg, L_kgs=L_cw, V_m3h=L_cw / 0.995 * 3.6,
+    # HX-4: engine auxiliary glycol loop (PMG + rectifier + oil cooler, docs/electrical 5xx) into the cooling water in
+    # summer; glycol 40 -> 35 C needs CW at ~32 C, a dry cooler alone cannot do it at 46 C. DC-1 dry cooler for winter.
+    Q_aux = 3.5
+    V_aux = Q_aux / (CPW * 3.0) / 0.995 * 3.6
+    lm4 = ((40 - 35.0) - (35 - 32.0)) / math.log((40 - 35.0) / (35 - 32.0))
+    t4 = tower_cold_water(sel['S'], L_cw + V_aux / 3.6 * 0.995, Q_rej + Q_aux, WB_TOWER + WB_RECIRC)
+    print('  HX-4 glycol/CW plate HX: %.1f kW, glycol 40->35 C, CW %.2f m3/h 32->35 C, LMTD %.1f K, UA %.0f W/K;'
+          ' tower with HX-4: %.1f kW -> cold water %.2f C (selection unchanged)' % (
+              Q_aux, V_aux, lm4, Q_aux * 1e3 / lm4, Q_rej + Q_aux, t4['Tc']))
+    out['tower'] = dict(sel=sel, fan_kW=fan_kW, hx4=dict(Q=Q_aux, V=V_aux, LMTD=lm4, UA=Q_aux * 1e3 / lm4, Tc=t4['Tc'],
+                                                          Q_tot=Q_rej + Q_aux), dia=dia, height=hgt, op_kg=op_kg, L_kgs=L_cw, V_m3h=L_cw / 0.995 * 3.6,
                         Q_rej=Q_rej, wb_sens=wbsens, E_nom=E_nom, E_max=E_max, drift=drift, water=wb_rows,
                         ro=dict(ec_city=ec_city, ec_blend=ec_blend, x_ro=x_ro, cycles=cyc_ro, rows=ro_rows),
                         NTU_rated=NTU_RATED)
@@ -646,15 +656,16 @@ def main():
         ('CT-1 fan', 'tower fan + VFD', fan_kW, fan_kW * 0.75, 0, '3~400 V', 'B6-R'),
         ('CH-1', 'chiller controls/pumps (internal)', CHILLERS['CH-1']['el'], CHILLERS['CH-1']['el'], 0, '1~230 V', 'B6-R'),
         ('CH-2', 'chiller controls/pumps (internal)', CHILLERS['CH-2']['el'], CHILLERS['CH-2']['el'], 0, '1~230 V', 'B6-R'),
-        ('D-101', 'exhaust diverter actuator (spring return)', 0.02, 0.01, 0.01, '24 VAC via B1 safety relay', 'B6-R/B1'),
+        ('D-801', 'exhaust diverter actuator (spring return)', 0.02, 0.01, 0.01, '24 VAC via SR1 safety output', 'B4/SR1'),
         ('WT-1', 'dosing pumps x3 + conductivity controller + BD valve', 0.10, 0.05, 0.01, '1~230 V', 'B6-R'),
         ('F-SS', 'side-stream separator purge valve', 0.01, 0.005, 0, '24 VDC', 'B6-R'),
         ('RO-1', 'RO unit 300 L/h (indoor), ~40 % duty', 0.75, 0.30, 0.05, '1~230 V', 'B6-E'),
         ('P-9', 'make-up / permeate booster to roof', 0.37, 0.10, 0.02, '1~230 V', 'B6-E'),
         ('P-7', 'DHW tank charging / circulation', 0.06, 0.03, 0.06, '1~230 V', 'B6-E'),
-        ('EH-301', 'tower basin heater (freeze, standby)', 1.5, 0, 0.05, '1~230 V', 'B6-R'),
+        ('EH-1301', 'tower basin heater (freeze, standby)', 1.5, 0, 0.05, '1~230 V', 'B6-R'),
         ('HT-1', 'heat tracing make-up/CW lines 30 m x 20 W/m', 0.6, 0, 0.05, '1~230 V', 'B6-R'),
         ('BOP-R', 'roof BOP panel: B6-R, PSU, meters, panel fan', 0.08, 0.08, 0.06, '1~230 V', 'B6-R'),
+        ('DC-1', 'aux glycol dry cooler EC fans (winter / backup)', 0.35, 0.05, 0.15, '1~230 V', 'B6-R'),
         ('FCU-1..4', 'hall fan coils 4 x 800 CFM (EC motors)', 4 * fanEC / 1e3, 4 * fanEC / 1e3 * 0.7, 4 * fanEC / 1e3 * 0.4, '1~230 V', 'building'),
         ('ERV-1', 'energy-recovery ventilator 500 m3/h (option)', 0.18, 0.15, 0.10, '1~230 V', 'building'),
         ('FCU-E', 'electrical-room fan coil EC', er_fan / 1e3, er_fan / 1e3, 0.0, '1~230 V', 'B6-E'),

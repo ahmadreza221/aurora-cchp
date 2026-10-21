@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "gr180")(type "KiCad")(uri "${KIPRJMOD}/symbols/gr180.kicad_sym")(options "")(descr "GR180-CCHP project symbols"))
+)

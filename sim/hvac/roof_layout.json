@@ -33,7 +33,7 @@
    "kg": 90,
    "group": "engine"
   },
-  "D-101": {
+  "D-801": {
    "label": "exhaust diverter damper",
    "kind": "rect",
    "x": 4.6,
@@ -217,7 +217,7 @@
    "cy": 5.8999999999999995
   },
   {
-   "tag": "D-101",
+   "tag": "D-801",
    "label": "exhaust diverter damper",
    "kg": 60,
    "area": 0.25,
