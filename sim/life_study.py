@@ -1,0 +1,66 @@
+# /// script
+# requires-python = ">=3.9"
+# dependencies = []
+# ///
+"""GR180-CHP (concept S3) — temperature / speed / life / efficiency trade-off.
+
+Speed line (air flow, PR vs N1) from gr180_cycle calibrated on Rutten's test data (115 N@100k ... 186 N@119k, eta_c 0.70).
+Life indicators are first estimates for choosing the operating point; FEA (CalculiX) replaces them in phase 1:
+  * turbine blade root centrifugal stress ~ 283 MPa @120k (tapered blade, rho 8000) scaled with N^2
+  * blade metal temperature ~ TIT - 70 K (relative frame + conduction to disk)
+  * creep rupture: Larson-Miller (C=20) for cast IN-713LC, generic literature curve; design value uses stress x 1.5
+  * disk bore hoop stress ~ 640 MPa @120k (uniform-disk estimate incl. blade rim load) scaled with N^2; IN-713LC
+    yield ~ 740 MPa at the bore temperature (~450 C)
+
+Run:  uv run sim/life_study.py
+"""
+import math
+import concept_study as cs
+
+SPEED_LINE = [(100e3, 2.52, 0.337), (105e3, 2.72, 0.359), (110e3, 2.86, 0.373), (117e3, 3.19, 0.407), (119e3, 3.27, 0.415)]
+LMP_713LC = [(700, 21.2e3), (500, 23.8e3), (330, 25.0e3), (200, 26.3e3), (80, 28.8e3)]   # (stress MPa, T[K]*(20+log10 t_h))
+
+def line(N):
+    for (n0, p0, m0), (n1, p1, m1) in zip(SPEED_LINE[:-1], SPEED_LINE[1:]):
+        if n0 <= N <= n1 or N > SPEED_LINE[-1][0]:
+            t = (N - n0) / (n1 - n0); return p0 + t * (p1 - p0), m0 + t * (m1 - m0)
+    return SPEED_LINE[0][1], SPEED_LINE[0][2]
+
+def lmp(sig):
+    for (s0, P0), (s1, P1) in zip(LMP_713LC[:-1], LMP_713LC[1:]):
+        if s1 <= sig <= s0:
+            t = (math.log(s0) - math.log(sig)) / (math.log(s0) - math.log(s1)); return P0 + t * (P1 - P0)
+    return LMP_713LC[0][1] if sig > LMP_713LC[0][0] else LMP_713LC[-1][1]
+
+def creep_hours(sig, T_metal_K):
+    return 10 ** (lmp(sig) / T_metal_K - 20)
+
+EFF = {'target': dict(eta_c=0.73, eta_t=0.82, eta_pt=0.78), 'as-is': dict(eta_c=0.70, eta_t=0.80, eta_pt=0.75)}
+
+def point(N, TIT_C, eff='target', eps=0.90):
+    PR, ma = line(N)
+    r = cs.cycle(dict(EFF[eff], arch='fpt', ma=ma, PR=PR, TIT=TIT_C + 273.15, eps=eps))
+    sb = 283.0 * (N / 120e3) ** 2
+    r.update(N=N, PR=PR, ma=ma, sig_blade=sb, sig_bore=640.0 * (N / 120e3) ** 2,
+             life_blade=creep_hours(1.5 * sb, TIT_C + 273.15 - 70), T4=None)
+    return r
+
+def main():
+    print('Concept S3, recuperator eps 0.90, %s efficiencies' % 'TARGET (tuned core, FPT 0.78)')
+    print('%7s %5s %6s %5s | %6s %6s | %6s %6s %6s | %8s %8s %8s' % ('N1', 'TIT', 'air', 'PR', 'P_el', 'eta_el', 'comb', 'FPTex', 'stack',
+                                                                  'sig_bl', 'bl.life', 'bore/ys'))
+    print('%7s %5s %6s %5s | %6s %6s | %6s %6s %6s | %8s %8s %8s' % ('rpm', 'C', 'kg/s', '', 'kW', '%', 'in C', 'C', 'in C', 'MPa', 'h (SF1.5)', ''))
+    for N in (100e3, 105e3, 110e3, 115e3, 119e3):
+        for T in (750, 800, 850):
+            r = point(N, T)
+            print('%7.0f %5d %6.3f %5.2f | %6.1f %6.1f | %6.0f %6.0f %6.0f | %8.0f %8.0f %8.2f' % (
+                N, T, r['ma'], r['PR'], r['P_el'] / 1e3, r['eta_el'] * 100, r['T2r'] - 273.15, r['T_hot'] - 273.15,
+                r['T_stack_in'] - 273.15, r['sig_blade'], min(r['life_blade'], 9.99e6), r['sig_bore'] / 740))
+        print()
+    print('Same with AS-IS component efficiencies (eta_c .70, eta_t .80, FPT .75):')
+    for N, T in ((110e3, 800), (112e3, 800), (115e3, 800), (119e3, 850)):
+        r = point(N, T, 'as-is')
+        print('  N1 %3.0fk TIT %d C: P_el %.1f kW, eta_el %.1f %%' % (N / 1e3, T, r['P_el'] / 1e3, r['eta_el'] * 100))
+
+if __name__ == '__main__':
+    main()

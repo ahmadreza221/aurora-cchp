@@ -1,0 +1,4 @@
+import sys,os
+sys.path.insert(0,os.path.expanduser('~/Desktop/GR180-3D/GR180Tools'))
+import gr180_anim
+gr180_anim.reset()

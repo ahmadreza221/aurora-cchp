@@ -1,0 +1,374 @@
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Missing element name prefix id
+<ElementMap> verify_gr180.py(6): Missing element name prefix id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Missing element name prefix id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+contact (zero gap, no volume) ShaftTunnel / FrontBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) ShaftTunnel / RearBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) ShaftTunnel / WaveSpring_22x16_free3_0_inst2_8
+contact (zero gap, no volume) ShaftTunnel / Diffuser
+contact (zero gap, no volume) ShaftTunnel / NGV
+INTERFERENCE Shaft / NoseCone  96.761 mm3 (0s)
+contact (zero gap, no volume) Shaft / FrontBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) Shaft / RearBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) Shaft / Turbine
+contact (zero gap, no volume) Shaft / TurbineNut
+contact (zero gap, no volume) Shaft / Compressor
+contact (zero gap, no volume) Shaft / RearSpacer_8x12x6_3
+contact (zero gap, no volume) NoseCone / Compressor
+contact (zero gap, no volume) NoseCone / RPM_Magnet
+contact (zero gap, no volume) NoseCone / Balance_Slug
+contact (zero gap, no volume) FrontBearing_608_hybrid_8x22x7 / Spacer_22x16x1_5
+contact (zero gap, no volume) FrontBearing_608_hybrid_8x22x7 / Compressor
+contact (zero gap, no volume) RearBearing_608_hybrid_8x22x7 / Turbine
+contact (zero gap, no volume) RearBearing_608_hybrid_8x22x7 / RearSpacer_8x12x6_3
+contact (zero gap, no volume) Spacer_22x16x1_5 / WaveSpring_22x16_free3_0_inst2_8
+INTERFERENCE Diffuser / IntakeOuter  0.029 mm3 (29s)
+contact (zero gap, no volume) Diffuser / Casing
+contact (zero gap, no volume) IntakeOuter / Intake
+contact (zero gap, no volume) IntakeOuter / SupplySeals
+contact (zero gap, no volume) IntakeOuter / Casing
+contact (zero gap, no volume) Intake / Starter
+contact (zero gap, no volume) Intake / RPM_Sensor
+contact (zero gap, no volume) Intake / Fasteners
+contact (zero gap, no volume) CC_Inner / CC_FrontCap
+contact (zero gap, no volume) CC_Outer / CC_FrontCap
+contact (zero gap, no volume) CC_Outer / CC_RearCone
+contact (zero gap, no volume) CC_FrontCap / SupplyLines
+contact (zero gap, no volume) SupplyLines / SupplySeals
+contact (zero gap, no volume) SupplyLines / GasBulkhead
+contact (zero gap, no volume) Turbine / TurbineNut
+contact (zero gap, no volume) Exhaust / Casing
+contact (zero gap, no volume) Exhaust / EGT_Probe
+contact (zero gap, no volume) Exhaust / Fasteners
+contact (zero gap, no volume) Casing / Igniter
+contact (zero gap, no volume) Casing / Fasteners
+contact (zero gap, no volume) Starter / Fasteners
+pairwise done in 1807s, 2 interferences
+STATIC gap Turbine              NGV                              0.100
+STATIC gap Turbine              Exhaust                          0.690
+STATIC gap Turbine              ShaftTunnel                      4.400
+STATIC gap Turbine              Casing                           3.850
+STATIC gap TurbineNut           Exhaust                          2.000
+STATIC gap Compressor           Intake                           0.299
+STATIC gap Compressor           Diffuser                         0.500
+STATIC gap Compressor           IntakeOuter                      1.230
+STATIC gap Shaft                ShaftTunnel                      1.500
+STATIC gap Shaft                Diffuser                         9.000
+STATIC gap Shaft                NGV                              9.000
+STATIC gap NoseCone             Intake                           19.194
+STATIC gap NoseCone             Starter                          6.280
+STATIC gap NGV                  Exhaust                          0.050
+STATIC gap NGV                  ShaftTunnel                      0.000
+STATIC gap Casing               IntakeOuter                      0.000
+STATIC gap Casing               Exhaust                          0.000
+STATIC gap Casing               Diffuser                         0.000
+STATIC gap FrontBearing_Oring   ShaftTunnel                      0.050
+STATIC gap FrontBearing_Oring   FrontBearing_608_hybrid_8x22x7   0.050
+rotation sweep 0s
+FreeCAD 1.1.3, Libs: 1.1.3R20260725 (Git shallow)
+(C) 2001-2026 FreeCAD contributors
+FreeCAD is free and open-source software licensed under the terms of LGPL2+ license.
+
+Importing project files......
+						(1 %)							(3 %)							(5 %)							(6 %)							(8 %)							(10 %)							(12 %)							(13 %)							(15 %)							(17 %)							(18 %)							(20 %)							(22 %)							(24 %)							(25 %)							(27 %)							(29 %)							(31 %)							(32 %)							(34 %)							(36 %)							(37 %)							(39 %)							(41 %)							(43 %)							(44 %)							(46 %)							(48 %)							(50 %)							(51 %)							(53 %)							(55 %)							(56 %)							(58 %)							(60 %)							(62 %)							(63 %)							(65 %)							(67 %)							(68 %)							(70 %)							(72 %)							(74 %)							(75 %)							(77 %)							(79 %)							(81 %)							(82 %)							(84 %)							(86 %)							(87 %)							(89 %)							(91 %)							(93 %)							(94 %)							(96 %)							(98 %)							(100 %)									Postprocessing......
+						(100 %)									[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/ShaftTunnel.step(1765 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 2                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Shaft.step(348 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/NoseCone.step(519 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/FrontBearing_608_hybrid_8x22x7.step(288 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/RearBearing_608_hybrid_8x22x7.step(288 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Spacer_22x16x1_5.step(112 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 2                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/WaveSpring_22x16_free3_0_inst2_8.step(14496 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Diffuser.step(41766 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/IntakeOuter.step(5569 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Intake.step(4645 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/CC_Inner.step(11280 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/CC_Outer.step(18307 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/CC_FrontCap.step(709 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 2                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/CC_RearCone.step(212 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/CC_Vaporisers.step(1724 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/SupplyLines.step(3442 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/SupplySeals.step(682 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/NGV.step(54944 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Turbine.step(43824 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/TurbineNut.step(112 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Exhaust.step(4076 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Casing.step(2469 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Starter.step(1074 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Compressor.step(23716 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 2                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/FrontBearing_Oring.step(48 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/RPM_Sensor.step(407 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 2                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/RPM_Magnet.step(73 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 2                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Balance_Slug.step(73 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Igniter.step(416 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/EGT_Probe.step(426 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/GasBulkhead.step(810 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/Fasteners.step(1000 ents)  Write  Done[0m
+[32;1m
+*******************************************************************
+******        Statistics on Transfer (Write)                 ******[0m
+[32;1m
+*******************************************************************
+******        Transfer Mode = 0  I.E.  As Is       ******[0m
+[32;1m******        Transferring Shape, ShapeType = 0                      ******[0m
+[32;1m** WorkSession : Sending all data[0m
+[32;1m Step File Name : /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-3D/asm_parts/RearSpacer_8x12x6_3.step(112 ents)  Write  Done[0m
+ALLDONE
+EXIT 0

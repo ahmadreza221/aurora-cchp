@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "graphify": {
+      "type": "stdio",
+      "command": "/Users/ahmadrezaasiyaeemoghadam/.local/bin/graphify-mcp",
+      "args": ["/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/graphify-out/graph.json"]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+# graphify: index the live design scripts, simulations and docs only
+build_gr180_v*.py
+verify_gr180_v11.py
+__pycache__/
+*/__pycache__/
+asm_parts/
+old_placeholders/
+previews/
+_audit/
+v11_logs/
+*.log
+*.tgz
+*.stl
+*.step
+*.FCStd
+*.mp4
+*.png
+*.jpg
+Icon
+sim/*.json

@@ -1,0 +1,18 @@
+# generated CAD/mesh outputs (rebuild with build_gr180.py) and archives
+*.stl
+*.step
+*.FCStd
+*.FCBak
+*.tgz
+*.zip
+*.mp4
+asm_parts/
+old_placeholders/
+__pycache__/
+*.pyc
+.DS_Store
+Icon?
+# simulation scratch / large results
+sim/cfd/**/processor*/
+sim/cfd/**/[0-9]*/
+graphify-out/cache/

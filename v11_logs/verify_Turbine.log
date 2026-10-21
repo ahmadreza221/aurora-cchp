@@ -1,0 +1,20 @@
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Missing element name prefix id
+<ElementMap> verify_gr180.py(6): Missing element name prefix id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Missing element name prefix id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+pairwise done in 0s, 0 interferences
+ROT Turbine     vs NGV          min 0.100 mm at 150.00 deg (21 positions)
+ROT Turbine     vs Exhaust      min 0.690 mm at 0.00 deg (21 positions)
+ROT Turbine     vs Casing       min 3.850 mm at 150.00 deg (21 positions)
+ROT Turbine     vs EGT_Probe    min 5.928 mm at 1.57 deg (21 positions)
+rotation sweep 1913s
+ALLDONE
+FreeCAD 1.1.3, Libs: 1.1.3R20260725 (Git shallow)
+(C) 2001-2026 FreeCAD contributors
+FreeCAD is free and open-source software licensed under the terms of LGPL2+ license.
+
+Importing project files......
+						(1 %)							(3 %)							(5 %)							(6 %)							(8 %)							(10 %)							(12 %)							(13 %)							(15 %)							(17 %)							(18 %)							(20 %)							(22 %)							(24 %)							(25 %)							(27 %)							(29 %)							(31 %)							(32 %)							(34 %)							(36 %)							(37 %)							(39 %)							(41 %)							(43 %)							(44 %)							(46 %)							(48 %)							(50 %)							(51 %)							(53 %)							(55 %)							(56 %)							(58 %)							(60 %)							(62 %)							(63 %)							(65 %)							(67 %)							(68 %)							(70 %)							(72 %)							(74 %)							(75 %)							(77 %)							(79 %)							(81 %)							(82 %)							(84 %)							(86 %)							(87 %)							(89 %)							(91 %)							(93 %)							(94 %)							(96 %)							(98 %)							(100 %)									Postprocessing......
+						(100 %)									EXIT 0

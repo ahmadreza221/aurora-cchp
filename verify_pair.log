@@ -1,0 +1,31 @@
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+<ElementMap> verify_gr180.py(6): Invalid element name string id
+contact (zero gap, no volume) ShaftTunnel / FrontBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) ShaftTunnel / RearBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) ShaftTunnel / WaveSpring_22x16_free3_0_inst2_8
+contact (zero gap, no volume) ShaftTunnel / Diffuser
+contact (zero gap, no volume) ShaftTunnel / NGV
+contact (zero gap, no volume) ShaftTunnel / FrontBearing_Oring
+contact (zero gap, no volume) ShaftTunnel / OilRing_Front
+contact (zero gap, no volume) ShaftTunnel / OilRing_Rear
+contact (zero gap, no volume) Shaft / NoseCone
+contact (zero gap, no volume) Shaft / FrontBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) Shaft / RearBearing_608_hybrid_8x22x7
+contact (zero gap, no volume) Shaft / Turbine
+contact (zero gap, no volume) Shaft / Compressor
+contact (zero gap, no volume) Shaft / RearSpacer_8x12x6_3
+contact (zero gap, no volume) Shaft / FrontShim_8x12x2_1
+contact (zero gap, no volume) NoseCone / Compressor
+contact (zero gap, no volume) NoseCone / RPM_Magnet
+contact (zero gap, no volume) NoseCone / Balance_Slug
+contact (zero gap, no volume) FrontBearing_608_hybrid_8x22x7 / WaveSpring_22x16_free3_0_inst2_8
+contact (zero gap, no volume) FrontBearing_608_hybrid_8x22x7 / FrontBearing_Oring
+contact (zero gap, no volume) FrontBearing_608_hybrid_8x22x7 / OilRing_Front
+contact (zero gap, no volume) FrontBearing_608_hybrid_8x22x7 / FrontShim_8x12x2_1
+contact (zero gap, no volume) RearBearing_608_hybrid_8x22x7 / Turbine
+contact (zero gap, no volume) RearBearing_608_hybrid_8x22x7 / RearSpacer_8x12x6_3
+contact (zero gap, no volume) RearBearing_608_hybrid_8x22x7 / OilRing_Rear
