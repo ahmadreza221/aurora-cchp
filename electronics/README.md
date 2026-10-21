@@ -11,7 +11,7 @@
 | Power | `power.kicad_sch` | TPS54360 (24→5 V)، دو TLV75533 (+3V3 ECU و +3V3_SMCU جدا) | 04 §۱ |
 | MCU_Main | `mcu_main.kicad_sch` | **STM32H743IIT6** (LQFP-176)، W25Q128JV (event recorder)، FM25V10 (life counter) | 03 §۱۰، §۱۱ |
 | Safety_MCU | `safety_mcu.kicad_sch` | STM32G431RBT6 (جای dsPIC33CK256MP506، معماری متنوع)، FM25V10، STWD100 | 03 §۸ |
-| CAN_FD | `can_fd.kicad_sch` | 3× ISO1042 (موتور، BOP، BMS) + MCP2518FD برای CAN سوم | 00 §۴ |
+| CAN_FD | `can_fd.kicad_sch` | 3× ISO1042 (موتور، BMS، رزرو) + MCP2518FD برای CAN سوم؛ بردهای HVAC روی Modbus TCP | 00 §۴ |
 | Comms_RS485_ETH | `comms.kicad_sch` | 2× ADM2587E، LAN8742A | 00 §۴ |
 | Speed_Inputs | `speed_inputs.kicad_sch` | 2× AM26LV32 (یکی برای ECU، یکی برای SMCU) | 03 §۸، 05 W102a/b |
 | Digital_IO | `digital_io.kicad_sch` | 12× ISO1212 (24 DI)، 2× ULN2003A (12 رله) | 02 بودجهٔ کانال |

@@ -822,7 +822,7 @@
 			(at 180.34 115.57 0)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Value" "ISO1042BQDWVRQ1 (CAN-FD #2 BOP)"
+		(property "Value" "ISO1042BQDWVRQ1 (CAN-FD #2 BMS)"
 			(at 180.34 123.19 0)
 			(effects (font (size 1.27 1.27)))
 		)
@@ -863,7 +863,7 @@
 			(at 260.35 186.69 0)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Value" "ISO1042BQDWVRQ1 (CAN #3 BMS)"
+		(property "Value" "ISO1042BQDWVRQ1 (CAN #3 spare)"
 			(at 260.35 194.31 0)
 			(effects (font (size 1.27 1.27)))
 		)

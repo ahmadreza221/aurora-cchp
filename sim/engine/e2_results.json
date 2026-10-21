@@ -1,0 +1,1024 @@
+{
+ "design_point": {
+  "ma": 0.39493623890665114,
+  "mf": 0.0022357340956442183,
+  "T2_C": 165.4203815538758,
+  "T2r_C": 565.5269985348767,
+  "TIT_C": 800.0,
+  "P2_bar": 3.087000610759929,
+  "P2r_bar": 3.0098255954909305,
+  "P3_bar": 2.874383443693839,
+  "PR": 3.0957142857142856,
+  "P_el_kW": 22.929755164335507,
+  "eta_el": 0.20512059290958198,
+  "Q_fuel_kW": 111.78670478221092,
+  "FAR": 0.005661000119496926,
+  "phi_overall": 0.09693493355302955
+ },
+ "collector": {
+  "V_channels": 109.03119232756599,
+  "q_channels_kPa": 14.575094951007193,
+  "turn_gap_mm": 13.4,
+  "K_turn": 0.3387077837059782,
+  "dP_mix_wakes_kPa": 2.4061451606800976,
+  "V_r70": 27.327783831001813,
+  "A_turn_mm2": 4504.415546717045,
+  "V_turn": 35.755978844301445,
+  "V_drum": 36.2747268005309,
+  "V_box": 35.32012872683272,
+  "A_box_mm2": 4560.0,
+  "V_C1_DN100": 17.516313825277148,
+  "dP_turn_kPa": 4.93669810815984,
+  "dP_drum_kPa": 1.4184626049848503,
+  "dP_C1_transition_kPa": 0.5190019902269214,
+  "dP_total_kPa": 6.874162703371612,
+  "dp_total_pct": 2.2268096350260826,
+  "dP_upper_bound_pure_dump_kPa": 16.512559546218966,
+  "P_C1_bar": 3.018258983726213
+ },
+ "pressure": {
+  "P2": 3.087000610759929,
+  "P_C1": 3.018258983726213,
+  "P_C2": 2.9428025091330574,
+  "dP_C2_port_kPa": 1.1902205999022009,
+  "V_C2_DN125": 21.89304461491777,
+  "V_C2_port": 41.263702247946085,
+  "A_C2_port_mm2": 7359.999999999999,
+  "dP_baffle_kPa": 0.8578093710319287,
+  "V_baffle_holes": 29.61733533524583,
+  "P_hot_plenum": 2.922322209423716,
+  "P_combustor": 2.8404971875598513,
+  "P_cold_inner_annulus": 3.033378241863376,
+  "dP_liner_hot_pct": 2.8000000000000003,
+  "dP_liner_cold_side_pct": 6.790397651096434,
+  "dP_bulkhead_bar": 0.11105603243966004
+ },
+ "combustor_T_ad_injector_K": null,
+ "air_split": {
+  "injectors": 0.14,
+  "dome_cool": 0.03,
+  "outer_film": 0.1,
+  "secondary": 0.12,
+  "dilution": 0.578,
+  "inner_film": 0.02,
+  "leak_cold": 0.004,
+  "ngv_purge": 0.008
+ },
+ "holes": {
+  "injectors": {
+   "frac": 0.14,
+   "m": 0.05529107344693116,
+   "A_eff_mm2": 392.2916382374103,
+   "A_geom_mm2": 523.0555176498805,
+   "n": 8,
+   "d_mm": null,
+   "V_jet": 116.11014174501939
+  },
+  "dome_cool": {
+   "frac": 0.03,
+   "m": 0.011848087167199534,
+   "A_eff_mm2": 84.06249390801649,
+   "A_geom_mm2": 129.32691370464076,
+   "n": 64,
+   "d_mm": 1.6,
+   "V_jet": 116.11014174501939
+  },
+  "outer_film": {
+   "frac": 0.1,
+   "m": 0.03949362389066512,
+   "A_eff_mm2": 280.20831302672167,
+   "A_geom_mm2": 431.08971234880255,
+   "n": 224,
+   "d_mm": 1.6,
+   "V_jet": 116.11014174501939
+  },
+  "secondary": {
+   "frac": 0.12,
+   "m": 0.047392348668798136,
+   "A_eff_mm2": 336.24997563206597,
+   "A_geom_mm2": 551.2294682492885,
+   "n": 24,
+   "d_mm": 5.4,
+   "V_jet": 116.11014174501939
+  },
+  "dilution": {
+   "frac": 0.578,
+   "m": 0.22827314608804433,
+   "A_eff_mm2": 1619.6040492944508,
+   "A_geom_mm2": 2655.088605400739,
+   "n": 48,
+   "d_mm": 8.4,
+   "V_jet": 116.11014174501939
+  },
+  "inner_film": {
+   "frac": 0.02,
+   "m": 0.007898724778133023,
+   "A_eff_mm2": 27.06360203018639,
+   "A_geom_mm2": 41.63631081567137,
+   "n": 64,
+   "d_mm": 0.9,
+   "V_jet": 132.17465450333594
+  }
+ },
+ "hole_x": {
+  "outer_film": [
+   45.9,
+   56.1,
+   67.1,
+   83.5
+  ],
+  "secondary": [
+   62.1
+  ],
+  "dilution": [
+   72.1,
+   79.1
+  ],
+  "inner_film": [
+   45.6,
+   57.1,
+   69.1,
+   81.1
+  ]
+ },
+ "jet_penetration": {
+  "secondary": {
+   "x": 62.1,
+   "T_gas_upstream": 1735.8784569638506,
+   "U_gas": 21.92602953970501,
+   "J": 59.71434004980801,
+   "d_jet": 4.217534824989594,
+   "Y_max_mm": 37.479676712586894,
+   "Y_over_H": 1.139199900078629
+  },
+  "dilution": {
+   "x": 72.1,
+   "T_gas_upstream": 1400.6693198125822,
+   "U_gas": 28.854739153314206,
+   "J": 27.82150529501284,
+   "d_jet": 6.404404734243458,
+   "Y_max_mm": 38.84784410346573,
+   "Y_over_H": 1.1807855350597487
+  }
+ },
+ "combustor": {
+  "H_dome_mm": 32.9,
+  "L_liner_mm": 50.699999999999996,
+  "L_over_H": 1.541033434650456,
+  "A_liner_mm2": 7762.215712563123,
+  "V_liner_cm3": 353.1094750422701,
+  "zones": {
+   "primary": {
+    "x": [
+     44.1,
+     62.1
+    ],
+    "V_cm3": 139.71988282613617,
+    "T_gas_K": 1884.3699377948506,
+    "phi": 0.47285333440502214,
+    "m": 0.08096192897586349,
+    "tau_ms": 0.8818967262092923
+   },
+   "secondary": {
+    "x": [
+     62.1,
+     72.1
+    ],
+    "V_cm3": 77.62215712563125,
+    "T_gas_K": 1459.0371459116895,
+    "phi": 0.2692637043139709,
+    "m": 0.14217704600639441,
+    "tau_ms": 0.36454449349038986
+   },
+   "dilution": {
+    "x": [
+     72.1,
+     94.8
+    ],
+    "V_cm3": 135.80595559710923,
+    "T_gas_K": 1076.550391644405,
+    "phi": 0.10065932871550315,
+    "m": 0.3803235980671051,
+    "tau_ms": 0.32630405009392804
+   }
+  },
+  "tau_total_ms": 1.5727452697936102,
+  "theta_SI": 485325618.7287612,
+  "heat_release_MW_m3_bar": 111.4516287195004,
+  "q_ref_Pa": 128.59649359187787,
+  "dPL_over_qref": 63.62927913380714,
+  "pattern_factor": 0.13557528049674483,
+  "T_exit_mixed_C": 797.5778844354014,
+  "T_max_hotstreak_C": 829.0382483808831,
+  "phi_injector": 0.6923923825216396,
+  "phi_PZ": 0.4038955564709564,
+  "T_PZ_K": 1735.8784569638506
+ },
+ "injector": {
+  "n": 8,
+  "n_vanes": 10,
+  "vane_angle_deg": 45.0,
+  "r_vane_exit": 9.0,
+  "t_vane": 0.8,
+  "cup_id": 14.0,
+  "cup_len": 6.0,
+  "centre_body_d": 5.0,
+  "n_gas_holes": 4,
+  "dP_gas_bar": 0.25,
+  "T_gas_K": 523.0,
+  "Cd_gas": 0.75,
+  "m_air_g_s": 6.911384180866396,
+  "A_eff_swirler_mm2": 49.03645477967629,
+  "throat_w_mm": 3.1985946443425295,
+  "slot_h_mm": 2.04,
+  "U_cup": 42.393886002323335,
+  "swirl_number": 0.6666666666666665,
+  "premix_time_ms": 0.14152984229072985,
+  "m_gas_g_s": 0.2794667619555273,
+  "P_manifold_barg": 2.083239363573821,
+  "d_gas_hole_mm": 0.7000000000000001,
+  "d_gas_exact": 0.704823942844523,
+  "phi_injector": 0.6923923825216396,
+  "S_L": 0.873274853426691,
+  "S_T": 6.605670737283985,
+  "flashback_margin_bulk": 6.417801868785573,
+  "g_wall": 292364.17919451656,
+  "g_crit": 34293.448600384225,
+  "flashback_margin_BL": 8.525365372301486,
+  "tau_ign_ms": 4.094676008183541,
+  "tau_ign_plus40K_ms": 1.5116643935997458,
+  "autoign_margin": 28.931537984563565,
+  "autoign_margin_NG_C2_factor3": 9.643845994854521,
+  "Da_design": 16.446813819482166,
+  "phi_LBO_Damkoehler": 0.42000000000000004,
+  "phi_LBO_literature": 0.32
+ },
+ "liner_thermal": {
+  "inner_scan": [
+   {
+    "f_inner": 0.02,
+    "Tw_max_C": 673.7816174244377,
+    "Q_to_bypass_W": 362.27855130863463,
+    "T_bypass_out_C": 216.34869475978155
+   },
+   {
+    "f_inner": 0.025,
+    "Tw_max_C": 622.8680401618107,
+    "Q_to_bypass_W": 367.1234224277326,
+    "T_bypass_out_C": 211.86999768954104
+   },
+   {
+    "f_inner": 0.03,
+    "Tw_max_C": 598.0028376577762,
+    "Q_to_bypass_W": 351.67714338212267,
+    "T_bypass_out_C": 207.05569950981095
+   },
+   {
+    "f_inner": 0.035,
+    "Tw_max_C": 509.1871338787481,
+    "Q_to_bypass_W": 352.8373621515158,
+    "T_bypass_out_C": 203.9901091275387
+   },
+   {
+    "f_inner": 0.04,
+    "Tw_max_C": 504.9518274782248,
+    "Q_to_bypass_W": 367.7488720288125,
+    "T_bypass_out_C": 202.33239210355214
+   },
+   {
+    "f_inner": 0.045,
+    "Tw_max_C": 501.26311936243485,
+    "Q_to_bypass_W": 381.5584533887035,
+    "T_bypass_out_C": 200.86402528767098
+   },
+   {
+    "f_inner": 0.05,
+    "Tw_max_C": 498.01141467925765,
+    "Q_to_bypass_W": 386.51659369877973,
+    "T_bypass_out_C": 199.13191603742308
+   },
+   {
+    "f_inner": 0.05500000000000001,
+    "Tw_max_C": 495.1157218493221,
+    "Q_to_bypass_W": 393.34092748047624,
+    "T_bypass_out_C": 197.6032041036239
+   },
+   {
+    "f_inner": 0.06,
+    "Tw_max_C": 492.51472943619535,
+    "Q_to_bypass_W": 408.2737796005572,
+    "T_bypass_out_C": 196.74152678190637
+   }
+  ],
+  "f_inner_film_chosen": 0.02,
+  "inner_Tw_max_C": 671.8664669603226,
+  "outer_Tw_max_C": 828.834451390279,
+  "T_bypass_out_C": 216.70750725887706,
+  "Q_into_bypass_W": 364.82061552886364,
+  "outer_profile": [
+   [
+    46.1,
+    1841,
+    826,
+    0.65
+   ],
+   [
+    49.1,
+    1841,
+    804,
+    0.65
+   ],
+   [
+    52.1,
+    1841,
+    807,
+    0.62
+   ],
+   [
+    55.1,
+    1841,
+    816,
+    0.58
+   ],
+   [
+    58.1,
+    1776,
+    793,
+    0.65
+   ],
+   [
+    61.1,
+    1776,
+    783,
+    0.64
+   ],
+   [
+    64.1,
+    1210,
+    718,
+    0.55
+   ],
+   [
+    67.1,
+    1210,
+    731,
+    0.65
+   ],
+   [
+    70.1,
+    1159,
+    711,
+    0.6
+   ],
+   [
+    73.1,
+    914,
+    676,
+    0.39
+   ],
+   [
+    76.1,
+    914,
+    670,
+    0.36
+   ],
+   [
+    79.1,
+    914,
+    664,
+    0.35
+   ],
+   [
+    82.1,
+    810,
+    632,
+    0.27
+   ],
+   [
+    85.1,
+    804,
+    659,
+    0.36
+   ],
+   [
+    88.1,
+    804,
+    650,
+    0.32
+   ],
+   [
+    91.1,
+    804,
+    643,
+    0.29
+   ]
+  ],
+  "inner_profile": [
+   [
+    45.6,
+    1928,
+    619,
+    0.65
+   ],
+   [
+    48.6,
+    1841,
+    630,
+    0.53
+   ],
+   [
+    51.6,
+    1841,
+    625,
+    0.49
+   ],
+   [
+    54.6,
+    1841,
+    616,
+    0.46
+   ],
+   [
+    57.6,
+    1776,
+    663,
+    0.56
+   ],
+   [
+    60.6,
+    1776,
+    670,
+    0.48
+   ],
+   [
+    63.6,
+    1210,
+    526,
+    0.35
+   ],
+   [
+    66.6,
+    1210,
+    512,
+    0.33
+   ],
+   [
+    69.6,
+    1159,
+    581,
+    0.42
+   ],
+   [
+    72.6,
+    914,
+    512,
+    0.26
+   ],
+   [
+    75.6,
+    914,
+    492,
+    0.23
+   ],
+   [
+    78.6,
+    914,
+    477,
+    0.22
+   ],
+   [
+    81.6,
+    810,
+    539,
+    0.24
+   ],
+   [
+    84.6,
+    804,
+    510,
+    0.2
+   ],
+   [
+    87.6,
+    804,
+    492,
+    0.18
+   ],
+   [
+    90.6,
+    804,
+    478,
+    0.17
+   ],
+   [
+    93.6,
+    804,
+    467,
+    0.17
+   ]
+  ],
+  "material": "Hastelloy-X 2.4665 (VDM Nicrofer 4722Co) / GH3536, t = 1.0 mm",
+  "limit_C": 850.0000000000001
+ },
+ "cycle": {
+  "base (cycle model, 4.5 % combustor)": {
+   "P_el_kW": 22.929755164335504,
+   "eta_el_pct": 20.512059290958195,
+   "mf_g_s": 2.235734095644218,
+   "T_rec_out_C": 565.5269985348767,
+   "eps": 0.8999999999999999,
+   "P3_bar": 2.874383443693839,
+   "T_stack_C": 261.68743983383376
+  },
+  "E2 pressure losses only": {
+   "P_el_kW": 21.685040181654486,
+   "eta_el_pct": 19.625951488278066,
+   "mf_g_s": 2.2098332602733937,
+   "T_rec_out_C": 568.2433531414837,
+   "eps": 0.8999828125344832,
+   "P3_bar": 2.8234542044344924,
+   "T_stack_C": 262.3266828363754
+  },
+  "E2 bypass only (beta)": {
+   "P_el_kW": 22.94338994356852,
+   "eta_el_pct": 19.890150943460302,
+   "mf_g_s": 2.3070101387151207,
+   "T_rec_out_C": 571.0314658394898,
+   "eps": 0.9123800860034266,
+   "P3_bar": 2.874383443693839,
+   "T_stack_C": 268.2566975794382
+  },
+  "E2 collector loss only": {
+   "P_el_kW": 21.360909477147306,
+   "eta_el_pct": 19.39178826548677,
+   "mf_g_s": 2.203088150994837,
+   "T_rec_out_C": 568.9507476482073,
+   "eps": 0.8999783359038553,
+   "P3_bar": 2.8103763962220696,
+   "T_stack_C": 262.4931230315832
+  },
+  "E2 complete (losses + beta + heat loss)": {
+   "P_el_kW": 21.69897303004691,
+   "eta_el_pct": 19.002261132728897,
+   "mf_g_s": 2.28383063241598,
+   "T_rec_out_C": 573.7867083538677,
+   "eps": 0.9123660429717162,
+   "P3_bar": 2.8234542044344924,
+   "T_stack_C": 268.94205844577846
+  }
+ },
+ "cycle_UA_W_K": 2368.1790704537507,
+ "beta_recuperator_bypass": 0.032,
+ "dp_hot_side_total_pct": 4.055600208582288,
+ "tunnel": {
+  "options": {
+   "a / as-is NGV joint": {
+    "T_tube_max_C": 175.962874476251,
+    "T_front_brg_C": 136.54393580637043,
+    "T_rear_brg_C": 214.3162360803168,
+    "T_rear_flange_C": 204.3162360803168,
+    "Q_to_oil_W": 179.18501383974382,
+    "Q_web_W": 404.870165060068,
+    "T_shield_max_C": null
+   },
+   "a / E1 thermal break": {
+    "T_tube_max_C": 136.9170929013166,
+    "T_front_brg_C": 136.31388516389762,
+    "T_rear_brg_C": 154.7806544501786,
+    "T_rear_flange_C": 144.7806544501786,
+    "Q_to_oil_W": 142.89259283690342,
+    "Q_web_W": 72.62632146597856,
+    "T_shield_max_C": null
+   },
+   "b / as-is NGV joint": {
+    "T_tube_max_C": 189.73908634273926,
+    "T_front_brg_C": 131.47355283363987,
+    "T_rear_brg_C": 235.83011704433665,
+    "T_rear_flange_C": 225.83011704433665,
+    "Q_to_oil_W": 179.55721780783026,
+    "Q_web_W": 440.84444964609213,
+    "T_shield_max_C": null
+   },
+   "b / E1 thermal break": {
+    "T_tube_max_C": 146.14979770449486,
+    "T_front_brg_C": 131.20484875157365,
+    "T_rear_brg_C": 170.29817165408167,
+    "T_rear_flange_C": 160.10672170637378,
+    "Q_to_oil_W": 138.81383043791374,
+    "Q_web_W": 79.18719339523516,
+    "T_shield_max_C": null
+   },
+   "c / as-is NGV joint": {
+    "T_tube_max_C": 168.88981374749847,
+    "T_front_brg_C": 129.3616072994564,
+    "T_rear_brg_C": 208.800519383415,
+    "T_rear_flange_C": 198.800519383415,
+    "Q_to_oil_W": 156.23648687216584,
+    "Q_web_W": 408.9625520379366,
+    "T_shield_max_C": 248.13194391318984
+   },
+   "c / E1 thermal break": {
+    "T_tube_max_C": 128.84866826147874,
+    "T_front_brg_C": 129.1182593230771,
+    "T_rear_brg_C": 148.30645351771858,
+    "T_rear_flange_C": 138.28838291346278,
+    "Q_to_oil_W": 118.83449887949935,
+    "Q_web_W": 73.40539405038446,
+    "T_shield_max_C": 248.13194391318984
+   }
+  },
+  "G_web_asis_W_K": 0.7419501766954882,
+  "G_web_break_W_K": 0.12,
+  "beta_a_c": 0.032,
+  "beta_b": 0.012,
+  "note": "(b) keeps leak/purge 1.2 % but the NGV cavity is hot; (a),(c) beta = inner film + leaks + purge",
+  "penalty_a_c": {
+   "dP_el_kW": 0.013634779233016162,
+   "deta_pts": -0.6219083474978931
+  },
+  "penalty_b": {
+   "dP_el_kW": 0.004992829739305307,
+   "deta_pts": -0.23228041259055476
+  }
+ },
+ "casing_thermal": {
+  "T_liner_cold_side_mean_C": 692.3143095770344,
+  "h_casing_inner": 119.2569941294272,
+  "T_casing_with_baffle_C": 578.9018709168931,
+  "T_baffle_C": 586.7027135621826,
+  "T_casing_without_baffle_C": 610.451339421392,
+  "design_metal_T_C": 620.0
+ },
+ "casing_mech": {
+  "PS_MPa": 0.3,
+  "f_cold_1_4404": 122.5,
+  "f_hot_time_indep": 90.0,
+  "f_hot_creep": 41.333333333333336,
+  "f_hot_design": 41.333333333333336,
+  "S_ASME_304H": 64.12124010000001,
+  "e_hot_req_mm": 0.7289185326345878,
+  "e_hot_chosen": 3.0,
+  "e_drum_req_mm": 0.3404664582832412,
+  "e_drum_chosen": 2.5,
+  "t_front_wall_req": 1.5396925216498552,
+  "t_front_wall": 4.0,
+  "t_rear_plate_req": 1.9357419182818634,
+  "t_rear_plate": 5.0,
+  "t_bulkhead_req_accident": 1.6033042803487474,
+  "t_bulkhead": 6.0,
+  "flange_mid": {
+   "W_kN": 34.14125816288708,
+   "Wm1_kN": 15.790331900335273,
+   "Wm2_kN": 34.14125816288708,
+   "bolt_area_req_mm2": 227.6083877525805,
+   "bolt_area_avail_mm2": 524.8,
+   "sigma_ring_MPa": 49.62328767123288,
+   "f_allow_MPa": 100.0,
+   "ok": true
+  },
+  "flange_E2E3": {
+   "W_kN": 34.43185548334414,
+   "Wm1_kN": 6.488252767642661,
+   "Wm2_kN": 34.43185548334414,
+   "bolt_area_req_mm2": 313.01686803040127,
+   "bolt_area_avail_mm2": 524.8,
+   "sigma_ring_MPa": 41.88535031847135,
+   "f_allow_MPa": 41.333333333333336,
+   "ok": true
+  },
+  "nozzle_C2_A_req_mm2": 46.65078608861362,
+  "nozzle_C2_A_avail_mm2": 253.47760966126188,
+  "test_pressure_barg": 11.11391129032258,
+  "PED": "PS x V = 10.2 bar.L < 25 (gas group 2) -> PED Art. 4(3) sound engineering practice"
+ },
+ "insulation": {
+  "table": {
+   "hot casing ventilated package 45 C, h 20 t=30": 64.66409737435193,
+   "drum ventilated package 45 C, h 20 t=30": 50.809725590026716,
+   "hot casing ventilated package 45 C, h 20 t=40": 59.3384249201226,
+   "drum ventilated package 45 C, h 20 t=40": 48.8077023331536,
+   "hot casing ventilated package 45 C, h 20 t=50": 56.1432340377042,
+   "drum ventilated package 45 C, h 20 t=50": 47.7917937866684,
+   "hot casing ventilated package 45 C, h 20 t=60": 54.02801290396402,
+   "drum ventilated package 45 C, h 20 t=60": 47.18098200964101,
+   "hot casing still air 45 C, h 4 t=30": 105.08470860485568,
+   "drum still air 45 C, h 4 t=30": 63.27588151178993,
+   "hot casing still air 45 C, h 4 t=40": 90.59365734405215,
+   "drum still air 45 C, h 4 t=40": 57.498930542763695,
+   "hot casing still air 45 C, h 4 t=50": 81.33257533826686,
+   "drum still air 45 C, h 4 t=50": 54.372871485675674,
+   "hot casing still air 45 C, h 4 t=60": 74.94304029318528,
+   "drum still air 45 C, h 4 t=60": 52.424370352124186,
+   "hot casing ventilated 35 C, h 20 t=30": 55.11937061142892,
+   "drum ventilated 35 C, h 20 t=30": 41.29000089365068,
+   "hot casing ventilated 35 C, h 20 t=40": 49.668937984316806,
+   "drum ventilated 35 C, h 20 t=40": 39.12230586561714,
+   "hot casing ventilated 35 C, h 20 t=50": 46.3993875556201,
+   "drum ventilated 35 C, h 20 t=50": 38.02239201329767,
+   "hot casing ventilated 35 C, h 20 t=60": 44.23515418563996,
+   "drum ventilated 35 C, h 20 t=60": 37.361094880884544
+  },
+  "chosen_hot_mm": 50.0,
+  "chosen_drum_mm": 25.0,
+  "skin_hot_C": 56.1432340377042,
+  "skin_drum_C": 49.61423883122968,
+  "skin_hot_still_air_C": 81.33257533826686,
+  "Q_loss_hot_casing_W": 35.177811663659064,
+  "Q_loss_drum_W": 7.429980027059912,
+  "Q_bulkhead_leak_W": 50.626708717898794,
+  "Q_inner_liner_front_leak_W": 31.61435438169874,
+  "material": "microporous (Promat MICROTHERM / Etex, BE) encapsulated, 0.5 mm 1.4301 cladding; AES blanket Morgan Superwool (UK) at joints"
+ },
+ "penalty_total": {
+  "dP_el_kW": -1.230782134288591,
+  "deta_pts": -1.5097981582293003,
+  "note": "base already contains 2 % hot-section heat loss and 4.5 % combustor loss (cycle model)"
+ },
+ "thermal_growth_mm": {
+  "hot casing axial (mid flange -> rear ring x113)": 0.8791090670168143,
+  "collector axial (fixed leg -> mid flange)": 0.07919028756530842,
+  "casing rear ring axial vs fixed leg": 0.9582993545821228,
+  "core: intake-outer lip -> NGV rib (Al tunnel ~130 C, NGV ~700 C)": 0.40348854999999995,
+  "rear seal ring travel on NGV land (casing - core)": 0.5877985087460467,
+  "liner axial, pin x50 -> outer sleeve end x106.5": 0.648034853060213,
+  "liner axial, pin x50 -> inner liner end x98": 0.5007486466255278,
+  "liner radial outer r55": 0.7119063172234454,
+  "casing radial r88": 0.9101364458527019,
+  "rear ring bore r38 (1.4948) vs NGV rib r37.95 (IN713LC, ~720 C)": -0.01770978878422791,
+  "C2 flange centre: dx": 0.46186129320792174,
+  "C2 flange centre: dy (nozzle 1.4948 ~560 C, length 185)": 1.8675795274856153,
+  "C1 flange centre: dy (nozzle 1.4404 165 C, length 185)": 0.45781884998693934,
+  "C1 flange centre: dx": -0.007424089459247665
+ },
+ "gas": {
+  "P_manifold_barg": 2.083239363573821,
+  "supply_min_barg": 3.5,
+  "regulator_margin_bar": 1.4167606364261789,
+  "Nm3_h": 11.225443158046286,
+  "DN15_ID_mm": 16.1,
+  "V_DN15": 6.077784714592249,
+  "feed_tube": "radial drilled rib \u00d85 (bulkhead cold face, south)",
+  "V_feed": 63.0169030347783,
+  "ring": "\u00d87x0.8 (ID 5.4) torus r37.5 on the bulkhead",
+  "V_ring_half": 27.013418653454345,
+  "stem": "\u00d86x0.8 (ID 4.4) x8",
+  "V_stem": 10.171891631388542,
+  "maldistribution_pct": 1.3185369436140186,
+  "gas_side_stiffness_dPgas_over_P": 0.08801276096835857
+ },
+ "ignition": {
+  "N1_rpm": 40000.0,
+  "ma": 0.075,
+  "P3_bar": 1.25,
+  "T3_C": 30.0,
+  "fuel_g_s": 0.7,
+  "phi_injector": 1.1415525114155252,
+  "phi_overall": 0.15981735159817353,
+  "dP_liner_kPa": 0.24936506519437873,
+  "U_cup": 6.803281341961426,
+  "S_L": 0.38676623982672237,
+  "T_after_lightoff_C": 472.2710056894258,
+  "MIE_quiescent_mJ": 0.19200000000000003,
+  "MIE_flowing_mJ_est": 19.200000000000003,
+  "exciter": "capacitive-discharge industrial exciter >= 0.5 J/spark, 10-20 sparks/s (IGN-630), plug M14x1.25 surface gap"
+ },
+ "geometry": {
+  "x_io_lip": -17.33,
+  "x_io_step": -11.33,
+  "x_io_end": -4.85,
+  "r_io_lip_o": 53.0,
+  "r_io_lip_i": 51.0,
+  "r_core": 53.5,
+  "x_ch_exit": 7.6,
+  "r_ch_i": 45.5,
+  "r_ch_o": 53.5,
+  "A_ch": 1477.19,
+  "n_ch": 13,
+  "r_tunnel": 10.5,
+  "x_tunnel_tube": [
+   16.53,
+   92.96
+  ],
+  "r_tunnel_bore": 8.5,
+  "x_ngv": 94.8,
+  "r_ngv_o": 36.35,
+  "r_ngv_rib": 37.95,
+  "x_ngv_rib": [
+   109.3,
+   110.8
+  ],
+  "x_ngv_end": 118.8,
+  "r_ngv_in_i": 21.25,
+  "r_ngv_in_o": 22.25,
+  "x_ngv_inner_end": 109.8,
+  "x_turb_exit": 118.3,
+  "x_nut_end": 126.8,
+  "x_drum_front": -30.0,
+  "t_front_wall": 4.0,
+  "r_front_ring_o": 60.0,
+  "r_lip_i": 51.5,
+  "x_ring_lip": -20.33,
+  "r_drum_i": 118.0,
+  "t_drum": 2.5,
+  "x_mid_A": [
+   14.0,
+   20.0
+  ],
+  "r_flange_o": 138.0,
+  "pcd_mid": 256.0,
+  "n_mid_bolts": 16,
+  "d_mid_bolt": 8,
+  "oring_x": -8.0,
+  "x_bh": 21.0,
+  "t_bh": 6.0,
+  "t_gasket": 1.0,
+  "t_bh_ins": 4.0,
+  "r_bh_bore": 21.35,
+  "r_bh_hub_o": 24.5,
+  "x_bh_hub_end": 35.0,
+  "gas_entry_deg": 180.0,
+  "r_gas_boss": [
+   138.5,
+   158.0
+  ],
+  "rib_x": [
+   14.0,
+   21.0
+  ],
+  "rib_w": 10.0,
+  "r_case_i": 85.0,
+  "t_case": 3.0,
+  "x_case_shell_end": 100.0,
+  "t_rear_plate": 5.0,
+  "r_rear_bore": 38.1,
+  "x_rear_ring": [
+   100.0,
+   116.0
+  ],
+  "x_e3_flange": [
+   106.0,
+   116.0
+  ],
+  "r_e3_flange_o": 88.0,
+  "pcd_e3": 160.0,
+  "n_e3_bolts": 16,
+  "e3_spigot_d": 120.0,
+  "e3_spigot_depth": 3.0,
+  "seal_groove_x": [
+   112.5,
+   114.5
+  ],
+  "r_seal_groove": 40.0,
+  "x_dome": 42.9,
+  "t_dome": 1.2,
+  "t_liner": 1.0,
+  "r_li_o": 21.1,
+  "r_lo_i": 54.0,
+  "x_li_front": 28.0,
+  "x_li_end": 98.0,
+  "x_lo_cyl_end": 82.0,
+  "x_lo_cone_end": 92.0,
+  "r_lo_sleeve_i": 36.5,
+  "x_lo_end": 106.5,
+  "n_inj": 8,
+  "r_inj": 37.5,
+  "inj_a0_deg": 0.0,
+  "r_baffle": 68.0,
+  "t_baffle": 0.8,
+  "x_baffle": [
+   54.0,
+   96.0
+  ],
+  "r_shield_i": 17.3,
+  "t_shield": 0.3,
+  "x_shield": [
+   17.5,
+   92.0
+  ],
+  "x_manifold": 17.5,
+  "r_manifold": 37.5,
+  "d_manifold": 7.0,
+  "x_bh_back": 27.0,
+  "x_hot_flange": [
+   28.0,
+   34.0
+  ],
+  "x_dome_hot": 44.1,
+  "r_lo_o": 55.0,
+  "r_li_i": 20.1,
+  "C1": {
+   "box": {
+    "x": [
+     -26.0,
+     12.0
+    ],
+    "z": [
+     -150.0,
+     -30.0
+    ]
+   },
+   "round_centre_xz": [
+    -7.0,
+    -90.0
+   ],
+   "DN": 100,
+   "pipe_od": 114.3,
+   "pipe_t": 3.05,
+   "face_y": 185.0,
+   "y_box": [
+    60.0,
+    145.0
+   ],
+   "y_round": 168.0
+  },
+  "C2": {
+   "box": {
+    "x": [
+     36.0,
+     100.0
+    ],
+    "z": [
+     15.0,
+     130.0
+    ]
+   },
+   "round_centre_xz": [
+    68.0,
+    72.0
+   ],
+   "DN": 125,
+   "pipe_od": 139.7,
+   "pipe_t": 3.4,
+   "face_y": 185.0,
+   "y_box": [
+    30.0,
+    145.0
+   ],
+   "y_round": 168.0
+  },
+  "holes": {
+   "outer_film": {
+    "n": 224,
+    "d": 1.6,
+    "x": [
+     45.9,
+     56.1,
+     67.1,
+     83.5
+    ]
+   },
+   "secondary": {
+    "n": 24,
+    "d": 5.4,
+    "x": [
+     62.1
+    ]
+   },
+   "dilution": {
+    "n": 48,
+    "d": 8.4,
+    "x": [
+     72.1,
+     79.1
+    ]
+   },
+   "inner_film": {
+    "n": 64,
+    "d": 0.9,
+    "x": [
+     45.6,
+     57.1,
+     69.1,
+     81.1
+    ]
+   },
+   "dome_cool": {
+    "n": 64,
+    "d": 1.6,
+    "x": null
+   }
+  },
+  "injector": {
+   "x_union": 27.0,
+   "x_backplate": [
+    33.0,
+    36.0
+   ],
+   "n": 8,
+   "r": 37.5,
+   "cup_id": 14.0,
+   "cup_len": 6.0,
+   "cb_d": 5.0,
+   "n_vanes": 10,
+   "vane_angle": 45.0,
+   "r_vane_exit": 9.0,
+   "slot_h": 2.04,
+   "n_gas": 4,
+   "d_gas": 0.7000000000000001
+  },
+  "insulation": {
+   "hot": 50.0,
+   "drum": 25.0
+  }
+ }
+}

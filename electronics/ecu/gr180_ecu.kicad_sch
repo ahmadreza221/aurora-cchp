@@ -3424,7 +3424,7 @@
 		)
 		(uuid "46f7cd6d-ca3e-4581-a7f5-0f9e125a0625")
 	)
-	(text "GR180-CCHP B1 ECU — top level (SKELETON, rev 0.1, 2026-10-21)\nArchitecture: docs/electrical/00_electrical_control_architecture.md §3–§5. I/O allocation: docs/electrical/02_io_list.md.\nMain MCU STM32H743IIT6 (LQFP-176) + independent safety MCU (STM32G431RBT6, alt. dsPIC33CK256MP506).\nBuses: CAN-FD#1 engine (B2/B3/B4), CAN-FD#2 BOP (B6-R/B6-E), CAN#3 BMS (MCP2518FD), RS-485 x2, Ethernet RMII.\nAll field I/O galvanically isolated; conformal coating IPC-CC-830. Supply 24 V from 48 V essential bus."
+	(text "GR180-CCHP B1 ECU — top level (SKELETON, rev 0.1, 2026-10-21)\nArchitecture: docs/electrical/00_electrical_control_architecture.md §3–§5. I/O allocation: docs/electrical/02_io_list.md.\nMain MCU STM32H743IIT6 (LQFP-176) + independent safety MCU (STM32G431RBT6, alt. dsPIC33CK256MP506).\nBuses: CAN-FD#1 engine (B2/B3/B4), CAN#2 BMS, CAN#3 spare (MCP2518FD); HVAC boards B6-R/B6-E via Modbus TCP (Ethernet), RS-485 x2, Ethernet RMII.\nAll field I/O galvanically isolated; conformal coating IPC-CC-830. Supply 24 V from 48 V essential bus."
 		(exclude_from_sim no)
 		(at 25 270 0)
 		(effects

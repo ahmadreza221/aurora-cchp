@@ -33,7 +33,7 @@
    "kg": 90,
    "group": "engine"
   },
-  "D-801": {
+  "D-101": {
    "label": "exhaust diverter damper",
    "kind": "rect",
    "x": 4.6,
@@ -56,14 +56,14 @@
    "group": "exhaust"
   },
   "ST-1": {
-   "label": "stack DN250 double wall, top +4.0 m",
+   "label": "stack DN250 double wall + silencer SL-101, top +4.0 m",
    "kind": "circle",
    "x": 5.5,
    "y": 8.05,
    "w": 0.35,
    "d": 0.35,
    "h": 4.0,
-   "kg": 80,
+   "kg": 140,
    "group": "exhaust"
   },
   "LLH-1": {
@@ -133,14 +133,14 @@
    "group": "tank"
   },
   "CT-1": {
-   "label": "cooling tower, FRP round, 40 ton class",
+   "label": "cooling tower, FRP round, 60 ton class",
    "kind": "circle",
-   "x": 8.4,
-   "y": 1.8,
-   "w": 1.6,
-   "d": 1.6,
-   "h": 1.95,
-   "kg": 600,
+   "x": 8.25,
+   "y": 1.95,
+   "w": 1.88,
+   "d": 1.88,
+   "h": 2.1,
+   "kg": 820,
    "group": "tower"
   },
   "PS-2": {
@@ -175,6 +175,17 @@
    "h": 0.5,
    "kg": 60,
    "group": "pipe"
+  },
+  "FS-1": {
+   "label": "fire suppression cabinet FK-5-1-12, 2 cyl., shaded/vented",
+   "kind": "rect",
+   "x": 3.0,
+   "y": 9.3,
+   "w": 0.6,
+   "d": 0.45,
+   "h": 1.4,
+   "kg": 80,
+   "group": "fire"
   },
   "HATCH": {
    "label": "roof access hatch / stair (ASSUMED)",
@@ -217,7 +228,7 @@
    "cy": 5.8999999999999995
   },
   {
-   "tag": "D-801",
+   "tag": "D-101",
    "label": "exhaust diverter damper",
    "kg": 60,
    "area": 0.25,
@@ -236,10 +247,10 @@
   },
   {
    "tag": "ST-1",
-   "label": "stack DN250 double wall, top +4.0 m",
-   "kg": 80,
+   "label": "stack DN250 double wall + silencer SL-101, top +4.0 m",
+   "kg": 140,
    "area": 0.09621127501618741,
-   "kg_m2": 831.5033761535757,
+   "kg_m2": 1455.1309082687574,
    "cx": 5.5,
    "cy": 8.05
   },
@@ -299,12 +310,12 @@
   },
   {
    "tag": "CT-1",
-   "label": "cooling tower, FRP round, 40 ton class",
-   "kg": 600,
-   "area": 2.0106192982974678,
-   "kg_m2": 298.4155182973037,
-   "cx": 8.4,
-   "cy": 1.8
+   "label": "cooling tower, FRP round, 60 ton class",
+   "kg": 820,
+   "area": 2.775911268711941,
+   "kg_m2": 295.39849102615256,
+   "cx": 8.25,
+   "cy": 1.95
   },
   {
    "tag": "PS-2",
@@ -332,6 +343,15 @@
    "kg_m2": 374.99999999999994,
    "cx": 9.5,
    "cy": 6.5
+  },
+  {
+   "tag": "FS-1",
+   "label": "fire suppression cabinet FK-5-1-12, 2 cyl., shaded/vented",
+   "kg": 80,
+   "area": 0.27,
+   "kg_m2": 296.2962962962963,
+   "cx": 3.3,
+   "cy": 9.525
   }
  ],
  "distributed": {
@@ -339,10 +359,10 @@
   "galvanised steel dunnage / skid frames": 900,
   "cable trays, insulation, cladding, walkways": 250
  },
- "total_kg": 6999.0,
+ "total_kg": 7359.0,
  "cg": [
-  5.289547078154022,
-  4.870022860408629
+  5.34590841146895,
+  4.87148933278978
  ],
  "checks": [
   {
@@ -359,19 +379,19 @@
   },
   {
    "name": "engine intake -> cooling tower",
-   "value": 10.151970252123476,
+   "value": 9.941453616046298,
    "min": 7.6,
    "ref": "ASHRAE 62.1 T5-1 cooling-tower exhaust 25 ft"
   },
   {
    "name": "exhaust stack -> cooling tower",
-   "value": 6.890029027515051,
+   "value": 6.691225597751133,
    "min": 5.0,
    "ref": "no hot exhaust into tower inlet"
   },
   {
    "name": "stack top above tower top",
-   "value": 2.05,
+   "value": 1.9,
    "min": 1.0,
    "ref": "exhaust above tower plume"
   },
@@ -389,16 +409,38 @@
   },
   {
    "name": "tower -> roof edge",
-   "value": 0.7999999999999994,
+   "value": 0.8099999999999996,
    "min": 0.8,
    "ref": "parapet, maintenance"
   },
   {
-   "name": "tower air-inlet ring: nearest equipment (PS-2)",
-   "value": 2.0615528128088303,
-   "min": 1.8,
+   "name": "tower air-inlet ring: nearest equipment (TK-1)",
+   "value": 1.9496794608345238,
+   "min": 1.94,
    "ref": ">= 1 m clear around louvres"
   }
  ],
+ "alternatives": {
+  "base": 7359,
+  "light": {
+   "items": {
+    "TK-1 500 -> 300 L": -220,
+    "LLH-1 buffer -> DN65 hydraulic separator": -200,
+    "CW piping PE100 instead of 316L/steel spools": -50
+   },
+   "total": 6889
+  },
+  "single": {
+   "items": {
+    "TK-1 500 -> 300 L": -220,
+    "LLH-1 buffer -> DN65 hydraulic separator": -200,
+    "CW piping PE100 instead of 316L/steel spools": -50,
+    "CH-2 SC5 not installed": -420,
+    "P-2B, P-4B and CH-2 branch piping": -80,
+    "tower 50 ton instead of 60 ton": -60
+   },
+   "total": 6329
+  }
+ },
  "conflicts": []
 }

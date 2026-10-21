@@ -1,0 +1,122 @@
+{
+ "board": "schgen_example",
+ "parts": 48,
+ "units": 50,
+ "sheets": [
+  {
+   "name": "Power",
+   "file": "power.kicad_sch",
+   "paper": "A3",
+   "parts": 21
+  },
+  {
+   "name": "MCU",
+   "file": "mcu.kicad_sch",
+   "paper": "A3",
+   "parts": 18
+  },
+  {
+   "name": "CAN",
+   "file": "can.kicad_sch",
+   "paper": "A3",
+   "parts": 9
+  }
+ ],
+ "nets": 28,
+ "pins": 189,
+ "pins_connected": 146,
+ "pins_nc": 43,
+ "power_flags": [
+  "+24V",
+  "+3V3A",
+  "+5V",
+  "GND"
+ ],
+ "generated_symbols": [
+  "M12_A5_CANopen"
+ ],
+ "warnings": [],
+ "files": [
+  "schgen_example.kicad_pro",
+  "schgen_example.kicad_sch",
+  "power.kicad_sch",
+  "mcu.kicad_sch",
+  "can.kicad_sch",
+  "symbols/schgen_example.kicad_sym",
+  "sym-lib-table",
+  "schgen_example.kicad_pcb"
+ ],
+ "out": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out",
+ "commands": [
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch erc --format json --severity-error --severity-warning -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_erc.json /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.kicad_sch",
+   "rc": 0,
+   "out": "Found 0 violations\nSaved ERC Report to /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_erc.json\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export netlist --format kicadxml -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_netlist.xml /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.kicad_sch",
+   "rc": 0,
+   "out": "",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export pdf -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.pdf /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.kicad_sch",
+   "rc": 0,
+   "out": "Plotted to '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.pdf'.\nDone.\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export bom -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_bom.csv --fields Reference,Value,Footprint,MPN,Manufacturer,LCSC,${QUANTITY},${DNP} --labels Refs,Value,Footprint,MPN,Manufacturer,LCSC,Qty,DNP --group-by Value,Footprint,MPN,Manufacturer,LCSC,${DNP} --ref-range-delimiter  /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.kicad_sch",
+   "rc": 0,
+   "out": "Wrote bill of materials to '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_bom.csv'.\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli pcb export step --board-only -f --no-optimize-step --user-origin 50x110mm -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_board.step /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.kicad_pcb",
+   "rc": 0,
+   "out": "STEP file '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_board.step' created.\n\nExport time 0.014 s\n",
+   "err": ""
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli pcb drc --format json -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_drc.json /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.kicad_pcb",
+   "rc": 0,
+   "out": "Found 0 violations\nFound 0 unconnected items\nSaved DRC Report to /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_drc.json\n",
+   "err": ""
+  }
+ ],
+ "erc": {
+  "errors": 0,
+  "warnings": 0,
+  "by_type": {},
+  "details": []
+ },
+ "roundtrip": {
+  "mismatches": [],
+  "spec_nets": 28,
+  "netlist_nets": 71,
+  "netlist_named_nets": 28,
+  "components": 48
+ },
+ "pdf": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example.pdf",
+ "bom": {
+  "path": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_bom.csv",
+  "lines": 34
+ },
+ "step": {
+  "path": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/tools/example/out/schgen_example_board.step",
+  "bbox": [
+   -8.881784197001e-16,
+   -1.33226762955e-15,
+   0.0,
+   80.0,
+   60.0,
+   1.51
+  ]
+ },
+ "pcb_drc": {
+  "violations": 0,
+  "types": []
+ },
+ "ok": true
+}

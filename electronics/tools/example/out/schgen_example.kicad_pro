@@ -1,0 +1,75 @@
+{
+  "board": {
+    "design_settings": {
+      "defaults": {},
+      "diff_pair_dimensions": [],
+      "drc_exclusions": [],
+      "rules": {},
+      "track_widths": [],
+      "via_dimensions": []
+    }
+  },
+  "boards": [],
+  "libraries": {
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
+  },
+  "meta": {
+    "filename": "schgen_example.kicad_pro",
+    "version": 3
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "name": "Default",
+        "priority": 2147483647,
+        "clearance": 0.2,
+        "track_width": 0.2,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "pcb_color": "rgba(0, 0, 0, 0.000)"
+      }
+    ],
+    "meta": {
+      "version": 4
+    }
+  },
+  "erc": {
+    "erc_exclusions": [],
+    "meta": {
+      "version": 0
+    },
+    "rule_severities": {}
+  },
+  "pcbnew": {
+    "page_layout_descr_file": ""
+  },
+  "schematic": {
+    "meta": {
+      "version": 1
+    }
+  },
+  "sheets": [
+    [
+      "29a559b4-b630-5f3b-a659-d07361027e96",
+      "Root"
+    ],
+    [
+      "21ae7893-372e-5496-a3ce-ee10384d03e1",
+      "Power"
+    ],
+    [
+      "aa5d5ef3-ce8a-5589-92a9-7b8bc818f085",
+      "MCU"
+    ],
+    [
+      "8cdd5a61-490c-5957-975a-42659083fdc7",
+      "CAN"
+    ]
+  ],
+  "text_variables": {}
+}

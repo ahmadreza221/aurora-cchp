@@ -1,223 +1,346 @@
-# GR180-CCHP — انتخاب قطعات (بردها، تجهیزات میدانی، اینورتر، باتری، پایش از راه دور)
+# GR180-CCHP — انتخاب قطعات (rev 2: اروپایی)
 
 تاریخ: ۲۰۲۶-۱۰-۲۱ · سند اصلی: [`00_electrical_control_architecture.md`](00_electrical_control_architecture.md)
 
-**دربارهٔ شماره‌های LCSC:**
-- همهٔ شماره‌های `Cxxxx` این سند در **۲۰۲۶-۱۰-۲۱ از API قطعات JLCPCB** استعلام شدند. موجودی (stock) همان لحظه کنارشان آمده و تغییر می‌کند.
-- همه از نوع «extended» هستند، به‌جز W25Q128 و ULN2003 که «basic» هستند. extended یعنی هزینهٔ setup در مونتاژ JLC.
-- ردیف‌هایی که LCSC ندارد با «—» و منبع پیشنهادی مشخص شده‌اند.
-- **مراقب برندهای مشابه با پیشوند متفاوت باشید** (مثلاً `GC3M…`، `MX74700T`، `-VB`، `-HXY`). این‌ها جایگزین سازگار یا نامشخص‌اند و نباید به‌جای قطعهٔ اصلی در مسیرهای قدرت و ایمنی خریده شوند.
+## ۰. سیاست تأمین (تصمیم کاربر، D17)
 
-> ⚠️ **تأمین و محدودیت صادرات:**
-> - بخشی از قطعات منشأ آمریکایی دارند: TI، ADI/Maxim، Microchip، Wolfspeed، onsemi، Vishay، Allegro.
-> - صادرات این قطعات به ایران مشمول تحریم‌ها و مقررات صادرات آمریکاست و مسیر خرید ممکن است ریسک حقوقی یا قطع ناگهانی تأمین داشته باشد.
-> - برای هر ردیف حیاتی یک **جایگزین غیرآمریکایی** آمده است: ST (اروپا)، Infineon (آلمان)، Chipanalog / Novosense / GigaDevice (چین). طراحی PCB طوری انجام شود که جایگزین با حداقل تغییر (footprint سازگار یا پد دوگانه) نصب شود.
-> - تصمیم مسیر تأمین با کاربر است (سؤال باز).
+- **قطعات اروپایی در همه‌جا:**
+  - ST (فرانسه/ایتالیا/سوئیس)، Infineon (آلمان)، NXP و Nexperia (هلند)، Semikron-Danfoss (آلمان/دانمارک)، Würth (آلمان)
+  - RECOM (اتریش)، Traco (سوئیس)، LEM (سوئیس)، Melexis (بلژیک)، Isabellenhütte (آلمان)، WIMA (آلمان)، Finder (ایتالیا)، Phoenix Contact (آلمان)
+- **هیچ قطعهٔ آمریکایی** به کار نمی‌رود: TI، ADI/Maxim، Microchip، Wolfspeed، onsemi، Vishay، Allegro، Littelfuse، Broadcom، Bussmann/Eaton، Honeywell، Sensata.
+  - Murata و TDK آمریکایی نیستند. فقط برای یکدستی، معادل اروپایی‌شان (RECOM، EPCOS/TDK Europe) ترجیح داده شده است.
+- **استثناها:** جایی که سازندهٔ اروپایی وجود ندارد (PHY اترنت 10/100، فلش سریال)، قطعهٔ **غیرآمریکایی آسیایی** با برچسب ⚑ آمده است.
+- **شماره‌های LCSC** در ۲۰۲۶-۱۰-۲۱ از API قطعات JLCPCB استعلام شدند و موجودی همان لحظه کنارشان آمده است.
+  - «—» یعنی LCSC موجودی ندارد. این قطعات از توزیع‌کنندهٔ اروپایی (Farnell، RS، Mouser EU، Distrelec، TME) تهیه و برای مونتاژ JLC به‌صورت consigned فرستاده می‌شوند.
+  - **مراقب برندهای مشابه** باشید (`-VB`، `-HXY`، `TOKMAS`، `UMW`، …). این‌ها مجاز نیستند.
+
+### جدول جایگزینی (rev 1 → rev 2)
+
+| کارکرد | rev 1 (حذف‌شده) | rev 2 (اروپایی) |
+|---|---|---|
+| MCU یکسوساز B3 | TI TMS320F28379D | **ST STM32G474** (HRTIM 184 ps، CORDIC/FMAC، 5× ADC 4 MS/s، 7 comparator) |
+| MCU ایمنی SMCU | Microchip dsPIC33CK / (STM32G431 موقت) | **NXP S32K144** (Cortex-M4F، ISO 26262 ASIL-B، FlexCAN-FD)؛ تنوع سازنده نسبت به ECU (ST) |
+| CAN-FD ایزوله | TI ISO1042 / ADI ADM3055E | **NXP TJA1052i-5** (5 kV) + DC-DC ایزولهٔ RECOM |
+| کنترلر CAN سوم | Microchip MCP2518FD | **حذف** (BOP روی Modbus TCP است؛ دو FDCAN داخلی کافی‌اند) |
+| RS-485 ایزوله | ADI ADM2587E | **ST ST485EB + ST STISO621** + RECOM R1SX-0505 |
+| RS-422 (سرعت) | TI AM26LV31/32 | **ST ST26C31 / ST26C32** |
+| ایزولاتور دیجیتال | TI ISO7741/7721 | **ST STISO620/621** |
+| ورودی دیجیتال ایزوله | TI ISO1212 | **Infineon ISO1I813T** (8 کانال، IEC 61131-2 نوع 1/3) |
+| کلید high-side | TI TPS27S100 | **ST VNI4140K / IPS1025H**، Infineon ITS4300S / BTS3800SL |
+| درایور گیت BLDC 48 V | TI DRV8353 | **Infineon 6EDL7141** (MOTIX) یا **ST STDRIVE101** |
+| MOSFET 100 V | TI CSD19536 | **Infineon IPB017N10N5** (OptiMOS 5) |
+| سنس جریان | TI INA240 | **ST TSC2011** یا CSA داخل 6EDL7141 |
+| درایور شیر تناسبی | TI DRV8876 | MOSFET Infineon + شانت + حلقهٔ جریان STM32 |
+| گیت‌درایور SiC | TI UCC21750 | **Infineon 1ED3491MU12M** (DESAT، soft-off) / **ST STGAP2SiCS** |
+| تغذیهٔ گیت | Murata MGJ2D | **RECOM R24P21503D** (+15/−3 V، 5.2 kV) |
+| SiC MOSFET | Wolfspeed C3M | **Infineon IMZA120R020M1H** / ST SCT020H120G3AG |
+| سنس جریان و ولتاژ ایزوله | TI AMC3306 / AMC3330 | **کنترلر B3 روی پتانسیل DC−** + شانت Isabellenhütte + آپ‌امپ ST؛ ایزولاسیون فقط در ارتباط و تغذیه؛ پایش مستقل **LEM HO / DVL** (سوئیس) |
+| ترموکوپل و RTD | Maxim MAX31856 / MAX31865 | **ST STM32F373** (3× SDADC 16 بیت، PGA تا 32×) به‌عنوان AFE |
+| ADC 4–20 mA و ارتعاش | TI ADS124S08 / ADS131M04 | ADC 16 بیتی STM32H7 + آپ‌امپ ST (TSV912 / TSZ122) |
+| منبع جریان IEPE | ADI LT3092 | **ST LM317D2T** در حالت منبع جریان (4 mA) |
+| خروجی آنالوگ | ADI AD5422 | DAC داخلی STM32 + **ST TSB572** (36 V) |
+| رگولاتورها | TI TPS54360، LM5013، TLV755، LM5069 | **RECOM R-78E5.0-1.0 / R-78HB12-0.5**، ST A6986 / L6984 / L7983، ST LDL1117 |
+| حفاظت ورودی | TI TPS16630، LM74700 | **ST STEF01** (eFuse) + P-MOSFET Infineon + SMBJ33A (ST) |
+| مرجع ولتاژ | TI REF5025 | ST TL1431 / مرجع داخلی STM32 (VREFBUF) |
+| حافظهٔ شمارندهٔ عمر | Infineon/Cypress FM25V10 (طراحی آمریکایی) | **ST M95M04** (EEPROM SPI 4 Mbit، 4 میلیون سیکل) با wear-leveling (§۱) |
+| USB سرویس ایزوله | ADI ADuM4160 | **حذف**؛ سرویس از راه Ethernet و SWD |
+| PHY اترنت | Microchip LAN8742A | ⚑ Realtek RTL8201F (تایوان؛ PHY اروپایی 10/100 وجود ندارد) |
+| فلش سریال | Winbond W25Q128 | ⚑ Winbond (تایوان، بدون تغییر) |
+| ماژول HMI | Raspberry Pi CM5 (SoC Broadcom) | **NXP i.MX 8M Plus** روی Toradex Verdin (سوئیس) یا Phytec phyCORE (آلمان) |
+| کریستال | Abracon | Micro Crystal (سوئیس)، Jauch (آلمان)، Würth WE-XTAL |
+| RJ45 و چوک | HanRun، TDK ACT45B | **Würth** 7499010211A، WE-SL5 744235510 |
+| رله | Omron G5Q / G7SA | **Finder** 34.51 (سیگنال)، **Finder 50.12** (force-guided، EN 61810-3) |
+| سنسور Hall دور | Allegro A1120 | **Melexis US5881** (TO-92UA، هم‌پایه) یا Infineon TLE4964 |
+| سنسور شعلهٔ UV | Hamamatsu R2868 | **Durag D-LX 100 UV** (آلمان) یا Siemens QRA2 + AGQ3 |
+| شتاب‌سنج | CTC / Wilcoxon / PCB | **Hansford HS-100** (انگلستان)، IFM VSA (آلمان)، Brüel & Kjær (دانمارک) |
+| کنتورها | Eastron SDM630 | **Carlo Gavazzi EM24 / EM340**، **Janitza UMG 96**، ABB B23/B24 |
+| شارژر و DC-DC 48 V | Mean Well (تایوان) | **Victron** Smart IP43 48/13، **PULS** CD10.242 (آلمان)، Traco |
+| اینورتر | Victron + Fronius (rev 2، باتری 48 V) | **rev 3:** Deye SUN-30K-SG01HP3-EU-BM3 + BOS-G20 (چین، غیرآمریکایی، تنها گزینهٔ backup بدون وقفه)؛ اروپایی: SMA Hybrid X 30 (§۸) |
+| سوییچ شبکه | Moxa (TW)، Planet | **Westermo** (SE)، **Phoenix FL SWITCH** (DE)، Siemens SCALANCE |
+
+> **چرا M95M04 به‌جای FRAM:**
+> - FRAM اروپایی وجود ندارد.
+> - شمارندهٔ عمر هر 60 s یک رکورد 32 بایتی با CRC و شمارهٔ ترتیبی می‌نویسد. با ring buffer روی 4 Mbit (16 384 رکورد)، هر سلول حدود هر 11 روز یک بار نوشته می‌شود؛ 4 میلیون سیکل یعنی بیش از 50 سال.
+> - **ذخیرهٔ لحظهٔ قطع برق:**
+>   - رویداد trip و power-fail بلافاصله نوشته می‌شود. زمان نوشتن صفحه حدود 5 ms است.
+>   - خازن نگهدارنده روی 3V3 حداقل 20 ms زمان می‌دهد. برق 24 V از 48 V UPS می‌آید و قطع ناگهانی آن نادر است.
+>   - آشکارسازی افت ولتاژ با PVD داخلی STM32 انجام می‌شود.
 
 ## ۱. B1 — ECU (اتاق برق)
 
-| کارکرد | قطعه | سازنده | LCSC (موجودی) | جایگزین | یادداشت |
-|---|---|---|---|---|---|
-| MCU اصلی | **STM32H743IIT6** (480 MHz، 2× FDCAN، Ethernet MAC، **LQFP-176، 140 GPIO**) | ST | C89597 (548) | STM32H743VIT6 C114409 (LQFP-100) **کافی نیست**: 24 DI + 12 رله + RMII + QSPI + 3 CAN + 2 UART + 6 ورودی سرعت از 82 GPIO بیشتر است؛ GigaDevice GD32H7 | ماشین حالت، گاورنر، life counter |
-| MCU ایمنی (SMCU) | **dsPIC33CK256MP506-I/PT** | Microchip | C634006 (22) | **STM32G431RBT6** C431633 (2552) | تنوع معماری؛ موجودی کم، پس جایگزین ST روی همان برد قابل‌نصب طراحی شود (دو footprint) |
-| watchdog خارجی | STWD100NYWY3F | ST | C46043 (19284) | TPS3431 | پنجره‌ای؛ رلهٔ ECU RUN PERMIT |
-| FRAM شمارندهٔ عمر | **FM25V10-GTR** (1 Mbit SPI) ×2 (H7 + SMCU) | Infineon/Cypress | C44173 (5527) | MB85RS4MT C42742723 | 10¹⁴ سیکل نوشتن |
-| فلش QSPI | W25Q128JVSIQ | Winbond | **C97521 (basic)** | — | event recorder |
-| PHY اترنت | LAN8742A-CZ-TR (RMII) | Microchip | C621424 (8773) | KSZ8081RNACA-TR C100017؛ YT8512 (Motorcomm) | — |
-| RJ45 + مگنتیک | HR911105A | HanRun | C12074 (54266) | — | — |
-| CAN-FD ایزوله | **ISO1042BQDWVRQ1** + B0505S-1WR3 ×3 | TI + Mornsun | C2672259 (223) + C512048 (5926) | **ADM3055EBRIZ-RL** C658105 (isoPower)؛ Chipanalog CA-IS3062 / Novosense NSi1042 | 3 کانال: #1 موتور، #2 BOP (B6-R/B6-E طبق docs/hvac)، #3 BMS |
-| کنترلر CAN-FD سوم | MCP2518FDT-E/SL (SPI) | Microchip | C626758 (22977) | — | FDCAN داخلی H7 فقط دو کانال دارد |
-| حفاظت CAN | PESD2CANFD24V-TR + چوک CM ACT45B-510-2P | Nexperia + TDK | C552486 + C76584 | — | — |
-| RS-485 ایزوله | **ADM2587EBRWZ-REEL7** (isoPower) ×2 | ADI | C12081 (6942) | **CA-IS2092W** C5121950 (6470) | Modbus اینورتر، کنتورها، VFDها |
-| ESD RS-485 | SM712 | Semtech/… | C908219 | SM712-02HTG C172881 | — |
-| ورودی‌های سرعت SPD-IN | AM26LV32EIDR (RS-422 برای N1-A) + ورودی open-collector با pull-up 24 V و اشمیت‌تریگر (N1-B، N2-B، UV) در ناحیهٔ ایزوله + ISO7741DWR؛ هر سیگنال به دو گیرندهٔ جدا (H7 و SMCU) | TI | C527448 (42602) + C571196 (8437) | ISO1410DWR C2671566؛ CA-IS3082WX C970942 | تغذیهٔ سنسورهای N1-B، N2-B و UV از ناحیهٔ SMCU |
-| ورودی دیجیتال 24 V | ISO1212DBQR ×12 (24 کانال) | TI | C2859667 (4099) | اپتوکوپلر TLP291-4 C60900 | IEC 61131-2 نوع 1/3 |
-| رله‌های عمومی | G5Q-14 DC24 ×12 + ULN2003ADR | Omron + TI | C397242 (11740) + C7512 (basic) | HF46F/24-HS1T C5274023 | load shedding، اینورتر، BMS-wake |
-| رله‌های force-guided | G7SA-3A1B DC24 ×4 | Omron | C968857 (50) | — | SMCU PERMIT A/B، ECU RUN PERMIT |
-| حفاظت ورودی 24 V | SMBJ33A + LM74700-Q1 (ideal diode) + eFuse TPS16630PWPR | TI | — / C22468156 (MX74700T، سازگار) / C1849461 (544) | — | معکوس، اضافه‌جریان |
-| مبدل 24→5 V | TPS54360BDDAR | TI | C524806 (54998) | LMR38010 C5219308 | — |
-| LDO 3.3 V | TLV75533PDBVR | TI | C404027 (115623) | — | — |
-| مرجع و LDO کم‌نویز | REF5025AIDR، TPS7A4701RGWR | TI | C11341، C90084 | — | پایش 48 V/24 V |
-| USB سرویس ایزوله | ADUM4160BRWZ-RL + USBLC6-2SC6 | ADI + ST | C57791 + C7519 | — | — |
-| ترمینال‌ها | Phoenix MSTBA 2,5/..-G-5,08 (هدر) + MSTB 2,5/..-ST-5,08 (پلاگ)؛ سیگنال: MC 1,5/..-3,81 | Phoenix | C90074 + C90073؛ C480511 | — | همه قابل‌جداشدن، کددار |
-| کریستال | ABM8-25.000MHZ-B2-T | Abracon | C596899 | — | — |
+| کارکرد | قطعه | سازنده | LCSC (موجودی) | یادداشت |
+|---|---|---|---|---|
+| MCU اصلی | **STM32H743IIT6** (LQFP-176، 140 GPIO، 2× FDCAN، Ethernet MAC) | ST | C89597 (548) | ماشین حالت، گاورنر، EMS، شمارندهٔ عمر |
+| MCU ایمنی (SMCU) | **FS32K144HFT0VLLT** (LQFP-100، 112 MHz) | NXP | C515292 (5940) | جایگزین هم‌خانواده: FS32K118LAT0MLHT C3230951 (788)؛ ارزان‌تر: MKE16Z64VLF4 C1339264 (موجودی کم) |
+| watchdog خارجی | STWD100NYWY3F | ST | C46043 | پنجره‌ای؛ رلهٔ ECU RUN PERMIT |
+| حافظهٔ شمارندهٔ عمر ×2 (H7، SMCU) | **M95M04-DRMN6TP** (SPI EEPROM 4 Mbit) | ST | C1852765 (153) | جایگزین: M95M02 C915963 |
+| فلش event recorder | ⚑ W25Q128JVSIQ (QSPI) | Winbond (TW) | C97521 (basic) | — |
+| PHY اترنت | ⚑ RTL8201F-VB-CG (RMII) | Realtek (TW) | C45044 (51618) | — |
+| RJ45 با مگنتیک | 7499010211A | Würth | — | از توزیع‌کننده |
+| CAN-FD ایزوله ×2 (#1 موتور، #2 BMS باتری HV listen-only) | **TJA1052IT/5Y** + RECOM R1SX-0505 | NXP + RECOM | C92210 (8790) + — | — |
+| حفاظت CAN | PESD2CANFD24V-T + چوک WE-SL5 744235510 | Nexperia + Würth | C552486 + C5331174 | — |
+| RS-485 ایزوله ×3 (HI-1؛ کنتورها و VFD؛ JT-901) | **ST485EBDR** + **STISO621TR** + R1SX-0505 | ST + RECOM | C81186 (6355) + C5447162 (1159) | ESD: SMBJ / ESDA (ST) |
+| ورودی‌های سرعت SPD-IN | **ST26C32ABDR** (RS-422، N1-A) + ورودی open-collector با اشمیت‌تریگر (N1-B، N2-B، UV) + **STISO620TR** | ST | C157432 (3953) + C7089838 | هر سیگنال به H7 و SMCU جدا |
+| ورودی دیجیتال 24 V (32 کانال) | **ISO1I813T** ×4 | Infineon | C538445 (1510) | SPI، تشخیص قطعی سیم |
+| رله‌های عمومی ×16 | Finder 34.51.7.024.0010 + 2× **ULN2803A** | Finder + ST | — | شامل K-LS1..4، K-SP1..3، EH-950 |
+| رله‌های force-guided ×3 | Finder 50.12.9.024.1000 | Finder | — | SMCU PERMIT A/B، ECU RUN PERMIT |
+| تغذیه | 24 V → **R-78E5.0-1.0** → **LDL1117S33R** (3V3 ECU) و LDL1117S33R جدا (3V3 SMCU) | RECOM + ST | — + C435835 | — |
+| حفاظت ورودی 24 V | **SMBJ33A-TR** + P-MOSFET Infineon (معکوس) + **STEF01** (eFuse) | ST + Infineon | C133662 + — | — |
+| کریستال | 25 MHz (HSE)، 32.768 kHz (RTC) | Micro Crystal / Jauch | — | — |
+| ترمینال‌ها | Phoenix MSTBA 2,5/..-G-5,08 + MSTB، سیگنال MC 1,5/..-3,81 | Phoenix | C90074 + C90073؛ C480511 | قابل‌جداشدن، کددار |
+
+بودجهٔ پایه‌های H7 (176 پایه):
+- RMII: 9
+- 2× FDCAN: 4
+- QSPI: 6
+- 3× SPI (DI، M95M04، رزرو): 12
+- 2× USART با DE: 6
+- 6 ورودی سرعت (TIM capture): 6
+- 12 رله: 12
+- 4 permit/feedback: 4
+- SWD: 2
+- نتیجه: **حدود 61 پایه، با جای خالی کافی.**
 
 ## ۲. B2 — I/O سنسورها (روی بام، RP-1)
 
-| کارکرد | قطعه | LCSC (موجودی) | جایگزین | یادداشت |
-|---|---|---|---|---|
-| MCU | STM32H743VIT6 (FFT ارتعاش و رأی‌گیری) | C114409 | STM32H723ZGT6 C730146 | هم‌سان با B1 برای قطعهٔ یدکی مشترک |
-| ترموکوپل | **MAX31856MUD+T** ×12 | C2653162 (7580) | ADC ΔΣ 24 بیتی + CJC (PT1000) از سازندهٔ غیرآمریکایی | تشخیص قطعی/اتصال کوتاه TC؛ **ناحیهٔ آنالوگ ایزوله** (ISO7741 + B0505S) |
-| RTD | **MAX31865ATP+T** ×12 | C118474 (14540) | ADS124S08 با منبع جریان | 3-wire، PT1000 |
-| 4–20 mA | **ADS124S08IPBSR** ×2 (24 کانال) + شانت 50 Ω 0.1 % + REF5025 | C2870171 (1531) + C11341 | AD4111BCPZ C649166 (ورودی ±10 V/جریان یکپارچه) | تغذیهٔ حلقه با PTC + SMAJ33CA (C115251) |
-| ارتعاش IEPE و آنالوگ سریع | **ADS131M04IPWR** ×2 (8 کانال هم‌زمان، تا 32 kS/s) + OPA2188AIDR | C2862562 (1579) + C17271 | — | VIB1–4، FAI1–4 (P2، مانیفولد) |
-| منبع جریان IEPE 4 mA | LT3092EST#TRPBF | C580042 (1569) | — | تطابق 24 V |
-| خروجی RS-422 سرعت N1-A به B1 | AM26LV31EIDR | C527446 (3120) | — | ورودی Hall با اشمیت‌تریگر؛ N1-B، N2-B و UV از B2 عبور نمی‌کنند |
-| ورودی دیجیتال | ISO1212DBQR ×16 (32 کانال) | C2859667 | — | — |
-| CAN-FD | ISO1042BQDWVRQ1 + B0505S-1WR3 | C2672259 + C512048 | ADM3055E | — |
-| تغذیه | 24 V از DC-DC بام → TPS54360 → TLV75533 | C524806، C404027 | — | — |
+**معماری:**
+- کل برد روی زمین محلی جعبه است و ایزولاسیون فقط در CAN و تغذیه است.
+- ترموکوپل‌ها ungrounded و حلقه‌های 4–20 mA دوسیمه‌اند.
+- **AFE دقیق** روی STM32F373 است و از راه SPI به H7 وصل می‌شود.
 
-## ۳. B3 — یکسوساز فعال SiC (PEB روی بام) و B3b
+| کارکرد | قطعه | LCSC (موجودی) | یادداشت |
+|---|---|---|---|
+| MCU اصلی | STM32H743VIT6 | C114409 (3628) | FFT ارتعاش، رأی‌گیری ITT، تقویم ارسال CAN |
+| AFE ترموکوپل و RTD | **STM32F373VCT6** ×2 (3× SDADC 16 بیت، PGA تا 32×، 21 کانال تفاضلی در هر کدام) | C1121903 (278) | 12 TC + 16 RTD (3-wire نسبتی با منبع جریان مشترک)؛ CJC با PT1000 روی بلوک ایزوترمال؛ تشخیص قطعی TC با pull-up 10 MΩ؛ بدون مالتی‌پلکسر (42 کانال تفاضلی کافی است) |
+| 4–20 mA (24 کانال) | ADC 16 بیتی H7 + بافر **TSV912** + شانت 50 Ω 0.1 % (Isabellenhütte) | — | حفاظت: PTC + SMAJ33CA (ST) |
+| IEPE و آنالوگ سریع (8 کانال) | ADC 16 بیتی H7 (dual/triple، نمونهٔ هم‌زمان) + فیلتر **TSZ122** / TSV912 | C52941316 | منبع جریان 4 mA: **LM317D2T-TR** (C91673) |
+| خروجی RS-422 سرعت N1-A | **ST26C31BDR** | C94192 (16537) | — |
+| ورودی دیجیتال (32 کانال) | ISO1I813T ×4 | C538445 | — |
+| CAN-FD | TJA1052IT/5Y + R1SX-0505 | C92210 | — |
+| تغذیه | 24 V → R-78E5.0-1.0 → LDL1117S33R | — + C435835 | مرجع ADC: VREFBUF |
 
-| کارکرد | قطعه | LCSC (موجودی) | جایگزین | یادداشت |
-|---|---|---|---|---|
-| کنترلر | **TMS320F28379DPTPT** (2× C28x + 2× CLA، SDFM، CMPSS) | C1339763 (108) | **STM32G474RET6** C521608 (HRTIM)؛ TMS320F28377S C1346020 | FOC در 40 kHz، PV emulation، Riso |
-| SiC MOSFET 1200 V | **IMZA120R020M1HXKSA1** (CoolSiC 20 mΩ، TO-247-4) ×6 + 1 (چاپر) | C7207676 (68) | **C3M0021120K** C5713521 (185)؛ ماژول six-pack EasyPACK 2B CoolSiC (Infineon) از توزیع‌کننده | تلفات تقریبی ~48 W برای هر سوییچ در 30 kW، 40 kHz؛ راندمان یکسوساز ~99 % |
-| دیود چاپر (SiC Schottky 1200 V/20 A) | IDW20G120C5B | C49450342 (60، نسخهٔ S-) | GC4D20120D C7435099 (برند سازگار) | freewheel سلف مقاومت |
-| گیت‌درایور ایزوله | **UCC21750QDWRQ1** (DESAT، Miller clamp، 10 A) ×7 | C2868955 (1131) | Infineon 1ED3124MU12H / 1EDI3031AS؛ Novosense NSi6801 | — |
-| تغذیهٔ ایزولهٔ گیت +15/−5 V | **MGJ2D241505SC** ×7 | C5369917 (90) | Mornsun QA01C C7500960 | 5.2 kV ایزولاسیون |
-| جریان فاز و DC | شانت 1 mΩ (WSLP3921L1000FEA) + **AMC3306M25DWER** (ΔΣ با DC-DC داخلی) ×4 | C6029738 (4) + C2867907 (300) | AMC1306M25 C471874 + B0505S؛ Novosense NSi1306 | SDFM؛ OCP سریع با CMPSS |
-| ولتاژ باس، V+/PE، V−/PE | **AMC3330DWER** ×3 | C2999368 (3923) | AMC3301DWER C2869778 | پایش عایق Riso |
-| OVP مستقل (900 V) | تقسیم‌کنندهٔ HV + مقایسه‌گر + ISO7721DR → disable گیت + چاپر full-on | C366164 | — | مستقل از C2000 |
-| CAN-FD | ISO1042 + B0505S | — | — | — |
-| خازن DC-link | فیلم MKP DC-link 1100 V، مجموع ≥ 400 µF، ریپل ≥ 30 A rms | — (TDK B32776/B32778، KEMET C4AQ، Vishay MKP1848C از توزیع‌کننده) | — | عمر طولانی، بدون الکترولیت |
-| کنتاکتور DC اصلی | ≥ 1000 V DC، 50 A، دوطرفه، کنتاکت کمکی | — (Schaltbau C195، Sensata/GIGAVAC سری HX، یا مدل 1000 V هونگ‌فا؛ **HFE18V-40/750 کافی نیست**) | — | K-DC+ و K-DC− |
-| پیش‌شارژ | رلهٔ DC کوچک 1000 V + 2× 50 Ω 50 W سیمی | — | — | — |
-| **B3b** پل دیودی | VS-36MT120 (1200 V، 35 A) | C506418 (40) | SEMIKRON SKD 30/12 | مستقل از B3 |
-| B3b سوییچ | **IKW40N120H3** (IGBT 1200 V/40 A) + UCC5350MCDR | C94637 (3595) + C2872371 | — | — |
-| B3b منطق و تغذیه | فلای‌بک HV خودتغذیه (کلاس VIPer26K / InnoSwitch3 1000 V) + مقایسه‌گر آنالوگ | — | — | **بدون نرم‌افزار** |
-| K-BR | کنتاکتور قدرت AC با کنتاکت NC اصلی (یا NO + منطق معکوس با فنر)، 400 V، 63 A | — | — | باز با B3 HEALTHY · SR1-O5 |
+## ۳. B3 — یکسوساز فعال SiC (PEB) و B3b
+
+**معماری rev 2:**
+- کنترلر روی **پتانسیل DC− باس** (سمت HV) قرار می‌گیرد.
+- اندازه‌گیری‌ها غیرایزوله‌اند: شانت‌های پایین‌دست فاز، تقسیم‌کنندهٔ ولتاژ باس، تقسیم‌کننده‌های V+/PE و V−/PE برای Riso از راه مقاومت‌های بزرگ.
+- **ایزولاسیون تقویت‌شده** فقط در این سه مسیر است:
+  - ارتباط (TJA1052i-5، STISO621)
+  - تغذیهٔ 24 V (RECOM ایزوله، ≥ 4 kV / 1000 V کار)
+  - رلهٔ B3-HEALTHY
+- سنسورهای ایزولهٔ LEM برای پایش مستقل استفاده می‌شوند: OCP دوم و OVP دوم.
+
+| کارکرد | قطعه | LCSC (موجودی) | یادداشت |
+|---|---|---|---|
+| کنترلر | **STM32G474RET6** | C521608 (54) | HRTIM برای PWM 40 kHz و چاپر؛ comparatorهای داخلی برای OCP سریع (< 1 µs)؛ FOC + PV emulation + Riso |
+| SiC MOSFET ×7 | **IMZA120R020M1HXKSA1** (CoolSiC 20 mΩ، TO-247-4) | C7207676 (68) | یا ماژول six-pack EasyPACK 2B CoolSiC؛ جایگزین ST SCT020H120G3AG |
+| دیود چاپر | IDW20G120C5B | C49450342 | Infineon CoolSiC Schottky |
+| گیت‌درایور ×7 | **1ED3491MU12M** (DESAT، soft-off، Miller clamp) | C530929 (288) | جایگزین: 1ED3124MU12H (C5353840)، STGAP2SICSCTR (C5267670) |
+| تغذیهٔ گیت ×7 | **RECOM R24P21503D** (+15/−3 V، 5.2 kV) | — | ورودی 24 V از تغذیهٔ ایزولهٔ برد |
+| شانت فاز و DC | Isabellenhütte BVR (1 mΩ، 5 W) + **TSZ122** | — + C52941316 | ADC هم‌زمان G474 |
+| پایش مستقل | **LEM HO 50-S-0100** (جریان)، **LEM DVL 1000** (ولتاژ باس) | — | سوئیس |
+| مقاومت‌های تقسیم HV | EBG (اتریش) یا TT Electronics/Welwyn (انگلستان)، ≥ 1000 V | — | — |
+| OVP مستقل 900 V | تقسیم‌کنندهٔ جدا + مقایسه‌گر ST **TS3011** + latch → disable گیت‌ها + چاپر full-on | — | مستقل از MCU |
+| CAN-FD ایزوله | TJA1052IT/5Y | C92210 | — |
+| خازن DC-link | **WIMA DC-LINK MKP 6** یا **EPCOS B3277x**، 1100 V، ≥ 400 µF، ریپل ≥ 30 A rms | — | بدون الکترولیت |
+| کنتاکتورهای DC و پیش‌شارژ | **Schaltbau C195** (1000–1500 V DC، دوطرفه) + رلهٔ پیش‌شارژ 1000 V + 2× 50 Ω 50 W | — | آلمان |
+| B3b: پل دیودی | **Semikron SKD 30/12** | — | مستقل از B3 |
+| B3b: IGBT + درایور | IKW40N120H3 + **STGAP2SMTR** | C94637 + C2802542 (1116) | منطق آنالوگ بدون نرم‌افزار |
+| B3b: تغذیهٔ خودی | فلای‌بک HV با ST **VIPer26K** (1050 V) | — | — |
+| K-BR | کنتاکتور AC با کنتاکت NC (Siemens 3RT / ABB AF / Schneider TeSys)، 400 V، 63 A | — | باز با B3-HEALTHY · SR1-O5 |
 
 ## ۴. B4 — درایورها (روی بام، RP-1)
 
-| کارکرد | قطعه | LCSC (موجودی) | جایگزین | یادداشت |
-|---|---|---|---|---|
-| MCU | **STM32G474RET6** (HRTIM + 3 تایمر پیشرفته) | C521608 (54) | 2× STM32G431RBT6 C431633 | 4 درایو BLDC |
-| درایور گیت BLDC 48 V | **DRV8353RSRGZR** (100 V، 3 CSA، SPI) ×4 | C506246 (900) | — | استارتر، پمپ روغن، خنک‌کن، scavenge |
-| MOSFET 100 V | **CSD19536KTT** (2.0 mΩ، D²PAK) ×24 | C2687963 (332) | Infineon IPT015N10N5 (TOLL) | استارتر 60 A پیک |
-| سنس جریان | INA240A2PWR | C129949 (9176) | — | — |
-| خروجی‌های 24 V (شیر، جرقه، چراغ) | **TPS27S100BPWPR** (high-side با سنس جریان) ×16 | C2680365 (626) | TPS1H100BQPWPRQ1 C475505 | تشخیص قطعی و اتصال کوتاه |
-| درایور جریان شیر تناسبی | **DRV8876PWPR** (با IPROPI) ×4 | C575551 (16218) | — | PWM + dither |
-| خروجی 0–10 V | AD5422BREZ-REEL ×4 | C192062 (3850) | DAC داخلی STM32 + OPA2188 | دمپر، کویل ورودی |
-| ورودی 48 V | LM5069MM-2/NOPB (hot-swap 80 V) + SMCJ58CA | C111822 (7815) + C151898 | TPS16630 (60 V، ناکافی برای 48 V با گذرا) | — |
-| تغذیهٔ منطق | LM5013DDAR (100 V → 12 V) → TPS54360 → TLV75533 | C5383001 (14794) | LM5164DDAR C477928 | — |
-| CAN-FD | ISO1042 + B0505S | — | — | — |
+| کارکرد | قطعه | LCSC (موجودی) | یادداشت |
+|---|---|---|---|
+| MCU | STM32G474RET6 | C521608 | 4 درایو BLDC: استارتر M-020، پمپ روغن، scavenge M-711، پمپ گلیکول |
+| درایور گیت BLDC 48 V ×4 | **6EDL7141XUMA1** (MOTIX، 3 CSA، SPI) | C3655737 (263) | جایگزین: **STDRIVE101** (C2969847، 237) |
+| MOSFET 100 V | **IPB017N10N5** (1.7 mΩ، D²PAK) | C536479 (143) | استارتر: 60 A پیک؛ پمپ‌ها: OptiMOS کوچک‌تر (BSC…N10NS5) |
+| سنس جریان | CSA داخل 6EDL7141 / **TSC2011IST** | — | — |
+| خروجی‌های 24 V (16 کانال) | **VNI4140KTR** ×4 (هر کدام 4 کانال، 0.7 A) + **IPS1025HTR-32** (2.5 A) برای جرقه و SSV | C2688485 (202) + C5268124 | تشخیص قطعی و اتصال کوتاه |
+| شیر تناسبی (جریان کنترل‌شده) | MOSFET Infineon + شانت + TSZ122 + حلقهٔ جریان STM32 (PWM 5 kHz + dither) | — | — |
+| خروجی 0–10 V / 4–20 mA (ZC-101، …) | DAC STM32 + **TSB572IST** | — | — |
+| تغذیهٔ منطق | **R-78HB12-0.5** (48→12 V، ورودی تا 72 V) → R-78E5.0 → LDL1117 | — | — |
+| ورودی 48 V | فیوز + TVS SMCJ58CA (ST) + P-MOSFET Infineon + محدودکنندهٔ inrush | — | — |
+| CAN-FD | TJA1052IT/5Y | C92210 | — |
 
-## ۵. B5 — HMI (اتاق برق)
+## ۵. B5 — HMI و دروازهٔ داده (اتاق برق)
 
 | کارکرد | انتخاب | یادداشت |
 |---|---|---|
-| ماژول | **Raspberry Pi CM5**: 8 GB RAM، 32 GB eMMC، **بدون Wi-Fi** (امنیت؛ مدل دقیق مثل CM5008032 هنگام سفارش بررسی شود) | RTC و watchdog داخلی دارد |
-| کانکتور | 2× Hirose DF40C-100DS-0.4V(51) — **C597931 (30822)** | — |
-| ذخیره‌سازی | M.2 NVMe صنعتی 256 GB با power-loss protection | پایگاه دادهٔ روند و رکوردها |
-| CAN-FD | MCP2518FDT-E/SL **C626758 (22977)** + ISO1042 | شنود مستقیم باس موتور (فقط خواندن) |
-| RS-485 | ADM2587E | رزرو |
-| نمایشگر | 10.1" IPS 1280×800، لمسی خازنی، optical bonding، ≥ 500 nit، DSI یا HDMI | روی در کابینت ECU |
-| مانیتور سرویس بام | پنل 10" IP65، ≥ 1000 nit، PoE، به‌صورت thin client (Chromium kiosk) روی فیبر | سند 03 §۹ |
-| **جایگزین خریدنی برای v1** | پنل HMI صنعتی مبتنی بر Compute Module با CAN و RS-485 و جلوی IP65 (کلاس Seeed reTerminal DM) | زمان توسعه را کم می‌کند؛ B5 سفارشی در نسخهٔ بعد |
+| ماژول | **NXP i.MX 8M Plus** (4× A53، GPU، 2× GbE، **2× CAN-FD**، LVDS/DSI، NPU) روی **Toradex Verdin iMX8M Plus** (سوئیس) یا **Phytec phyCORE-i.MX 8M Plus** (آلمان)، نسخهٔ صنعتی −40…+85 °C | Linux (Torizon OS یا Yocto)؛ RTC + watchdog؛ v1 روی برد حامل **Toradex Mallow** (خریدنی) |
+| برد حامل B5 | طراحی خودمان در KiCad (Verdin: SODIMM-260) یا Toradex Mallow/Dahlia برای v1 | 24 V، 2× Ethernet (OT، مدیریت)، CAN-FD (شنود باس موتور)، RS-485، M.2 NVMe |
+| ذخیره‌سازی | NVMe صنعتی با PLP، **Swissbit** (سوئیس)، 256 GB | روند و رکوردها |
+| نمایشگر | 10.1" IPS، 1280×800، LVDS، لمسی خازنی، optical bonding، ≥ 500 nit: **DATA MODUL easyTOUCH eTD101W3201** (259 × 177 × 18.9 mm) یا **Distec POS-PRO 10.1** (آلمان) | روی در کابینت CP-E |
+| مانیتور سرویس بام | همان پنل HMI B6 (Riverdi 10.1"، §۶) با صفحه‌های موتور، یا thin client روی فیبر | سند 03 §۹ |
 
-## ۶. تجهیزات میدانی
+## ۶. B6 — کنترلر HVAC/BOP (برد خودمان، بدون PLC)
 
-| تجهیز | مشخصه | گزینه‌ها |
+طراحی کامل در [08_b6_bop_controller.md](08_b6_bop_controller.md).
+
+| بخش | قطعه | LCSC (موجودی) |
 |---|---|---|
-| ترموکوپل‌ها | K، کلاس 1، MI Ø1.5 (ITT) / Ø3، غلاف Inconel 600، **ungrounded**، اتصال فشاری (M4 برای EGT طبق v11) | Omega، TC Ltd، Watlow، یا سازندهٔ داخلی با گواهی کالیبراسیون |
-| RTD | PT1000 کلاس A، 3-wire، غلاف SS316 | — |
-| P2 (سریع) | 0–6 bar abs، 4–20 mA، پاسخ < 1 ms، دمای فرایند تا 150 °C با sense line | Keller PA-23 / PA-21Y، WIKA S-20 |
-| سایر فشارها | 4–20 mA، ±0.25 % FS، سازگار با متان برای مسیر گاز | Danfoss MBS 3000 / MBS 1700، WIKA A-10، Keller PA-21Y |
-| ΔP پایین (فیلتر، bellmouth) | 0–1000 Pa / 0–25 mbar | Huba 699، Dwyer 616KD، Siemens QBM |
-| سرعت N1 | Allegro A1120 (طرح v11) ×2 | **گزینهٔ ممتاز:** Micro-Epsilon turboSPEED DZ140 (جریان گردابی از روی پره‌ها، تا 400k rpm، بدون آهنربا) |
-| سرعت N2-B | Hall + آهنربا یا هدف ۲ دندانه روی سر سرد شفت PMG | Micro-Epsilon DZ140 روی پره‌های FPT |
-| ارتعاش | IEPE 100 mV/g، ±50 g، 2 Hz–10 kHz، تا 120 °C (نسخهٔ دمای بالا در صورت نیاز) | CTC AC102، Wilcoxon 786A، Hansford HS-100، PCB 603C01 |
-| شعله | UVTRON Hamamatsu R2868 + درایور C10807 (12–24 V) + پنجرهٔ کوارتز | جایگزین: میلهٔ یونیزاسیون (عمر کم در لاینر) |
-| SSV1/SSV2 | **EN 161 کلاس A، pmax ≥ 6 bar**، DN15، 24 VDC، بسته‌شدن < 1 s، POC | Kromschröder (سری VG با pmax 6 bar)، GSR سری D، **Dungs رایج فقط 500 mbar است، مناسب نیست** |
-| XV-610 (رایزر) | مثل SSV، با reset دستی (اختیاری) | — |
-| شیر تناسبی | PWM، 24 V، Kv کوچک، سازگار با 6 bar | Bürkert 2875 (+ کنترلر)، **جایگزین یکپارچه: MFC حرارتی** (Bürkert 8746، Alicat MCR-500SLPM) |
-| دبی‌سنج گاز | thermal MFM 0–20 Nm³/h، 4–20 mA + Modbus | Bürkert 8746، Alicat، Endress+Hauser t-mass |
-| کلیدهای فشار گاز | EN 1854، 0.5–6 bar | Kromschröder DG، Honeywell C6097 (بررسی رنج) |
-| اگزایتر جرقه | 24 VDC، ≥ 8 kV، 50–200 جرقه/s، شیلددار | ترانس جرقهٔ مشعل 24 VDC (Danfoss، COFI، BRAHMA) |
-| آشکارساز گاز | متان NDIR، 4–20 mA + دو رله، ATEX/IECEx | Dräger Polytron 5310، Honeywell Sensepoint XCD، Crowcon Xgard IQ، MSA Ultima X |
-| کلید درها | مغناطیسی کدشده PL e، 2 کانال | Schmersal BNS 260، Pilz PSENmag، Euchner CES |
-| E-stop | IEC 60947-5-5، 2 NC | Schneider XB4، Siemens 3SU1، Pilz PIT es |
-| SR1 | رلهٔ ایمنی قابل پیکربندی PL e | Pilz PNOZmulti 2، Phoenix PSR-TRISAFE، Siemens 3SK2 |
-| مانیتور سرعت (اختیاری) | گواهی‌دار، ≥ 2.5 kHz | کلاس Pilz PNOZ s30 (بررسی حد فرکانس) |
-| دتکتور آتش | حرارتی 90 °C + rate-of-rise | — |
-| اکچویتور دمپر | 24 V، 0–10 V، spring return، بدنهٔ دمپر SS برای 300 °C | Belimo NF24A-SR / AF24-SR |
-| فن جعبه | EC 48 VDC، 0–10 V + tach | ebm-papst (سری 48 VDC) |
-| پمپ‌ها | چرخ‌دنده‌ای روغن + BLDC 48 V؛ گردشی خنک‌کن 48 V | طبق طراحی سیستم روغن |
+| برد پایه: MCU | STM32H743IIT6 | C89597 |
+| برد پایه: Ethernet | ⚑ RTL8201F + Würth RJ45 | C45044 |
+| برد پایه: RS-485 ایزوله ×3 (Modbus RTU برای VFDها، کنتورها، چیلرها) | ST485EBDR + STISO621TR | C81186 + C5447162 |
+| برد پایه: M-Bus master (HM-1..4، HM-11..22) | ماژول M-Bus level converter (Relay GmbH / Lingg & Janke، آلمان) یا مدار گسسته با ترانزیستورهای Nexperia | — |
+| برد پایه: حافظه | M95M04 (پارامترها، شمارنده‌ها) + ⚑ W25Q128 (روند محلی) | C1852765 + C97521 |
+| کارت AFE (16 RTD / 8 TC / 8 AI) | STM32F373VCT6 + TSV912 + شانت Isabellenhütte | C1121903 |
+| کارت DI-16 | 2× ISO1I813T | C538445 |
+| کارت DO-16 | 16× Finder 34.51 + 2× ULN2003A (ST) یا 4× VNI4140K برای خروجی ترانزیستوری | C61273 / C2688485 |
+| کارت AO-8 | DAC STM32G474 + TSB572 (0–10 V / 4–20 mA) | C521608 |
+| اتصال کارت‌ها | باس SPI ایزوله یا CAN-FD داخلی رک (TJA1052) | C92210 |
+| HMI لمسی | **Riverdi** (لهستان) STM32 Embedded Display 10.1" **RVT101HVSNWC00-B** (STM32H757XI، IPS 1280×800، PCAP، optical bonding؛ 257.96 × 168.6 × 15.5 mm، 0.52 kg؛ نسخهٔ پرنور تأیید شود) با firmware **TouchGFX** خودمان؛ RS-485 به CPU | — |
 
-## ۷. اینورتر هیبرید — معیارها و کاندیداها
+## ۷. تجهیزات میدانی (اروپایی)
 
-**معیارهای اجباری:**
-1. سه‌فاز 400/230 V، **≥ 30 kW پیوسته**، کار **off-grid با black start از باتری**. حالت on-grid بعداً با همان دستگاه (گواهی EN 50549 / IEC 62116).
-2. **درگاه PV:**
-   - Vmax ≥ 1000 V، رنج MPPT شامل 700–800 V
-   - ≥ 2 MPPT با ≥ 36 A
-   - امکان موازی‌کردن ورودی‌ها
-   - «PV start delay» قابل تنظیم و کوتاه
-   - توانایی curtail در جزیره
-3. **درگاه باتری HV:** 150/160–800 V، ≥ 2× 50 A، پروتکل BMS باتری انتخابی در لیست سازگاری، **battery activation / wake از PV**.
-4. **۱۰۰ ٪ بار نامتعادل** در هر فاز. surge ≥ 1.5× برای ≥ 5 s. THD ولتاژ < 3 % با بار غیرخطی.
-5. **Modbus RTU/TCP با نقشهٔ رجیستر منتشرشده:** خواندن توان‌ها، SOC و خطاها؛ نوشتن on/off و حدها. کنتاکت remote on/off.
-6. **امکان موازی** (اینورتر دوم برای 30 kW آینده یا افزونگی).
-7. رلهٔ N-PE داخلی برای جزیره، یا راهنمای اجرای K-NPE.
-8. IP65، کار تا 45 °C بدون derate شدید. **خدمات پس از فروش و قطعه در ایران.**
-
-| کاندیدا | دادهٔ کلیدی (طبق datasheet و فروشنده‌ها؛ **باید با datasheet رسمی منطقه تأیید شود**) | نظر |
+| تجهیز | مشخصه | انتخاب |
 |---|---|---|
-| **Deye SUN-30K-SG01HP3-EU-BM3** | باتری 160–800 V با 2 ورودی (50+50 A)؛ PV حداکثر 1000 V، MPPT 150–850 V، 3 MPPT (~36 A هر کدام طبق فروشنده‌ها)؛ PV حداکثر 39 kW؛ **۱۰۰ ٪ نامتعادل**؛ موازی تا ۱۰ دستگاه | **اولویت ۱:** در ایران رایج است و سرویس دارد |
-| **Solis S6-EH3P30K-H** | باتری 150–800 V، 2× 70 A؛ MPPT 150–850 V، 3 MPPT × 40 A؛ backup peak 1.6× برای 2 s | اولویت ۲؛ surge کوتاه‌تر است |
-| سایر (Sungrow، GoodWe، Growatt سری HV سه‌فاز) | با همین معیارها ارزیابی شوند | — |
+| ترموکوپل | K، کلاس 1، MI Ø1.5 (ITT) / Ø3، Inconel 600، **ungrounded**، اتصال فشاری M4 | **WIKA** TC80، **Rössel**، **JUMO**، TC Direct (انگلستان) |
+| RTD | PT1000 کلاس A، 3-wire، SS316 | WIKA، JUMO |
+| P2 (سریع) | 0–6 bar abs، 4–20 mA، < 1 ms | **Keller** PA-23 / PA-21Y (سوئیس)، WIKA S-20 |
+| سایر فشارها | 4–20 mA، ±0.25 % FS، سازگار با متان | **Danfoss** MBS 3000 / 1700، WIKA A-10، Keller |
+| ΔP پایین | 0–500 / 0–1000 Pa | **Huba** 699 (سوئیس)، Siemens QBM |
+| RH بعد از کویل (MT-501) | پروب **گرم‌شونده**، ±2 % RH | **E+E** EE33 (اتریش)، **Vaisala** HMP7 (فنلاند)، Rotronic HC2A (سوئیس) |
+| روغن: PDT-703، PT-709، LT-707 | 0–2.5 bar ΔP؛ −50…+500 mbar؛ سطح پیوسته 4–20 mA | Keller PD-23؛ Huba 520؛ **Baumer** CleverLevel / Gems-free |
+| دور N1/N2 | Hall | **Melexis US5881** (TO-92UA، جایگزین مستقیم A1120)؛ ممتاز: **Micro-Epsilon turboSPEED DZ140** (آلمان، از روی پره‌ها) |
+| ارتعاش | IEPE 100 mV/g، ±50 g، تا 120 °C | **Hansford HS-100**، **IFM VSA**، Brüel & Kjær 4533 |
+| شعله | UV، 24 V، خروجی رله/پالس | **Durag D-LX 100 UV** یا **Siemens QRA2 + AGQ3** (آلمان)؛ پنجرهٔ کوارتز |
+| SSV1/SSV2، XV-610 | EN 161 کلاس A، pmax ≥ 6 bar، 24 VDC، < 1 s، POC | **GSR** سری D (آلمان)، **Dungs** سری فشار بالا (MV/HP؛ رنج 6 bar تأیید شود)؛ Kromschröder ساخت آلمان است ولی مالکیت آمریکایی دارد |
+| شیر تناسبی و دبی‌سنج گاز | PWM 24 V / MFC حرارتی | **Bürkert** 2875 + 8746 (آلمان)؛ Endress+Hauser t-mass (سوئیس) |
+| کلیدهای فشار گاز | EN 1854، 0.5–6 bar | Dungs GW (نسخهٔ فشار بالا)، GSR |
+| اگزایتر جرقه | 24 VDC، ≥ 8 kV | **COFI** / **BRAHMA** (ایتالیا)، Danfoss EBI4 |
+| آشکارساز گاز | متان NDIR، 4–20 mA + رله، ATEX | **Dräger** Polytron 5310 (آلمان)، **Crowcon** Xgard IQ (انگلستان) |
+| کلید درها، E-stop | PL e | **Schmersal** BNS 260، **Euchner** CES، **Pilz** PSENmag؛ Schneider XB4، Siemens 3SU1، Pilz PIT es |
+| SR1 | رلهٔ ایمنی قابل پیکربندی PL e | **Pilz PNOZmulti 2**: PNOZ m B0 (772100، 45 mm) + 2× PNOZ m EF 16DI (772140) + PNOZ m EF 4DI4DOR (772143)؛ Phoenix PSR-TRISAFE، Siemens 3SK2 |
+| مانیتور سرعت (اختیاری) | گواهی‌دار | Pilz PNOZ s30 |
+| اکچویتور دمپر | 24 V، spring return | **Belimo** NF24A-SR / AF24-SR (سوئیس) |
+| فن EC | 48 VDC، 0–10 V + tach | **ebm-papst** (آلمان) |
+| پمپ‌های روغن | چرخ‌دنده‌ای فشار + scavenge (BLDC 48 V)، فیلتر 10 µm با bypass، خنک‌کن OC-1 روی حلقهٔ گلیکول | پمپ: **Oberdorfer** / **Kracht** (آلمان) با موتور BLDC؛ فیلتر: **Hydac** / **Argo-Hytos** |
+| استارتر | BLDC 48 V، 1.5–2 kW، **کلاچ یک‌طرفه (sprag، Ringspann / GMN آلمان)** + پینی در سوراخ عرضی Ø3 دماغه؛ چرخش ساعت‌گرد از دید ورودی؛ پشتیبان هوای فشرده M5 با XV-021 | موتور: **maxon** (سوئیس)، **Dunkermotoren** (آلمان)، **ebm-papst** |
+| آتش | سند [07](07_fire_protection.md) | Siemens Sinteso، Minimax، Bosch، Hekatron |
 
-منابع داده: [Deye 30–60K HP3 datasheet (US variant)](https://www.deyeinverter.com/deyeinverter/2026/07/10/rand/3076/%E3%80%90b%E3%80%91datasheet_sun-30-60k-sg01hp3-us-bm4-277v_20260710_en.pdf)، [Deye HP3 EU family page](https://deye.com/ja/?p=7455)، [Solis S6-EH3P(30-50)K-H datasheet](https://www.solisinverters.com/uploads/file/Solis_datasheet_S6-EH3P%2829%2C9-50%29K-H_Global_V1%2C8_2024_04.pdf).
+## ۸. اینورتر هیبرید و باتری‌ها (rev 3: باتری HV ۲۰ kWh، شبکهٔ پشتیبان با zero-export)
 
-## ۸. باتری HV — معیارها و کاندیداها
+**تصمیم کاربر:**
+- باتری اصلی **HV LFP ۲۰ kWh** + باتری 48 V
+- **شبکه منبع پشتیبان خودکار**، با zero-export تا مجوز DG
+- هدف نهایی: صادرات
+- بارهای واقعی ~5–8 kW
 
-- **ظرفیت ≥ 20 kWh اسمی**، با توان پیوسته ≥ 20 kW (1C) و پیک ≥ 30 kW برای 60 s (سند 01 §۷). کمتر از سند 03 (۱۰–۱۵ kWh) **کافی نیست**؛ سؤال باز برای کاربر.
-- شیمی LFP منشوری، ≥ 6000 سیکل در 80 % DoD، دمای کار 0–45 °C، گواهی IEC 62619 / UN38.3.
-- BMS با تعادل‌سازی (balancing)، **پورت دوم CAN/RS-485** برای پایش B1، wake از راه دور (کنتاکت خشک)، و در لیست سازگاری اینورتر انتخابی.
-- ولتاژ اسمی در رنج باتری اینورتر (معمولاً 200–500 V).
-- **کاندیداها:**
-  - Deye BOS-G (HV، ماژول 5.12 kWh / 100 Ah؛ ۴ ماژول ≈ 20.5 kWh)
-  - Pylontech Force H3
-  - BYD Battery-Box Premium HVM (۶–۸ ماژول)
-- انتخاب نهایی پس از انتخاب اینورتر انجام شود (لیست سازگاری).
+**معیارها:**
+1. درگاه GRID + **درگاه LOAD (backup، ترجیحاً بدون وقفه)**؛ zero-export با CT یا کنتور.
+2. ورودی DC (MPPT) با بازه‌ای که 720 V را در بار کامل پوشش دهد؛ حداکثر 1000 V؛ ≥ 24 kW DC.
+3. باتری HV با جریان کافی برای ~12 kW در backup (trip توربین).
+4. ۱۰۰ ٪ بار نامتعادل؛ پیک فاز کافی برای استارت کولر 12,000 BTU (calc §۵).
+5. گواهی grid-tie: EN 50549-1، VDE-AR-N 4105، IEC 62116، IEC 61727، IEC 62109.
+6. Modbus باز برای EMS؛ سرویس در منطقه.
+7. **بدون محتوای آمریکایی**؛ ترجیح اروپایی.
 
-**باتری 48 V (باس اضطراری):**
-- LFP 48 V، 100 Ah، رکی، با BMS (CAN/RS-485). کاندیداها: Deye SE-G5.1 Pro، Pylontech US5000، Dyness.
-- شارژرها: 2× Mean Well RSP-1000-48 (تنظیم 54.0 V، current sharing) یا NPB-1700-48.
-- مبدل‌های DC-DC (رنج ورودی 33.6–67.2 V را بررسی کنید): Mean Well DDR-240C-24 در ER و DDR-480C-24 روی بام.
+**نتیجهٔ بررسی datasheetها (۲۰۲۶-۱۰-۲۱؛ منبع هر عدد در `cad/electrical/el_items.py` و پوشهٔ تحقیق):**
+
+| گزینه | درگاه backup | انتقال | توان | باتری | MPPT | نتیجه |
+|---|---|---|---|---|---|---|
+| **Deye SUN-30K-SG01HP3-EU-BM3** (چین) | **LOAD داخلی (UPS) + GEN** | در datasheet نیامده؛ فروشنده‌ها < 4 ms (**تأیید شود**) | 30 kW، هر فاز ≤ 50 %، پیک 1.5× / 10 s | 160–800 V، **2× 50 A** | 3× 36 A، 150–850 V (بار کامل 360–850) | **انتخاب مرجع** |
+| Deye SUN-25K-SG01HP3-EU-AM2 (چین) | LOAD داخلی | همان | 25 kW | 160–700 V، **1× 50 A** (با BOS-G20 فقط ~10 kW) | 2× 26 A، بار کامل 625–850 V | باتری کم‌توان |
+| SMA Sunny Tripower Hybrid X 30 (آلمان) + SMA Backup | جعبهٔ خارجی | **پس از 1–600 s قطع شبکه** (پیش‌فرض 2 s) | 30 kW | 120–800 V، 50 A؛ فقط باتری SMA در 20–30 kW | 4× 32 A، 180–850 V | اروپایی، بدون وقفه نیست |
+| KOSTAL PLENTICORE G3 L 20 (آلمان) + BackUp Switch | سوییچ خارجی | < 5 s دستی / < 30 s خودکار | 20 kW، 6.66 kW در هر فاز در backup | 95–820 V، **30 A** | 3 MPPT، 227–800 V | اروپایی؛ استارت کولر در backup بیش از پیک |
+| Fronius Symo GEN24 10 Plus (اتریش) | Backup Controller | ~10 s | **10 kW** | 22 A | 2 MPPT | کوچک |
+| SMA STP Smart Energy 10 (آلمان) | داخلی | 30 ms تا 10 s | **10 kW** | 30 A | 2 MPPT | کوچک |
+
+**انتخاب: Deye SUN-30K-SG01HP3-EU-BM3 + Deye BOS-G20.**
+- تنها ترکیب این اندازه که **درگاه LOAD بدون وقفه**، **~20 kW از باتری ۲۰ kWh**، و MPPT مناسب B3 را با هم دارد.
+- **چینی است، نه آمریکایی** (مجاز طبق docs/06 §۵)، و در ایران رایج است و سرویس دارد.
+- اگر کاربر اروپایی بودن را بر انتقال بدون وقفه ترجیح دهد، گزینهٔ اروپایی **SMA Hybrid X 30 + SMA Home Storage** است، با پذیرش قطعی ~2 s در قطع شبکه (سؤال باز 00 §۱۰-۱).
+
+| قلم | انتخاب | ابعاد و وزن (datasheet) |
+|---|---|---|
+| **HI-1** | Deye SUN-30K-SG01HP3-EU-BM3 | 527 × 894 × 294 mm، 80 kg، IP65، دیواری |
+| **BAT-1** | Deye **BOS-G20**: 4× BOS-GM5.1 (5.12 kWh، 51.2 V، 100 Ah؛ 440 × 133 × 570 mm، 45 kg) + جعبهٔ کنترل HVB750V/100A-EU (440 × 150 × 570، 19 kg) در رک 3U-LRACK | 530 × 1629 × 602 mm، 240 kg؛ 20.48 kWh، 204.8 V (166–234 V)، 100 A اسمی / 125 A برای 2 min؛ IEC 62619، VDE 2510-50، UN38.3 |
+| CT / کنتور zero-export | کنتور سه‌فاز تأییدشدهٔ Deye (یا CTهای همراه) در ورودی شبکه | — |
+| **ATS-1** | **Socomec ATyS p M 4P 63 A** (9384 4006، فرانسه) | 324 × 245 mm (عمق تأیید شود)، 4.3 kg |
+| **BAT-2** (باس 48 V) | **Pylontech US5000** (48 V، 100 Ah، 4.8 kWh، 19") در جعبهٔ فولادی با فیوز Class-T؛ جایگزین اروپایی: Victron Lithium NG 51.2 V 100 Ah (648 × 235 × 162 mm، 37 kg) | 442 × 162 × 420 mm، 40 kg |
+| شارژر 48 V | 2× **Victron Smart IP43 Charger 48/13** (هلند، 13 A، دیواری) + ORing | 249 × 180 × 116 mm |
+| DC-DC 48→24 V | **PULS CD10.242** (آلمان، 10 A، DIN) | 42 × 124 × 117 mm |
+
+> **دو نکته که باید با Deye یا فروشنده تأیید شود:**
+> - **زمان انتقال UPS درگاه LOAD.** datasheet و دفترچه عددی ندارند.
+> - **موازی‌کردن دو ورودی باتری روی یک رشتهٔ BOS-G20.** این برای رسیدن به ~20 kW از باتری لازم است.
+>
+> **اگر موازی‌کردن مجاز نباشد:** BOS-G با 8 ماژول (409.6 V، 41 kWh) لازم می‌شود، یا حذف بار در backup به ~10 kW.
 
 ## ۹. سایر تجهیزات قدرت
 
-| تجهیز | مشخصه | گزینه |
-|---|---|---|
-| DCD-1 | ایزولاتور DC-PV2، 1000 V، 50 A، دوپل، IP66، قفل‌شو | ABB OTDC، Santon، Suntree |
-| SPD DC | Type 1+2 (بام) / Type 2 (ER)، Ucpv ≥ 1000 V | Phoenix VAL-MS…DC-PV، DEHN DEHNcombo / DEHNguard YPV |
-| SPD AC | Type 1+2 (BOP-R)، Type 2 (MDB-P، تابلوی شرکت) | Phoenix، DEHN، ABB OVR |
-| SPD داده | CAN، RS-422، حلقهٔ ایمنی 24 V | Phoenix TERMITRAB / PLUGTRAB، DEHN BLITZDUCTOR XT |
-| فیوز gPV | 1000 V DC، 40 A | Mersen HP10M / HP14M، Bussmann PV |
-| مقاومت‌های ترمز | R_BR1: 18 Ω (2×36)، 36 kW/10 s، ≥ 400 kJ، 6 kW پیوسته؛ R_BR2: 8 Ω، 30–40 kW/10 s؛ فولاد ضدزنگ edge-wound یا grid، IP23 + کلاهک باران، کلید حرارتی NC | Cressall، Danotherm، Frizlen، یا ساخت داخلی با تست نوعی |
-| کنتورها | سه‌فاز، Modbus RTU، کلاس 0.5S/1 | Eastron SDM630-Modbus، Schneider PM5110، Janitza UMG 96 |
-| VFD پمپ‌ها | 4 kW، چوک DC، C2، Modbus | سند 01 §۶ |
-| کولرها | soft starter کمپرسور یا جایگزینی با اینورتری | مدل‌های اینورتری Gree / Midea / LG در ایران رایج‌اند |
-| شبکه | سوییچ مدیریتی صنعتی با SFP ×2 (ER و بام)، فیبر OM3 زره‌دار 4 کور | Moxa، Phoenix FL SWITCH، Planet IGS |
-| روتر | LTE دو سیم‌کارت با WireGuard، پیامک آلارم، باند LTE ایران (B3/B7/B40/B41 بررسی شود) | Teltonika RUT956 / RUTX11 |
+| تجهیز | انتخاب اروپایی |
+|---|---|
+| DCD-1 (ایزولاتور DC 1000 V) | **ABB OTDC**، **Santon** (هلند) |
+| SPD AC، DC و داده | **DEHN**، **Phoenix Contact**، **OBO Bettermann** (آلمان)، **Citel** (فرانسه) |
+| فیوز gPV، NH و Class-T 48 V | **Mersen** (فرانسه)، **SIBA** (آلمان) |
+| مقاومت‌های ترمز R_BR1 / R_BR2 (RB-1) | **Danotherm** (دانمارک)، **Frizlen** (آلمان)، **Cressall** (انگلستان)؛ مبنای ابعاد: Schneider VW3A7790 (3× 6.7 Ω، 20 kW، IP23، 1060 × 565 × 540 mm). مدل کاتالوگی 18 Ω با ≥ 400 kJ یافت نشد، پس ساخت سفارشی با تأمین‌کننده |
+| کنتورها JT-901..920 | **Carlo Gavazzi** EM24 (سه‌فاز، CT) / EM340 / EM111 (تک‌فاز)، **Janitza** UMG 96-PA (کلاس 0.5S)، ABB B23/B24؛ همه Modbus RTU |
+| VFD پمپ‌ها | **Danfoss** FC 51 / FC 102، **ABB** ACS580، **Siemens** G120X |
+| soft starter کمپرسور تک‌فاز | **Carlo Gavazzi RSHR / RSBS** (کاهش LRA حدود 60 %) |
+| رلهٔ حفاظت رابط (grid-tie، اگر لازم شد) | **Ziehl UFR1001E**، **Bender LINETRAXX VMD460-NA** (آلمان) |
+| مانیتور عایق (اختیاری، DC و IT) | **Bender** ISOMETER (آلمان) |
+| سوییچ شبکه | **Westermo Lynx L205-S1** (سوئد)، **Phoenix FL SWITCH 2105** (آلمان)؛ فیبر OM3 زره‌دار |
+| روتر | **Teltonika** RUTX11 (لیتوانی): WAN اینترنت ثابت + LTE پشتیبان، SMS، WireGuard |
+| تابلو و یراق | **Rittal**، **Phoenix**، **Weidmüller**، **WAGO** |
+| کلید و حفاظت | **ABB**، **Siemens**، **Schneider**، **Hager** |
+| کابل | **Lapp**، **Helukabel** (آلمان)، **Prysmian** (ایتالیا)؛ آتش: FE180 / PH120 (سند 05) |
 
-## ۱۰. پشتهٔ پایش از راه دور (B5 + ابر)
+## ۱۰. پایش از راه دور (اینترنت ثابت با IP ثابت؛ هشدار Telegram و SMS)
 
 ```
- B1 ECU ──Ethernet (VLAN OT)── B5 CM5 ──┬── HMI محلی (Chromium kiosk) + مانیتور سرویس بام (thin client، فیبر)
-   Modbus TCP server                    ├── gr180-gateway (Python/Go): Modbus TCP poll 1–10 Hz، UDP 100 Hz، دانلود event record
-   UDP stream 100 Hz                    ├── VictoriaMetrics (روند 1 s، ۲ سال محلی ≈ 3 GB/سال)
-   HTTP/TFTP: رکورد trip               ├── PostgreSQL / SQLite: آلارم‌ها (ISA-18.2)، رویدادها، شمارنده‌های عمر
-                                        ├── Grafana (روند مهندسی) + Node-RED (یکپارچه‌سازی HVAC، اختیاری)
-                                        ├── Mosquitto bridge (TLS، store-and-forward) ──┐
-                                        └── WireGuard client                           │
- روتر LTE + اینترنت ساختمان (فایروال، بدون پورت باز ورودی) ──── WireGuard ──────────── VPS (داخلی، مثلاً ArvanCloud/ParsPack، یا خارجی در صورت امکان)
-                                                                                          ├── WireGuard hub (دسترسی مهندسین)
-                                                                                          ├── EMQX/Mosquitto + VictoriaMetrics + Grafana
-                                                                                          ├── هشدار: Grafana alerting → پیامک (Kavenegar) / Bale / Telegram / email
-                                                                                          └── پشتیبان روزانهٔ پایگاه داده و رکوردها
+ B1 ECU ─Modbus TCP / UDP 100 Hz─┐
+ B6-R/E/C ─Modbus TCP────────────┼─ B5 (i.MX 8M Plus) ─┬─ HMI محلی (Qt / Chromium kiosk)
+ HI-1 Deye ─Modbus RTU (B1) ───────┘                     ├─ VictoriaMetrics (روند 1 s)، PostgreSQL (آلارم ISA-18.2، رویداد، شمارنده‌ها)، Grafana
+                                                       ├─ gr180-notify: قواعد اولویت → Telegram + SMS
+                                                       └─ Mosquitto bridge (TLS، store-and-forward) → VPS (اختیاری)
+ روتر Teltonika RUTX11:
+   WAN1 = اینترنت ثابت با IP ثابت، WAN2 = LTE (failover)
+   ├─ سرور WireGuard روی IP ثابت (تنها پورت باز: UDP 51820)؛ کلید جدا برای هر کاربر
+   ├─ مودم LTE: SMS مستقیم، مستقل از اینترنت (API محلی روتر از B5)
+   └─ VLANها: OT (B1، B5، B6، logger اینورتر، FCP gateway)، مدیریت، IT؛ فایروال بین VLANها
+ VPS خارج از کشور (اختیاری ولی برای Telegram لازم): رلهٔ Telegram Bot API + آینهٔ داده + پشتیبان روزانه
 ```
 
-**اصول:**
-- **هیچ تابع ایمنی به B5 یا شبکه وابسته نیست.**
-- فرمان‌های راه دور فقط در حالت REMOTE: start/stop، setpoint، reset تریپ‌های کلاس R. trip‌های L و LO فقط محلی ریست می‌شوند (سند 03 §۷).
-- **احراز هویت:** حساب‌های نقش‌محور (اپراتور، مهندس، نگهداری)، 2FA روی VPS، ثبت همهٔ فرمان‌ها (audit log).
-- **امنیت سیستم‌عامل B5:**
-  - Raspberry Pi OS Lite 64-bit (Debian 12) با root فقط‌خواندنی (overlayroot) و داده روی NVMe
-  - به‌روزرسانی امضاشده
-  - شبکهٔ OT جدا از IT (VLAN)
-- **سرویس‌های خارجی ممکن است از ایران مسدود باشند** (AWS IoT، Azure، Teltonika RMS)، پس همه‌چیز **self-hosted** است. پیامک داخلی هم به‌عنوان پشتیبان پیام‌رسان‌ها در نظر گرفته شده.
-- **به‌روزرسانی firmware بردها:** از B5 روی CAN-FD با bootloader امضاشده، فقط در MAINT و STANDBY.
-- **زمان:** NTP از اینترنت + RTC CM5. B1 با B5 همگام می‌شود (برای هم‌زمانی رویدادها ±10 ms).
+- **IP ثابت:** مهندسین مستقیم به WireGuard سایت وصل می‌شوند و برای دسترسی VPS لازم نیست.
+  - پورتال ابری سازندهٔ اینورتر (Deye SolarmanPV) اختیاری است و به اینترنت خارجی وابسته است. **مبنای پایش، B5 محلی است.** logger وای‌فای اینورتر در VLAN جدا یا غیرفعال.
+- **Telegram:**
+  - Bot API از ایران فیلتر است. پس B5 پیام را با MQTT روی TLS به **VPS خارج از کشور** می‌فرستد و VPS آن را به `api.telegram.org` می‌دهد.
+  - اگر VPS در دسترس نباشد، پیام در صف می‌ماند و SMS جای آن را می‌گیرد.
+- **SMS از دو مسیر مستقل:**
+  1. **مودم LTE روتر** با سیم‌کارت محلی، بدون وابستگی به اینترنت (مسیر اصلی برای P1/P2)
+  2. سرویس پیامک داخلی روی اینترنت (Kavenegar / Ghasedak) به‌عنوان پشتیبان
+- **برای P1، SMS مستقیماً هم از FCP آتش‌نشانی** (شمارنده/دیالر GSM گواهی‌دار EN 54-21) ارسال می‌شود، مستقل از B5.
+- **اولویت‌ها و مسیرها** (جزئیات در 06 §۱۱):
+
+| اولویت | نمونه | Telegram | SMS | تماس صوتی | تکرار تا تأیید |
+|---|---|---|---|---|---|
+| P1 | trip ایمنی، آتش، نشت گاز، خطای ESD | ✓ | ✓ (همهٔ کشیک‌ها) | ✓ (روتر، اختیاری) | هر 5 min |
+| P2 | trip فرایندی، فاز نزدیک حد، SOC < 20 %، قطع شبکه | ✓ | ✓ (کشیک اول) | — | هر 15 min |
+| P3 | آلارم، نگهداری لازم | ✓ | — | — | — |
+| P4 | گزارش روزانه (kWh، ساعت کار، شمارندهٔ عمر، COP) | ✓ (08:00) | — | — | — |
+
+- **امنیت:**
+  - فرمان‌های راه دور فقط در حالت REMOTE؛ trip‌های L/LO فقط محلی ریست می‌شوند (03 §۷)
+  - 2FA روی وب HMI، audit log
+  - سیستم‌عامل B5 فقط‌خواندنی با به‌روزرسانی امضاشده
+  - مرجع: IEC 62443-3-3 SL2
+- **هیچ تابع ایمنی به B5، شبکه یا اینترنت وابسته نیست.**
+
+## ۱۱. اعلام و اطفای حریق
+
+جزئیات در [07_fire_protection.md](07_fire_protection.md). خلاصه:
+
+| بخش | انتخاب |
+|---|---|
+| پنل کنترل اطفا (FCP) | گواهی‌دار EN 54-2/4 و **EN 12094-1**: **Siemens Sinteso XC10** (مرجع؛ 505 × 375 × 125 mm، 6.5 kg) یا FC2020 + ماژول اطفا، **Minimax FMZ 5000**، **Bosch FPA-1000**، **Hekatron Integral** (آلمان) |
+| دتکتور حرارتی | EN 54-5 کلاس A2R/BS (ROR + ثابت)؛ نسخهٔ دمای بالا کلاس CS/DS در جعبهٔ موتور |
+| دتکتور شعله | IR3 / UV-IR، EN 54-10 (جعبهٔ موتور، روی بام) |
+| دتکتور دود | نوری EN 54-7 (اتاق برق، اتاق باتری)؛ اختیاری: مکشی EN 54-20 (Wagner TITANUS، آلمان) |
+| گاز باتری | آشکارساز **H₂** (Dräger Polytron 8100 EC + DrägerSensor H2، 150 × 280 × 130 mm) + CO؛ Crowcon Xgard |
+| شستی‌ها | دستی آژیر (EN 54-11)، **شستی رهاسازی زرد**، **شستی abort آبی**، **کلید lock-off** |
+| آژیر و فلاشر | EN 54-3 / EN 54-23 (داخل و خارج هر ناحیه) |
+| شیر رهاسازی | سولنوئید 24 V پایش‌شده روی مخزن (طراحی HVAC)، کلید فشار تخلیه، کلید وضعیت شیر دستی |
+| دیالر | GSM / IP دیالر EN 54-21 |

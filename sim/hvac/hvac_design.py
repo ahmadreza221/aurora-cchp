@@ -98,16 +98,16 @@ def m3h(m_kgs, T):
 # ------------------------------------------------------------------------------ engine design data
 C.CHILLER['Q_heat_max'] = 75.3e3                            # SC10 + SC5 class (roof_site_study)
 
-def engine_case(T_in, TIT=800):
-    c = C.cchp(115e3, TIT, 'target', T_in=T_in)
+def engine_case(T_in, TIT=800, N=115e3):
+    c = C.cchp(N, TIT, 'target', T_in=T_in)
     r = c['r']
     mg = r['ma'] + r['mf']
     T_ex = r['T_stack_in'] - 273.15
     coil = RS.inlet_coil_kW(r['ma'], RS.OUT['T'], RS.OUT['w'], T_in) if T_in < RS.OUT['T'] else 0.0
     P = c['P_net'] - (0.35e3 if T_in < RS.OUT['T'] else 0)
-    return dict(T_in=T_in, TIT=TIT, ma=r['ma'], mf=r['mf'], mg=mg, T_ex=T_ex,
+    return dict(T_in=T_in, TIT=TIT, N=N, ma=r['ma'], mf=r['mf'], mg=mg, T_ex=T_ex,
                 Q_gas=mg * CP_GAS * (T_ex - 100.0), Q_hw=c['Q_hw'] / 1e3, Q_cool=c['Q_cool'] * DER / 1e3,
-                coil=coil, P_net=P / 1e3, F=c['F'] / 1e3, P_aux_engine=r['P_aux'] / 1e3)
+                coil=coil, P_net=P / 1e3, F=c['F'] / 1e3, P_aux_engine=r['P_aux'] / 1e3, P_shaft=r['P_shaft'] / 1e3)
 
 DESIGN = engine_case(15.0)                                  # summer design: intake chilled to 15 C
 CASES = {'design 15C intake': DESIGN, 'spec nominal 22C': engine_case(22.0),
@@ -217,8 +217,9 @@ def exhaust_system(hx):
         q_c = 0.5 * rho_c * (mg / rho_c / A) ** 2
         A_face = hx['Nt'] * HXG['St'] * hx['Lt']
         q_face_h = 0.5 * rho_h * (mg / rho_h / A_face) ** 2
-        dp_hx_path = (0.8 * q_h + 0.6 * q_face_h * 2 + r['dp_g'] + (0.02 * 5 / D_stack + 1.0) * q_c)
-        dp_bypass = 0.8 * q_h + 1.2 * q_h + (0.02 * 6 / D_stack + 1.0) * q_h
+        K_sil = 1.0                                          # SL-101 absorptive silencer in the common stack
+        dp_hx_path = (0.8 * q_h + 0.6 * q_face_h * 2 + r['dp_g'] + (0.02 * 5 / D_stack + 1.0 + K_sil) * q_c)
+        dp_bypass = 0.8 * q_h + 1.2 * q_h + (0.02 * 6 / D_stack + 1.0 + K_sil) * q_h
         out[name] = dict(T_in=Tin, mg=mg, Q_gas_to_water=r['Q'], Tg_out=r['Tg_out'], Tw_out=r['Tw_out'],
                          dp_core=r['dp_g'], dp_hx_path=dp_hx_path, dp_bypass=dp_bypass,
                          dp_pct=dp_hx_path / (P_ATM * 10), v_stack=mg / rho_c / A, v_stack_bypass=mg / rho_h / A)
@@ -248,6 +249,25 @@ CHILLERS = {   # APPROX catalogue values (Yazaki WFC-SC brochure class) - replac
     'CH-2': dict(model='WFC-SC5 class', Qc=17.6, Qh=25.1, hw=1.20, chw=0.77, cw=2.55,
                  dp_hw=90.0, dp_chw=56.0, dp_cw=47.0, el=0.05, dims=(0.594, 0.744, 1.756), dry=365, op=420),
 }
+
+# Equipment package. 'A' = first issue (catalogue dp, 40 t tower at full fan, balancing valves throttling the ECM pumps).
+# 'B' = low-aux selection (recommended): purchase-spec dp caps on the chillers, ECM/VFD flow setting instead of balancing
+# valves, oversize strainers and low-loss checks, larger tower with low-head (gravity / low-pressure) distribution and EC
+# fan sized for the design at 60 % fan speed, low-dp FCU coils and PICVs, CW flow trimmed to 85 % of rated (maker approval).
+PKG = {
+    'A': dict(label='rev A (first issue)', ch_dp=None, strainer=10, check=6, balance=8, tower_static=40, fcu_dp=30,
+              picv_dp=25, dp_sp=65, tower_fan_speed=1.0, cw_frac=1.0, ro_kW=0.30, coil_dp=40, hx4=False),
+    'B': dict(label='rev B low-aux (recommended)', ch_dp=dict(hw=50.0, chw=40.0, cw=50.0), strainer=5, check=4, balance=0,
+              tower_static=25, fcu_dp=20, picv_dp=20, dp_sp=50, tower_fan_speed=0.60, cw_frac=0.85, ro_kW=0.15, coil_dp=30,
+              hx4=True),
+}
+REV = 'B'                                                   # design basis of this issue
+CW_MIN, CW_MAX_PART = 26.0, 33.0                            # crystallisation floor; CW ceiling for one part-loaded chiller
+
+def ch_dp(tag, key, pkg):
+    v = CHILLERS[tag]['dp_' + key]
+    cap = PKG[pkg]['ch_dp']
+    return min(v, cap[key]) if cap else v
 
 def chiller_pair(Q_heat_avail, T_hw_in, T_cw_in):
     """Heat-limited LiBr pair. COP law anchored to docs/03 (0.70 x 0.92 at 32 C cooling water)."""
@@ -280,9 +300,9 @@ def merkel(Tc, Th, WB, LG, n=40):
 
 NTU_RATED = merkel(TOWER_RATING['Tc'], TOWER_RATING['Th'], TOWER_RATING['WB'], TOWER_RATING['LG'])
 
-def tower_cold_water(S, L_kgs, Q_kW, WB):
+def tower_cold_water(S, L_kgs, Q_kW, WB, fan=1.0):
     Lr = S * TOWER_RATING['L_per_ton'] * 995 / 3600
-    G = Lr / TOWER_RATING['LG']
+    G = Lr / TOWER_RATING['LG'] * fan                       # air flow proportional to fan speed
     LG = L_kgs / G
     ntu_av = NTU_RATED * (LG / TOWER_RATING['LG']) ** -0.6
     rng = Q_kW / (L_kgs * CPW)
@@ -339,6 +359,253 @@ def insul_thk(OD_mm, T_f, T_a, RH, k, h_s, need_dp=True, P=P_ATM):
         if not need_dp or Ts >= Td + 1.0:
             return t, Ts, q, Td
     return None, Ts, q, Td
+
+# ------------------------------------------------------------------- 6. engine glycol loop and oil cooler
+def bearing_loss_W(n_rpm, dm_mm, nu_cSt=10.0, f0=4.0):
+    """Palmgren speed-dependent friction of an oil-jet lubricated ball bearing: M0 = 1e-7 f0 (nu n)^2/3 dm^3 [N mm]."""
+    M0 = 1e-7 * f0 * (nu_cSt * n_rpm) ** (2 / 3) * dm_mm ** 3
+    return M0 / 1e3 * n_rpm * 2 * math.pi / 60
+
+def glycol_loop(case):
+    """Engine auxiliary loop (docs/electrical M-751, TE-GLY, DC-1): rectifier B3 -> PMG jacket -> oil cooler OC-1 -> DC-1
+    (adiabatic pre-cooling pads) -> HX-4 trim when the tower runs. docs/electrical: TE-GLY ALM 58 / FSD 65 C; docs/06 section 2: PMG glycol 35-40 C target."""
+    core = 2 * bearing_loss_W(115e3, 15.0)                  # 2 x 608 hybrid 8x22x7 (dm 15 mm), turbine oil ~10 cSt
+    fpt = 2 * bearing_loss_W(60e3, 23.5)                    # FPT/PMG pair, 15x32 class, only if it joins the oil system
+    soak, pump = 400.0, 50.0                                # turbine-side heat soak into the oil (estimate), M-710 pump
+    oil_core = (core + soak + pump) / 1e3                   # confirmed: closed-loop pressurised oil on the core 608s
+    oil_all = oil_core + fpt / 1e3
+    oil_design = math.ceil(oil_core * 1.25 * 10) / 10       # OC-1 sized for the core system (+25 %)
+    pmg = case['P_shaft'] * 0.05                            # PMG 95 % (concept_study)
+    rect = case['P_shaft'] * 0.95 * 0.015                   # SiC active rectifier ~1.5 %
+    panels = 0.2                                            # air/water coolers of RP-1 / PEB (docs/electrical)
+    Q_gly = pmg + rect + oil_core + panels
+    Q_des = 4.0                                             # DC-1 design (FPT/PMG oil, 30 kW core later)
+    m_g, cp_g = 15.0 / 60 * 1.03, 3.85                      # 30 % PG, 15 L/min
+    # DC-1 coil sized dry for Q_des at 46 C air with glycol supply 55 C (UA fixed by this)
+    T_sup_dry = 55.0
+    T_ret_dry = T_sup_dry + Q_des / (m_g * cp_g)
+    m_air = Q_des / (1.006 * 5.0)
+    d1, d2 = T_ret_dry - (DB_SUMMER + 5.0), T_sup_dry - DB_SUMMER
+    lm = (d1 - d2) / math.log(d1 / d2)
+    UA = Q_des * 1e3 / lm
+    # rating with the actual load: dry at 46 C, and with adiabatic pads (eff 0.75) at 46 C / WB 28 C
+
+    def rate(Q, T_air):
+        Cg, Ca = m_g * cp_g * 1e3, m_air * 1006.0
+        Cmin, Cmax = min(Cg, Ca), max(Cg, Ca)
+        Cr, NTU = Cmin / Cmax, UA / Cmin
+        eps = (1 - math.exp(-NTU * (1 - Cr))) / (1 - Cr * math.exp(-NTU * (1 - Cr)))
+        T_in_g = T_air + Q * 1e3 / (eps * Cmin)             # glycol into DC-1 for this duty
+        return T_in_g - Q * 1e3 / Cg                        # glycol supply
+    T_pad = DB_SUMMER - 0.75 * (DB_SUMMER - WB_TOWER)
+    T_sup_dry_act = rate(Q_gly, DB_SUMMER)
+    T_sup_pad = rate(Q_gly, T_pad)
+    pad_water = m_air * 1.006 * (DB_SUMMER - T_pad) / 2420 * 3600   # L/h evaporated at the design hour
+    V_air = m_air / 1.09 * 3600
+    fan_W = m_air / 1.09 * 120.0 / 0.45                     # +pad pressure drop
+    # oil cooler: oil 100 -> 70 C; glycol enters after B3 + PMG (pads in summer)
+    T_g_oc = T_sup_pad + (rect + pmg + panels) / (m_g * cp_g)
+    T_g_oc_out = T_g_oc + oil_design / (m_g * cp_g)
+    lm_oc = ((100 - T_g_oc_out) - (70 - T_g_oc)) / math.log((100 - T_g_oc_out) / (70 - T_g_oc))
+    m_oil = oil_design / (1.95 * 30.0)
+    return dict(core_bearings=core / 1e3, fpt_bearings=fpt / 1e3, soak=soak / 1e3, oil_pump=pump / 1e3, oil_core=oil_core,
+                oil_all=oil_all, oil_design=oil_design, oil_design_with_fpt=math.ceil(oil_all * 1.25 * 10) / 10,
+                oil_flow_Lmin=m_oil / 0.85 * 60, pmg=pmg, rect=rect, panels=panels, Q_gly=Q_gly, Q_des=Q_des,
+                glycol_Lmin=15.0, dc1_UA=UA, dc1_LMTD=lm, T_sup_dry=T_sup_dry_act, T_sup_pad=T_sup_pad, T_pad_air=T_pad,
+                pad_water_Lh=pad_water, dc1_air_m3h=V_air, dc1_fan_W=fan_W, T_glycol_at_oc=T_g_oc, oc_LMTD=lm_oc,
+                oc_UA=oil_design * 1e3 / lm_oc)
+
+# --------------------------------------------------------------------------- 7. pumps per package
+def build_pumps(rev, P, hx_dp_w, hy, V_sec, L_cw, V_hx4):
+    k = PKG[rev]
+    st, ck, bal = k['strainer'], k['check'], k['balance']
+    return [  # tag, service, m3/h, T, items, control, static kPa (not scaled with flow)
+        ('P-1A/B', 'HW primary through HX-1 (twin head)', hy['V1'], 87,
+         [('pipe L-HW-01', P['L-HW-01']['dp']), ('HX-1 water side', hx_dp_w), ('LLH-1 + air/dirt separator', 8),
+          ('strainer', st), ('check + isolation', ck), ('flow meter', 2)], 'duty/standby, ECM const. flow', 0.0),
+        ('P-2A', 'HW secondary to CH-1', CHILLERS['CH-1']['hw'] * 3.6, 86,
+         [('pipe L-HW-02/03', P['L-HW-02']['dp'] + P['L-HW-03']['dp']), ('CH-1 generator', ch_dp('CH-1', 'hw', rev)),
+          ('strainer', st), ('check + isolation', ck), ('balancing valve', bal)], 'on with CH-1, ECM const. flow', 0.0),
+        ('P-2B', 'HW secondary to CH-2', CHILLERS['CH-2']['hw'] * 3.6, 86,
+         [('pipe L-HW-02/04', P['L-HW-02']['dp'] + P['L-HW-04']['dp']), ('CH-2 generator', ch_dp('CH-2', 'hw', rev)),
+          ('strainer', st), ('check + isolation', ck), ('balancing valve', bal)], 'on with CH-2, ECM const. flow', 0.0),
+        ('P-3', 'DHW / heating branch', P['L-HW-05']['Q'], 80,
+         [('pipe L-HW-05', P['L-HW-05']['dp']), ('HX-2/HX-3 plate HX', 25), ('V-PRI 3-way', 15), ('strainer', st),
+          ('check + isolation', ck)], 'on demand, ECM', 0.0),
+        ('P-4A', 'CHW primary CH-1', CHILLERS['CH-1']['chw'] * 3.6, 10,
+         [('pipe L-CH-01', P['L-CH-01']['dp']), ('CH-1 evaporator', ch_dp('CH-1', 'chw', rev)), ('strainer', st),
+          ('check + isolation', ck), ('balancing valve', bal), ('MV-CH1E isolation', 3)], 'on with CH-1 + 15 min run-on', 0.0),
+        ('P-4B', 'CHW primary CH-2', CHILLERS['CH-2']['chw'] * 3.6, 10,
+         [('pipe L-CH-02', P['L-CH-02']['dp']), ('CH-2 evaporator', ch_dp('CH-2', 'chw', rev)), ('strainer', st),
+          ('check + isolation', ck), ('balancing valve', bal), ('MV-CH2E isolation', 3)], 'on with CH-2 + 15 min run-on', 0.0),
+        ('P-5A/B', 'CHW secondary distribution (twin head)', V_sec, 10,
+         [('pipe L-CH-03', P['L-CH-03']['dp']), ('pipe index: hall L-CH-05/06/07 or elec room L-CH-08',
+                                                 max(P['L-CH-05']['dp'] + P['L-CH-06']['dp'] + P['L-CH-07']['dp'], P['L-CH-08']['dp'])),
+          ('FCU coil', k['fcu_dp']), ('PICV', k['picv_dp']), ('strainer', st), ('check + changeover valves', 8 + ck),
+          ('air/dirt separator', 3)], 'duty/standby, ECM dp-control', 0.0),
+        ('P-6A/B', 'condenser water (tower)', L_cw / 0.995 * 3.6 * k['cw_frac'] + (V_hx4 if k['hx4'] else 0.0), 34,
+         [('pipe L-CW-01/02', (P['L-CW-01']['dp'] + P['L-CW-02']['dp']) * k['cw_frac'] ** 2),
+          ('CH-1 absorber+condenser', ch_dp('CH-1', 'cw', rev) * k['cw_frac'] ** 2),   # rated-flow dp scaled to trimmed flow
+          ('basket strainer', st), ('check + isolation', ck), ('balancing valve (CH-2 branch)', max(bal, 5) * k['cw_frac'] ** 2),
+          ('tower static lift + distribution', k['tower_static'])], 'duty/standby, VFD on flow set-point',
+         k['tower_static'] * 1.10),
+    ]
+
+def pump_kW(Q, H_kPa):
+    if Q <= 0:
+        return 0.0
+    Ph = Q / 3600 * H_kPa * 1e3
+    return Ph / eta_ww(Ph) / 1e3
+
+# ----------------------------------------------------------------------- 8. operating modes (power priority)
+MODE_SPEC = {   # chillers, CW flow fraction (None = package), tower fan rule, hall rule, intake-coil set-point
+    'MAX-COOLING': dict(ch=('CH-1', 'CH-2'), cw=1.0, fan='max', hall='first', T1=15.0, defer=False),
+    'BALANCED':    dict(ch=('CH-1', 'CH-2'), cw=None, fan='hold', hall='rest', T1=15.0, defer=False),
+    'MAX-POWER':   dict(ch=('CH-1',), cw=None, fan='hold', hall='rest', T1=15.0, defer=True),
+    'MAX-POWER T1=12C': dict(ch=('CH-1',), cw=None, fan='hold', hall='rest', T1=12.0, defer=True),   # EMS merit step 4
+    'MAX-POWER-HALL-OFF': dict(ch=('CH-1',), cw=None, fan='min', hall='off', T1=15.0, defer=True),     # Q_HALL_MAX_PCT = 0
+    'NO-COOLING':  dict(ch=(), cw=0.0, fan='off', hall='off', T1=None, defer=True),
+}
+ALT_SPEC = {     # single SC10-class chiller option (CH-2 not installed)
+    'SINGLE BALANCED':    dict(ch=('CH-1',), cw=None, fan='hold', hall='rest', T1=15.0, defer=False),
+    'SINGLE MAX-COOLING': dict(ch=('CH-1',), cw=1.0, fan='max', hall='rest', T1=15.0, defer=False),
+}
+ER_LOAD = 2.5
+HALL_DEMAND = None                                          # set in main (insulated roof, design hour)
+
+def coil_kW(T_sp, ma):
+    return RS.inlet_coil_kW(ma, RS.OUT['T'], RS.OUT['w'], T_sp) if T_sp < RS.OUT['T'] else 0.0
+
+def plant_solve(active, Q_hw_avail, demand, cw_frac, fan, ctx):
+    """Chillers + LLH mixing + tower, iterated: returns cooling actually produced and the loop temperatures."""
+    m1 = ctx['m1']
+    m2 = sum(CHILLERS[t]['hw'] for t in active) * rho_w(85) / 1e3
+    L_ch = sum(CHILLERS[t]['cw'] for t in active) * 0.995 * cw_frac
+    L = L_ch + ctx['L_hx4']
+    el = sum(CHILLERS[t]['el'] for t in active)
+    Tc, Q_in, cool = CW_SUPPLY, 0.6 * Q_hw_avail, 0.0
+    for _ in range(40):
+        T_ret = HW_SUPPLY - Q_in / (CPW * m1)
+        T_ch_in = (m1 * HW_SUPPLY + (m2 - m1) * T_ret) / m2 if m2 > m1 else HW_SUPPLY
+        rng_ch = (Q_in + cool + el) / (L_ch * CPW)
+        T_eff = Tc + 0.5 * (rng_ch - ctx['rng_ref'])        # range penalty of a trimmed CW flow
+        cop = 0.70 * (1 - 0.08 * (T_eff - 31.0))
+        Qmax = sum(CHILLERS[t]['Qh'] for t in active) * (1 + 0.033 * (T_ch_in - 88.0)) * (1 - 0.06 * (T_eff - 31.0))
+        cap = min(Q_hw_avail, Qmax) * cop
+        cool = min(cap, demand)
+        Q_in = cool / cop
+        Q_rej = Q_in + cool + el + ctx['Q_hx4']
+        Tc_new = max(tower_cold_water(ctx['S'], L, Q_rej, WB_TOWER + WB_RECIRC, fan)['Tc'], CW_MIN)
+        if abs(Tc_new - Tc) < 1e-4:
+            Tc = Tc_new
+            break
+        Tc = 0.5 * (Tc + Tc_new)
+    return dict(cool=cool, cap=cap, Q_in=Q_in, cop=cop, Tc=Tc, T_ch_in=T_ch_in, Q_rej=Q_rej, L=L, L_ch=L_ch,
+                rng=rng_ch, surplus=Q_hw_avail - Q_in)
+
+def run_mode(mode, ctx):
+    sp = MODE_SPEC[mode] if mode in MODE_SPEC else ALT_SPEC[mode]
+    pk = PKG[ctx['rev']]
+    active = sp['ch']
+    cw = pk['cw_frac'] if sp['cw'] is None else sp['cw']
+    hall_dem = HALL_DEMAND
+    if not active:
+        case = engine_case(46.0, ctx.get('TIT', 800), ctx.get('N', 115e3))
+        res = dict(cool=0.0, cap=0.0, Q_in=0.0, cop=0.0, Tc=float('nan'), Q_rej=0.0, L=0.0, rng=0.0, surplus=case['Q_hw'])
+        T1, fan, coil, hall = 46.0, 0.0, 0.0, 0.0
+    else:
+        T1 = sp['T1']
+        for _ in range(8):
+            case = engine_case(T1, ctx.get('TIT', 800), ctx.get('N', 115e3))
+            coil = coil_kW(T1, case['ma'])
+            demand = coil + ER_LOAD + (0.0 if sp['hall'] == 'off' else hall_dem)
+            prio = coil + ER_LOAD                               # intake coil and electrical room come first
+
+            def solve(f):
+                return plant_solve(active, case['Q_hw'], demand, cw, f, ctx)
+            if sp['fan'] == 'max':
+                fan = 1.0
+            else:
+                target = CW_SUPPLY if sp['fan'] == 'hold' else CW_MAX_PART
+                lo, hi = 0.25, 1.0
+                if solve(lo)['Tc'] <= target and (sp['fan'] == 'hold' or solve(lo)['cool'] >= prio - 1e-6):
+                    hi = lo
+                for _ in range(30):
+                    if hi - lo < 1e-3:
+                        break
+                    mid = 0.5 * (lo + hi)
+                    r_ = solve(mid)
+                    ok = r_['Tc'] <= target and (sp['fan'] == 'hold' or r_['cool'] >= prio - 1e-6)
+                    lo, hi = (lo, mid) if ok else (mid, hi)
+                fan = hi
+            res = solve(fan)
+            if sp['hall'] == 'first':                       # comfort first: the coil takes what is left
+                left = res['cool'] - ER_LOAD - hall_dem
+                if left >= coil - 1e-6 or T1 >= 45.9:
+                    break
+                lo_t, hi_t = T1, 45.9
+                for _ in range(40):
+                    mid = 0.5 * (lo_t + hi_t)
+                    lo_t, hi_t = (mid, hi_t) if coil_kW(mid, case['ma']) > max(left, 0.0) else (lo_t, mid)
+                if abs(hi_t - T1) < 0.02:
+                    break
+                T1 = hi_t
+            else:
+                break
+        hall = 0.0 if sp['hall'] == 'off' else max(0.0, min(hall_dem, res['cool'] - coil - ER_LOAD))
+    # tower water use (evaporation: latent-only estimate .. saturated-exit bound at this fan speed)
+    if active:
+        tw = tower_cold_water(ctx['S'], res['L'], res['Q_rej'], WB_TOWER + WB_RECIRC, fan)
+        E_lo = res['Q_rej'] / (2501 - 2.36 * 34) * 3600
+        E_hi = evaporation(tw['G'], tw['LG'], tw['rng'], WB_TOWER)[0]
+    else:
+        E_lo = E_hi = 0.0
+    # auxiliary power, itemised (plant side)
+    P = ctx['pumps']
+    a = {}
+    a['P-1'] = pump_kW(P['P-1A/B']['Q'], P['P-1A/B']['H_kPa']) if active else pump_kW(P['P-1A/B']['Q'] * 0.4, P['P-1A/B']['H_kPa'] * 0.16)
+    a['P-2A'] = P['P-2A']['kW'] if 'CH-1' in active else 0.0
+    a['P-2B'] = P['P-2B']['kW'] if 'CH-2' in active else 0.0
+    a['P-4A'] = P['P-4A']['kW'] if 'CH-1' in active else 0.0
+    a['P-4B'] = P['P-4B']['kW'] if 'CH-2' in active else 0.0
+    if active:
+        q5 = (coil + ER_LOAD + hall) / (CPW * 5.0) * 3.6
+        f5 = q5 / P['P-5A/B']['Q']
+        a['P-5'] = pump_kW(q5, pk['dp_sp'] + (P['P-5A/B']['H_kPa'] - pk['dp_sp']) * f5 ** 2)
+        q6 = res['L'] / 0.995 * 3.6
+        st6 = P['P-6A/B']['static']
+        a['P-6'] = pump_kW(q6, st6 + (P['P-6A/B']['H_kPa'] - st6) * (cw / ctx['cw_des']) ** 2)
+        a['CT fan'] = ctx['fan_kW'] * fan ** 3
+    else:
+        a['P-5'] = a['P-6'] = a['CT fan'] = 0.0
+    a['chillers'] = sum(CHILLERS[t]['el'] for t in active)
+    a['RO-1 + P-9'] = 0.0 if sp['defer'] else pk['ro_kW'] + 0.04    # P-9 lifts ~0.35 m3/h by ~12 m in bursts
+    a['DHW P-3/P-7'] = 0.02 + (0.0 if sp['defer'] else 0.03)
+    a['WT-1, F-SS, D-101, BOP-R'] = (0.05 + 0.005 if active else 0.0) + 0.01 + 0.08
+    a['elec room'] = (0.04 if active else 1.30) + 0.03     # FCU-E (or AC-E DX when no chilled water) + EF-E
+    aux = sum(a.values())
+    bldg_fans = (0.18 * hall / hall_dem + (0.15 if sp['hall'] != 'off' else 0.05)) if hall_dem else 0.0
+    P_eng = case['P_net'] + C.AUX_CCHP / 1e3                # engine before HVAC aux (keeps the 0.35 kW coil air-side loss)
+    net = P_eng - aux
+    eq = net + hall / C.COP_SPLIT - bldg_fans
+    unmet = hall_dem - hall
+    return dict(mode=mode, chillers=list(active), T1=T1, fan=fan, cw_frac=cw if active else 0.0, Tc=res['Tc'],
+                Q_hw=case['Q_hw'], Q_in=res['Q_in'], surplus=res['surplus'], cop=res['cop'], cool=res['cool'], coil=coil,
+                er=ER_LOAD, hall=hall, hall_unmet=unmet, P_eng=P_eng, aux=aux, aux_items=a, net=net, bldg_fans=bldg_fans,
+                el_equiv=eq, el_equiv_split=eq - unmet / C.COP_SPLIT, F=case['F'], eta_el=net / case['F'],
+                E_lo=E_lo, E_hi=E_hi, makeup=0.5 * (E_lo + E_hi) * 3.5 / 2.5,
+                eta_useful=(net + res['Q_in'] + 0.0) / case['F'])
+
+# ------------------------------------------------------------------- 9. clean-agent fire suppression
+FK_K1, FK_K2 = 0.0664, 0.0002741                            # FK-5-1-12 specific vapour volume S = k1 + k2 T (m3/kg)
+
+def fk_mass(V, C_pct, T_min):
+    """NFPA 2001 / ISO 14520 total flooding: W = V/S * C/(100-C)."""
+    return V / (FK_K1 + FK_K2 * T_min) * C_pct / (100.0 - C_pct)
+
+def fk_conc(W, V, T):
+    x = W * (FK_K1 + FK_K2 * T) / V
+    return 100.0 * x / (1.0 + x)
 
 # ----------------------------------------------------------------------------------- main
 def main():
@@ -400,25 +667,37 @@ def main():
 
     # ---------------------------------------------------------------- tower
     L_cw = sum(c['cw'] for c in CHILLERS.values()) * 995 / 1e3
-    sel = None
-    for S in TOWER_SIZES:
-        t = tower_cold_water(S, L_cw, Q_rej, WB_TOWER + WB_RECIRC)
-        if t['Tc'] <= CW_SUPPLY:
-            sel = t
-            break
-    print('\n[3] COOLING TOWER CT-1 (open, counterflow, induced draft, FRP round)')
+    gl = glycol_loop(DESIGN)
+    pk = PKG[REV]
+    V_hx4 = gl['Q_gly'] / (CPW * 3.0) / 0.995 * 3.6         # HX-4 trim of the engine glycol loop into the CW
+    L_hx4 = V_hx4 / 3.6 * 0.995 if pk['hx4'] else 0.0
+    Q_hx4 = gl['Q_gly'] if pk['hx4'] else 0.0
+
+    def select_tower(L, Q, fan):
+        for S_ in TOWER_SIZES:
+            t_ = tower_cold_water(S_, L, Q, WB_TOWER + WB_RECIRC, fan)
+            if t_['Tc'] <= CW_SUPPLY:
+                return t_
+    selA = select_tower(L_cw, Q_rej, 1.0)
+    sel = select_tower(L_cw * pk['cw_frac'] + L_hx4, Q_rej + Q_hx4, pk['tower_fan_speed'])
+    print('\n[3] COOLING TOWER CT-1 (open, induced draft, FRP; %s)' % pk['label'])
+    print('  rev A rule: Tc <= %.0f C at full fan, rated CW flow -> %d ton class; rev B rule: Tc <= %.0f C at %.0f %% fan,'
+          ' %.0f %% CW flow + HX-4 -> %d ton class' % (CW_SUPPLY, selA['S'], CW_SUPPLY, pk['tower_fan_speed'] * 100,
+                                                     pk['cw_frac'] * 100, sel['S']))
     print('  rating basis %.0f/%.0f/%.0f C, %.2f m3/h per nominal ton, L/G %.1f -> rated KaV/L %.3f' % (
         TOWER_RATING['Th'], TOWER_RATING['Tc'], TOWER_RATING['WB'], TOWER_RATING['L_per_ton'], TOWER_RATING['LG'], NTU_RATED))
-    print('  duty %.1f kW, water %.1f m3/h, range %.2f K, design WB %.1f C (+%.1f recirculation)' % (
-        Q_rej, L_cw / 0.995 * 3.6, sel['rng'], WB_TOWER, WB_RECIRC))
+    print('  duty %.1f kW (chillers %.1f + HX-4 %.1f), water %.1f m3/h, range %.2f K, design WB %.1f C (+%.1f recirculation)' % (
+        Q_rej + Q_hx4, Q_rej, Q_hx4, (L_cw * pk['cw_frac'] + L_hx4) / 0.995 * 3.6, sel['rng'], WB_TOWER, WB_RECIRC))
     fan_kW, dia, hgt, op_kg = TOWER_SIZES[sel['S']]
-    print('  SELECT nominal %d ton class: cold water %.2f C, approach %.2f K, L/G %.2f, fan %.1f kW, ~D%.2f x %.2f m, ~%d kg op' % (
-        sel['S'], sel['Tc'], sel['approach'], sel['LG'], fan_kW, dia, hgt, op_kg))
+    sel_full = tower_cold_water(sel['S'], L_cw * pk['cw_frac'] + L_hx4, Q_rej + Q_hx4, WB_TOWER + WB_RECIRC, 1.0)
+    print('  SELECT nominal %d ton class (EC/VFD fan %.1f kW, low-head distribution): cold water %.2f C at %.0f %% fan'
+          ' (%.2f C at full fan), approach %.2f K, ~D%.2f x %.2f m, ~%d kg op' % (
+              sel['S'], fan_kW, sel['Tc'], pk['tower_fan_speed'] * 100, sel_full['Tc'], sel['approach'], dia, hgt, op_kg))
     wbsens = []
-    print('  wet-bulb sensitivity (heat in %.1f kW):' % DESIGN['Q_hw'])
+    print('  wet-bulb sensitivity (heat in %.1f kW, selected tower at full fan):' % DESIGN['Q_hw'])
     print('    %5s %7s %7s %7s %7s %7s %8s' % ('WB', 'CW in', 'COP', 'cool', 'coil15', 'bldg', 'surplus'))
     for wb in (24.0, 26.0, 27.0, 28.0, 29.0, 30.0):
-        tw = tower_cold_water(sel['S'], L_cw, Q_rej, wb + WB_RECIRC)
+        tw = tower_cold_water(sel['S'], L_cw * pk['cw_frac'] + L_hx4, Q_rej + Q_hx4, wb + WB_RECIRC, 1.0)
         Tcw = max(tw['Tc'], 26.0)
         cc = chiller_pair(DESIGN['Q_hw'], hy['T_ch_in'], Tcw)
         coil = RS.inlet_coil_kW(DESIGN['ma'], DB_SUMMER, w_from_wb(DB_SUMMER, wb), 15.0)
@@ -426,9 +705,9 @@ def main():
                            surplus=cc['surplus']))
         print('    %5.1f %7.2f %7.3f %7.1f %7.1f %7.1f %8.1f' % (wb, Tcw, cc['cop'], cc['Q_cool'], coil, cc['Q_cool'] - coil,
                                                               cc['surplus']))
-    E_max, T_air_out = evaporation(sel['G'], sel['LG'], sel['rng'], WB_TOWER)
+    E_max, T_air_out = evaporation(sel_full['G'], sel_full['LG'], sel_full['rng'], WB_TOWER)
     hfg = 2501 - 2.36 * 34
-    E_nom = Q_rej / hfg * 3600
+    E_nom = (Q_rej + Q_hx4) / hfg * 3600
     drift = L_cw * 3600 * 2e-5
     wb_rows = []
     print('  evaporation: %.0f L/h (heat/latent, docs/03 basis) .. %.0f L/h (Merkel, saturated exit %.1f C, 46 C dry inlet air)' % (
@@ -454,17 +733,13 @@ def main():
     print('  RO-blend option (circ <= 800 uS/cm at %.1f cycles): make-up %.0f uS/cm, RO share %.0f %%, RO permeate %.0f..%.0f L/h,'
           ' city water %.0f..%.0f L/h' % (cyc_ro, ec_blend, x_ro * 100, ro_rows[0]['perm'], ro_rows[1]['perm'],
                                           ro_rows[0]['city'], ro_rows[1]['city']))
-    # HX-4: engine auxiliary glycol loop (PMG + rectifier + oil cooler, docs/electrical 5xx) into the cooling water in
-    # summer; glycol 40 -> 35 C needs CW at ~32 C, a dry cooler alone cannot do it at 46 C. DC-1 dry cooler for winter.
-    Q_aux = 3.5
-    V_aux = Q_aux / (CPW * 3.0) / 0.995 * 3.6
-    lm4 = ((40 - 35.0) - (35 - 32.0)) / math.log((40 - 35.0) / (35 - 32.0))
-    t4 = tower_cold_water(sel['S'], L_cw + V_aux / 3.6 * 0.995, Q_rej + Q_aux, WB_TOWER + WB_RECIRC)
-    print('  HX-4 glycol/CW plate HX: %.1f kW, glycol 40->35 C, CW %.2f m3/h 32->35 C, LMTD %.1f K, UA %.0f W/K;'
-          ' tower with HX-4: %.1f kW -> cold water %.2f C (selection unchanged)' % (
-              Q_aux, V_aux, lm4, Q_aux * 1e3 / lm4, Q_rej + Q_aux, t4['Tc']))
-    out['tower'] = dict(sel=sel, fan_kW=fan_kW, hx4=dict(Q=Q_aux, V=V_aux, LMTD=lm4, UA=Q_aux * 1e3 / lm4, Tc=t4['Tc'],
-                                                          Q_tot=Q_rej + Q_aux), dia=dia, height=hgt, op_kg=op_kg, L_kgs=L_cw, V_m3h=L_cw / 0.995 * 3.6,
+    lm4 = ((45 - 35.0) - (40 - 32.0)) / math.log((45 - 35.0) / (40 - 32.0))
+    print('  HX-4 (optional trim of the engine glycol loop): %.1f kW, glycol 45->40 C, CW %.2f m3/h 32->35 C, LMTD %.1f K,'
+          ' UA %.0f W/K' % (gl['Q_gly'], V_hx4, lm4, gl['Q_gly'] * 1e3 / lm4))
+    out['tower'] = dict(sel=sel, sel_full=sel_full, selA=selA, fan_kW=fan_kW, fan_speed_design=pk['tower_fan_speed'],
+                        hx4=dict(Q=gl['Q_gly'], V=V_hx4, LMTD=lm4, UA=gl['Q_gly'] * 1e3 / lm4, active=pk['hx4']),
+                        Q_tot=Q_rej + Q_hx4, cw_frac=pk['cw_frac'],
+                        dia=dia, height=hgt, op_kg=op_kg, L_kgs=L_cw, V_m3h=L_cw / 0.995 * 3.6,
                         Q_rej=Q_rej, wb_sens=wbsens, E_nom=E_nom, E_max=E_max, drift=drift, water=wb_rows,
                         ro=dict(ec_city=ec_city, ec_blend=ec_blend, x_ro=x_ro, cycles=cyc_ro, rows=ro_rows),
                         NTU_rated=NTU_RATED)
@@ -476,7 +751,7 @@ def main():
     coil_28 = RS.inlet_coil_kW(DESIGN['ma'], DB_SUMMER, w_from_wb(DB_SUMMER, WB_TOWER), 15.0)
     elec_room = 2.5
     V_coil = coil_28 / (CPW * 5) / rho_w(10) * 3600
-    V_hall = hall_unins / (CPW * 5) / rho_w(10) * 3600
+    V_hall = hall_ins / (CPW * 5) / rho_w(10) * 3600                  # roof insulated (user)
     V_er = 3.9 * 0.75 / (CPW * 5) / rho_w(10) * 3600
     V_sec = V_coil + V_hall + V_er
     V_pri = sum(c['chw'] for c in CHILLERS.values()) * 3.6
@@ -503,7 +778,7 @@ def main():
         ('L-CH-05', 'CHW hall main: roof 6 m + riser 3.5 m', V_hall, 10, 9.5, 'roof outdoor part + riser'),
         ('L-CH-06', 'CHW hall distribution, 2 FCUs', V_hall / 2, 10, 9.0, 'indoor, elastomeric'),
         ('L-CH-07', 'CHW hall distribution, last FCU', V_hall / 4, 10, 7.0, ''),
-        ('L-CH-08', 'CHW electrical-room branch', V_er, 10, 15.0, 'route length ASSUMED'),
+        ('L-CH-08', 'CHW electrical-room branch', V_er, 10, 30.0, 'route ~30 m (user)'),
         ('L-CW-01', 'CW tower <-> chiller header (P-6)', L_cw / 0.995 * 3.6, 34, 8.0, 'steel Sch40 galv./epoxy or PP-RCT'),
         ('L-CW-02', 'CW CH-1 branch', CHILLERS['CH-1']['cw'] * 3.6, 34, 3.0, ''),
         ('L-CW-03', 'CW CH-2 branch', CHILLERS['CH-2']['cw'] * 3.6, 34, 3.0, ''),
@@ -522,51 +797,30 @@ def main():
 
     # ---------------------------------------------------------------- pumps
     P = pipes
-    pumps = [  # tag, service, m3/h, T, list of (item, kPa), duty, control
-        ('P-1A/B', 'HW primary through HX-1 (twin head)', hy['V1'], 87,
-         [('pipe L-HW-01', P['L-HW-01']['dp']), ('HX-1 water side', r['dp_w']), ('LLH-1 + air/dirt separator', 8),
-          ('strainer (dirty)', 10), ('check + isolation', 6), ('flow meter', 2)], 'duty/standby, ECM const. flow'),
-        ('P-2A', 'HW secondary to CH-1', CHILLERS['CH-1']['hw'] * 3.6, 86,
-         [('pipe L-HW-02/03', P['L-HW-02']['dp'] + P['L-HW-03']['dp']), ('CH-1 generator', CHILLERS['CH-1']['dp_hw']),
-          ('strainer', 10), ('check + isolation', 6), ('balancing valve', 8)], 'on with CH-1, ECM'),
-        ('P-2B', 'HW secondary to CH-2', CHILLERS['CH-2']['hw'] * 3.6, 86,
-         [('pipe L-HW-02/04', P['L-HW-02']['dp'] + P['L-HW-04']['dp']), ('CH-2 generator', CHILLERS['CH-2']['dp_hw']),
-          ('strainer', 10), ('check + isolation', 6), ('balancing valve', 8)], 'on with CH-2, ECM'),
-        ('P-3', 'DHW / heating branch', P['L-HW-05']['Q'], 80,
-         [('pipe L-HW-05', P['L-HW-05']['dp']), ('HX-2/HX-3 plate HX', 25), ('V-PRI 3-way', 15), ('strainer', 10),
-          ('check + isolation', 6)], 'on demand, ECM'),
-        ('P-4A', 'CHW primary CH-1', CHILLERS['CH-1']['chw'] * 3.6, 10,
-         [('pipe L-CH-01', P['L-CH-01']['dp']), ('CH-1 evaporator', CHILLERS['CH-1']['dp_chw']), ('strainer', 10),
-          ('check + isolation', 6), ('balancing valve', 8), ('MV-CH1 isolation', 3)], 'on with CH-1 + 15 min run-on'),
-        ('P-4B', 'CHW primary CH-2', CHILLERS['CH-2']['chw'] * 3.6, 10,
-         [('pipe L-CH-02', P['L-CH-02']['dp']), ('CH-2 evaporator', CHILLERS['CH-2']['dp_chw']), ('strainer', 10),
-          ('check + isolation', 6), ('balancing valve', 8), ('MV-CH2 isolation', 3)], 'on with CH-2 + 15 min run-on'),
-        ('P-5A/B', 'CHW secondary distribution (twin head)', V_sec, 10,
-         [('pipe L-CH-03', P['L-CH-03']['dp']), ('pipe L-CH-05/06/07 (hall index)', P['L-CH-05']['dp'] + P['L-CH-06']['dp'] + P['L-CH-07']['dp']),
-          ('FCU coil', 30), ('PICV', 25), ('strainer', 10), ('check + changeover valves', 12), ('air/dirt separator', 3)],
-         'duty/standby, ECM dp-control (VFD)'),
-        ('P-6A/B', 'condenser water (tower)', L_cw / 0.995 * 3.6, 34,
-         [('pipe L-CW-01/02', P['L-CW-01']['dp'] + P['L-CW-02']['dp']), ('CH-1 absorber+condenser', CHILLERS['CH-1']['dp_cw']),
-          ('basket strainer', 10), ('check + isolation', 6), ('balancing valve', 8), ('tower static lift + nozzles', 40)],
-         'duty/standby, VFD set to rated flow'),
-    ]
-    pump_out = {}
-    print('\n[6] PUMPS')
-    for tag, svc, Q, T, items, ctl in pumps:
-        H_kPa = sum(v for _, v in items) * 1.10
-        P_hyd = Q / 3600 * H_kPa * 1e3
-        eta = eta_ww(P_hyd)
-        kW = P_hyd / eta / 1e3
-        pump_out[tag] = dict(service=svc, Q=Q, H_kPa=H_kPa, H_m=H_kPa / (rho_w(T) * 9.81e-3), P_hyd=P_hyd, eta=eta, kW=kW,
-                             items=items, control=ctl, T=T)
-        print('  %-7s %-40s %6.2f m3/h  H %5.1f kPa (%4.1f m)  P_hyd %4.0f W  eta_ww %.2f -> %.2f kW  [%s]' % (
-            tag, svc, Q, H_kPa, pump_out[tag]['H_m'], P_hyd, eta, kW, ctl))
-        print('          ' + ', '.join('%s %.0f' % (n, v) for n, v in items) + ' kPa, +10 %')
+    pumps = build_pumps(REV, P, r['dp_w'], hy, V_sec, L_cw, V_hx4)
+    pumpsA = build_pumps('A', P, r['dp_w'], hy, V_sec, L_cw, V_hx4)
+    def pump_table(plist):
+        po = {}
+        for tag, svc, Q, T, items, ctl, static in plist:
+            H_kPa = sum(v for _, v in items) * 1.10
+            P_hyd = Q / 3600 * H_kPa * 1e3
+            eta = eta_ww(P_hyd)
+            po[tag] = dict(service=svc, Q=Q, H_kPa=H_kPa, H_m=H_kPa / (rho_w(T) * 9.81e-3), P_hyd=P_hyd, eta=eta,
+                           kW=P_hyd / eta / 1e3, items=items, control=ctl, T=T, static=static)
+        return po
+    pump_out, pump_A = pump_table(pumps), pump_table(pumpsA)
+    print('\n[6] PUMPS (%s; design flow, +10 %% head margin)' % pk['label'])
+    for tag, p_ in pump_out.items():
+        print('  %-7s %-40s %6.2f m3/h  H %5.1f kPa (%4.1f m)  P_hyd %4.0f W  eta_ww %.2f -> %.2f kW (rev A %.2f)  [%s]' % (
+            tag, p_['service'], p_['Q'], p_['H_kPa'], p_['H_m'], p_['P_hyd'], p_['eta'], p_['kW'], pump_A[tag]['kW'], p_['control']))
+        print('          ' + ', '.join('%s %.0f' % (n, v) for n, v in p_['items']) + ' kPa, +10 %')
     out['pumps'] = pump_out
+    out['pumps_revA'] = pump_A
     # alternative: one constant-flow HW loop (no low-loss header) through HX-1 and both chiller generators
     V_single = hy['V2']
     r_single = hx_rate(HXG, hx['Nt'], hx['Lt'], hx['Nr'], DESIGN['mg'], DESIGN['T_ex'], hy['m2'], 83.0)
-    H_single = (P['L-HW-01']['dp'] * (V_single / hy['V1']) ** 2 + r_single['dp_w'] + CHILLERS['CH-1']['dp_hw'] + 10 + 6 + 8) * 1.10
+    H_single = (P['L-HW-01']['dp'] * (V_single / hy['V1']) ** 2 + r_single['dp_w'] + ch_dp('CH-1', 'hw', REV) + pk['strainer']
+                + pk['check'] + pk['balance']) * 1.10
     Ph_single = V_single / 3600 * H_single * 1e3
     kW_single = Ph_single / eta_ww(Ph_single) / 1e3
     kW_ps = pump_out['P-1A/B']['kW'] + pump_out['P-2A']['kW'] + pump_out['P-2B']['kW']
@@ -618,21 +872,26 @@ def main():
 
     # ---------------------------------------------------------------- fan coils
     m_fa = 10 * 0.010 * 1.15
-    n_fcu, cfm = 4, 800
-    V_fcu = n_fcu * cfm * 1.699 / 3600 * 1.18
-    x_fa = m_fa / V_fcu
-    T_ea = RS.IN_HALL['T'] + x_fa * (DB_SUMMER - RS.IN_HALL['T'])
-    w_ea = RS.IN_HALL['w'] + x_fa * (w_from_wb(DB_SUMMER, WB_TOWER) - RS.IN_HALL['w'])
-    cf_mix, cf_room = fcu_factor(T_ea, w_ea), fcu_factor(RS.IN_HALL['T'], RS.IN_HALL['w'])
-    need = hall_unins / n_fcu / cf_mix
+    n_fcu = 4
+    for cfm in FCU_CLASSES:                                 # smallest class that carries the insulated-roof load
+        V_fcu = n_fcu * cfm * 1.699 / 3600 * 1.18
+        x_fa = m_fa / V_fcu
+        T_ea = RS.IN_HALL['T'] + x_fa * (DB_SUMMER - RS.IN_HALL['T'])
+        w_ea = RS.IN_HALL['w'] + x_fa * (w_from_wb(DB_SUMMER, WB_TOWER) - RS.IN_HALL['w'])
+        cf_mix, cf_room = fcu_factor(T_ea, w_ea), fcu_factor(RS.IN_HALL['T'], RS.IN_HALL['w'])
+        need = hall_ins / n_fcu / cf_mix
+        if FCU_CLASSES[cfm][0] >= need:
+            break
     nom, fanAC, fanEC = FCU_CLASSES[cfm]
+    need_unins = hall_unins / n_fcu / cf_mix
     q_lat = (10 * 0.055 + m_fa * 2450 * (w_from_wb(DB_SUMMER, WB_TOWER) - RS.IN_HALL['w']) + 0.35) * 1.1
     cond_hall = q_lat / 2450 * 3600
     print('\n[9] HALL FAN COILS (10 x 10 x 2.5 m): load %.1f kW uninsulated / %.1f kW insulated roof' % (hall_unins, hall_ins))
     print('  fresh air 100 L/s mixed at the FCUs -> entering %.1f C / %.1f g/kg; capacity factor vs 27/19 rating %.2f (room air only %.2f)' % (
         T_ea, w_ea * 1e3, cf_mix, cf_room))
-    print('  need %.1f kW nominal per unit x %d -> select %d x %d CFM class (%.1f kW nominal, ~%.1f kW on site), water %.2f m3/h each,'
-          ' fan %d W AC / %d W EC' % (need, n_fcu, n_fcu, cfm, nom, nom * cf_mix, V_hall / n_fcu, fanAC, fanEC))
+    print('  insulated roof: need %.1f kW nominal per unit x %d -> select %d x %d CFM class (%.1f kW nominal, ~%.1f kW on site),'
+          ' water %.2f m3/h each, fan %d W AC / %d W EC (uninsulated would need %.1f kW -> 800 CFM)' % (
+              need, n_fcu, n_fcu, cfm, nom, nom * cf_mix, V_hall / n_fcu, fanAC, fanEC, need_unins))
     print('  latent load ~%.1f kW -> hall condensate ~%.1f L/h; air changes %.0f /h' % (q_lat, cond_hall, n_fcu * cfm * 1.699 / 250))
     fcu_pos = [(2.5, 0.4, 'S wall, throw N'), (7.5, 0.4, 'S wall, throw N'), (2.5, 9.6, 'N wall, throw S'), (7.5, 9.6, 'N wall, throw S')]
     out['fcu'] = dict(n=n_fcu, cfm=cfm, nominal=nom, site=nom * cf_mix, cf_mix=cf_mix, cf_room=cf_room, T_ea=T_ea, w_ea=w_ea,
@@ -642,37 +901,86 @@ def main():
           ' (T3 tropical) as automatic standby' % (elec_room, er_nom, er_nom * fcu_factor(25.0, w_from_rh(25.0, 0.5))))
     out['elec_room'] = dict(load=elec_room, fcu_nom=er_nom, fcu_site=er_nom * fcu_factor(25.0, w_from_rh(25.0, 0.5)))
 
-    # ---------------------------------------------------------------- electrical loads
-    pk = {t: p['kW'] for t, p in pump_out.items()}
+    # ---------------------------------------------------------------- engine glycol loop and oil cooler
+    print('\n[10] ENGINE GLYCOL LOOP AND OIL COOLER (interface with docs/electrical M-751 / TE-GLY / DC-1-FAN)')
+    print('  oil heat: 2 x 608 core bearings %.2f kW (115k rpm, oil jet), heat soak %.2f, oil pump %.2f -> %.2f kW;'
+          ' with FPT/PMG bearings on the same oil %.2f kW -> oil cooler design %.1f kW, oil ~%.1f L/min 100->70 C' % (
+              gl['core_bearings'], gl['soak'], gl['oil_pump'], gl['oil_core'], gl['oil_all'], gl['oil_design'], gl['oil_flow_Lmin']))
+    print('  glycol loop heat: PMG %.2f + rectifier %.2f + oil (core) %.2f + panels %.2f = %.2f kW -> DC-1 design %.1f kW' % (
+        gl['pmg'], gl['rect'], gl['oil_core'], gl['panels'], gl['Q_gly'], gl['Q_des']))
+    print('  DC-1 (UA %.0f W/K, air %.0f m3/h, EC fans ~%.0f W): glycol supply %.1f C dry at 46 C; %.1f C with adiabatic pads'
+          ' (air %.1f C, ~%.0f L/h water at the design hour) -> PMG 35-40 C target (docs/06) met without the tower; dry is still < ALM 58 C' % (
+              gl['dc1_UA'], gl['dc1_air_m3h'], gl['dc1_fan_W'], gl['T_sup_dry'], gl['T_sup_pad'], gl['T_pad_air'], gl['pad_water_Lh']))
+    print('  OC-1 oil cooler (core 608 system): %.1f kW design (%.1f kW if FPT/PMG bearings join), oil ~%.1f L/min 100->70 C,'
+          ' glycol in %.1f C, LMTD %.1f K, UA %.0f W/K (brazed PHE)' % (
+              gl['oil_design'], gl['oil_design_with_fpt'], gl['oil_flow_Lmin'], gl['T_glycol_at_oc'], gl['oc_LMTD'], gl['oc_UA']))
+    out['glycol'] = gl
+
+    # ---------------------------------------------------------------- operating modes
+    global HALL_DEMAND
+    HALL_DEMAND = hall_ins                                  # roof insulated (user answer)
+    rng_ref = Q_rej / (L_cw * CPW)
+    def make_ctx(rev, S, fkW, po):
+        k = PKG[rev]
+        return dict(rev=rev, m1=hy['m1'], rng_ref=rng_ref, S=S, fan_kW=fkW, cw_des=k['cw_frac'],
+                    L_hx4=L_hx4 if k['hx4'] else 0.0, Q_hx4=Q_hx4 if k['hx4'] else 0.0, pumps=po)
+    ctx = make_ctx(REV, sel['S'], fan_kW, pump_out)
+    ctxA = make_ctx('A', selA['S'], TOWER_SIZES[selA['S']][0], pump_A)
+    modes = {m: run_mode(m, ctx) for m in MODE_SPEC}
+    balA = run_mode('BALANCED', ctxA)
+    print('\n[11] OPERATING MODES at Borazjan summer design (46 C / WB %.0f C, hall %.1f kW, %s)' % (WB_TOWER, HALL_DEMAND, pk['label']))
+    print('  %-18s %-9s %5s %5s %5s %5s | %6s %6s %6s | %6s %6s %6s %6s | %6s %6s' % (
+        'mode', 'chillers', 'T1', 'CW', 'fan', 'CWfl', 'P_eng', 'aux', 'NET', 'cool', 'coil', 'hall', 'unmet', 'el-eq', 'eta_el'))
+    for m, x in list(modes.items()) + [('rev A BAL', balA)]:
+        print('  %-18s %-9s %5.1f %5.1f %4.0f%% %4.0f%% | %6.1f %6.2f %6.1f | %6.1f %6.1f %6.1f %6.1f | %6.1f %5.1f%%' % (
+            m, '+'.join(c[-1] for c in x['chillers']) or '-', x['T1'], x['Tc'], x['fan'] * 100, x['cw_frac'] * 100,
+            x['P_eng'], x['aux'], x['net'], x['cool'], x['coil'], x['hall'], x['hall_unmet'], x['el_equiv'], x['eta_el'] * 100))
+    print('  aux items (kW):')
+    for m, x in modes.items():
+        print('    %-18s ' % m + ', '.join('%s %.2f' % (k, v) for k, v in x['aux_items'].items() if v > 0.004))
+    print('    %-18s ' % 'rev A BAL' + ', '.join('%s %.2f' % (k, v) for k, v in balA['aux_items'].items() if v > 0.004))
+    print('  tower water (make-up at 3.5 cycles, mid of latent..saturated estimate): ' + ', '.join(
+        '%s %.0f L/h' % (m, x['makeup']) for m, x in modes.items()))
+    print('  el-eq = NET + hall cooling / %.1f (split-AC electricity avoided) - hall FCU/ERV fans; unmet hall load would cost'
+          ' a further unmet/%.1f kW if split ACs carry it' % (C.COP_SPLIT, C.COP_SPLIT))
+    out['modes'] = modes
+    out['modes_revA_balanced'] = balA
+
+    # ---------------------------------------------------------------- electrical loads (summer = BALANCED mode)
+    bal = modes['BALANCED']
+    ai = bal['aux_items']
+    pk_ = {t: p_['kW'] for t, p_ in pump_out.items()}
     loads = [  # tag, description, connected kW, summer running kW, winter running kW, supply, board
-        ('P-1A/B', 'HW primary pump, twin ECM', pk['P-1A/B'] * 1.6, pk['P-1A/B'], pk['P-1A/B'], '1~230 V', 'B6-R'),
-        ('P-2A', 'HW pump CH-1', pk['P-2A'] * 1.5, pk['P-2A'], 0, '1~230 V', 'B6-R'),
-        ('P-2B', 'HW pump CH-2', pk['P-2B'] * 1.5, pk['P-2B'], 0, '1~230 V', 'B6-R'),
-        ('P-3', 'DHW/heating branch pump', max(pk['P-3'] * 1.5, 0.1), pk['P-3'] * 0.3, pk['P-3'], '1~230 V', 'B6-R'),
-        ('P-4A', 'CHW primary CH-1', pk['P-4A'] * 1.5, pk['P-4A'], 0, '1~230 V', 'B6-R'),
-        ('P-4B', 'CHW primary CH-2', pk['P-4B'] * 1.5, pk['P-4B'], 0, '1~230 V', 'B6-R'),
-        ('P-5A/B', 'CHW secondary twin ECM (dp control)', pk['P-5A/B'] * 1.6, pk['P-5A/B'] * 0.8, pk['P-5A/B'] * 0.4, '1~230 V', 'B6-R'),
-        ('P-6A/B', 'condenser-water pump + VFD', pk['P-6A/B'] * 1.4, pk['P-6A/B'], 0, '3~400 V', 'B6-R'),
-        ('CT-1 fan', 'tower fan + VFD', fan_kW, fan_kW * 0.75, 0, '3~400 V', 'B6-R'),
+        ('P-1A/B', 'HW primary pump, twin ECM', pk_['P-1A/B'] * 1.6, ai['P-1'], ai['P-1'], '1~230 V', 'B6-R'),
+        ('P-2A', 'HW pump CH-1, ECM const. flow', pk_['P-2A'] * 1.5, ai['P-2A'], 0, '1~230 V', 'B6-R'),
+        ('P-2B', 'HW pump CH-2, ECM const. flow', pk_['P-2B'] * 1.5, ai['P-2B'], 0, '1~230 V', 'B6-R'),
+        ('P-3', 'DHW/heating branch pump', max(pk_['P-3'] * 1.5, 0.1), 0.02, pk_['P-3'], '1~230 V', 'B6-R'),
+        ('P-4A', 'CHW primary CH-1, ECM const. flow', pk_['P-4A'] * 1.5, ai['P-4A'], 0, '1~230 V', 'B6-R'),
+        ('P-4B', 'CHW primary CH-2, ECM const. flow', pk_['P-4B'] * 1.5, ai['P-4B'], 0, '1~230 V', 'B6-R'),
+        ('P-5A/B', 'CHW secondary twin ECM (dp control)', pk_['P-5A/B'] * 1.6, ai['P-5'], pk_['P-5A/B'] * 0.4, '1~230 V', 'B6-R'),
+        ('P-6A/B', 'condenser-water pump + VFD', pk_['P-6A/B'] * 1.4, ai['P-6'], 0, '3~400 V', 'B6-R'),
+        ('CT-1 fan', 'tower EC/VFD fan', fan_kW, ai['CT fan'], 0, '3~400 V', 'B6-R'),
         ('CH-1', 'chiller controls/pumps (internal)', CHILLERS['CH-1']['el'], CHILLERS['CH-1']['el'], 0, '1~230 V', 'B6-R'),
         ('CH-2', 'chiller controls/pumps (internal)', CHILLERS['CH-2']['el'], CHILLERS['CH-2']['el'], 0, '1~230 V', 'B6-R'),
-        ('D-801', 'exhaust diverter actuator (spring return)', 0.02, 0.01, 0.01, '24 VAC via SR1 safety output', 'B4/SR1'),
+        ('D-101', 'exhaust diverter actuator (spring return)', 0.02, 0.01, 0.01, '24 VAC from K-EX (SR1-O6)', 'B6-R/SR1'),
         ('WT-1', 'dosing pumps x3 + conductivity controller + BD valve', 0.10, 0.05, 0.01, '1~230 V', 'B6-R'),
         ('F-SS', 'side-stream separator purge valve', 0.01, 0.005, 0, '24 VDC', 'B6-R'),
-        ('RO-1', 'RO unit 300 L/h (indoor), ~40 % duty', 0.75, 0.30, 0.05, '1~230 V', 'B6-E'),
-        ('P-9', 'make-up / permeate booster to roof', 0.37, 0.10, 0.02, '1~230 V', 'B6-E'),
+        ('RO-1', 'softener + RO 400 L/h ULP (indoor), deferrable', 0.60, pk['ro_kW'], 0.03, '1~230 V', 'B6-E'),
+        ('P-9', 'make-up / permeate booster to roof, deferrable', 0.37, 0.04, 0.02, '1~230 V', 'B6-E'),
         ('P-7', 'DHW tank charging / circulation', 0.06, 0.03, 0.06, '1~230 V', 'B6-E'),
-        ('EH-1301', 'tower basin heater (freeze, standby)', 1.5, 0, 0.05, '1~230 V', 'B6-R'),
+        ('EH-301', 'tower basin heater (freeze, standby)', 1.5, 0, 0.05, '1~230 V', 'B6-R'),
         ('HT-1', 'heat tracing make-up/CW lines 30 m x 20 W/m', 0.6, 0, 0.05, '1~230 V', 'B6-R'),
         ('BOP-R', 'roof BOP panel: B6-R, PSU, meters, panel fan', 0.08, 0.08, 0.06, '1~230 V', 'B6-R'),
-        ('DC-1', 'aux glycol dry cooler EC fans (winter / backup)', 0.35, 0.05, 0.15, '1~230 V', 'B6-R'),
-        ('FCU-1..4', 'hall fan coils 4 x 800 CFM (EC motors)', 4 * fanEC / 1e3, 4 * fanEC / 1e3 * 0.7, 4 * fanEC / 1e3 * 0.4, '1~230 V', 'building'),
-        ('ERV-1', 'energy-recovery ventilator 500 m3/h (option)', 0.18, 0.15, 0.10, '1~230 V', 'building'),
-        ('FCU-E', 'electrical-room fan coil EC', er_fan / 1e3, er_fan / 1e3, 0.0, '1~230 V', 'B6-E'),
+        ('DC-1', 'engine glycol dry cooler EC fans (fed from BOP-R, in engine P_aux)', gl['dc1_fan_W'] / 1e3, 0.05, 0.10,
+         '1~230 V', 'B4 (engine)'),
+        ('FCU-1..4', 'hall fan coils 4 x %d CFM (EC motors)' % cfm, 4 * fanEC / 1e3, bal['bldg_fans'] - 0.15, 4 * fanEC / 1e3 * 0.4,
+         '1~230 V', 'building'),
+        ('ERV-1', 'energy-recovery ventilator 500 m3/h, CO2 control', 0.18, 0.15, 0.10, '1~230 V', 'building'),
+        ('FCU-E', 'electrical-room fan coil EC', er_fan / 1e3, 0.04, 0.0, '1~230 V', 'B6-E'),
         ('AC-E', 'electrical-room DX split standby 12 kBTU/h', 1.5, 0.0, 0.3, '1~230 V', 'B6-E'),
         ('EF-E', 'battery/electrical-room exhaust fan', 0.03, 0.03, 0.03, '1~230 V', 'B6-E'),
     ]
-    plant = [l for l in loads if l[6] != 'building']
+    plant = [l for l in loads if l[6] not in ('building', 'B4 (engine)')]
     s_conn = sum(l[2] for l in loads)
     s_sum = sum(l[3] for l in loads)
     s_win = sum(l[4] for l in loads)
@@ -681,22 +989,99 @@ def main():
     assumed = C.AUX_CCHP / 1e3                               # 'pumps + tower fan' in cchp_study; the extra 0.35 kW of
     P_corr = DESIGN['P_net'] + assumed - s_plant             # roof_site_study stays as the intake-coil air-side loss
     annual = (s_sum * SUMMER_FRACTION + s_win * (1 - SUMMER_FRACTION)) * HOURS_YEAR
-    print('\n[10] ELECTRICAL LOAD OF HVAC ITEMS (kW)')
-    print('  %-10s %-52s %6s %7s %7s  %-26s %s' % ('tag', 'item', 'conn.', 'summer', 'winter', 'supply', 'board'))
+    print('\n[12] ELECTRICAL LOAD OF HVAC ITEMS (kW; summer = BALANCED mode at design)')
+    print('  %-10s %-60s %6s %7s %7s  %-26s %s' % ('tag', 'item', 'conn.', 'summer', 'winter', 'supply', 'board'))
     for l in loads:
-        print('  %-10s %-52s %6.2f %7.2f %7.2f  %-26s %s' % l)
-    print('  %-63s %6.2f %7.2f %7.2f' % ('TOTAL', s_conn, s_sum, s_win))
-    print('  plant-side parasitic (excl. hall FCUs/ERV) summer %.2f kW, winter %.2f kW; annual HVAC energy ~%.0f MWh' % (
-        s_plant, s_plant_w, annual / 1e3))
-    print('  cchp_study AUX_CCHP assumed %.2f kW -> corrected net to company loads %.1f kW (docs/03: %.1f kW)' % (
-        assumed, P_corr, DESIGN['P_net']))
-    bldg_cool = ch['Q_cool'] - coil_doc
+        print('  %-10s %-60s %6.2f %7.2f %7.2f  %-26s %s' % l)
+    print('  %-71s %6.2f %7.2f %7.2f' % ('TOTAL', s_conn, s_sum, s_win))
+    print('  plant-side parasitic (excl. hall FCUs/ERV and engine DC-1) summer %.2f kW (rev A %.2f), winter %.2f kW;'
+          ' annual HVAC energy ~%.0f MWh' % (s_plant, balA['aux'], s_plant_w, annual / 1e3))
+    print('  cchp_study AUX_CCHP assumed %.2f kW -> corrected net to company loads %.1f kW (docs/03: %.1f kW; rev A %.1f kW)' % (
+        assumed, P_corr, DESIGN['P_net'], balA['net']))
+    bldg_cool = bal['hall'] + ER_LOAD
     print('  building cooling %.1f kW displaces ~%.1f kW of split-AC electricity (COP %.1f)' % (
         bldg_cool, bldg_cool / C.COP_SPLIT, C.COP_SPLIT))
     out['electrical'] = dict(loads=[dict(tag=l[0], item=l[1], conn=l[2], summer=l[3], winter=l[4], supply=l[5], board=l[6])
                                     for l in loads], conn=s_conn, summer=s_sum, winter=s_win, plant_summer=s_plant,
                              plant_winter=s_plant_w, assumed=assumed, P_net_doc=DESIGN['P_net'], P_net_corr=P_corr,
-                             annual_MWh=annual / 1e3, bldg_cool=bldg_cool, split_saved=bldg_cool / C.COP_SPLIT)
+                             annual_MWh=annual / 1e3, bldg_cool=bldg_cool, split_saved=bldg_cool / C.COP_SPLIT,
+                             revA_aux=balA['aux'], revA_net=balA['net'])
+
+    # ---------------------------------------------------------------- water options with softened make-up
+    print('\n[13] TOWER MAKE-UP WITH SOFTENER (hardness < 100 ppm; sewer discharge allowed): BALANCED mode, 5600 h/yr cooling')
+    E = 0.5 * (modes['BALANCED']['E_lo'] + modes['BALANCED']['E_hi'])
+    ec_city, ec_ro = 400 * EC_PER_TDS, 20.0                 # softening swaps Ca/Mg for Na: conductivity ~unchanged
+    regen = 0.04                                            # softener regeneration + rinse, fraction of softened water
+    rec_ro = 0.75                                           # softened feed -> higher RO recovery than 0.60
+    def option(name, C, limit_ec, use_ro):
+        M = E * C / (C - 1)
+        if use_ro:
+            x = (ec_city - limit_ec / C) / (ec_city - ec_ro)
+            perm = x * M
+            feed = perm / rec_ro
+            soft = (1 - x) * M + feed
+        else:
+            x, perm, feed, soft = 0.0, 0.0, 0.0, M
+        city = soft * (1 + regen)
+        sewer = (M - E) + (feed - perm) + soft * regen
+        return dict(name=name, cycles=C, limit=limit_ec, ro_share=x, makeup=M, city=city, sewer=sewer, perm=perm,
+                    ro_kW=perm / 1e3 * 0.7, city_m3y=city * 5600 / 1e3, sewer_m3y=sewer * 5600 / 1e3)
+    opts = [option('softened only, chiller limit 800 uS/cm (JRA)', 800 / ec_city, 800, False),
+            option('softened only, chiller limit 2000 uS/cm (if maker allows)', 2000 / ec_city, 2000, False),
+            option('softened only, chiller limit 3000 uS/cm (if maker allows)', 3000 / ec_city, 3000, False),
+            option('softener + RO blend, 800 uS/cm, 3.5 cycles (rev B)', 3.5, 800, True),
+            option('softener + RO blend, 800 uS/cm, 6 cycles (recommended for JRA)', 6.0, 800, True),
+            option('softener + RO blend, 800 uS/cm, 8 cycles', 8.0, 800, True)]
+    print('  evaporation (mid estimate) %.0f L/h' % E)
+    print('  %-62s %6s %6s %7s %7s %7s %7s %8s' % ('option', 'cycles', 'RO %', 'make-up', 'city', 'sewer', 'RO kW', 'city m3/y'))
+    for o in opts:
+        print('  %-62s %6.2f %5.0f%% %7.0f %7.0f %7.0f %7.2f %8.0f' % (o['name'], o['cycles'], o['ro_share'] * 100, o['makeup'],
+                                                                o['city'], o['sewer'], o['ro_kW'], o['city_m3y']))
+    out['water_soft'] = dict(E=E, options=opts, regen=regen, rec_ro=rec_ro)
+
+    # ---------------------------------------------------------------- single SC10 vs pair, island part load
+    print('\n[14] RE-CHECK: insulated hall %.1f kW -> single SC10-class chiller or SC10 + SC5?' % hall_ins)
+    L_single = CHILLERS['CH-1']['cw'] * 0.995 * pk['cw_frac'] + L_hx4
+    Q_single = 50.2 + 50.2 * 0.644 + CHILLERS['CH-1']['el'] + Q_hx4
+    sel_s = select_tower(L_single, Q_single, pk['tower_fan_speed'])
+    fan_s = TOWER_SIZES[sel_s['S']][0]
+    ctxS = make_ctx(REV, sel_s['S'], fan_s, pump_out)
+    single = {m: run_mode(m, ctxS) for m in ('SINGLE BALANCED', 'SINGLE MAX-COOLING')}
+    demand = DESIGN['coil'] + ER_LOAD + hall_ins
+    print('  demand at design: coil %.1f + elec room %.1f + hall %.1f = %.1f kW (coil %.1f at WB 28)' % (
+        DESIGN['coil'], ER_LOAD, hall_ins, demand, coil_28))
+    print('  single SC10 -> tower %d ton class (fan %.1f kW, ~%d kg): ' % (sel_s['S'], fan_s, TOWER_SIZES[sel_s['S']][3]) + '; '.join(
+        '%s: cool %.1f kW, hall %.1f (unmet %.1f), aux %.2f, net %.1f' % (m, x['cool'], x['hall'], x['hall_unmet'], x['aux'], x['net'])
+        for m, x in single.items()))
+    b = modes['BALANCED']
+    print('  pair (rev B) BALANCED: cool %.1f kW, hall %.1f (unmet %.1f), aux %.2f, net %.1f' % (
+        b['cool'], b['hall'], b['hall_unmet'], b['aux'], b['net']))
+    part = {}
+    for N_, TIT_ in ((100e3, 750), (105e3, 750)):
+        for label, cx, md in (('pair', ctx, 'BALANCED'), ('single', ctxS, 'SINGLE BALANCED')):
+            cxp = dict(cx, N=N_, TIT=TIT_)
+            x = run_mode(md, cxp)
+            part['%dk/%d %s' % (N_ / 1e3, TIT_, label)] = x
+    print('  island v1 part load (T1 15 C, BALANCED rules):')
+    for k, x in part.items():
+        print('    %-20s Q_hw %.1f kW, P_eng (gross before HVAC) %.1f kW, cool %.1f = coil %.1f + elec %.1f + hall %.1f (unmet %.1f),'
+              ' aux %.2f, net %.1f kW' % (k, x['Q_hw'], x['P_eng'], x['cool'], x['coil'], x['er'], x['hall'], x['hall_unmet'],
+                                          x['aux'], x['net']))
+    out['recheck'] = dict(demand=demand, coil_28=coil_28, tower_single=sel_s, tower_single_fan_kW=fan_s,
+                          tower_single_kg=TOWER_SIZES[sel_s['S']][3], tower_single_dia=TOWER_SIZES[sel_s['S']][1],
+                          single=single, pair_balanced=b, part=part)
+
+    # ---------------------------------------------------------------- fire suppression (FK-5-1-12)
+    print('\n[15] FIRE SUPPRESSION, clean agent FK-5-1-12 (NFPA 2001 / ISO 14520 total flooding)')
+    V_enc = 1.4 * 0.9 * 1.3                                 # engine enclosure gross volume (docs/03 sec 6)
+    V_er = 3.5 * 3.0 * 3.0                                  # electrical room, ASSUMED
+    W1 = fk_mass(V_enc, 5.9, 5.0)                           # class B (heptane 4.5 % x 1.3); hot surfaces -> 2nd shot
+    W2 = fk_mass(V_er, 5.3, 18.0)                           # class A higher hazard / electrical, occupiable
+    print('  engine enclosure (hot + gas zones) %.2f m3: 5.9 %% at 5 C -> %.2f kg per shot; main + reserve shot (2 cylinders);'
+          ' %.1f %% at 60 C (unoccupied)' % (V_enc, W1, fk_conc(W1, V_enc, 60.0)))
+    print('  electrical room %.1f m3 (ASSUMED 3.5 x 3.0 x 3.0 m): 5.3 %% at 18 C -> %.1f kg; %.1f %% at 35 C (NOAEL 10 %%)' % (
+        V_er, W2, fk_conc(W2, V_er, 35.0)))
+    out['fire'] = dict(V_enc=V_enc, V_er=V_er, W_enc=W1, W_er=W2, C_enc_60=fk_conc(W1, V_enc, 60.0), C_er_35=fk_conc(W2, V_er, 35.0))
 
     path = os.path.join(HERE, 'hvac_results.json')
     with open(path, 'w') as fh:

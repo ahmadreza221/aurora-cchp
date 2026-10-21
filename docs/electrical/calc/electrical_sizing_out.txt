@@ -45,29 +45,51 @@ R_DC = V_on^2 / P_peak = 800^2 / 36 kW = 17.8 ohm -> 2 x 36 ohm in parallel = 18
 C = 600 uF, R_pre = 100 ohm: tau 60 ms, 5 tau 300 ms, I_peak 7.2 A, energy in R 156 J (= 1/2 C V^2)
   close the main contactor when |V_B3 - V_inv| < 20 V; pre-charge resistor: 2 x 50 ohm 50 W, pulse >= 300 J
 
-5. Inverter surge check (30 kW, 1.5x for 10 s)
-----------------------------------------------
-rated 43.5 A/phase, surge 65.2 A/phase; pump FLC 6.1 A; base load 30.4 A/phase
-  3 kW pump DOL (LRC 6.5 x FLC)                                  start  39.9 A -> phase  70.3 A = 1.62 x rated (EXCEEDS SURGE)
-  3 kW pump star (LRC/3)                                         start  13.3 A -> phase  43.7 A = 1.01 x rated (surge window)
-  3 kW pump star->delta open transition spike (~6 x, 1-2 cycles) start  36.8 A -> phase  67.3 A = 1.55 x rated (EXCEEDS SURGE)
-  3 kW pump on VFD (<= 1.1 x FLC)                                start   6.8 A -> phase  37.2 A = 0.86 x rated (OK)
-  24k BTU split fixed-speed (LRA, one phase)                     start  50.0 A -> phase  80.4 A = 1.85 x rated (EXCEEDS SURGE)
-  same + compressor soft starter (-65 %)                         start  17.5 A -> phase  47.9 A = 1.10 x rated (surge window)
-  inverter-type (DC inverter) split                              start  10.0 A -> phase  40.4 A = 0.93 x rated (OK)
-  two fixed-speed splits on one phase at once                    start 100.0 A -> phase 130.4 A = 3.00 x rated (EXCEEDS SURGE)
+5. Per-phase surge and unbalance with the real loads (backup LOAD port = worst case; with the grid in parallel the grid takes inrush)
+-------------------------------------------------------------------------------------------------------------------------------------
+three-phase share per phase: pump on VFD 5.8 A + HVAC aux/controls 5.2 A = 11.1 A
+  L1: split 1 + fridge + lighting 0.6 kW                                     -> 19.5 A running (all compressors on)
+  L2: split 2 + PCs 0.8 kW                                                   -> 19.7 A running (all compressors on)
+  L3: split 3 + TV/sockets 0.4 kW + ER single-phase HVAC (FCU-E/AC-E) 0.9 kW -> 21.9 A running (all compressors on)
+  unbalance (I_max - I_min)/I_avg = 12 % (rule 06 §7-6: <= 30 %)
+  Deye SUN-30K-SG01HP3-EU-BM3 (CN, reference): per phase 43 A rated, 60 A unbalanced max, peak 65 A (10 s) [each phase <= 50 % rated; 2x 50 A battery inputs]
+    L3 split restart (compressor off -> LRA)           43.4 A -> OK (continuous)
+    L3 two splits starting on one phase (misallocated)  70.4 A -> EXCEEDS 0.85 x peak
+    L3 split + fridge start together                   50.6 A -> peak window
+    L3 3 kW pump on VFD start                          22.5 A -> OK (continuous)
+    start tokens on L3 (06 §7-4): N_tok = 1
+  Deye SUN-25K-SG01HP3-EU-AM2 (CN): per phase 36 A rated, 54 A unbalanced max, peak 54 A (10 s) [1x 50 A battery input]
+    L3 split restart (compressor off -> LRA)           43.4 A -> peak window
+    L3 two splits starting on one phase (misallocated)  70.4 A -> EXCEEDS 0.85 x peak
+    L3 split + fridge start together                   50.6 A -> EXCEEDS 0.85 x peak
+    L3 3 kW pump on VFD start                          22.5 A -> OK (continuous)
+    start tokens on L3 (06 §7-4): N_tok = 1
+  SMA STP Hybrid X 30 + SMA Backup (DE): per phase 43 A rated, 43 A unbalanced max, peak 43 A (n/a) [backup after 1-600 s grid loss (not seamless); surge not stated]
+    L3 split restart (compressor off -> LRA)           43.4 A -> OK (continuous)
+    L3 two splits starting on one phase (misallocated)  70.4 A -> EXCEEDS 0.85 x peak
+    L3 split + fridge start together                   50.6 A -> EXCEEDS 0.85 x peak
+    L3 3 kW pump on VFD start                          22.5 A -> OK (continuous)
+    start tokens on L3 (06 §7-4): N_tok = 0
+  KOSTAL PLENTICORE G3 L 20 + BackUp Switch (DE): per phase 32 A rated, 32 A unbalanced max, peak 35 A (5 s) [backup < 5 s (manual) / < 30 s (auto box)]
+    L3 split restart (compressor off -> LRA)           43.4 A -> EXCEEDS 0.85 x peak
+    L3 two splits starting on one phase (misallocated)  70.4 A -> EXCEEDS 0.85 x peak
+    L3 split + fridge start together                   50.6 A -> EXCEEDS 0.85 x peak
+    L3 3 kW pump on VFD start                          22.5 A -> OK (continuous)
+    start tokens on L3 (06 §7-4): N_tok = 0
 
-6. HV battery: power, not energy, sets the size
------------------------------------------------
-turbine trip at full company load: battery carries 22.5 kW for <= 60 s (load shedding), then <= 10 kW critical load
-  10.2 kWh LFP: 1C continuous 10.2 kW, 1.5C/60 s peak 15.3 kW -> too small for a full-load trip
-  15.4 kWh LFP: 1C continuous 15.4 kW, 1.5C/60 s peak 23.1 kW -> too small for a full-load trip
-  20.5 kWh LFP: 1C continuous 20.5 kW, 1.5C/60 s peak 30.8 kW -> OK (>= 1.2 x trip load)
-  25.6 kWh LFP: 1C continuous 25.6 kW, 1.5C/60 s peak 38.4 kW -> OK (>= 1.2 x trip load)
-  energy reserve for a restart: 15 min start at ~4 kW + 30 min critical load 5 kW = 3.5 kWh; SOC window 20-90 %
+6. Battery 20 kWh HV LFP (user decision): power check in backup
+---------------------------------------------------------------
+backup + turbine trip: battery carries site 8.0 + aux 3.6 = 11.6 kW until load shedding / restart
+  Deye SUN-30K-SG01HP3-EU-BM3 (CN, reference)      100 A x 205 V (Deye BOS-G20) -> 19.9 kW from the battery -> OK
+  Deye SUN-25K-SG01HP3-EU-AM2 (CN)                  50 A x 205 V (Deye BOS-G20) -> 9.9 kW from the battery -> SHORT: shed to 9.9 kW (groups 4, 3) or use a >= 400 V stack
+  SMA STP Hybrid X 30 + SMA Backup (DE)             50 A x 400 V (SMA Home Storage / Storage M (~400 V assumed)) -> 19.4 kW from the battery -> OK
+  KOSTAL PLENTICORE G3 L 20 + BackUp Switch (DE)    30 A x 410 V (BYD HVM 22.1) -> 11.9 kW from the battery -> OK
+  energy: 18.4 kWh usable (90 % DoD) -> 1.6 h at 11.6 kW (peak + aux), 2.1 h at 8.6 kW (typical + aux)
+  grid present (normal v1): turbine trip -> grid supplies the loads; battery only covers the short dip of a grid outage
+  reserve for a black start without grid: 15 min start at ~4 kW + 30 min critical 5 kW = 3.5 kWh; SOC floor 20 % (= 4.1 kWh)
 
-7. 48 V essential bus (DC-UPS, independent of HV battery and inverter)
-----------------------------------------------------------------------
+7. 48 V essential bus (DC-UPS, independent of the 20 kWh HV battery and the inverter)
+-------------------------------------------------------------------------------------
 running load 665 W; blackout (post-lube + vent + controls) 405 W; starter 2 kW x 90 s = 50 Wh
   48 V 50 Ah LFP: 2.0 kWh usable -> 3.1 h at running load, 5.1 h blackout
   48 V 100 Ah LFP: 4.1 kWh usable -> 6.2 h at running load, 10.1 h blackout
@@ -77,6 +99,6 @@ running load 665 W; blackout (post-lube + vent + controls) 405 W; starter 2 kW x
   DC 750 V roof->ER, 2 x 1 x 10 mm2, 41.7 A            dV  5.15 V = 0.72 %  loss  215 W
   DC 750 V roof->ER, 2 x 1 x 16 mm2, 41.7 A            dV  3.22 V = 0.45 %  loss  134 W
   AC 400 V ER->hall, 5G10, 43.5 A                      dV  0.93 V = 0.23 %  loss   70 W
-  AC 400 V ER->roof BOP-R, 5G10, 20 A (HVAC ~10 kW connected) dV  2.14 V = 0.54 %  loss   74 W
+  AC 400 V ER->roof BOP-R, 5G10, 20 A (HVAC ~11 kW connected) dV  2.14 V = 0.54 %  loss   74 W
   48 V ER->roof, 2 x 1 x 25 mm2, starter peak 58 A     dV  2.87 V = 5.97 %  loss  166 W
   48 V ER->roof, 2 x 1 x 25 mm2, steady 15 A           dV  0.74 V = 1.54 %  loss   11 W

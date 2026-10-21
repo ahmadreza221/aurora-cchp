@@ -18,8 +18,8 @@ RES = json.load(open(os.path.join(HERE, 'hvac_results.json'))) if os.path.exists
 ROOF = (10.0, 10.0)
 
 # tag: (label, kind, x0, y0, w, d, h, operating kg, group, service zones [(side, depth)])
-TOWER_D = RES['tower']['dia'] if RES else 1.6
-TOWER_KG = RES['tower']['op_kg'] if RES else 600
+TOWER_D = RES['tower']['dia'] if RES else 1.88
+TOWER_KG = RES['tower']['op_kg'] if RES else 820
 HX_KG = round(RES['hx']['mass']['op']) if RES else 350
 CH1_KG = RES['chillers']['units']['CH-1']['op'] if RES else 560
 CH2_KG = RES['chillers']['units']['CH-2']['op'] if RES else 420
@@ -27,20 +27,21 @@ EQ = {
     'IF-1':  ('intake louver + G4/F8 filters + CHW coil CC-1', 'rect', 0.40, 7.60, 0.90, 0.90, 1.40, 150, 'engine', [('W', 0.0)]),
     'EP-1':  ('engine package GR180+FPT+PMG+recuperator', 'rect', 1.30, 7.60, 1.40, 0.90, 1.30, 450, 'engine', [('N', 1.0), ('S', 1.0)]),
     'DC-1':  ('aux glycol dry cooler (engine interface)', 'rect', 0.40, 5.60, 1.20, 0.60, 1.00, 90, 'engine', [('S', 0.6)]),
-    'D-801': ('exhaust diverter damper', 'rect', 4.60, 7.80, 0.50, 0.50, 0.90, 60, 'exhaust', []),
+    'D-101': ('exhaust diverter damper', 'rect', 4.60, 7.80, 0.50, 0.50, 0.90, 60, 'exhaust', []),
     'HX-1':  ('exhaust/water HX (vertical up-flow)', 'rect', 5.10, 7.60, 0.80, 0.90, 1.80, HX_KG, 'exhaust', [('N', 0.8), ('S', 0.8)]),
-    'ST-1':  ('stack DN250 double wall, top +4.0 m', 'circle', 5.50, 8.05, 0.35, 0.35, 4.00, 80, 'exhaust', []),
+    'ST-1':  ('stack DN250 double wall + silencer SL-101, top +4.0 m', 'circle', 5.50, 8.05, 0.35, 0.35, 4.00, 140, 'exhaust', []),
     'LLH-1': ('HW low-loss header / buffer 200 L', 'circle', 6.60, 7.30, 0.50, 0.50, 1.40, 280, 'tank', []),
     'BOP-R': ('roof BOP/MCC panel (B6-R), sun canopy', 'rect', 7.00, 9.20, 1.20, 0.45, 2.00, 220, 'elec', [('S', 1.0)]),
     'PS-1':  ('hydronic pump skid P-1..P-5, ET-1/2, AS-1/2', 'rect', 2.80, 5.20, 2.80, 1.10, 1.20, 750, 'pump', [('N', 0.8), ('S', 0.8)]),
     'CH-1':  ('absorption chiller SC10 class', 'rect', 4.40, 2.50, 0.76, 0.97, 1.90, CH1_KG, 'chiller', [('N', 1.0), ('E', 0.6), ('W', 0.6), ('S', 0.5)]),
     'CH-2':  ('absorption chiller SC5 class', 'rect', 2.80, 2.60, 0.594, 0.744, 1.76, CH2_KG, 'chiller', [('N', 1.0), ('E', 0.6), ('W', 0.6), ('S', 0.5)]),
     'TK-1':  ('CHW buffer / decoupler 500 L', 'circle', 6.40, 3.60, 0.75, 0.75, 1.70, 650, 'tank', []),
-    'CT-1':  ('cooling tower, FRP round, %.0f ton class' % (RES['tower']['sel']['S'] if RES else 40), 'circle', 8.40, 1.80,
+    'CT-1':  ('cooling tower, FRP round, %.0f ton class' % (RES['tower']['sel']['S'] if RES else 40), 'circle', 8.25, 1.95,
               TOWER_D, TOWER_D, RES['tower']['height'] if RES else 1.95, TOWER_KG, 'tower', [('ring', 1.0)]),
     'PS-2':  ('CW pump skid P-6A/B + basket strainer', 'rect', 5.00, 0.40, 1.40, 0.90, 1.00, 380, 'pump', [('N', 0.6)]),
     'WT-1':  ('water treatment: dosing x3 in bund, EC ctrl, side-stream sep.', 'rect', 8.30, 4.00, 1.20, 0.70, 1.30, 300, 'water', [('W', 0.8)]),
     'RS-1':  ('riser + roof penetration to hall (CHW, DHW, drains)', 'rect', 9.30, 6.30, 0.40, 0.40, 0.50, 60, 'pipe', []),
+    'FS-1':  ('fire suppression cabinet FK-5-1-12, 2 cyl., shaded/vented', 'rect', 3.00, 9.30, 0.60, 0.45, 1.40, 80, 'fire', [('S', 0.8)]),
     'HATCH': ('roof access hatch / stair (ASSUMED)', 'rect', 0.40, 0.40, 0.80, 0.80, 0.00, 0, 'access', []),
 }
 DISTRIBUTED = {'roof piping, filled, + supports': 450, 'galvanised steel dunnage / skid frames': 900,
@@ -134,7 +135,7 @@ def weights():
     return rows, M, dist, total, cgx, cgy
 
 COL = {'engine': '#f2a65a', 'exhaust': '#e4572e', 'chiller': '#4a90d9', 'tower': '#2bb3a3', 'tank': '#9b6fd1',
-       'pump': '#8c8c8c', 'elec': '#e8c547', 'water': '#5cb85c', 'pipe': '#b0b0b0', 'access': '#ffffff'}
+       'pump': '#8c8c8c', 'elec': '#e8c547', 'water': '#5cb85c', 'pipe': '#b0b0b0', 'access': '#ffffff', 'fire': '#d62728'}
 
 def svg(res, conflicts, wt):
     S, X0, Y0 = 62.0, 70.0, 70.0
@@ -244,6 +245,21 @@ def svg(res, conflicts, wt):
     o.append('</svg>')
     return '\n'.join(o)
 
+def alternatives(rows, dist_total):
+    """Roof weight of lighter options (user: RC building; asked what drives ~7 t)."""
+    kg = {r['tag']: r['kg'] for r in rows}
+    base = sum(kg.values()) + dist_total
+    light = {'TK-1 500 -> 300 L': -220, 'LLH-1 buffer -> DN65 hydraulic separator': -200,
+             'CW piping PE100 instead of 316L/steel spools': -50}
+    single = dict(light)
+    single['CH-2 SC5 not installed'] = -kg['CH-2']
+    single['P-2B, P-4B and CH-2 branch piping'] = -80
+    if RES and 'recheck' in RES:
+        single['tower %d ton instead of %d ton' % (RES['recheck']['tower_single']['S'], RES['tower']['sel']['S'])] = \
+            RES['recheck']['tower_single_kg'] - kg['CT-1']
+    return dict(base=base, light=dict(items=light, total=base + sum(light.values())),
+                single=dict(items=single, total=base + sum(single.values())))
+
 def main():
     res, conflicts = checks()
     wt = weights()
@@ -256,6 +272,9 @@ def main():
         print('  %-65s %6d  (distributed)' % (k, v))
     print('  equipment %.0f kg + distributed %.0f kg = %.1f t; average %.0f kg/m2 over the roof; CG (%.2f, %.2f) m' % (
         M, dist, total / 1e3, total / (ROOF[0] * ROOF[1]), cgx, cgy))
+    alt = alternatives(rows, dist)
+    print('  lighter options: pair + light items %.1f t (%s); single SC10 + light items %.1f t' % (
+        alt['light']['total'] / 1e3, ', '.join('%s %+d' % kv for kv in alt['light']['items'].items()), alt['single']['total'] / 1e3))
     print('\nSEPARATION / CLEARANCE CHECKS')
     for name, val, req, ref in res:
         print('  %-3s %-48s %5.1f m (min %.1f)  %s' % ('OK' if val >= req - 1e-6 else 'NO', name, val, req, ref))
@@ -266,7 +285,7 @@ def main():
     with open(os.path.join(HERE, 'roof_layout.json'), 'w') as fh:
         json.dump(dict(equipment={t: dict(label=e[0], kind=e[1], x=e[2], y=e[3], w=e[4], d=e[5], h=e[6], kg=e[7], group=e[8])
                                   for t, e in EQ.items()}, weights=rows, distributed=DISTRIBUTED, total_kg=total,
-                       cg=(cgx, cgy), checks=[dict(name=n, value=v, min=q, ref=r) for n, v, q, r in res],
+                       cg=(cgx, cgy), checks=[dict(name=n, value=v, min=q, ref=r) for n, v, q, r in res], alternatives=alt,
                        conflicts=conflicts), fh, indent=1)
     print('written %s' % os.path.relpath(path, os.getcwd()))
 

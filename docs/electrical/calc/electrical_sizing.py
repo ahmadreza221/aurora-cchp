@@ -3,7 +3,7 @@
 # dependencies = []
 # ///
 """GR180-CCHP electrical sizing: PMG/rectifier window, FPT load-loss overspeed, dump resistor, pre-charge,
-inverter surge, HV battery C-rate, 48 V essential-bus UPS, cable voltage drop.
+per-phase surge and unbalance with the real loads (rev 3), 20 kWh HV battery power, 48 V essential-bus UPS, cable voltage drop.
 
 Every assumption is a named constant below; docs/electrical/*.md quote the printed results.
 Run:  python3 docs/electrical/calc/electrical_sizing.py
@@ -18,7 +18,7 @@ N2_RATED, N2_MAX_GOV, N2_TRIP_SMCU = 60e3, 65e3, 71.5e3
 E_LL_RATED = 360.0       # PMG back-EMF, line-line rms at 60k rpm (design rule chosen below)
 L_S = 100e-6             # PMG synchronous inductance per phase (assumed, high-speed SPM)
 V_MP, V_OC, V_CHOP_ON, V_CHOP_FULL, V_OVP_HW = 720.0, 780.0, 800.0, 830.0, 900.0   # DC link (PV-emulation window)
-I_MPPT_MAX = 36.0        # per-MPPT current limit of the candidate inverters (Deye HP3 ~36 A, Solis S6-EH3P 40 A)
+I_MPPT_MAX = 36.0        # per-MPPT current limit of the reference hybrid inverter (Deye SUN-30K-SG01HP3-EU-BM3: 3x 36 A, 150-850 V)
 
 # rotor of the free power turbine + PMG (assumed until the FPT/PMG CAD exists)
 J_FPT, J_PMG, J_SHAFT = 4.0e-4, 3.0e-4, 1.0e-4   # kg m^2
@@ -27,7 +27,7 @@ J_FPT, J_PMG, J_SHAFT = 4.0e-4, 3.0e-4, 1.0e-4   # kg m^2
 INV_P = 30e3             # inverter rating, 3-phase 400/230 V
 INV_SURGE = (1.5, 10.0)  # (x rated, seconds) — Deye HP3 class; Solis S6-EH3P: 1.6x for 2 s (verify on datasheet)
 BASE_KW = 15.0           # company load already running when a motor starts (balanced)
-AUX_KW = 6.0             # plant auxiliaries on AC in summer: docs/hvac/06_bom_electrical.md (5.9 kW BOP + engine AC aux)
+AUX_KW = 4.0             # plant auxiliaries on AC in summer: sim/hvac/hvac_results.json revA (3.8 kW) + engine AC aux
 AUX_TRIP_KW = 2.5        # aux left after a turbine trip (HVAC BOP pumps/tower shed by B6-R: no heat, no chiller)
 PUMP_KW, PUMP_EFF, PUMP_PF = 3.0, 0.86, 0.82
 AC_RLA, AC_LRA = 10.0, 50.0   # 24k BTU fixed-speed split, single phase 230 V
@@ -112,40 +112,71 @@ def precharge():
     print('  close the main contactor when |V_B3 - V_inv| < 20 V; pre-charge resistor: 2 x 50 ohm 50 W, pulse >= 300 J')
 
 
+# ---------------------------------------------------------------- hybrid inverter (backup LOAD port) per phase, real loads (rev 3)
+# (name, per-phase continuous A (rated / 3 phases), per-phase max unbalanced A, peak factor x rated, peak s, battery A, note) — datasheets 09/2026
+INVERTERS = [
+    ('Deye SUN-30K-SG01HP3-EU-BM3 (CN, reference)', 30e3 / 3 / 230, 60.0, 1.5, 10, 100, 'each phase <= 50 % rated; 2x 50 A battery inputs',
+     (204.8, 'Deye BOS-G20')),
+    ('Deye SUN-25K-SG01HP3-EU-AM2 (CN)', 25e3 / 3 / 230, 25e3 * 0.5 / 230, 1.5, 10, 50, '1x 50 A battery input', (204.8, 'Deye BOS-G20')),
+    ('SMA STP Hybrid X 30 + SMA Backup (DE)', 29.99e3 / 3 / 230, 29.99e3 / 3 / 230, 1.0, 0, 50, 'backup after 1-600 s grid loss (not seamless); surge not stated',
+     (400.0, 'SMA Home Storage / Storage M (~400 V assumed)')),
+    ('KOSTAL PLENTICORE G3 L 20 + BackUp Switch (DE)', 32.0, 32.0, 22.1 / 20.0, 5, 30, 'backup < 5 s (manual) / < 30 s (auto box)',
+     (409.6, 'BYD HVM 22.1')),
+]
+# real site loads (user): per phase allocation of 06 §7 (one split per phase); amps at 230 V
+SPLIT_RLA, SPLIT_LRA = 5.5, 27.0     # 12,000 BTU fixed-speed wall split (~1.2 kW), LRA ~5x RLA (measure at commissioning)
+FRIDGE_RLA, FRIDGE_LRA = 0.8, 8.0
+PUMP_FLC_3PH = 3.0e3 / (math.sqrt(3) * 400 * 0.86 * 0.82) * 0.95   # 3 kW pump on VFD, input current per phase (VFD PF ~0.95)
+AUX_HVAC_KW = 3.3                    # HVAC aux BALANCED (docs/hvac rev B), mostly three-phase
+CTRL_KW = 0.3
+PHASE_1PH_KW = {'L1': ('split 1 + fridge + lighting 0.6 kW', 1.2 + 0.15 + 0.6), 'L2': ('split 2 + PCs 0.8 kW', 1.2 + 0.8),
+                'L3': ('split 3 + TV/sockets 0.4 kW + ER single-phase HVAC (FCU-E/AC-E) 0.9 kW', 1.2 + 0.4 + 0.9)}
+BAT_STACK_V = 204.8                  # Deye BOS-G20: 4 x 51.2 V
+
+
 def inverter_surge():
-    hdr('5. Inverter surge check (%.0f kW, %.1fx for %.0f s)' % (INV_P / 1e3, *INV_SURGE))
-    i_rated = INV_P / 3 / 230
-    i_surge = i_rated * INV_SURGE[0]
-    flc = PUMP_KW * 1e3 / (math.sqrt(3) * 400 * PUMP_EFF * PUMP_PF)
-    base = (BASE_KW + AUX_KW) * 1e3 / 3 / 230
-    print('rated %.1f A/phase, surge %.1f A/phase; pump FLC %.1f A; base load %.1f A/phase' % (i_rated, i_surge, flc, base))
-    rows = [('3 kW pump DOL (LRC 6.5 x FLC)', 6.5 * flc), ('3 kW pump star (LRC/3)', 6.5 * flc / 3),
-            ('3 kW pump star->delta open transition spike (~6 x, 1-2 cycles)', 6.0 * flc), ('3 kW pump on VFD (<= 1.1 x FLC)', 1.1 * flc),
-            ('24k BTU split fixed-speed (LRA, one phase)', AC_LRA), ('same + compressor soft starter (-65 %)', AC_LRA * 0.35),
-            ('inverter-type (DC inverter) split', AC_RLA),
-            ('two fixed-speed splits on one phase at once', 2 * AC_LRA)]
-    for lab, i in rows:
-        tot = base + i
-        print('  %-62s start %5.1f A -> phase %5.1f A = %4.2f x rated (%s)'
-              % (lab, i, tot, tot / i_rated, 'OK' if tot <= i_rated else ('surge window' if tot <= i_surge else 'EXCEEDS SURGE')))
+    hdr('5. Per-phase surge and unbalance with the real loads (backup LOAD port = worst case; with the grid in parallel the grid takes inrush)')
+    three = PUMP_FLC_3PH + (AUX_HVAC_KW + CTRL_KW) * 1e3 / (3 * 230)
+    base = {ph: three + kw * 1e3 / 230 for ph, (lab, kw) in PHASE_1PH_KW.items()}
+    print('three-phase share per phase: pump on VFD %.1f A + HVAC aux/controls %.1f A = %.1f A' % (PUMP_FLC_3PH, three - PUMP_FLC_3PH, three))
+    for ph, (lab, kw) in PHASE_1PH_KW.items():
+        print('  %s: %-70s -> %.1f A running (all compressors on)' % (ph, lab, base[ph]))
+    imax, imin = max(base.values()), min(base.values())
+    print('  unbalance (I_max - I_min)/I_avg = %.0f %% (rule 06 §7-6: <= 30 %%)' % ((imax - imin) / (sum(base.values()) / 3) * 100))
+    worst = max(base, key=base.get)
+    for name, ic, iunb, pk, pks, ibat, note, bat in INVERTERS:
+        ip = ic * pk if pks else ic
+        print('  %s: per phase %.0f A rated, %.0f A unbalanced max, peak %.0f A (%s) [%s]' % (name, ic, iunb, ip, ('%d s' % pks) if pks else 'n/a', note))
+        events = [('split restart (compressor off -> LRA)', base[worst] - SPLIT_RLA + SPLIT_LRA),
+                  ('two splits starting on one phase (misallocated)', base[worst] - SPLIT_RLA + 2 * SPLIT_LRA),
+                  ('split + fridge start together', base[worst] - SPLIT_RLA - FRIDGE_RLA + SPLIT_LRA + FRIDGE_LRA),
+                  ('3 kW pump on VFD start', base[worst] + 0.1 * PUMP_FLC_3PH)]
+        for lab, tot in events:
+            verdict = 'OK (continuous)' if tot <= min(ic, iunb) else ('peak window' if tot <= 0.85 * max(ip, ic) else 'EXCEEDS 0.85 x peak')
+            print('    %s %-46s %5.1f A -> %s' % (worst, lab, tot, verdict))
+        tok = math.floor((0.85 * max(ip, ic) - (base[worst] - SPLIT_RLA)) / SPLIT_LRA)
+        print('    start tokens on %s (06 §7-4): N_tok = %d' % (worst, min(2, max(tok, 0))))
 
 
 def battery():
-    hdr('6. HV battery: power, not energy, sets the size')
-    p_trip = (20 + AUX_TRIP_KW) * 1e3
-    p_crit = 10e3
-    print('turbine trip at full company load: battery carries %.1f kW for <= 60 s (load shedding), then <= %.0f kW critical load'
-          % (p_trip / 1e3, p_crit / 1e3))
-    for kwh in (10.2, 15.4, 20.5, 25.6):
-        cont, peak = kwh * 1.0, kwh * 1.5          # typical HV LFP stack: 1C continuous, ~1.5C for 60 s (verify per product)
-        ok = peak * 1e3 >= p_trip * 1.2 and cont * 1e3 >= p_crit
-        print('  %4.1f kWh LFP: 1C continuous %4.1f kW, 1.5C/60 s peak %4.1f kW -> %s'
-              % (kwh, cont, peak, 'OK (>= 1.2 x trip load)' if ok else 'too small for a full-load trip'))
-    print('  energy reserve for a restart: 15 min start at ~4 kW + 30 min critical load 5 kW = %.1f kWh; SOC window 20-90 %%' % (4 * 0.25 + 5 * 0.5))
+    hdr('6. Battery 20 kWh HV LFP (user decision): power check in backup')
+    site_peak, site_typ = 8.0, 5.0
+    aux = AUX_HVAC_KW + CTRL_KW
+    p_trip = site_peak + aux
+    print('backup + turbine trip: battery carries site %.1f + aux %.1f = %.1f kW until load shedding / restart' % (site_peak, aux, p_trip))
+    for name, ic, iunb, pk, pks, ibat, note, (vbat, bname) in INVERTERS:
+        p_bat = vbat * min(ibat, 100) * 0.97 / 1e3
+        print('  %-48s %3d A x %.0f V (%s) -> %.1f kW from the battery -> %s' % (name, ibat, vbat, bname, p_bat,
+              'OK' if p_bat >= p_trip else 'SHORT: shed to %.1f kW (groups 4, 3) or use a >= 400 V stack' % p_bat))
+    e = 20.48 * 0.9
+    print('  energy: %.1f kWh usable (90 %% DoD) -> %.1f h at %.1f kW (peak + aux), %.1f h at %.1f kW (typical + aux)'
+          % (e, e / p_trip, p_trip, e / (site_typ + aux), site_typ + aux))
+    print('  grid present (normal v1): turbine trip -> grid supplies the loads; battery only covers the short dip of a grid outage')
+    print('  reserve for a black start without grid: 15 min start at ~4 kW + 30 min critical 5 kW = %.1f kWh; SOC floor 20 %% (= 4.1 kWh)' % (4 * 0.25 + 5 * 0.5))
 
 
 def ups48():
-    hdr('7. 48 V essential bus (DC-UPS, independent of HV battery and inverter)')
+    hdr('7. 48 V essential bus (DC-UPS, independent of the 20 kWh HV battery and the inverter)')
     loads = dict(ecu_b1=15, b2_sensors=25, b4_logic=10, b3_logic=30, hmi_b5=25, network=20, gas_valves=60, igniter=30,
                  oil_pump=150, coolant_pump=100, encl_fans=160, misc=40)
     run = sum(loads.values())
@@ -162,7 +193,7 @@ def cables():
     rows = [('DC 750 V roof->ER, 2 x 1 x 10 mm2, 41.7 A', 720, 41.7, 2 * L_ROOF, 10, False),
             ('DC 750 V roof->ER, 2 x 1 x 16 mm2, 41.7 A', 720, 41.7, 2 * L_ROOF, 16, False),
             ('AC 400 V ER->hall, 5G10, 43.5 A', 400, 43.5, L_HALL, 10, True),
-            ('AC 400 V ER->roof BOP-R, 5G10, 20 A (HVAC ~10 kW connected)', 400, 20, L_ROOF, 10, True),
+            ('AC 400 V ER->roof BOP-R, 5G10, 20 A (HVAC ~11 kW connected)', 400, 20, L_ROOF, 10, True),
             ('48 V ER->roof, 2 x 1 x 25 mm2, starter peak 58 A', 48, 58, 2 * L_ROOF, 25, False),
             ('48 V ER->roof, 2 x 1 x 25 mm2, steady 15 A', 48, 15, 2 * L_ROOF, 25, False)]
     for lab, v, i, l, a, three in rows:

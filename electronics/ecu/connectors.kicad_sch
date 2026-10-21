@@ -1885,7 +1885,7 @@
 			(at 80.01 96.52 0)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Value" "CAN-FD2 BOP W115"
+		(property "Value" "CAN2 BMS W107"
 			(at 80.01 104.14 0)
 			(effects (font (size 1.27 1.27)))
 		)
@@ -1918,7 +1918,7 @@
 			(at 80.01 125.73 0)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Value" "CAN3 BMS W107"
+		(property "Value" "CAN3 spare"
 			(at 80.01 133.35 0)
 			(effects (font (size 1.27 1.27)))
 		)
