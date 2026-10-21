@@ -27,7 +27,8 @@ J_FPT, J_PMG, J_SHAFT = 4.0e-4, 3.0e-4, 1.0e-4   # kg m^2
 INV_P = 30e3             # inverter rating, 3-phase 400/230 V
 INV_SURGE = (1.5, 10.0)  # (x rated, seconds) — Deye HP3 class; Solis S6-EH3P: 1.6x for 2 s (verify on datasheet)
 BASE_KW = 15.0           # company load already running when a motor starts (balanced)
-AUX_KW = 2.5             # plant auxiliaries on AC (pumps, cooling tower fan, chiller controls)
+AUX_KW = 6.0             # plant auxiliaries on AC in summer: docs/hvac/06_bom_electrical.md (5.9 kW BOP + engine AC aux)
+AUX_TRIP_KW = 2.5        # aux left after a turbine trip (HVAC BOP pumps/tower shed by B6-R: no heat, no chiller)
 PUMP_KW, PUMP_EFF, PUMP_PF = 3.0, 0.86, 0.82
 AC_RLA, AC_LRA = 10.0, 50.0   # 24k BTU fixed-speed split, single phase 230 V
 
@@ -131,7 +132,7 @@ def inverter_surge():
 
 def battery():
     hdr('6. HV battery: power, not energy, sets the size')
-    p_trip = (20 + AUX_KW) * 1e3
+    p_trip = (20 + AUX_TRIP_KW) * 1e3
     p_crit = 10e3
     print('turbine trip at full company load: battery carries %.1f kW for <= 60 s (load shedding), then <= %.0f kW critical load'
           % (p_trip / 1e3, p_crit / 1e3))
@@ -161,7 +162,7 @@ def cables():
     rows = [('DC 750 V roof->ER, 2 x 1 x 10 mm2, 41.7 A', 720, 41.7, 2 * L_ROOF, 10, False),
             ('DC 750 V roof->ER, 2 x 1 x 16 mm2, 41.7 A', 720, 41.7, 2 * L_ROOF, 16, False),
             ('AC 400 V ER->hall, 5G10, 43.5 A', 400, 43.5, L_HALL, 10, True),
-            ('AC 400 V ER->roof aux, 5G6, 10 A', 400, 10, L_ROOF, 6, True),
+            ('AC 400 V ER->roof BOP-R, 5G10, 20 A (HVAC ~10 kW connected)', 400, 20, L_ROOF, 10, True),
             ('48 V ER->roof, 2 x 1 x 25 mm2, starter peak 58 A', 48, 58, 2 * L_ROOF, 25, False),
             ('48 V ER->roof, 2 x 1 x 25 mm2, steady 15 A', 48, 15, 2 * L_ROOF, 25, False)]
     for lab, v, i, l, a, three in rows:

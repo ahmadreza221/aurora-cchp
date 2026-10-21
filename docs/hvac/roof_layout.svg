@@ -79,7 +79,7 @@
 <text x="132.0" y="323.2" font-size="11" font-weight="bold" fill="#111" text-anchor="middle">DC-1</text>
 <text x="132.0" y="334.2" font-size="9" fill="#222" text-anchor="middle">90 kg</text>
 <rect x="355.2" y="175.4" width="31.0" height="31.0" fill="#e4572e" stroke="#333" stroke-width="1.5" rx="2"/>
-<text x="370.7" y="189.9" font-size="11" font-weight="bold" fill="#111" text-anchor="middle">D-101</text>
+<text x="370.7" y="189.9" font-size="11" font-weight="bold" fill="#111" text-anchor="middle">D-801</text>
 <text x="370.7" y="200.9" font-size="9" fill="#222" text-anchor="middle">60 kg</text>
 <rect x="386.2" y="163.0" width="49.6" height="55.8" fill="#e4572e" stroke="#333" stroke-width="1.5" rx="2"/>
 <text x="411.0" y="205.9" font-size="11" font-weight="bold" fill="#111" text-anchor="middle">HX-1</text>
@@ -141,7 +141,7 @@
 <rect x="710.0" y="202.0" width="10" height="10" fill="#f2a65a" stroke="#333"/>
 <text x="725.0" y="211.0" font-size="9.5" fill="#222">DC-1 - aux glycol dry cooler (engine interface)</text>
 <rect x="710.0" y="217.0" width="10" height="10" fill="#e4572e" stroke="#333"/>
-<text x="725.0" y="226.0" font-size="9.5" fill="#222">D-101 - exhaust diverter damper</text>
+<text x="725.0" y="226.0" font-size="9.5" fill="#222">D-801 - exhaust diverter damper</text>
 <rect x="710.0" y="232.0" width="10" height="10" fill="#e4572e" stroke="#333"/>
 <text x="725.0" y="241.0" font-size="9.5" fill="#222">HX-1 - exhaust/water HX (vertical up-flow)</text>
 <rect x="710.0" y="247.0" width="10" height="10" fill="#e4572e" stroke="#333"/>

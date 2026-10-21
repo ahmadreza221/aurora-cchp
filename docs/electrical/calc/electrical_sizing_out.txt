@@ -47,15 +47,15 @@ C = 600 uF, R_pre = 100 ohm: tau 60 ms, 5 tau 300 ms, I_peak 7.2 A, energy in R 
 
 5. Inverter surge check (30 kW, 1.5x for 10 s)
 ----------------------------------------------
-rated 43.5 A/phase, surge 65.2 A/phase; pump FLC 6.1 A; base load 25.4 A/phase
-  3 kW pump DOL (LRC 6.5 x FLC)                                  start  39.9 A -> phase  65.3 A = 1.50 x rated (EXCEEDS SURGE)
-  3 kW pump star (LRC/3)                                         start  13.3 A -> phase  38.7 A = 0.89 x rated (OK)
-  3 kW pump star->delta open transition spike (~6 x, 1-2 cycles) start  36.8 A -> phase  62.2 A = 1.43 x rated (surge window)
-  3 kW pump on VFD (<= 1.1 x FLC)                                start   6.8 A -> phase  32.1 A = 0.74 x rated (OK)
-  24k BTU split fixed-speed (LRA, one phase)                     start  50.0 A -> phase  75.4 A = 1.73 x rated (EXCEEDS SURGE)
-  same + compressor soft starter (-65 %)                         start  17.5 A -> phase  42.9 A = 0.99 x rated (OK)
-  inverter-type (DC inverter) split                              start  10.0 A -> phase  35.4 A = 0.81 x rated (OK)
-  two fixed-speed splits on one phase at once                    start 100.0 A -> phase 125.4 A = 2.88 x rated (EXCEEDS SURGE)
+rated 43.5 A/phase, surge 65.2 A/phase; pump FLC 6.1 A; base load 30.4 A/phase
+  3 kW pump DOL (LRC 6.5 x FLC)                                  start  39.9 A -> phase  70.3 A = 1.62 x rated (EXCEEDS SURGE)
+  3 kW pump star (LRC/3)                                         start  13.3 A -> phase  43.7 A = 1.01 x rated (surge window)
+  3 kW pump star->delta open transition spike (~6 x, 1-2 cycles) start  36.8 A -> phase  67.3 A = 1.55 x rated (EXCEEDS SURGE)
+  3 kW pump on VFD (<= 1.1 x FLC)                                start   6.8 A -> phase  37.2 A = 0.86 x rated (OK)
+  24k BTU split fixed-speed (LRA, one phase)                     start  50.0 A -> phase  80.4 A = 1.85 x rated (EXCEEDS SURGE)
+  same + compressor soft starter (-65 %)                         start  17.5 A -> phase  47.9 A = 1.10 x rated (surge window)
+  inverter-type (DC inverter) split                              start  10.0 A -> phase  40.4 A = 0.93 x rated (OK)
+  two fixed-speed splits on one phase at once                    start 100.0 A -> phase 130.4 A = 3.00 x rated (EXCEEDS SURGE)
 
 6. HV battery: power, not energy, sets the size
 -----------------------------------------------
@@ -77,6 +77,6 @@ running load 665 W; blackout (post-lube + vent + controls) 405 W; starter 2 kW x
   DC 750 V roof->ER, 2 x 1 x 10 mm2, 41.7 A            dV  5.15 V = 0.72 %  loss  215 W
   DC 750 V roof->ER, 2 x 1 x 16 mm2, 41.7 A            dV  3.22 V = 0.45 %  loss  134 W
   AC 400 V ER->hall, 5G10, 43.5 A                      dV  0.93 V = 0.23 %  loss   70 W
-  AC 400 V ER->roof aux, 5G6, 10 A                     dV  1.78 V = 0.45 %  loss   31 W
+  AC 400 V ER->roof BOP-R, 5G10, 20 A (HVAC ~10 kW connected) dV  2.14 V = 0.54 %  loss   74 W
   48 V ER->roof, 2 x 1 x 25 mm2, starter peak 58 A     dV  2.87 V = 5.97 %  loss  166 W
   48 V ER->roof, 2 x 1 x 25 mm2, steady 15 A           dV  0.74 V = 1.54 %  loss   11 W
