@@ -28,3 +28,6 @@ sim/engine/fea/*.out
 sim/engine/fea/*.inp
 graphify-out/20[0-9][0-9]-*/
 graphify-out/*.pending.json
+
+# compact parts for Autodesk Fusion (fusion/README.md)
+!fusion/E1/*.step
