@@ -12,7 +12,8 @@ axis nodes radially (u_right = R u_left on a node in both sets -> u_y = u_z = 0)
 face is free to expand thermally (a full 3-DOF fix there gave a fictitious 4000 MPa thermal peak at the weld face).
 Cases: 115k hot (design), 120k hot (trip), 138k cold (spin test), 115k cold.
 Run:    CCX=~/micromamba/envs/gr180/bin/ccx python sim/engine/e1_sector_stress.py [--h 0.5] [--hmin 0.12] [--curv 24]
-            [--cases 115h,120h,138c,115c] [--tag name]   (tag: job / json suffix for mesh-convergence runs)
+            [--cases 115h,120h,138c,115c] [--tag name] [--sector variant]   (tag: job / json suffix; sector: variant
+            written by e1_sector_tool.py with E1_SECTOR_TAG)
 Writes: sim/engine/fea/sector_stress.json, cad_out/engine/E1/E1_sector_vm_<case>.png, cad_out/engine/E1/E1_fea_results.json
         (clearance.ngv_bore_r_cold_recommended, read by cad/engine/gg_turbine.py ngv_bore_r()).
 """
@@ -57,6 +58,19 @@ def mesh(step, theta0, pitch, h=H_MESH, hmin=H_MIN, curv=CURV):
     if len(left) != len(right) or not left:
         raise RuntimeError('cut faces not found: left %s right %s' % (left, right))
     a = math.radians(pitch); c, s = math.cos(a), math.sin(a)
+    # pair each right face with the left face whose centre, rotated by one pitch, coincides (several faces per side when a
+    # blade section lies on the cut plane)
+    def rot(p):
+        return np.array([p[0], c * p[1] - s * p[2], s * p[1] + c * p[2]])
+    cl = {t: rot(np.array(gmsh.model.occ.getCenterOfMass(2, t))) for t in left}
+    pairs = []
+    for t in right:
+        cr = np.array(gmsh.model.occ.getCenterOfMass(2, t))
+        tl = min(cl, key=lambda u: np.linalg.norm(cl[u] - cr))
+        if np.linalg.norm(cl[tl] - cr) > 1e-3:
+            raise RuntimeError('no periodic partner for face %d (%.4f mm)' % (t, np.linalg.norm(cl[tl] - cr)))
+        pairs.append((t, tl))
+    right = [p[0] for p in pairs]; left = [p[1] for p in pairs]
     gmsh.model.mesh.setPeriodic(2, right, left, [1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1])
     gmsh.option.setNumber('Mesh.CharacteristicLengthMax', h); gmsh.option.setNumber('Mesh.CharacteristicLengthMin', hmin)
     gmsh.option.setNumber('Mesh.MeshSizeFromCurvature', curv)
@@ -195,17 +209,20 @@ def main():
     curv = float(args[args.index('--curv') + 1]) if '--curv' in args else CURV
     tag = args[args.index('--tag') + 1] if '--tag' in args else ''
     cases = args[args.index('--cases') + 1].split(',') if '--cases' in args else ['115h', '120h', '138c', '115c']
-    step = os.path.join(F.OUT, 'E1_sector_boreless.step')
-    meta = json.load(open(os.path.join(F.OUT, 'E1_sector_boreless.json')))
+    sname = 'E1_sector_boreless' + (('_' + args[args.index('--sector') + 1]) if '--sector' in args else '')
+    step = os.path.join(F.OUT, sname + '.step')
+    meta = json.load(open(os.path.join(F.OUT, sname + '.json')))
     t0 = time.time()
     nodes, els, nl, nr = mesh(step, meta['theta0_deg'], meta['pitch_deg'], h, hmin, curv)
-    print('sector mesh: %d nodes, %d C3D10, cut faces %d / %d nodes (%.0f s)' % (len(nodes), len(els), len(nl), len(nr), time.time() - t0), flush=True)
+    vol = sum(abs(np.linalg.det(np.array([nodes[e[1]] - nodes[e[0]], nodes[e[2]] - nodes[e[0]], nodes[e[3]] - nodes[e[0]]]))) / 6.0 for e in els)
+    print('sector mesh: %d nodes, %d C3D10, cut faces %d / %d nodes, mesh volume %.1f mm3 (%.0f s)' % (
+        len(nodes), len(els), len(nl), len(nr), vol, time.time() - t0), flush=True)
     res = dict(mesh=dict(nodes=len(nodes), elements=len(els), h=h, h_min=hmin, curvature=curv), sector=meta, cases={})
     for case in cases:
         N, hot = CASES[case]
         job = 'sec_' + case + (('_' + tag) if tag else '')
         write_deck(job, nodes, els, nl, nr, N, hot)
-        dt, log = F.run_ccx(job, threads=max(1, (os.cpu_count() or 4) - 2))
+        dt, log = F.run_ccx(job, threads=int(os.environ.get('E1_THREADS', max(1, (os.cpu_count() or 4) - 2))))
         out, pt = post(job, nodes, meta, N, hot)
         out['N'] = N; out['hot'] = hot; out['ccx_s'] = dt
         for key in ('blade_root_fillet', 'web', 'all'):

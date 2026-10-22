@@ -28,7 +28,8 @@ CASE = os.path.join(HERE, 'ngv')
 OF = os.environ.get('OF', '/Applications/OpenFOAM-v2606.app/Contents/Resources/etc/openfoam')
 META = json.load(open(os.path.join(GEO, 'passage.json')))
 D = META['design']
-NP = max(2, min(8, (os.cpu_count() or 4) - 2))
+NP = int(os.environ.get('E1_CFD_NP', max(2, min(6, (os.cpu_count() or 4) - 4))))
+X_OUT_NGV = 116.0         # stator-only domain outlet (straight annulus behind the vanes, ~1 axial chord after the TE)
 
 HEADER = '''FoamFile
 {
@@ -56,7 +57,7 @@ def block_mesh():
     rh, rs, rb = META['r_hub_ngv'], META['r_shroud_inlet'], META['r_bore']
     x_in, x_f = META['x_inlet'], 94.8
     x_ch = x_f + (rs - rb) / math.tan(math.radians(26))
-    x_out = META['x_interface']
+    x_out = X_OUT_NGV
     xs = [x_in, x_f, x_ch, x_out]
     ro = [rs, rs, rb, rb]
     S = 1e-3
@@ -67,7 +68,7 @@ def block_mesh():
     for k, x in enumerate(xs):
         idx.append([P(x, rh, tl), P(x, ro[k], tl), P(x, ro[k], tr), P(x, rh, tr)])
     # cells: axial per block, radial, tangential (coarse background; snappy refines the vane region)
-    nx = [8, 4, 24]; nr = 22; nt = 24
+    nx = [8, 4, 34]; nr = 24; nt = 28
     blocks = []
     for k in range(3):
         a, b = idx[k], idx[k + 1]
@@ -116,18 +117,20 @@ boundary
     {
         type            cyclicAMI;
         neighbourPatch  per2;
-        transformType   rotational;
+        transform       rotational;
         rotationAxis    (1 0 0);
         rotationCentre  (0 0 0);
+        lowWeightCorrection 0.2;
         faces ( %s );
     }
     per2
     {
         type            cyclicAMI;
         neighbourPatch  per1;
-        transformType   rotational;
+        transform       rotational;
         rotationAxis    (1 0 0);
         rotationCentre  (0 0 0);
+        lowWeightCorrection 0.2;
         faces ( %s );
     }
 );
@@ -155,12 +158,6 @@ geometry
         type triSurfaceMesh;
         file "ngv_vane_m.stl";
     }
-    refineBox
-    {
-        type box;
-        min (%.5f -1 -1);
-        max (%.5f  1  1);
-    }
 }
 
 castellatedMeshControls
@@ -181,8 +178,7 @@ castellatedMeshControls
     resolveFeatureAngle 25;
     refinementRegions
     {
-        vane     { mode distance; levels ((0.0006 %d) (0.0015 %d)); }
-        refineBox { mode inside; levels ((1e15 1)); }
+        vane     { mode distance; levels ((0.0004 %d) (0.0012 %d)); }
     }
     locationInMesh (%.6f %.6f %.6f);
     allowFreeStandingZoneFaces true;
@@ -247,7 +243,7 @@ meshQualityControls
 }
 
 mergeTolerance 1e-6;
-''' % ((META['x_ngv_le_te'][0] - 2.5) * 1e-3, (META['x_ngv_le_te'][1] + 3.0) * 1e-3, level, level, level + 1, level + 1, level, *loc)
+''' % (level + 1, level, level + 1, level + 1, level, *loc)
     w('system/snappyHexMeshDict', 'dictionary', body)
     w('system/surfaceFeatureExtractDict', 'dictionary', '''ngv_vane_m.stl
 {
@@ -276,8 +272,8 @@ runTimeModifiable true;
 
 functions
 {
-    mdot_in  { type flowRatePatch; libs (fieldFunctionObjects); patch inlet;  writeControl timeStep; writeInterval 25; log true; }
-    mdot_out { type flowRatePatch; libs (fieldFunctionObjects); patch outlet; writeControl timeStep; writeInterval 25; log true; }
+    mdot_in  { type surfaceFieldValue; libs (fieldFunctionObjects); regionType patch; name inlet;  operation sum; fields (phi); writeControl timeStep; writeInterval 25; log true; writeFields false; }
+    mdot_out { type surfaceFieldValue; libs (fieldFunctionObjects); regionType patch; name outlet; operation sum; fields (phi); writeControl timeStep; writeInterval 25; log true; writeFields false; }
     p0 { type pressure; libs (fieldFunctionObjects); mode total; rho rho; writeControl writeTime; }
     Ma { type MachNo; libs (fieldFunctionObjects); writeControl writeTime; }
     out_avg
@@ -386,16 +382,16 @@ def fields():
 internalField uniform %.1f;
 boundaryField
 {
-    inlet  { type totalPressure; p0 uniform %.1f; gamma 1.33; rho rho; psi psi; value uniform %.1f; }
-    outlet { type fixedValue; value uniform %.1f; }
+    inlet  { type totalPressure; p0 uniform %.1f; gamma 1.33; rho rho; psi thermo:psi; value uniform %.1f; }
+    outlet { type fixedMean; meanValue %.1f; value uniform %.1f; }
     "(hub|shroud|vane)" { type zeroGradient; }
 %s}
-''' % (0.5 * (p01 + p2), p01, p01 * 0.95, p2, per))
+''' % (0.5 * (p01 + p2), p01, p01 * 0.95, p2, p2, per))
     w('0/T', 'volScalarField', '''dimensions [0 0 0 1 0 0 0];
 internalField uniform %.1f;
 boundaryField
 {
-    inlet  { type totalTemperature; T0 uniform %.1f; gamma 1.33; psi psi; value uniform %.1f; }
+    inlet  { type totalTemperature; T0 uniform %.1f; gamma 1.33; psi thermo:psi; value uniform %.1f; }
     outlet { type inletOutlet; inletValue uniform %.1f; value uniform %.1f; }
     "(hub|shroud|vane)" { type zeroGradient; }
 %s}

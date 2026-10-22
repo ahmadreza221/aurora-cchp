@@ -64,7 +64,16 @@ wedge = Part.Face(tri).extrude(V(25.0, 0, 0))
 disc_cut = disc.common(wedge)
 log('disc sector vol %.1f (x%d = %.0f vs disc %.0f) solids %d valid %s'
     % (disc_cut.Volume, G.Z_ROT, G.Z_ROT * disc_cut.Volume, disc.Volume, len(disc_cut.Solids), disc_cut.isValid()))
-sector = disc_cut.fuse(piece)
+# exact periodicity: the sector is (disc + blades -1, 0, +1) x wedge. A blade whose fillet or lean crosses a cut plane is cut
+# there, and its neighbour supplies the matching section on the opposite plane (a whole blade fused to the disc sector gave
+# unmatched edges on one cut face when the fillet foot touched the plane: gmsh periodic meshing failed).
+parts = []
+for k in (-1, 0, 1):
+    b = piece.copy(); b.rotate(V(0, 0, 0), V(1, 0, 0), math.degrees(k * pitch))
+    c = b.common(wedge)
+    if c.Volume > 1e-3:
+        parts.append(c); log('blade %+d inside the wedge: vol %.3f mm3' % (k, c.Volume))
+sector = disc_cut.fuse(parts)
 try:
     sector = sector.removeSplitter()
 except Exception:
@@ -77,9 +86,12 @@ if len(sols) != 1:
 sec = sols[0]
 OUT = G.OUT
 os.makedirs(OUT, exist_ok=True)
-sec.exportStep(os.path.join(OUT, 'E1_sector_boreless.step'))
+TAG = os.environ.get('E1_SECTOR_TAG', '')          # variant suffix for the sensitivity study (default: the design sector)
+NAME = 'E1_sector_boreless' + (('_' + TAG) if TAG else '')
+sec.exportStep(os.path.join(OUT, NAME + '.step'))
 json.dump(dict(theta0_deg=math.degrees(theta0), pitch_deg=math.degrees(pitch), Z=G.Z_ROT,
                footprint_deg=[math.degrees(th_lo), math.degrees(th_hi)], clearance_deg=math.degrees(clear),
-               vol_mm3=sec.Volume, disc_sector_mm3=disc_cut.Volume, blade_mm3=piece.Volume, disc='DISC_BORELESS final'),
-          open(os.path.join(OUT, 'E1_sector_boreless.json'), 'w'), indent=1)
-log('written', os.path.join(OUT, 'E1_sector_boreless.step'))
+               vol_mm3=sec.Volume, disc_sector_mm3=disc_cut.Volume, blade_mm3=piece.Volume, disc='DISC_BORELESS final',
+               fillet_rot=G.FILLET_ROT, tte_root_add=G.TTE_ROOT_ADD),
+          open(os.path.join(OUT, NAME + '.json'), 'w'), indent=1)
+log('written', os.path.join(OUT, NAME + '.step'))

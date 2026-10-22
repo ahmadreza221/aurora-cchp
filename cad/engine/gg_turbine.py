@@ -46,6 +46,11 @@ X_FL0, X_FL1, R_H0, R_H1 = 110.30, 118.60, 22.10, 19.00   # hub flare r 22.1 -> 
 ROT_LE = (111.20, 110.95)          # rotor LE (hub, tip): hub set back so the R0.8 root fillet stays on the platform
 ROT_TE = (118.70, 117.60)          # rotor TE (hub, tip): tip chord shortened for blade taper (root stress), 1.2 inside the shroud end x 118.8
 FILLET_ROT, FILLET_NGV = 0.80, 1.00
+# sensitivity hooks (defaults = the design; used by the blade-root fillet study, docs/engine/E1_gg_turbine.md section 6):
+#   E1_FILLET_ROT    rotor root fillet radius [mm]
+#   E1_TTE_ROOT_ADD  extra trailing-edge thickness at the hub [mm], tapering linearly to 0 at span s = 0.25
+FILLET_ROT = float(os.environ.get('E1_FILLET_ROT', FILLET_ROT))
+TTE_ROOT_ADD = float(os.environ.get('E1_TTE_ROOT_ADD', 0.0))
 
 def r_hub(x):
     """Rotor hub (platform) radius [mm] at axial x: C1 smooth step 22.1 -> 19.0 between X_FL0 and X_FL1."""
@@ -325,7 +330,8 @@ def rot_params(s):
     sc = min(max(s, 0.0), 1.0)
     # t/c 0.22 at the root -> 0.068 at the tip (strong outer taper keeps the root P/A ~290 MPa @115k), LE radius 0.36 -> 0.18,
     # cast TE 0.48 -> 0.45 mm, max thickness at 32-38 % of the camber, camber loading exponent 2.0 (hub) -> 1.6 (tip)
-    return dict(tau=0.068 + 0.152 * (1 - sc)**2.2, rle=0.36 - 0.18 * sc, tte=0.48 - 0.03 * sc, sig_m=0.32 + 0.06 * sc, p=2.0 - 0.4 * sc)
+    return dict(tau=0.068 + 0.152 * (1 - sc)**2.2, rle=0.36 - 0.18 * sc, tte=0.48 - 0.03 * sc + TTE_ROOT_ADD * max(0.0, 1.0 - sc / 0.25),
+                sig_m=0.32 + 0.06 * sc, p=2.0 - 0.4 * sc)
 
 def rot_le_te(s):
     return ROT_LE[0] + (ROT_LE[1] - ROT_LE[0]) * s, ROT_TE[0] + (ROT_TE[1] - ROT_TE[0]) * s
