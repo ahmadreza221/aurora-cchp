@@ -621,6 +621,50 @@ def clash_check(m, min_vol=1000.0):
     return res
 
 
+def joint_points(m):
+    """Points where touching between connected items is legitimate: nozzle ends, route ends and route corners
+    (tees on a parent sit on its centre line)."""
+    pts = [n['p'] for n in m.nozzles.values()]
+    for r in m.routes.values():
+        pts.append(r.pts[0])
+        pts.append(r.pts[-1])
+    return pts
+
+
+def connected_overlap_check(m, min_vol=1000.0, tol=0.30):
+    """Connected items are excluded from clash_check. Here their overlaps are checked anyway and kept only if they lie
+    within tol (m, plus the overlap's own half-size) of a joint point; the rest are real clashes hidden by the
+    connection. Dunnage/mount/support pairs and skid frames carrying their own lines are expected contact."""
+    jp = joint_points(m)
+    sol = [p for p in m.parts if p.kind not in ('ref', 'walk')]
+    bbs = [p.shape.BoundBox for p in sol]
+    res = []
+    for i in range(len(sol)):
+        a = sol[i]
+        for j in range(i + 1, len(sol)):
+            b = sol[j]
+            if a.owner == b.owner or not (a.owner in b.connects or b.owner in a.connects):
+                continue
+            if 'support' in (a.kind, b.kind) or 'dunnage' in (a.group, b.group) or 'mount' in a.label or 'mount' in b.label:
+                continue
+            if not bbs[i].intersect(bbs[j]):
+                continue
+            try:
+                c = a.shape.common(b.shape)
+            except Exception:
+                m.clash_errors.append((a.label, b.label))
+                continue
+            if c.Volume <= min_vol:
+                continue
+            cb = c.BoundBox
+            ctr = ((cb.XMin + cb.XMax) / 2 / MM, (cb.YMin + cb.YMax) / 2 / MM, (cb.ZMin + cb.ZMax) / 2 / MM)
+            half = max(cb.XLength, cb.YLength, cb.ZLength) / 2 / MM
+            dmin = min(math.dist(ctr, q) for q in jp)
+            if dmin > tol + half:
+                res.append((a.label, b.label, c.Volume / 1e3, tuple(round(x, 2) for x in ctr), round(dmin, 2)))
+    return res
+
+
 def zone_check(m, min_vol=1000.0):
     res = []
     for z in m.zones:

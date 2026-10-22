@@ -203,7 +203,7 @@ IO = [
     ('ESD-R', 'E-stop روی بام (در جعبه؛ یک شستی دوم کنار BOP-R به‌صورت سری)', 'SAFE-DI', 'NC dual channel', 'roof', 'SR1', 'SI01 + B2 DI10 (docs/electrical)'),
     ('ENG-RUN', 'سیگنال سخت‌افزاری «موتور روشن» از B1', 'DI', 'dry contact (B1 RO08)', 'BOP-R', 'B6-R', 'پشتیبان Modbus TCP برای حالت محلی امن'),
     ('XV-305', 'شیر on/off سمت آب خنک‌کن HX-4 (trim گلیکول)', 'DO', '24 VAC، normally closed', 'PS-2', 'B6-R', 'باز وقتی CW در کار است و TE-GLY > 40 °C؛ اختیاری (بخش ۷ سند 07)'),
-    ('XV-307', 'شیر آب پدهای پیش‌سرمایش adiabatic در DC-1 (آب نرم‌شده)', 'DO', '24 VAC', 'DC-1', 'B4', 'پیشنهاد به docs/electrical : باز وقتی TT-OA > 35 °C یا TE-GLY > 42 °C'),
+    ('XV-307', 'شیر آب پدهای پیش‌سرمایش adiabatic در DC-1 (آب نرم‌شده)', 'DO', '24 VDC, NC', 'DC-1', 'B4', 'B4 DO12 (docs/electrical)؛ باز وقتی TT-OA > 35 °C یا TE-GLY > 42 °C'),
     ('SOFT-1-FLT', 'خطا یا regeneration سختی‌گیر SOFT-1', 'DI', 'dry contact', 'water room', 'B6-E', ''),
     ('LSL-403', 'سطح پایین نمک مخزن brine سختی‌گیر', 'DI', 'dry contact', 'water room', 'B6-E', ''),
     # ---------------- fire suppression FK-5-1-12 (docs/hvac/08): mechanical side here. Detection, release, discharge and

@@ -96,17 +96,22 @@ def tower_ring_check():
 
 T1 = time.time()
 clashes = L.clash_check(m)
+hidden = L.connected_overlap_check(m)
 zones = L.zone_check(m)
 walks = walkway_check()
 ring = tower_ring_check()
-print('checks: %d clashes, %d service-zone, %d walkway, %d tower-ring, %d unchecked pairs (%.1f s)' % (
-    len(clashes), len(zones), len(walks), len(ring), len(m.clash_errors), time.time() - T1))
+print('checks: %d clashes, %d connected-item overlaps away from a joint, %d service-zone, %d walkway, %d tower-ring, '
+      '%d unchecked pairs (%.1f s)' % (len(clashes), len(hidden), len(zones), len(walks), len(ring), len(m.clash_errors),
+                                       time.time() - T1))
 with open(os.path.join(OUT, 'clash_report.txt'), 'w') as f:
     f.write('GR180-CCHP roof plant - interference and clearance report (cad/plant/build_plant.py)\n')
     f.write('solids: %d, routes: %d\n\n' % (len(m.parts), len(m.routes)))
     f.write('[1] solid interference > 1 cm3 (connected items and own parts excluded): %d\n' % len(clashes))
     for a, b, v in clashes:
         f.write('  %-45s x %-45s %8.1f cm3\n' % (a, b, v))
+    f.write('\n[1b] overlaps between connected items away from any nozzle / route end (> 0.30 m): %d\n' % len(hidden))
+    for a, b, v, c, d in hidden:
+        f.write('  %-45s x %-45s %8.1f cm3 at %s (%.2f m from a joint)\n' % (a, b, v, c, d))
     f.write('    pairs not checked (boolean failed, check by hand): %d\n' % len(m.clash_errors))
     for a, b in m.clash_errors:
         f.write('      %-45s x %s\n' % (a, b))
@@ -122,6 +127,8 @@ with open(os.path.join(OUT, 'clash_report.txt'), 'w') as f:
     f.write('\nwarnings: %d\n' % len(m.warnings))
     for w_ in m.warnings:
         f.write('  %s\n' % w_)
+for a, b, v, c, d in hidden:
+    print('  HIDDEN %-40s x %-40s %7.1f cm3 at %s' % (a, b, v, c))
 for a, b in m.clash_errors:
     print('  UNCHECKED %s x %s' % (a, b))
 for a, b, v in clashes[:60]:

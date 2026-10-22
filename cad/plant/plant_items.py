@@ -225,7 +225,7 @@ def equipment(m):
         m.add(t, 'PS-1 frame y-beam', box(xb - 0.03, 5.45, zf, 0.06, 0.80, 0.12), 'equip', C_STEEL)
     m.add(t, 'ET-2 25 L', cyl(3.45, 5.90, zf + 0.12, 0.30, 0.42), 'equip', (0.8, 0.15, 0.15))
     m.add(t, 'JB-PS1 junction box', box(2.85, 5.50, zf + 0.12, 0.20, 0.10, 0.40), 'equip', C_ELEC)
-    m.add(t, 'FU-1 fill unit (BA + meter + pot)', box(4.10, 5.88, zf + 0.12, 0.40, 0.20, 0.30), 'equip', (0.3, 0.55, 0.3))
+    m.add(t, 'FU-1 fill unit (BA + meter + pot)', box(4.10, 5.68, zf + 0.12, 0.40, 0.20, 0.30), 'equip', (0.3, 0.55, 0.3))
     m.nozzle(t, 'et2', (3.45, 5.75, 0.55), (0, -1, 0), 20, 'ET-2 connection', stub=0.10)
     m.item(t, 'hydronic pump skid PS-1: galvanised frame on spring isolators, carrying P-2A/B, P-5A/B, FT-211, HM-2/4, '
               'AS-2, ET-2 25 L, closed-loop fill unit FU-1 (BA backflow preventer, FQ-410, XV-410, dosing pot), JB-PS1',
@@ -578,8 +578,8 @@ def piping(m):
 
     # ---------------- make-up, pad water, fill
     add('MU-1', 'L-MU-01', 'tower make-up (softened / RO blend) RS-1 -> CT-1', 20, 'PPR',
-        [(10.0, 6.24, -2.50), (9.68, 6.24, -2.50), (9.68, 6.24, 0.40), (9.68, 1.95, 0.40), (9.50, 1.95, 0.40), (9.50, 1.95, 0.80),
-         nz('CT-1', 'mu_in')], ins='EL25H', connects={'RS-1', 'CT-1', 'REF'}, heat_trace=True,
+        [(10.0, 6.24, -2.50), (9.68, 6.24, -2.50), (9.68, 6.24, 0.75), (8.95, 6.24, 0.75), (8.95, 5.45, 0.75), (8.95, 5.45, 0.40),
+         (9.68, 5.45, 0.40), (9.68, 1.95, 0.40), (9.50, 1.95, 0.40), (9.50, 1.95, 0.80), nz('CT-1', 'mu_in')], ins='EL25H', connects={'RS-1', 'CT-1', 'REF'}, heat_trace=True,
         inline=[dict(type='meter_water', tag='FQ-301', at=(9.68, 3.40, 0.40), dn=20), dict(type='motorball', tag='XV-301', at=(9.68, 2.95, 0.40), dn=20)])
     add('PW-1', 'L-MU-02', 'softened water to DC-1 pads + closed-loop fill', 15, 'PPR',
         [(9.68, 6.24, 0.40), (2.65, 6.24, 0.40), (2.65, 6.24, 0.30), (1.66, 6.24, 0.30), (1.66, 6.10, 0.30), (1.66, 6.10, 1.05),
