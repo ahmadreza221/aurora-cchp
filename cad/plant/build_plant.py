@@ -42,9 +42,10 @@ PI.hall(m)
 PI.interfaces(m)
 
 # walkways (GRP grating tiles on pads at roof level); low pipes crossing them get auto step-over stiles
-m.walkways = [dict(x0=1.70, y0=0.40, x1=2.55, y1=7.00, axis='y', name='WK-1 N-S hatch -> engine'),
-              dict(x0=2.55, y0=4.45, x1=8.25, y1=5.20, axis='x', name='WK-2 E-W central'),
-              dict(x0=1.20, y0=0.40, x1=1.70, y1=1.15, axis='x', name='WK-3 hatch landing')]
+# WK-1 0.62 m wide between the DC-1 pad-water riser (x 1.66) and the engine glycol risers (x 2.40)
+m.walkways = [dict(x0=1.72, y0=0.40, x1=2.34, y1=7.00, axis='y', name='WK-1 N-S hatch -> engine'),
+              dict(x0=2.34, y0=4.45, x1=8.25, y1=5.15, axis='x', name='WK-2 E-W central'),
+              dict(x0=1.20, y0=0.40, x1=1.72, y1=1.15, axis='x', name='WK-3 hatch landing')]
 walk_area = 0.0
 for w in m.walkways:
     m.add('WALK', w['name'], L.box(w['x0'], w['y0'], 0.0, w['x1'] - w['x0'], w['y1'] - w['y0'], 0.03), 'walk',
@@ -98,13 +99,17 @@ clashes = L.clash_check(m)
 zones = L.zone_check(m)
 walks = walkway_check()
 ring = tower_ring_check()
-print('checks: %d clashes, %d service-zone, %d walkway, %d tower-ring (%.1f s)' % (len(clashes), len(zones), len(walks), len(ring), time.time() - T1))
+print('checks: %d clashes, %d service-zone, %d walkway, %d tower-ring, %d unchecked pairs (%.1f s)' % (
+    len(clashes), len(zones), len(walks), len(ring), len(m.clash_errors), time.time() - T1))
 with open(os.path.join(OUT, 'clash_report.txt'), 'w') as f:
     f.write('GR180-CCHP roof plant - interference and clearance report (cad/plant/build_plant.py)\n')
     f.write('solids: %d, routes: %d\n\n' % (len(m.parts), len(m.routes)))
     f.write('[1] solid interference > 1 cm3 (connected items and own parts excluded): %d\n' % len(clashes))
     for a, b, v in clashes:
         f.write('  %-45s x %-45s %8.1f cm3\n' % (a, b, v))
+    f.write('    pairs not checked (boolean failed, check by hand): %d\n' % len(m.clash_errors))
+    for a, b in m.clash_errors:
+        f.write('      %-45s x %s\n' % (a, b))
     f.write('\n[2] service / door zones (0.03-2.10 m) occupied by unrelated solids: %d\n' % len(zones))
     for o, lab, p, v in zones:
         f.write('  zone %-8s %-28s <- %-40s %8.1f cm3\n' % (o, lab, p, v))
@@ -117,6 +122,8 @@ with open(os.path.join(OUT, 'clash_report.txt'), 'w') as f:
     f.write('\nwarnings: %d\n' % len(m.warnings))
     for w_ in m.warnings:
         f.write('  %s\n' % w_)
+for a, b in m.clash_errors:
+    print('  UNCHECKED %s x %s' % (a, b))
 for a, b, v in clashes[:60]:
     print('  CLASH %-40s x %-40s %7.1f cm3' % (a, b, v))
 for o, lab, p, v in zones[:40]:
@@ -223,7 +230,7 @@ for (ct, dn, hall_), names in sorted(agg.items()):
         mass_roof['equipment'] += mass
 
 # pipes, elbows, tees, flanges, reducers, insulation
-pipe_len, elb, tees, ins_len, flanges, ht_len = {}, {}, {}, {}, {}, 0.0
+pipe_len, elb, tees, ins_len, ins_kg, flanges, ht_len = {}, {}, {}, {}, {}, {}, 0.0
 for r in m.routes.values():
     k = (r.mat, r.dn)
     pipe_len[k] = pipe_len.get(k, 0.0) + r.length
@@ -245,6 +252,7 @@ for r in m.routes.values():
     if r.ins:
         ki = (r.ins, r.dn)
         ins_len[ki] = ins_len.get(ki, 0.0) + r.length
+        ins_kg[ki] = ins_kg.get(ki, 0.0) + ik
     if r.heat_trace:
         ht_len += r.length
     for c in r.comps:
@@ -286,7 +294,8 @@ for (dn, kind), q in sorted(flanges.items()):
 for (ins, dn), Lm in sorted(ins_len.items()):
     row('INS-%s-DN%d' % (ins, dn), 'pipe insulation %s on DN%d' % (L.INSULATION[ins][0], dn), round(Lm * 1.08, 1), 'buy',
         L.INSULATION[ins][0], 'DN%d, %d mm' % (dn, L.INSULATION[ins][1]),
-        'Rockwool, Isover (EU) / Armacell, K-Flex (EU); domestic equivalents', '', 'cad_out/plant/piping/', 'unit: m incl. 8 % for fittings')
+        'Rockwool, Isover (EU) / Armacell, K-Flex (EU); domestic equivalents', round(ins_kg[(ins, dn)] * 1.08, 1), 'cad_out/plant/piping/',
+        'unit: m incl. 8 % for fittings')
 row('HT-1', 'self-regulating heat tracing 20 W/m + controller + RCD 30 mA (make-up, pad/fill water)', round(ht_len * 1.15, 1), 'buy',
     'self-regulating cable, IP67 kit, ambient thermostat 3 C', '20 W/m', 'Eltherm (DE), Heat Trace Ltd (UK); Chinese', round(ht_len * 0.15, 1),
     'cad_out/plant/piping/', 'unit: m')
@@ -325,7 +334,7 @@ for r_ in m.bom_extra:
 # instruments from io_list.csv (field devices)
 io = os.path.join(ROOT, 'docs', 'hvac', 'io_list.csv')
 INSTR = ('TE', 'TT', 'PT', 'PDT', 'DPT', 'FT', 'FS', 'FSL', 'LT', 'LSL', 'LSH', 'LSLL', 'AT', 'AIT', 'MT', 'VS', 'LD', 'ZT', 'PSH', 'TSHH', 'TSH')
-already = {r_['tag'] for r_ in rows}
+already = {r_['tag'] for r_ in rows} | {'LD-E'}     # LD-E: listed once with the indoor items (cable + module)
 ninstr = 0
 with open(io) as f:
     rd = csv.reader(f)

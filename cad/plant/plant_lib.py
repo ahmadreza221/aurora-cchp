@@ -595,7 +595,9 @@ def step_overs(m):
 
 # ----------------------------------------------------------------------------------------------- clash check
 def clash_check(m, min_vol=1000.0):
-    """Pairwise solid interference (> min_vol mm3), skipping same owner / declared connections / reference."""
+    """Pairwise solid interference (> min_vol mm3), skipping same owner / declared connections / reference.
+    Pairs whose boolean fails are collected in m.clash_errors (must be checked by hand)."""
+    m.clash_errors = []
     sol = [p for p in m.parts if p.kind not in ('ref',)]
     bbs = [p.shape.BoundBox for p in sol]
     res = []
@@ -612,6 +614,7 @@ def clash_check(m, min_vol=1000.0):
             try:
                 v = a.shape.common(b.shape).Volume
             except Exception:
+                m.clash_errors.append((a.label, b.label))     # boolean failed: reported, not silently passed
                 continue
             if v > min_vol:
                 res.append((a.label, b.label, v / 1e3))
