@@ -597,6 +597,13 @@ def _fc():
     import FreeCAD as App, Part
     return App, Part, App.Vector
 
+def resample_closed(P, n=240):
+    """Closed outline (no duplicate end point) resampled at equal arc length, seam point kept. The NGV fillet offsets spread the
+    TE-cap points and bunch the concave side; interpolating them as they are puts small loops into the B-spline."""
+    Q = np.vstack([P, P[:1]]); d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(Q, axis=0), axis=1))]
+    t = np.linspace(0, d[-1], n + 1)[:-1]
+    return np.stack([np.interp(t, d, Q[:, k]) for k in range(3)], 1)
+
 def bs_wire(pts):
     """Closed, non-periodic B-spline interpolation (seam at the TE mid-point; periodic curves break ThruSections)."""
     App, Part, V = _fc()
@@ -735,8 +742,10 @@ def fc_vane(ngv, rb):
     # fillet foot sections (h = 0) sunk 0.05 mm into the rings: a section edge lying exactly on the ring cylinder makes the
     # vane/ring boolean fail (invalid NGV solid); the sunk part is fused away, the visible fillet is unchanged
     sink = lambda hk: -0.05 if hk == 0 else 0.0
-    inner = [mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8 + sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H]
-    outer = [mk(shr, rb - hk * FILLET_NGV / 0.8 - sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H][::-1]
+    inner = [resample_closed(mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8 + sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)))
+             for hk in FILLET_H]
+    outer = [resample_closed(mk(shr, rb - hk * FILLET_NGV / 0.8 - sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)))
+             for hk in FILLET_H][::-1]
     r_in_max, r_out_min = R_NGV_HUB + FILLET_H[-1] * FILLET_NGV / 0.8 + 1.0, rb - FILLET_H[-1] * FILLET_NGV / 0.8 - 1.0
     mids = [ngv[r].outline()[0] for r in sorted(ngv) if r_in_max < r < r_out_min]
     # end caps on true planes (normal at the section's mid angle, radial projection), buried in the rings: caps on r = const
