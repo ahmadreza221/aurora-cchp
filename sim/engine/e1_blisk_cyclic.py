@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""GR180-CCHP E1 - bore-less blisk modes by cyclic symmetry (CalculiX + gmsh): nodal diameters 0-14, ZZENF / interference check.
+"""GR180-CCHP E1 - bore-less blisk modes by cyclic symmetry (CalculiX + gmsh): excited nodal diameters, ZZENF / interference check.
 
 Model: 1/29 sector = disc cut by two radial planes +-pitch/2 about the blade-root footprint (they clear the fillet foot by
 0.33 deg; cyclic symmetry only needs periodic cut faces, the blade above the hub may lean over them) + the blade piece,
 built by tooling around cad/engine/gg_turbine.py (cad_out/engine/E1/E1_sector_boreless.step + .json with theta0 / pitch).
 Periodic mesh on the cut faces; held at the weld face to the shaft (x 104.3, r <= 4: ND >= 2 exact, ND 0/1 couple with the
 shaft, see sim/gr180_rotor.py). Metal temperature by radius (disc axis 480 C -> hub 730 C, blade 730 C) for E(T), no
-thermal stress. Per speed: NLGEOM static (centrifugal) -> perturbation *FREQUENCY, nodal diameters 0..14.
+thermal stress. Per speed: NLGEOM static (centrifugal) -> perturbation *FREQUENCY, one job per
+nodal-diameter group in GROUPS (the ones the engine orders EO reach), PARALLEL jobs at a time.
 
 Engine order k excites nodal diameter n = k mod 29 folded to 0..14 (n = min(k mod 29, 29 - k mod 29)).
 Run:    python sim/engine/e1_blisk_cyclic.py            (CCX = path to ccx; gmsh python module)
@@ -27,7 +28,10 @@ G = F.G
 
 Z = G.Z_ROT
 SPEEDS = [0.0, 115e3]                                        # others by f^2 = f0^2 + k N^2 (centrifugal stiffening)
-N_PER_ND = 5
+# (nodal diameters, eigenvalues requested): EO 1-4 -> ND 1-4, EO7 -> 7, EO21 -> 8, EO42 -> 13. ccx returns every
+# family twice (cos / sin), so nev = 2 x the families wanted; the families must reach above k x 115k / 60.
+GROUPS = [((1, 2, 3, 4), 10), ((7,), 12), ((8,), 24), ((13,), 40)]
+PARALLEL = 2                                                 # ccx jobs at once (threads split between them)
 EO = [1, 2, 3, 4, 7, 21, 42]
 H_MESH = 0.50
 T_AXIS, T_HUB = 480.0, 730.0
@@ -86,7 +90,7 @@ def temperature(p):
     return T_HUB if r >= rh else T_AXIS + (T_HUB - T_AXIS) * r / rh
 
 
-def run(nodes, els, nl, nr, N, tag):
+def run(nodes, els, nl, nr, N, nds, nev, tag):
     om = N * 2 * math.pi / 60.0
     dep = set(nr)                                            # dependent cut-face nodes follow their tied partners (no SPC on them)
     weld = [k for k, p in nodes.items() if abs(p[0] - G.X_HUB) < 1e-3 and math.hypot(p[1], p[2]) <= 4.0 + 1e-6 and k not in dep]
@@ -105,28 +109,23 @@ def run(nodes, els, nl, nr, N, tag):
         f.write('*BOUNDARY\nNWELD, 1, 3, 0.\n')
         if N > 0:
             f.write('*STEP, NLGEOM\n*STATIC\n*DLOAD\nEALL, CENTRIF, %.6e, 0., 0., 0., 1., 0., 0.\n*END STEP\n' % om**2)
-        f.write('*STEP%s\n*FREQUENCY\n%d\n*SELECT CYCLIC SYMMETRY MODES, NMIN=0, NMAX=%d\n*END STEP\n'
-                % ('' if N == 0 else ', PERTURBATION', N_PER_ND, Z // 2))
-    F.run_ccx(job, threads=4)
-    txt = open(os.path.join(F.FEA, job + '.dat')).read()
+        f.write('*STEP%s\n*FREQUENCY\n%d\n*SELECT CYCLIC SYMMETRY MODES, NMIN=%d, NMAX=%d\n*END STEP\n'
+                % ('' if N == 0 else ', PERTURBATION', nev, min(nds), max(nds)))
+    F.run_ccx(job, threads=max(1, (os.cpu_count() or 4) // PARALLEL))
+    return {nd: v for nd, v in parse_dat(os.path.join(F.FEA, job + '.dat')).items() if nd in nds}
+
+
+def parse_dat(path):
+    """{nd: [family frequencies, Hz]} from the .dat lines 'ND  MODE  EIGENVALUE  RAD/T  HZ  IMAG'; the cos / sin
+    copies of each family are merged."""
     res = {}
-    for blk in txt.split('E I G E N V A L U E   O U T P U T')[1:]:
-        nd = None
-        head = blk[:400].upper()
-        for line in blk.splitlines()[:12]:
-            if 'NODAL DIAMETER' in line.upper():
-                try: nd = int(line.split()[-1])
-                except ValueError: pass
-        fr = []
-        for line in blk.splitlines():
-            p = line.split()
-            if len(p) == 5 and p[0].isdigit():
-                fr.append(float(p[3]))
-            elif fr and p and not p[0].replace('.', '').isdigit():
-                if len(fr) >= N_PER_ND: break
-        if nd is None: nd = len(res)
-        res[nd] = fr[:N_PER_ND]
-    return res, len(weld)
+    for line in open(path):
+        p = line.split()
+        if len(p) == 6 and p[0].isdigit() and p[1].isdigit():
+            fl = res.setdefault(int(p[0]), []); f = float(p[4])
+            if not fl or abs(f - fl[-1]) > 1e-5 * f:
+                fl.append(f)
+    return res
 
 
 def main():
@@ -134,11 +133,17 @@ def main():
     meta = json.load(open(os.path.join(ROOT, 'cad_out', 'engine', 'E1', 'E1_sector_boreless.json')))
     nodes, els, nl, nr = mesh(step, meta['theta0_deg'], meta['pitch_deg'])
     print('sector mesh: %d nodes, %d C3D10, cut faces %d / %d nodes' % (len(nodes), len(els), len(nl), len(nr)), flush=True)
-    table = {}
+    from concurrent.futures import ThreadPoolExecutor
+    jobs = [(N, nds, nev) for N in SPEEDS for nds, nev in GROUPS]
+    with ThreadPoolExecutor(PARALLEL) as ex:
+        out = list(ex.map(lambda j: (j[0], run(nodes, els, nl, nr, j[0], j[1], j[2],
+                                               '%dk_nd%s' % (j[0] / 1e3, '-'.join(map(str, j[1]))))), jobs))
+    table = {N: {} for N in SPEEDS}
+    for N, res in out:
+        table[N].update(res)
     for N in SPEEDS:
-        res, nw = run(nodes, els, nl, nr, N, '%dk' % (N / 1e3))
-        table[N] = res
-        print('%5.0fk rpm (weld nodes %d):' % (N / 1e3, nw), flush=True)
+        res = table[N]
+        print('%5.0fk rpm:' % (N / 1e3), flush=True)
         for nd in sorted(res):
             print('   ND %2d: %s' % (nd, '  '.join('%7.0f' % f for f in res[nd])), flush=True)
     # interference: EO k at speed N excites ND nd_of(k) at k*N/60
@@ -146,7 +151,7 @@ def main():
     hits = []
     for k in EO:
         n = nd_of(k)
-        for m in range(N_PER_ND):
+        for m in range(min(len(table[0.0][n]), len(table[115e3][n]))):
             f0, f1 = table[0.0][n][m], table[115e3][n][m]
             sp = np.linspace(0.0, 130e3, 131); fs = np.sqrt(f0**2 + (f1**2 - f0**2) * (sp / 115e3)**2)
             g = fs - k * sp / 60.0
@@ -162,15 +167,17 @@ def main():
     import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(10, 7), dpi=120)
     r115 = table[115e3]; nds = sorted(r115)
-    for m in range(N_PER_ND):
-        ax.plot(nds, [r115[n][m] for n in nds], 'o-', lw=1.6, label='family %d' % (m + 1))
+    for m in range(max(len(v) for v in r115.values())):
+        pts = [(n, r115[n][m]) for n in nds if len(r115[n]) > m]
+        ax.plot(*zip(*pts), 'o', ms=4, color='C%d' % (m % 10))
     for k in EO:
         n = nd_of(k); fk = k * 115e3 / 60
+        if n not in r115: continue
         ax.plot([n], [fk], 'kx', ms=11, mew=2); ax.annotate(' EO%d' % k, (n, fk), fontsize=9)
         ax.fill_between([n - 0.3, n + 0.3], fk * 0.9, fk * 1.1, color='k', alpha=0.08)
     ax.set_xlabel('nodal diameter'); ax.set_ylabel('frequency at 115k rpm [Hz]'); ax.set_xticks(range(0, Z // 2 + 1))
     ax.set_title('GR180 E1 bore-less blisk: ZZENF (interference) at 115k, x = engine-order excitation (+-10 %% band)')
-    ax.grid(alpha=0.3); ax.legend(fontsize=8); fig.tight_layout()
+    ax.grid(alpha=0.3); fig.tight_layout()
     png = os.path.join(ROOT, 'cad_out', 'engine', 'E1', 'E1_blisk_zzenf.png'); fig.savefig(png); print('written', png)
 
 
