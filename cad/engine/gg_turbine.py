@@ -710,6 +710,8 @@ def ngv_body(kind, RB):
     App, Part, V = _fc()
     ck = kind == 'cast'
     def rvp(pts):
+        # counter-clockwise in (u, r): a clockwise profile revolves into an inside-out solid (booleans then drop the ring)
+        if sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(pts, pts[1:] + pts[:1])) < 0: pts = pts[::-1]
         return Part.Face(Part.makePolygon([V(X_NGV + u, r, 0) for u, r in pts] + [V(X_NGV + pts[0][0], pts[0][1], 0)])).revolve(V(0, 0, 0), V(1, 0, 0), 360)
     rb = RB - (CAST_SHROUD_STOCK if ck else 0.0)
     u_web0 = 8.5 - (0.5 if ck else 0.0); r_web_b = 13.0 - (0.5 if ck else 0.0); u_in1 = 15.0 + (0.3 if ck else 0.0)
@@ -725,16 +727,31 @@ def fc_vane(ngv, rb):
     """Single NGV vane loft (TE stacked at theta 0) with integral R1.0 fillets to both rings, buried in the rings."""
     App, Part, V = _fc()
     hubs, shr = ngv[R_NGV_HUB], ngv[R_NGV_SHR]
-    mk = lambda w, r: Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m, w.dth)
-    inner = [mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H]
-    outer = [mk(shr, rb - hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H][::-1]
+    def mk(w, r):
+        # TE stacking at this radius (as design_ngv): reusing w.dth of the end section rotates the fillet sections off the
+        # vane (~1 deg at the hub) and twists the loft into an invalid solid
+        s0 = Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m)
+        return Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m, -s0.th[-1])
+    # fillet foot sections (h = 0) sunk 0.05 mm into the rings: a section edge lying exactly on the ring cylinder makes the
+    # vane/ring boolean fail (invalid NGV solid); the sunk part is fused away, the visible fillet is unchanged
+    sink = lambda hk: -0.05 if hk == 0 else 0.0
+    inner = [mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8 + sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H]
+    outer = [mk(shr, rb - hk * FILLET_NGV / 0.8 - sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H][::-1]
     r_in_max, r_out_min = R_NGV_HUB + FILLET_H[-1] * FILLET_NGV / 0.8 + 1.0, rb - FILLET_H[-1] * FILLET_NGV / 0.8 - 1.0
     mids = [ngv[r].outline()[0] for r in sorted(ngv) if r_in_max < r < r_out_min]
-    capI = project_to_plane(inner[0], lambda x: np.full_like(np.asarray(x, float), 21.60))
-    capO = project_to_plane(outer[-1], lambda x: np.full_like(np.asarray(x, float), rb + 0.55))
+    # end caps on true planes (normal at the section's mid angle, radial projection), buried in the rings: caps on r = const
+    # are not planar, give invalid faces and an unorientable vane. Hub: vane spans ~23 deg -> r <= 21.40 / cos(12) = 21.9 < 22.25
+    def flat(P, c):
+        th = np.arctan2(P[:, 2], P[:, 1]); tm = 0.5 * (th.min() + th.max()); d = th - tm
+        return np.stack([P[:, 0], c * np.cos(tm) - c * np.tan(d) * np.sin(tm), c * np.sin(tm) + c * np.tan(d) * np.cos(tm)], 1)
+    capI = flat(inner[0], 21.40)
+    capO = flat(outer[-1], rb + 0.15)
     vw = [bs_wire(capI)] + [bs_wire(p_) for p_ in inner + mids + outer] + [bs_wire(capO)]
     v_ = Part.makeLoft(vw, True, False)
-    if v_.Volume < 0: v_.reverse()
+    if v_.Volume < 0:        # loft in the other order instead of reverse(): a reversed shell breaks the ring booleans
+        v_ = Part.makeLoft(vw[::-1], True, False)
+    if not v_.isValid():     # end caps (buried in the rings) have self-intersecting outlines; repair keeps the volume
+        v_.fix(1e-4, 1e-5, 1e-3)
     return v_, len(vw)
 
 def fc_ngv(ngv, kind, RB):
