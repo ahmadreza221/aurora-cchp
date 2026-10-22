@@ -156,8 +156,10 @@ def axisym_mesh(P, h=0.25):
         out.append(list(e))
     return nodes, out
 
-def axisym_run(P, N, hot, tag, h=0.25, Fblade=None, Tn=None):
-    """Tn: optional nodal temperatures {node: C} on this mesh (from a thermal run) instead of the prescribed T_field."""
+def axisym_run(P, N, hot, tag, h=0.25, Fblade=None, Tn=None, creep=None):
+    """Tn: optional nodal temperatures {node: C} on this mesh (from a thermal run) instead of the prescribed T_field.
+    creep: optional dict(cards=*CREEP material lines, hours=duration): a *VISCO step at constant load follows the static step;
+    results (stress, displacement, res['peeq_max']) are then those at the end of the creep step."""
     nodes, els = axisym_mesh(P, h)
     Tnode = (Tn if Tn is not None else {k: float(T_field(v[1], v[0])) for k, v in nodes.items()}) if hot else None
     rot = AXI_ROT
@@ -187,13 +189,17 @@ def axisym_run(P, N, hot, tag, h=0.25, Fblade=None, Tn=None):
         face = [k for k, v in nodes.items() if abs(v[1] - G.X_HUB) < 1e-4]
         fix = [min(face, key=lambda k: abs(nodes[k][0] - 5.2))]          # one ring on the sleeve face (axial rigid body only)
         f.write('*NSET, NSET=NFIX\n' + ''.join('%d,\n' % k for k in fix))
-        f.write(material_cards() + '*SOLID SECTION, ELSET=EALL, MATERIAL=IN713LC\n')
+        f.write(material_cards() + (creep['cards'] if creep else '') + '*SOLID SECTION, ELSET=EALL, MATERIAL=IN713LC\n')
         f.write('*INITIAL CONDITIONS, TYPE=TEMPERATURE\nNALL, 20.\n*BOUNDARY\nNFIX, 2, 2, 0.\n')
         f.write('*STEP\n*STATIC\n*DLOAD\nEALL, CENTRIF, %.6e, 0., 0., 0., 0., 1., 0.\n' % om**2)
         f.write('*CLOAD\n' + ''.join('%d, 1, %.4f\n' % (k, v) for k, v in cl.items()))
         if hot:
             f.write('*TEMPERATURE\n' + ''.join('%d, %.2f\n' % (k, Tnode[k]) for k in nodes))
         f.write('*NODE FILE\nU\n*EL FILE\nS\n*EL PRINT, ELSET=EALL\nS\n*END STEP\n')
+        if creep:          # loads and temperatures carry over into the creep step
+            tt = creep['hours'] * 3600.0
+            f.write('*STEP, INC=100000\n*VISCO, CETOL=1.e-4\n%.3e, %.4e, %.3e, %.4e\n' % (10.0, tt, 1e-3, tt / 50))
+            f.write('*NODE FILE\nU\n*EL FILE\nS, PEEQ\n*EL PRINT, ELSET=EALL\nS\n*END STEP\n')
     dt, log = run_ccx(job)
     nd, blocks = read_frd(os.path.join(FEA, job + '.frd'))
     S = [b for b in blocks if b.get('name') == 'STRESS'][-1]['data']
@@ -220,6 +226,11 @@ def axisym_run(P, N, hot, tag, h=0.25, Fblade=None, Tn=None):
                vm_max=vmax, vm_max_at=tuple(nodes[kmax]), disc_mass_g=2 * math.pi * rc * A_mer * RHO * 1e6,
                u_rim=float(np.mean([U[k][0] for k, v in nodes.items() if abs(v[0] - G.r_hub(v[1])) < 0.02 and le_h < v[1] < te_h])),
                ccx_s=dt)
+    if creep:
+        PE = [b for b in blocks if b.get('name') == 'PE']
+        if PE:
+            pe = PE[-1]['data']; kp = max(pe, key=lambda k: pe[k][0])
+            res.update(peeq_max=float(pe[kp][0]), peeq_at=tuple(nodes[kp]))
     return res
 
 AXI_ROT = None

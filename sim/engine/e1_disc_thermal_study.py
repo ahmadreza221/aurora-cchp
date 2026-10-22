@@ -9,10 +9,12 @@ Boundary conditions are ESTIMATES (no CFD / test data yet): replace with measure
   platform (blade root)       fixed 730 C (as e1_turbine_fea.T_BLADE)
   front face (bearing-tunnel / buffer air), rear face (exhaust-side cavity), bore + sleeve (into shaft / 608 ring): film
 
-Run:  python sim/engine/e1_disc_thermal_study.py [--opt]        (CCX = path to ccx; gmsh python module required)
+Run:  python sim/engine/e1_disc_thermal_study.py [--opt | --rear]  (CCX = path to ccx; gmsh python module required)
   default  current bore vs bore-less (DISC profile), nominal + hot BC sets
   --opt    bore-less web study (web thickness, web fillet, hub shoulders), nominal BCs
-Writes sim/engine/fea/thermo_study.json, boreless_opt.json
+  --rear   rear-face protection on the bore-less w6/R4 disc: baseline, heat shield, cooling bleed, both
+  --creep  creep FEA (Norton law fitted to the IN713LC Larson-Miller curve, Monkman-Grant), 10 000 / 50 000 h at 115k
+Writes sim/engine/fea/thermo_study.json, boreless_opt.json, rear_cooling_study.json, creep_study.json
 """
 import itertools
 import json
@@ -32,6 +34,24 @@ G = F.G
 BCS = {'nominal': dict(Tf=250, hf=400, Tr=600, hr=150, Tb=150, hb=1500),     # C, W/m2K
        'hot':     dict(Tf=450, hf=200, Tr=650, hr=150, Tb=250, hb=800)}
 T_PLAT = 730.0
+BORELESS_W6R4 = dict(r_bore=0.0, xf_w=110.6, xr_w=116.6, R_web=4.0)
+# rear-face options (front / sink as 'nominal'): rear gas temperature C, h W/m2K -- ESTIMATES, to be replaced by CFD
+REAR = {'baseline (exhaust cavity)': (600, 150), 'heat shield': (450, 80), 'cooling bleed ~0.5-1 %': (250, 400),
+        'shield + bleed': (220, 300)}
+
+
+MONKMAN_GRANT = 0.05      # eps_dot_min * t_rupture for Ni superalloys (0.02-0.1): minimum creep rate from rupture life
+
+
+def norton_cards():
+    """*CREEP, LAW=NORTON (eps_dot = A sigma^n, MPa, 1/s) fitted per temperature to the life_study Larson-Miller curve."""
+    lines = []
+    for T in (450, 500, 550, 600, 650, 700, 750, 800):
+        sg = np.array([350., 450., 550., 650.])
+        ed = MONKMAN_GRANT / (np.array([LS.creep_hours(x, T + 273.15) for x in sg]) * 3600.0)
+        n, lnA = np.polyfit(np.log(sg), np.log(ed), 1)
+        lines.append('%.5e, %.4f, 0., %.1f\n' % (math.exp(lnA), n, T))
+    return '*CREEP, LAW=NORTON\n' + ''.join(lines)
 
 
 def boundary_edges(els):
@@ -107,6 +127,34 @@ def main():
     sb, Fp, Ar, tap, r0 = G.blade_pull_estimate(rot)
     F.AXI_ROT, F.AXI_F115 = rot, Fp * 1.08
     print('blade pull %.0f N (+8 %% fillets -> %.0f N)' % (Fp, F.AXI_F115))
+    if '--creep' in sys.argv:
+        out = {}
+        cards = norton_cards()
+        for name, P in (('bore', dict(G.DISC)), ('boreless_w6R4', dict(G.DISC, **BORELESS_W6R4))):
+            nodes, els = F.axisym_mesh(P, 0.25)
+            Tn = thermal(nodes, els, P, BCS['nominal'], 'cr_' + name)
+            el = F.axisym_run(P, F.N_DES, True, 'cr_%s_0h' % name, Tn=Tn)
+            for hrs in (10000.0, 50000.0):
+                r = F.axisym_run(P, F.N_DES, True, 'cr_%s_%dh' % (name, hrs), Tn=Tn, creep=dict(cards=cards, hours=hrs))
+                print('%-14s %6.0f h: creep strain max %.3f %% at (r %.1f, x %.1f) | peak vM %4.0f -> %4.0f MPa | bore/centre %4.0f -> %4.0f'
+                      ' | rim growth %.4f -> %.4f mm (creep +%.4f)' % (
+                          name, hrs, 100 * r.get('peeq_max', float('nan')), *r.get('peeq_at', (float('nan'),) * 2)[:2], el['vm_max'],
+                          r['vm_max'], el['bore_vm'], r['bore_vm'], el['u_rim'], r['u_rim'], r['u_rim'] - el['u_rim']), flush=True)
+                out['%s_%dh' % (name, hrs)] = dict(elastic=el, creep=r)
+        json.dump(out, open(os.path.join(F.FEA, 'creep_study.json'), 'w'), indent=1, default=float)
+        return
+    if '--rear' in sys.argv:
+        rows = {}
+        P = dict(G.DISC, **BORELESS_W6R4)
+        for k, (Tr, hr) in REAR.items():
+            BCS['rear_case'] = dict(BCS['nominal'], Tr=Tr, hr=hr)
+            tag = 'rear_' + ''.join(c for c in k.split()[0] if c.isalnum())
+            r = case(P, 'rear_case', tag, cold=False)
+            print('%-26s rear %3d C h %3d:' % (k, Tr, hr), end=' ')
+            report(tag, r)
+            rows[k] = r
+        json.dump(rows, open(os.path.join(F.FEA, 'rear_cooling_study.json'), 'w'), indent=1, default=float)
+        return
     if '--opt' in sys.argv:
         rows = []
         xm = 113.6
