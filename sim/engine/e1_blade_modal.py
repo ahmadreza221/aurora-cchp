@@ -5,11 +5,13 @@ One blade (with its root fillet, the part above the hub surface) fixed on the hu
 high vs the real blisk, where disc flexibility lowers the low nodal-diameter modes), metal at the blade temperature.
 Per speed: nonlinear static step with the centrifugal load (NLGEOM) -> *FREQUENCY step on the pre-stressed blade.
 
-Excitations (engine orders): 1-4 (unbalance, inlet / combustor non-uniformity), 8 (E2 injectors), 21 (NGV vanes), 42.
+Excitations (engine orders): 1-4 (unbalance, inlet / combustor non-uniformity), 7 (E2 injectors; 8 resonated with 2F at
+113.8k), 21 (NGV vanes; also the 21 secondary holes), 42.
 
 Input:  blade STEP (default cad_out/engine/E1/E1_blade_piece.step; written by cad/engine/gg_turbine.py tooling or
         any FreeCAD run that exports the blade piece: blade_f.cut(disc_f), largest solid)
 Run:    python sim/engine/e1_blade_modal.py [blade.step]      (CCX = path to ccx; gmsh python module)
+        python sim/engine/e1_blade_modal.py --plot                re-evaluate crossings / plot from blade_modal.json
 Writes: sim/engine/fea/blade_modal.json, cad_out/engine/E1/E1_blade_campbell.png
 """
 import json
@@ -28,7 +30,7 @@ G = F.G
 T_BLADE = 730.0                                              # C, uniform blade metal temperature (F.T_BLADE)
 SPEEDS = [0.0, 40e3, 80e3, 100e3, 115e3, 120e3, 130e3]
 N_MODES = 8
-EO = [1, 2, 3, 4, 8, 21, 42]
+EO = [1, 2, 3, 4, 7, 21, 42]
 N_OP = (100e3, 120e3)                                        # continuous operating band (design 115k, trip 120k)
 H_MESH = 0.30
 
@@ -92,15 +94,19 @@ def run_speed(nodes, els, base, N, tag):
 
 
 def main():
-    step = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'cad_out', 'engine', 'E1', 'E1_blade_piece.step')
-    nodes, els = mesh(step)
-    base = base_nodes(nodes)
-    print('mesh: %d nodes, %d C3D10, %d base nodes (hub surface)' % (len(nodes), len(els), len(base)), flush=True)
     table = {}
+    if '--plot' in sys.argv:
+        saved = json.load(open(os.path.join(F.FEA, 'blade_modal.json')))
+        table = {float(k): v for k, v in saved['freqs'].items()}
+    else:
+        step = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'cad_out', 'engine', 'E1', 'E1_blade_piece.step')
+        nodes, els = mesh(step)
+        base = base_nodes(nodes)
+        print('mesh: %d nodes, %d C3D10, %d base nodes (hub surface)' % (len(nodes), len(els), len(base)), flush=True)
+        for N in SPEEDS:
+            table[N] = run_speed(nodes, els, base, N, '%dk' % (N / 1e3))
     for N in SPEEDS:
-        fr = run_speed(nodes, els, base, N, '%dk' % (N / 1e3))
-        table[N] = fr
-        print('%6.0fk rpm: ' % (N / 1e3) + '  '.join('F%d %6.0f' % (i + 1, f) for i, f in enumerate(fr)), flush=True)
+        print('%6.0fk rpm: ' % (N / 1e3) + '  '.join('F%d %6.0f' % (i + 1, f) for i, f in enumerate(table[N])), flush=True)
     # crossings with the engine orders inside / near the operating band
     cross = []
     sp = np.array(SPEEDS)
