@@ -130,7 +130,8 @@ def main():
     if '--creep' in sys.argv:
         out = {}
         cards = norton_cards()
-        for name, P in (('bore', dict(G.DISC)), ('boreless_w6R4', dict(G.DISC, **BORELESS_W6R4))):
+        # bore-less only: the current Ø8 bore is above yield (1172 MPa), outside the creep-law fit (350-650 MPa)
+        for name, P in (('boreless_w6R4', dict(G.DISC, **BORELESS_W6R4)),):
             nodes, els = F.axisym_mesh(P, 0.25)
             Tn = thermal(nodes, els, P, BCS['nominal'], 'cr_' + name)
             el = F.axisym_run(P, F.N_DES, True, 'cr_%s_0h' % name, Tn=Tn)

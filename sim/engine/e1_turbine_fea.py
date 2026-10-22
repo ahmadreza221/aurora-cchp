@@ -198,7 +198,8 @@ def axisym_run(P, N, hot, tag, h=0.25, Fblade=None, Tn=None, creep=None):
         f.write('*NODE FILE\nU\n*EL FILE\nS\n*EL PRINT, ELSET=EALL\nS\n*END STEP\n')
         if creep:          # loads and temperatures carry over into the creep step
             tt = creep['hours'] * 3600.0
-            f.write('*STEP, INC=100000\n*VISCO, CETOL=1.e-4\n%.3e, %.4e, %.3e, %.4e\n' % (10.0, tt, 1e-3, tt / 50))
+            # ccx: minimum increment >= 1e-6 x step time
+            f.write('*STEP, INC=100000\n*VISCO, CETOL=1.e-4\n%.4e, %.4e, %.4e, %.4e\n' % (tt * 1e-5, tt, tt * 2e-6, tt / 50))
             f.write('*NODE FILE\nU\n*EL FILE\nS, PEEQ\n*EL PRINT, ELSET=EALL\nS\n*END STEP\n')
     dt, log = run_ccx(job)
     nd, blocks = read_frd(os.path.join(FEA, job + '.frd'))
