@@ -172,12 +172,25 @@ class Section:
         up = np.stack([mpv - hv / rv * np.sin(kv), thv + hv / rv * np.cos(kv)], 1)           # +theta side
         mpl, thl, kl, hl, rl = at(sg)
         lo = np.stack([mpl + hl / rl * np.sin(kl), thl - hl / rl * np.cos(kl)], 1)            # -theta side
-        # TE cap: semicircle around the camber end (conformal plane, radius tte/2 / r)
+        # TE cap: circular arc around the camber end (conformal plane, radius tte/2 / r), tangent to both sides. The sides
+        # converge at the TE (wedge half-angle w ~ 7 deg), so a plain semicircle met them with a ~8 deg kink and the B-spline
+        # through the outline rang there; the arc runs between +-(90 deg - w) and the side end points move onto its ends
+        # (the sides extended along their end tangent by rr*tan(w), ~0.03 mm; offset from the straight extension ~rr*w^2/2, 2 um)
         mpe, the, ke, re = self.mp[-1], self.th[-1], self.kap[-1], self.st.r(self.x_te)
         rr = 0.5 * self.tte / re
-        ang = np.linspace(-math.pi / 2, math.pi / 2, n_te + 2)[1:-1]     # from lower to upper
+        e1 = np.array([math.cos(ke), math.sin(ke)])
+        def wedge(a, b):                                         # angle from the camber direction to the side's aft tangent a -> b
+            t = b - a; return math.atan2(e1[0] * t[1] - e1[1] * t[0], e1 @ t)
+        hs = 1e-4
+        mq, tq, kq, hq, rq = at(np.array([1.0 - hs, 1.0]))
+        pu = np.stack([mq - hq / rq * np.sin(kq), tq + hq / rq * np.cos(kq)], 1)
+        pl = np.stack([mq + hq / rq * np.sin(kq), tq - hq / rq * np.cos(kq)], 1)
+        w_up, w_lo = -wedge(pu[0], pu[1]), wedge(pl[0], pl[1])
+        ang = np.linspace(-(math.pi / 2 - w_lo), math.pi / 2 - w_up, n_te + 2)     # from lower to upper, ends = tangent points
         cap = np.stack([mpe + rr * (np.cos(ang) * math.cos(ke) - np.sin(ang) * math.sin(ke)),
                         the + rr * (np.cos(ang) * math.sin(ke) + np.sin(ang) * math.cos(ke))], 1)
+        up[0], lo[-1] = cap[-1], cap[0]
+        cap = cap[1:-1]
         capm = cap[n_te // 2:]                                   # TE mid -> upper
         capl = cap[:n_te // 2]                                   # lower -> TE mid
         P = np.vstack([capm, up[:-1] if False else up, lo[1:], capl])
@@ -304,6 +317,10 @@ def design_ngv(verbose=False):
 ROT_SPANS = [0.0, 0.125, 0.25, 0.375, 0.50, 0.75, 1.0]
 ROT_LOFT_MIN_S = 0.10                               # design sections used in the loft start above the root fillet (h 0.9 mm)
 ROT_EXT = (-0.04, 1.05)
+# section outlines sampled densely, then resampled to 200 evenly spaced points: B-splines through the raw cosine-clustered
+# outline (spacing ratio ~600:1 nose : mid-chord) rang, curvature spikes up to ~90 /mm at LE / TE (design 5.6); now 5-7 /mm.
+# (curvature-weighted spacing made self-intersecting loft sections)
+ROT_DENSE, ROT_NPTS = (1500, 61), 200
 def rot_params(s):
     sc = min(max(s, 0.0), 1.0)
     # t/c 0.22 at the root -> 0.068 at the tip (strong outer taper keeps the root P/A ~290 MPa @115k), LE radius 0.36 -> 0.18,
@@ -643,22 +660,29 @@ def fc_blade(rot):
     """Single rotor blade loft (centroids stacked on +y, theta = 0) with the integral R0.8 root fillet, trimmed at R_TIP
     (final) and R_TIP + TIP_STOCK (cast). Returns blade_raw, blade_f, blade_c."""
     App, Part, V = _fc()
-    ss = sorted(rot); hub = rot[0.0]
+    ss = sorted(rot); hub = rot[0.0]; nxt = rot[min(s_ for s_ in rot if s_ > 0)]
     root = []
     for hk in FILLET_H:
         h = hk * FILLET_ROT / 0.8
-        sec = Section(StreamOffset(h), hub.x_le, hub.x_te, hub.k1, hub.k2, hub.p, hub.tau, hub.rle, hub.tte, hub.sig_m, hub.dth)
-        root.append(sec.outline_offset(fillet_offset(h, FILLET_ROT)))
+        # the blade section at height h (parameters interpolated hub -> first span by the LE height), not the hub section
+        # copied upward: copies stack the fillet vertically while the blade leans ~17-30 deg there, and the loft made a knee
+        # at the fillet top (LE shifted 0.67 mm sideways over the next 1.1 mm)
+        w = h / (nxt.r_in - hub.r_in); L = lambda a, b: a + w * (b - a)
+        sec = Section(StreamOffset(h), *(L(getattr(hub, k), getattr(nxt, k)) for k in ('x_le', 'x_te', 'k1', 'k2', 'p', 'tau', 'rle', 'tte', 'sig_m', 'dth')))
+        root.append(resample_closed(sec.outline_offset(fillet_offset(h, FILLET_ROT), *ROT_DENSE), ROT_NPTS))
     capH = project_to_plane(root[0], hub_cap_plane())
-    capT = project_to_plane(rot[1.0].outline()[0], lambda x: np.full_like(np.asarray(x, float), R_TIP + 1.25))
-    wires = [bs_wire(capH)] + [bs_wire(p_) for p_ in root] + [bs_wire(rot[s_].outline()[0]) for s_ in ss if s_ >= ROT_LOFT_MIN_S] + [bs_wire(capT)]
+    tip = resample_closed(rot[1.0].outline(*ROT_DENSE)[0], ROT_NPTS)
+    capT = project_to_plane(tip, lambda x: np.full_like(np.asarray(x, float), R_TIP + 1.25))
+    wires = ([bs_wire(capH)] + [bs_wire(p_) for p_ in root]
+             + [bs_wire(resample_closed(rot[s_].outline(*ROT_DENSE)[0], ROT_NPTS)) for s_ in ss if s_ >= ROT_LOFT_MIN_S] + [bs_wire(capT)])
     blade_raw = Part.makeLoft(wires, True, False)
     if blade_raw.Volume < 0: blade_raw.reverse()
     # axial trim to the platform: the root fillet foot otherwise overhangs the platform edges (TE ~0.4-0.65 mm into the rear
     # cavity, LE sliver into the 0.30 mm gap to the NGV ring); the fillet now runs out at the platform edges. Trim planes 0.02 mm
-    # inside the edges: planes coincident with the disc faces break the 29-blade fuse
-    e = 0.02
-    return (blade_raw, blade_raw.common(cyl(R_TIP, X_PF + e, X_PR - e)), blade_raw.common(cyl(R_TIP + TIP_STOCK, X_PF - 0.30 + e, X_PR - e)),
+    # inside the edges: planes coincident with the disc faces break the 29-blade fuse (front plane 0.05: at 0.02 it grazes the
+    # fillet foot near the LE and the trimmed blade is invalid)
+    e, ef = 0.02, 0.05
+    return (blade_raw, blade_raw.common(cyl(R_TIP, X_PF + ef, X_PR - e)), blade_raw.common(cyl(R_TIP + TIP_STOCK, X_PF - 0.30 + e, X_PR - e)),
             len(wires))
 
 def fc_disc(kind='final', P=None):
@@ -681,9 +705,11 @@ def fc_shaft_welded():
 
 def fc_full_wheel(disc, piece, Z=Z_ROT):
     App, Part, V = _fc()
-    w = disc                 # one blade at a time: a single 29-shape fuse of the 12-span blades needs > 14 GB
-    for k in range(Z):
-        w = w.fuse(rot_shape(piece, 360.0 * k / Z)); __import__('gc').collect()
+    # a few blades per fuse: a single 29-shape fuse of the 12-span blades needs > 14 GB, and one at a time can fail on the
+    # second blade (null result of (disc + blade 0) + blade 1, while disc + [blade 0, blade 1] is fine)
+    w, B = disc, 4
+    for k0 in range(0, Z, B):
+        w = w.fuse([rot_shape(piece, 360.0 * k / Z) for k in range(k0, min(k0 + B, Z))]); __import__('gc').collect()
     try: w = w.removeSplitter()
     except Exception: pass
     return w
@@ -773,12 +799,12 @@ def fc_vane(ngv, rb):
     # fillet foot sections (h = 0) sunk 0.05 mm into the rings: a section edge lying exactly on the ring cylinder makes the
     # vane/ring boolean fail (invalid NGV solid); the sunk part is fused away, the visible fillet is unchanged
     sink = lambda hk: -0.05 if hk == 0 else 0.0
-    inner = [resample_closed(mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8 + sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)))
+    inner = [resample_closed(mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8 + sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV), *ROT_DENSE))
              for hk in FILLET_H]
-    outer = [resample_closed(mk(shr, rb - hk * FILLET_NGV / 0.8 - sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)))
+    outer = [resample_closed(mk(shr, rb - hk * FILLET_NGV / 0.8 - sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV), *ROT_DENSE))
              for hk in FILLET_H][::-1]
     r_in_max, r_out_min = R_NGV_HUB + FILLET_H[-1] * FILLET_NGV / 0.8 + 1.0, rb - FILLET_H[-1] * FILLET_NGV / 0.8 - 1.0
-    mids = [ngv[r].outline()[0] for r in sorted(ngv) if r_in_max < r < r_out_min]
+    mids = [resample_closed(ngv[r].outline(*ROT_DENSE)[0]) for r in sorted(ngv) if r_in_max < r < r_out_min]   # dense + even (see ROT_DENSE)
     # end caps on true planes (normal at the section's mid angle, radial projection), buried in the rings: caps on r = const
     # are not planar, give invalid faces and an unorientable vane. Hub: vane spans ~23 deg -> r <= 21.40 / cos(12) = 21.9 < 22.25
     def flat(P, c):
