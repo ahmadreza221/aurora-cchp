@@ -51,7 +51,10 @@ def norton_cards():
         ed = MONKMAN_GRANT / (np.array([LS.creep_hours(x, T + 273.15) for x in sg]) * 3600.0)
         n, lnA = np.polyfit(np.log(sg), np.log(ed), 1)
         lines.append('%.5e, %.4f, 0., %.1f\n' % (math.exp(lnA), n, T))
-    return '*CREEP, LAW=NORTON\n' + ''.join(lines)
+    # with a yield surface (*PLASTIC, minimum yield, perfectly plastic): ccx's Norton creep without *PLASTIC diverges at the first
+    # creep increment on this model; with it the material is viscoplastic and converges
+    pl = '*PLASTIC\n' + ''.join('%.1f, 0., %.1f\n' % (F.YS(t), t) for t in F.MAT_T)
+    return pl + '*CREEP, LAW=NORTON\n' + ''.join(lines)
 
 
 def boundary_edges(els):
