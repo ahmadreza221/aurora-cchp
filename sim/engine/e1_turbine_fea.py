@@ -67,7 +67,8 @@ def T_field(x, r):
     return T_BORE + (T_BLADE - T_BORE) * f
 
 # ===================================================================================== CalculiX helpers
-def run_ccx(job, cwd=FEA, threads=8):
+def run_ccx(job, cwd=None, threads=8):
+    cwd = cwd or FEA                 # resolved at call time (FEA may be redirected)
     env = dict(os.environ, OMP_NUM_THREADS=str(threads), CCX_NPROC_EQUATION_SOLVER=str(threads))
     t0 = time.time()
     p = subprocess.run([CCX, '-i', job], cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -155,8 +156,10 @@ def axisym_mesh(P, h=0.25):
         out.append(list(e))
     return nodes, out
 
-def axisym_run(P, N, hot, tag, h=0.25, Fblade=None):
+def axisym_run(P, N, hot, tag, h=0.25, Fblade=None, Tn=None):
+    """Tn: optional nodal temperatures {node: C} on this mesh (from a thermal run) instead of the prescribed T_field."""
     nodes, els = axisym_mesh(P, h)
+    Tnode = (Tn if Tn is not None else {k: float(T_field(v[1], v[0])) for k, v in nodes.items()}) if hot else None
     rot = AXI_ROT
     om = omega(N)
     F = (Fblade if Fblade is not None else AXI_F115) * (N / N_DES)**2       # blade pull per blade
@@ -189,7 +192,7 @@ def axisym_run(P, N, hot, tag, h=0.25, Fblade=None):
         f.write('*STEP\n*STATIC\n*DLOAD\nEALL, CENTRIF, %.6e, 0., 0., 0., 0., 1., 0.\n' % om**2)
         f.write('*CLOAD\n' + ''.join('%d, 1, %.4f\n' % (k, v) for k, v in cl.items()))
         if hot:
-            f.write('*TEMPERATURE\n' + ''.join('%d, %.2f\n' % (k, T_field(v[1], v[0])) for k, v in nodes.items()))
+            f.write('*TEMPERATURE\n' + ''.join('%d, %.2f\n' % (k, Tnode[k]) for k in nodes))
         f.write('*NODE FILE\nU\n*EL FILE\nS\n*EL PRINT, ELSET=EALL\nS\n*END STEP\n')
     dt, log = run_ccx(job)
     nd, blocks = read_frd(os.path.join(FEA, job + '.frd'))
@@ -197,7 +200,8 @@ def axisym_run(P, N, hot, tag, h=0.25, Fblade=None):
     U = [b for b in blocks if b.get('name') == 'DISP'][-1]['data']
     ip = read_dat_stresses(os.path.join(FEA, job + '.dat'))
     # bore: nodes at r = 4 inside the fit length
-    bore = [k for k, v in nodes.items() if abs(v[0] - 4.0) < 1e-3 and G.X_HUB + 0.4 < v[1] < G.X_HUB + G.HUB_L - 0.4]
+    rb = dict(G.DISC, **(P or {})).get('r_bore', 4.0)          # bore surface, or the axis of a bore-less disc
+    bore = [k for k, v in nodes.items() if abs(v[0] - rb) < 1e-3 and G.X_HUB + 0.4 < v[1] < G.X_HUB + G.HUB_L - 0.4]
     s_hoop_bore = max(S[k][2] for k in bore)
     vm_all = {k: vm(np.array([S[k][0], S[k][1], S[k][2], S[k][3], 0, 0])) for k in S}
     vm_bore = max(vm_all[k] for k in bore)
@@ -207,7 +211,7 @@ def axisym_run(P, N, hot, tag, h=0.25, Fblade=None):
         a, b, c = nodes[e[0]], nodes[e[1]], nodes[e[2]]
         ar = 0.5 * abs((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]))
         sh = np.mean([v[2] for v in ip[ei]])
-        A += ar; SA += sh * ar; TA += T_field((a[1] + b[1] + c[1]) / 3, (a[0] + b[0] + c[0]) / 3) * ar
+        A += ar; SA += sh * ar; TA += (np.mean([Tnode[n_] for n_ in e[:3]]) if hot else 20.0) * ar
     hoop_avg = SA / A; T_avg = TA / A if hot else 20.0
     # web / rim peak
     vmax = max(vm_all.values()); kmax = max(vm_all, key=vm_all.get)

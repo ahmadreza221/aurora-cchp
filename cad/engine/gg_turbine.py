@@ -298,7 +298,10 @@ def design_ngv(verbose=False):
     return secs
 
 # ======================================================================================== rotor design
-ROT_SPANS = [0.0, 0.25, 0.50, 0.75, 1.0]           # 5 design stream surfaces (+ extensions below the hub / above the tip)
+# 12 design stream surfaces (+ extensions below the hub / above the tip), dense where the blade twists fastest (hub): with
+# only 5 the loft strayed up to ~1 mm from the design between them (bumps on the blade)
+ROT_SPANS = [0.0, 0.0625, 0.125, 0.1875, 0.25, 0.3125, 0.375, 0.50, 0.625, 0.75, 0.875, 1.0]
+ROT_LOFT_MIN_S = 0.06                               # design sections used in the loft start above the root fillet (h 0.9 mm)
 ROT_EXT = (-0.04, 1.05)
 def rot_params(s):
     sc = min(max(s, 0.0), 1.0)
@@ -485,13 +488,15 @@ def disc_profile(kind='final', P=None):
     P = dict(DISC, **(P or {}))
     ck = kind == 'cast'
     rb = 3.00 if ck else 4.00                   # bore: cast Ø6 pilot hole, machined Ø8
+    if 'r_bore' in P: rb = max(P['r_bore'] - (1.0 if ck else 0.0), 0.0)   # r_bore 0: bore-less disc (wheel welded to a stub shaft)
+    kb = 'c' if rb > 0 else None                # no chamfer on the axis
     xf = X_HUB - (0.50 if ck else 0.0)          # sleeve front face
     rs = 6.40 + (0.50 if ck else 0.0)           # sleeve OD Ø12.8 (pilot / bearing-ring shoulder)
     xb = X_HUB + HUB_L + (0.50 if ck else 0.0)  # nut seat face
     rbo = 6.50 + (0.50 if ck else 0.0)          # boss OD Ø13
     xpf = X_PF - (0.30 if ck else 0.0)          # platform front face (axial gap to the NGV ring) machined
     pts = [  # vertex, corner kind, size
-        ((xf, rb), 'c', 0.30), ((xb, rb), 'c', 0.30), ((xb, rbo), 'c', 0.20), ((P['x_boss'], rbo), 'f', 0.60),
+        ((xf, rb), kb, 0.30), ((xb, rb), kb, 0.30), ((xb, rbo), 'c', 0.20), ((P['x_boss'], rbo), 'f', 0.60),
         ] + ([((P['x_boss'], P['r_hr']), 'f', 1.0)] if P['r_hr'] > rbo + 0.8 else []) + [
         ((P['xr_w'], P['r_web']), 'f', P['R_web']), ((X_PR, P['r_lip_r']), 'f', 0.40), ((X_PR, R_H1), 'f', 0.30),
         ('FLARE',),
@@ -641,10 +646,15 @@ def fc_blade(rot):
         root.append(sec.outline_offset(fillet_offset(h, FILLET_ROT)))
     capH = project_to_plane(root[0], hub_cap_plane())
     capT = project_to_plane(rot[1.0].outline()[0], lambda x: np.full_like(np.asarray(x, float), R_TIP + 1.25))
-    wires = [bs_wire(capH)] + [bs_wire(p_) for p_ in root] + [bs_wire(rot[s_].outline()[0]) for s_ in ss if s_ >= 0.2] + [bs_wire(capT)]
+    wires = [bs_wire(capH)] + [bs_wire(p_) for p_ in root] + [bs_wire(rot[s_].outline()[0]) for s_ in ss if s_ >= ROT_LOFT_MIN_S] + [bs_wire(capT)]
     blade_raw = Part.makeLoft(wires, True, False)
     if blade_raw.Volume < 0: blade_raw.reverse()
-    return blade_raw, blade_raw.common(cyl(R_TIP, 100, 125)), blade_raw.common(cyl(R_TIP + TIP_STOCK, 100, 125)), len(wires)
+    # axial trim to the platform: the root fillet foot otherwise overhangs the platform edges (TE ~0.4-0.65 mm into the rear
+    # cavity, LE sliver into the 0.30 mm gap to the NGV ring); the fillet now runs out at the platform edges. Trim planes 0.02 mm
+    # inside the edges: planes coincident with the disc faces break the 29-blade fuse
+    e = 0.02
+    return (blade_raw, blade_raw.common(cyl(R_TIP, X_PF + e, X_PR - e)), blade_raw.common(cyl(R_TIP + TIP_STOCK, X_PF - 0.30 + e, X_PR - e)),
+            len(wires))
 
 def fc_disc(kind='final', P=None):
     """Revolved wheel body; the revolve seam is put mid-passage (rotated by half a pitch)."""
@@ -653,7 +663,9 @@ def fc_disc(kind='final', P=None):
 
 def fc_full_wheel(disc, piece, Z=Z_ROT):
     App, Part, V = _fc()
-    w = disc.fuse([rot_shape(piece, 360.0 * k / Z) for k in range(Z)])
+    w = disc                 # one blade at a time: a single 29-shape fuse of the 12-span blades needs > 14 GB
+    for k in range(Z):
+        w = w.fuse(rot_shape(piece, 360.0 * k / Z)); __import__('gc').collect()
     try: w = w.removeSplitter()
     except Exception: pass
     return w
