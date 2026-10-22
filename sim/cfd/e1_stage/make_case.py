@@ -10,13 +10,14 @@ BCs: inlet total p / total T of the meanline (P01, T01), outlet static p = meanl
 walls no-slip adiabatic.  Result of interest: mass flow at the meanline pressure ratio (throat check: 1175 mm2 CAD vs
 1224 meanline), exit flow angle and Mach vs the meanline alpha2, loss (p0 drop).
 
-Run:  python sim/cfd/e1_stage/make_case.py            # writes the case into sim/cfd/e1_stage/ngv/ and runs it
+Run:  ~/micromamba/envs/gr180/bin/python sim/cfd/e1_stage/make_case.py            # writes the case into sim/cfd/e1_stage/ngv/ and runs it
       python sim/cfd/e1_stage/make_case.py --mesh-only / --post-only / --level N (vane refinement level, default 3)
 OpenFOAM: /Applications/OpenFOAM-v2606.app (gerlero/openfoam-app); OF env var overrides the launcher path.
 """
 import json
 import math
 import os
+import numpy as np
 import shutil
 import subprocess
 import sys
@@ -29,6 +30,8 @@ OF = os.environ.get('OF', '/Applications/OpenFOAM-v2606.app/Contents/Resources/e
 META = json.load(open(os.path.join(GEO, 'passage.json')))
 D = META['design']
 NP = int(os.environ.get('E1_CFD_NP', max(2, min(6, (os.cpu_count() or 4) - 4))))
+LAYERS = os.environ.get('E1_CFD_LAYERS', '0') == '1'   # prism layers (off: wall functions, y+ ~ 30-100, robust)
+SCHEME = os.environ.get('E1_CFD_SCHEME', 'upwind')     # 'upwind' (pass 1, robust) or 'linearUpwind' (pass 2)
 X_OUT_NGV = 116.0         # stator-only domain outlet (straight annulus behind the vanes, ~1 axial chord after the TE)
 
 HEADER = '''FoamFile
@@ -149,7 +152,7 @@ def snappy(level):
     loc = (x_le - 3.0) * 1e-3, r_m * math.cos(th) * 1e-3, r_m * math.sin(th) * 1e-3
     body = '''castellatedMesh true;
 snap            true;
-addLayers       true;
+addLayers       %%s;
 
 geometry
 {
@@ -244,7 +247,7 @@ meshQualityControls
 
 mergeTolerance 1e-6;
 ''' % (level + 1, level, level + 1, level + 1, level, *loc)
-    w('system/snappyHexMeshDict', 'dictionary', body)
+    w('system/snappyHexMeshDict', 'dictionary', body % ('true' if LAYERS else 'false'))
     w('system/surfaceFeatureExtractDict', 'dictionary', '''ngv_vane_m.stl
 {
     extractionMethod    extractFromSurface;
@@ -289,26 +292,30 @@ functions
     yPlus { type yPlus; libs (fieldFunctionObjects); writeControl writeTime; }
 }
 ''')
+    up = SCHEME == 'upwind'
+    sU = 'bounded Gauss upwind' if up else 'bounded Gauss linearUpwindV limited'
+    sS = 'bounded Gauss upwind' if up else 'bounded Gauss linearUpwind limited'
+    sT = 'bounded Gauss upwind' if up else 'bounded Gauss limitedLinear 1'
     w('system/fvSchemes', 'dictionary', '''ddtSchemes      { default steadyState; }
 gradSchemes     { default Gauss linear; limited cellLimited Gauss linear 1; grad(U) $limited; grad(e) $limited; grad(h) $limited; }
 divSchemes
 {
     default         none;
-    div(phi,U)      bounded Gauss linearUpwindV limited;
-    div(phi,e)      bounded Gauss linearUpwind limited;
-    div(phi,h)      bounded Gauss linearUpwind limited;
-    div(phi,K)      bounded Gauss linearUpwind limited;
-    div(phi,Ekp)    bounded Gauss linearUpwind limited;
-    div(phi,k)      bounded Gauss limitedLinear 1;
-    div(phi,omega)  bounded Gauss limitedLinear 1;
-    div(phid,p)     Gauss limitedLinear 1;
+    div(phi,U)      %s;
+    div(phi,e)      %s;
+    div(phi,h)      %s;
+    div(phi,K)      %s;
+    div(phi,Ekp)    %s;
+    div(phi,k)      %s;
+    div(phi,omega)  %s;
+    div(phid,p)     Gauss upwind;
     div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 laplacianSchemes { default Gauss linear limited corrected 0.5; }
 interpolationSchemes { default linear; }
 snGradSchemes   { default limited corrected 0.5; }
 wallDist        { method meshWave; }
-''')
+''' % (sU, sS, sS, sS, sS, sT, sT))
     w('system/fvSolution', 'dictionary', '''solvers
 {
     p
@@ -331,7 +338,7 @@ SIMPLE
 {
     nNonOrthogonalCorrectors 1;
     consistent      yes;
-    transonic       yes;
+    transonic       no;
     pMinFactor      0.3;
     pMaxFactor      1.5;
     residualControl { p 1e-5; U 1e-5; e 1e-5; "(k|omega)" 1e-5; }
@@ -340,7 +347,7 @@ SIMPLE
 relaxationFactors
 {
     fields    { p 0.3; rho 0.05; }
-    equations { U 0.7; e 0.5; h 0.5; "(k|omega)" 0.7; }
+    equations { U 0.7; e 0.7; h 0.7; "(k|omega)" 0.7; }
 }
 ''')
     w('system/decomposeParDict', 'dictionary', 'numberOfSubdomains %d;\nmethod scotch;\n' % NP)
@@ -528,9 +535,82 @@ def post():
     if 'mdot_in' in res:
         m1 = float(res['mdot_in']['last'][1]); res['mdot_stage_kg_s'] = abs(m1) * Zn
         res['mdot_meanline_kg_s'] = D['mdot_kg_s']; res['mdot_ratio'] = abs(m1) * Zn / D['mdot_kg_s']
+    try:
+        res['harmonics'] = harmonics()
+        h = res['harmonics']
+        res['exit_alpha_deg'] = h['alpha_abs_deg']
+    except Exception as e:
+        res['harmonics_error'] = repr(e)
     json.dump(res, open(os.path.join(HERE, 'ngv_results.json'), 'w'), indent=1)
     print(json.dumps(res, indent=1))
     return res
+
+
+def sample_plane(x_mm=110.5):
+    """cutting plane at x (rotor inlet, NGV-only domain) with p U T rho on the latest time (postProcess)."""
+    d = os.path.join(CASE, 'system', 'samplePlane')
+    open(d, 'w').write(HEADER % ('dictionary', 'samplePlane') + """type            surfaces;
+libs            (sampling);
+surfaceFormat   raw;
+fields          (p U T rho);
+interpolationScheme cellPoint;
+surfaces
+{
+    plane
+    {
+        type        cuttingPlane;
+        point       (%.6f 0 0);
+        normal      (1 0 0);
+        interpolate true;
+    }
+}
+""" % (x_mm * 1e-3))
+    sh('postProcess -dict system/samplePlane -latestTime -func samplePlane', 'log.samplePlane')
+
+
+def read_raw(path):
+    rows = [l.split() for l in open(path) if l.strip() and not l.startswith('#')]
+    return np.array([[float(v) for v in r] for r in rows])
+
+
+def harmonics(x_mm=110.5, n_bins=72):
+    """pitchwise distributions at the rotor inlet plane (mid 60 % of the span) and their Fourier harmonics: harmonic n of
+    the vane pitch = engine order 21 n in the rotor frame. v_perp = velocity perturbation normal to the mean relative flow."""
+    global np
+    import numpy as np
+    sample_plane(x_mm)
+    base = os.path.join(CASE, 'postProcessing', 'samplePlane')
+    t = sorted(os.listdir(base), key=float)[-1]
+    def load(name):
+        f = [g for g in os.listdir(os.path.join(base, t)) if g.startswith(name + '_') and g.endswith('.raw')][0]
+        return read_raw(os.path.join(base, t, f))
+    P = load('p'); Uv = load('U'); T = load('T'); R = load('rho')
+    xyz = P[:, :3]; r = np.hypot(xyz[:, 1], xyz[:, 2]); th = np.arctan2(xyz[:, 2], xyz[:, 1])
+    rh, rb = META['r_hub_ngv'] * 1e-3, META['r_bore'] * 1e-3
+    sel = (r > rh + 0.2 * (rb - rh)) & (r < rb - 0.2 * (rb - rh))
+    ut = (-np.sin(th) * Uv[:, 4] + np.cos(th) * Uv[:, 5])
+    ux = Uv[:, 3]
+    pitch = 2 * math.pi / META['Z_ngv']
+    ph = np.mod(th - th[sel].min(), pitch) / pitch
+    bins = np.linspace(0, 1, n_bins + 1); idx = np.clip(np.digitize(ph[sel], bins) - 1, 0, n_bins - 1)
+    def prof(v):
+        out = np.array([v[sel][idx == i].mean() if np.any(idx == i) else np.nan for i in range(n_bins)])
+        good = ~np.isnan(out); xg = np.arange(n_bins)
+        return np.interp(xg, xg[good], out[good], period=n_bins)
+    pp, uxp, utp, rhop = prof(P[:, 3]), prof(ux), prof(ut), prof(R[:, 3])
+    U_blade = D['N_rpm'] * 2 * math.pi / 60 * 0.5 * (rh + rb)
+    wx, wt = uxp.mean(), utp.mean() - U_blade
+    W = math.hypot(wx, wt); e_perp = np.array([-wt, wx]) / W
+    vperp = (uxp - uxp.mean()) * e_perp[0] + (utp - utp.mean()) * e_perp[1]
+    def amp(v, n):
+        c = np.fft.rfft(v - v.mean()) / len(v) * 2
+        return float(abs(c[n]))
+    out = dict(x_mm=x_mm, rho=float(rhop.mean()), W=float(W), U_blade=float(U_blade), Cx=float(uxp.mean()), Ctheta=float(utp.mean()),
+               alpha_abs_deg=float(math.degrees(math.atan2(utp.mean(), uxp.mean()))), beta_rel_deg=float(math.degrees(math.atan2(wt, wx))),
+               chord_m=0.00854, p_mean=float(pp.mean()),
+               by_eo={str(21 * n): dict(p=amp(pp, n), v_perp=amp(vperp, n), ux=amp(uxp, n), ut=amp(utp, n)) for n in (1, 2, 3)},
+               profiles=dict(p=pp.tolist(), ux=uxp.tolist(), ut=utp.tolist()))
+    return out
 
 
 if __name__ == '__main__':
