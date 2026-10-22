@@ -463,6 +463,10 @@ def aero_report(ngv, rot, verbose=True):
 # x 109.8 (r 21.25-22.25) -> platform front face x 110.1; old exhaust cone x 120.31 (r 7-26) -> platform rear x 119.4.
 # Web parameters were chosen with the axisymmetric study in sim/engine/e1_turbine_fea.py (--opt); values below = selected design.
 DISC = dict(xf_w=111.60, xr_w=115.60, r_web=15.0, x_boss=118.50, r_lip_f=19.70, r_lip_r=17.30, R_web=2.5, r_hf=6.4, r_hr=6.5)
+# Bore-less disc (sim/engine/e1_disc_thermal_study.py): solid hub, web 6 mm, R4 web fillets. Hot 115k peak 615 MPa (margin 1.13 to
+# minimum yield), burst 201k, creep (reference stress) >= 1e6 h; the Ø8 bore reached 957-1172 MPa hot. The wheel is friction
+# welded to the shaft at the sleeve front face (x 104.3); no rear nut / thread (fc_shaft_welded).
+DISC_BORELESS = dict(r_bore=0.0, xf_w=110.6, xr_w=116.6, R_web=4.0)
 
 def _fillet_corner(P0, V, P1, R, kind):
     """Corner at V between segments P0-V and V-P1. kind 'f' fillet radius R, 'c' chamfer length R. Returns (t0, mid, t1)."""
@@ -661,6 +665,19 @@ def fc_disc(kind='final', P=None):
     """Revolved wheel body; the revolve seam is put mid-passage (rotated by half a pitch)."""
     App, Part, V = _fc()
     d_ = rev_prims(disc_profile(kind, P)); d_.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z_ROT); return d_
+
+def fc_shaft_welded():
+    """GR180 shaft (build_gr180.py profile, silver steel -> 42CrMo4 Q+T for welding) cut at the wheel's front face and inertia /
+    friction welded to the bore-less wheel there: rear 608 journal Ø8 x 97.3..104.3, weld face Ø8 at x 104.3 (flash removed,
+    0.5 mm relief on the wheel face inside the 608 inner-ring contact). ENG frame."""
+    App, Part, V = _fc()
+    SH_OFF = 97.30 - 145.0                       # shaft local 145 (rear shoulder) on the rear 608 front face (build_gr180.py)
+    x_w = X_HUB - SH_OFF                         # weld face in shaft local x (152.0)
+    re_, rm = 11.0 / 2, 15.5 / 2
+    pts = [(0, 0), (0, 3), (15, 3), (15, 3.5), (49, 3.5), (49, 4), (58, 4), (58, re_), (76, rm), (127, rm), (145, re_), (145, 4),
+           (x_w, 4), (x_w, 0)]
+    w = Part.makePolygon([V(SH_OFF + a, r, 0) for a, r in pts] + [V(SH_OFF + pts[0][0], pts[0][1], 0)])
+    return Part.Face(w).revolve(V(0, 0, 0), V(1, 0, 0), 360)
 
 def fc_full_wheel(disc, piece, Z=Z_ROT):
     App, Part, V = _fc()
