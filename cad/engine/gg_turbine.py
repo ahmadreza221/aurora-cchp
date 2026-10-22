@@ -718,7 +718,8 @@ def fc_sector_tool(rot, ruled=True):
         a_in = Part.Arc(prr[-1], V(float(x), ri * math.cos(thL[0] + half), ri * math.sin(thL[0] + half)), pl[0])
         sec_wires.append(Part.Wire([cL.toShape(), a_out.toShape(), cR.toShape(), a_in.toShape()]))
     tool = Part.makeLoft(sec_wires, True, ruled)
-    if tool.Volume < 0: tool.reverse()
+    if tool.Volume < 0:      # loft in the other order instead of reverse(): a reversed shell makes w1f.common(tool) empty
+        tool = Part.makeLoft(sec_wires[::-1], True, ruled)
     return tool, (xs, rr_st, THL, half)
 
 def fc_sector(w1f, rot, log=print):
