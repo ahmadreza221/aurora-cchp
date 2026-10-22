@@ -298,10 +298,11 @@ def design_ngv(verbose=False):
     return secs
 
 # ======================================================================================== rotor design
-# 12 design stream surfaces (+ extensions below the hub / above the tip), dense where the blade twists fastest (hub): with
-# only 5 the loft strayed up to ~1 mm from the design between them (bumps on the blade)
-ROT_SPANS = [0.0, 0.0625, 0.125, 0.1875, 0.25, 0.3125, 0.375, 0.50, 0.625, 0.75, 0.875, 1.0]
-ROT_LOFT_MIN_S = 0.06                               # design sections used in the loft start above the root fillet (h 0.9 mm)
+# 7 design stream surfaces (+ extensions below the hub / above the tip), denser at the hub where the blade twists fastest. With
+# only 5 (and the loft starting at s 0.25) the CAD surface strayed up to ~1 mm from the design between them (bumps on the blade);
+# now <= 0.1 mm for s >= 0.19, 0.37 mm just above the root fillet. 12 spans fit even closer but break the 29-blade fuse.
+ROT_SPANS = [0.0, 0.125, 0.25, 0.375, 0.50, 0.75, 1.0]
+ROT_LOFT_MIN_S = 0.10                               # design sections used in the loft start above the root fillet (h 0.9 mm)
 ROT_EXT = (-0.04, 1.05)
 def rot_params(s):
     sc = min(max(s, 0.0), 1.0)
