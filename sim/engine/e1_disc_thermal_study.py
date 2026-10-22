@@ -13,7 +13,7 @@ Run:  python sim/engine/e1_disc_thermal_study.py [--opt | --rear]  (CCX = path t
   default  current bore vs bore-less (DISC profile), nominal + hot BC sets
   --opt    bore-less web study (web thickness, web fillet, hub shoulders), nominal BCs
   --rear   rear-face protection on the bore-less w6/R4 disc: baseline, heat shield, cooling bleed, both
-  --creep  creep FEA (Norton law fitted to the IN713LC Larson-Miller curve, Monkman-Grant), 10 000 / 50 000 h at 115k
+  --creep  disc creep rupture by the reference-stress method (mean hoop stress, IN713LC Larson-Miller)
 Writes sim/engine/fea/thermo_study.json, boreless_opt.json, rear_cooling_study.json, creep_study.json
 """
 import itertools
@@ -44,7 +44,8 @@ MONKMAN_GRANT = 0.05      # eps_dot_min * t_rupture for Ni superalloys (0.02-0.1
 
 
 def norton_cards():
-    """*CREEP, LAW=NORTON (eps_dot = A sigma^n, MPa, 1/s) fitted per temperature to the life_study Larson-Miller curve."""
+    """*CREEP, LAW=NORTON (eps_dot = A sigma^n, MPa, 1/s) fitted per temperature to the life_study Larson-Miller curve.
+    Not used by --creep (see there); kept for a creep FEA in another solver."""
     lines = []
     for T in (450, 500, 550, 600, 650, 700, 750, 800):
         sg = np.array([350., 450., 550., 650.])
@@ -131,20 +132,20 @@ def main():
     F.AXI_ROT, F.AXI_F115 = rot, Fp * 1.08
     print('blade pull %.0f N (+8 %% fillets -> %.0f N)' % (Fp, F.AXI_F115))
     if '--creep' in sys.argv:
+        # Reference-stress method (disc rupture is governed by the mean hoop stress, the elastic fillet peak relaxes):
+        # CalculiX gave no usable creep result here (Norton alone diverges at the first increment; with *PLASTIC it is an
+        # overstress model that creeps only above yield, i.e. not at all on this disc).
         out = {}
-        cards = norton_cards()
-        # bore-less only: the current Ø8 bore is above yield (1172 MPa), outside the creep-law fit (350-650 MPa)
-        for name, P in (('boreless_w6R4', dict(G.DISC, **BORELESS_W6R4)),):
-            nodes, els = F.axisym_mesh(P, 0.25)
-            Tn = thermal(nodes, els, P, BCS['nominal'], 'cr_' + name)
-            el = F.axisym_run(P, F.N_DES, True, 'cr_%s_0h' % name, Tn=Tn)
-            for hrs in (10000.0, 50000.0):
-                r = F.axisym_run(P, F.N_DES, True, 'cr_%s_%dh' % (name, hrs), Tn=Tn, creep=dict(cards=cards, hours=hrs))
-                print('%-14s %6.0f h: creep strain max %.3f %% at (r %.1f, x %.1f) | peak vM %4.0f -> %4.0f MPa | bore/centre %4.0f -> %4.0f'
-                      ' | rim growth %.4f -> %.4f mm (creep +%.4f)' % (
-                          name, hrs, 100 * r.get('peeq_max', float('nan')), *r.get('peeq_at', (float('nan'),) * 2)[:2], el['vm_max'],
-                          r['vm_max'], el['bore_vm'], r['bore_vm'], el['u_rim'], r['u_rim'], r['u_rim'] - el['u_rim']), flush=True)
-                out['%s_%dh' % (name, hrs)] = dict(elastic=el, creep=r)
+        P = dict(G.DISC, **BORELESS_W6R4)
+        for bcname in ('nominal', 'hot'):
+            r = case(P, bcname, 'ref_' + bcname, cold=False)
+            s_ref, T_avg, T_pk = r['hot']['hoop_avg'], r['hot']['T_avg'], r['T_peak']
+            row = dict(sigma_ref=s_ref, T_avg=T_avg, T_peak=T_pk,
+                       h_Tavg=LS.creep_hours(s_ref, T_avg + 273.15), h_Tpeak=LS.creep_hours(s_ref, T_pk + 273.15),
+                       h_Tpeak_SF15=LS.creep_hours(1.5 * s_ref, T_pk + 273.15))
+            out[bcname] = row
+            print('bore-less w6/R4 %-8s sigma_ref %.0f MPa: rupture %.1e h at T_avg %.0f C, %.1e h at T_peak %.0f C, %.1e h with 1.5 x stress'
+                  % (bcname, s_ref, row['h_Tavg'], T_avg, row['h_Tpeak'], T_pk, row['h_Tpeak_SF15']), flush=True)
         json.dump(out, open(os.path.join(F.FEA, 'creep_study.json'), 'w'), indent=1, default=float)
         return
     if '--rear' in sys.argv:
