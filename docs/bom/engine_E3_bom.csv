@@ -1,5 +1,5 @@
 tag,description,qty,make_or_buy,material_or_spec,size_or_rating,supplier_candidates,mass_kg,model_file,notes
-E3-101,Interduct NGV module,1,make,"SLM IN718 (iDesign3D, Tehran); stress relief + solution/age AMS 5662; flanges & seal lands machined 5-axis",91 x 150 x 150 mm,iDesign3D (IR),2.043,cad_out/engine/E3/E3-101_Interduct_NGV_module.step,NGV 23 vanes; integral stationary hub cone over the GG nut; 2 TC + 1 P boss
+E3-101,Interduct NGV module,1,make,"SLM IN718 (iDesign3D, Tehran); stress relief + solution/age AMS 5662; flanges & seal lands machined 5-axis",90 x 176 x 176 mm,iDesign3D (IR),2.633,cad_out/engine/E3/E3-101_Interduct_NGV_module.step,NGV 23 vanes; integral stationary hub cone over the GG nut; 2 TC + 1 P boss
 E3-102,Shroud DiffuserWestWall,1,make,"IN718 ring (5-axis/turn) + IN625 1.5-3 mm radial wall, EB/TIG weld",30 x 250 x 250 mm,local 5-axis shop; IN718 bar VDM Metals (DE) / GH4169 (CN),1.409,cad_out/engine/E3/E3-102_Shroud_DiffuserWestWall.step,"tip gap 0.30 mm cold (0.35 at assembly, check growth)"
 E3-110,Collector Body,1,make,"1.4828/310S sheet 2.5-3 mm, TIG; DN250 PN6 flange 1.4541; hub bell spun",375 x 485 x 470 mm,local fabrication (robotic weld OK),19.23,cad_out/engine/E3/E3-110_Collector_Body.step,insulate outside (E5): 610 C surface
 E3-111,Collector WestCover,1,make,"1.4828 plate 6 mm laser + machined, 24 x M8 to drum flange",6 x 470 x 470 mm,local,7.763,cad_out/engine/E3/E3-111_Collector_WestCover.step,hot module (interduct+NGV+shroud) slides in from the west
@@ -44,10 +44,10 @@ E3-511,TE-721 B2 RTD,1,buy,"PT1000 class A, 3-wire, spring-loaded on the B2 oute
 E3-512,TE-720 B1 RTD,1,buy,"PT1000 class A, 3-wire, embedded in the B1 housing at the outer ring, lead via cone window",5 x 14 x 5 mm,"Roessel / Electronic Sensor (DE), Jaquet / Baumer (CH), MMF (DE), Hansford (UK)",0.001,cad_out/engine/E3/E3-512_TE-720_B1_RTD.step,tag per docs/electrical/02_io_list
 E3-701,GapAir Fan 48V,1,buy,48 V EC radial blower 4 g/s @ 2 kPa + G4 filter (ebm-papst / Micronel class),60 x 30 x 60 mm,ebm-papst (DE) / Micronel (CH),0.076,cad_out/engine/E3/E3-701_GapAir_Fan_48V.step,PMG gap cooling + seal pressurisation of the PMG cavity
 E3-601,"flange gaskets (E2/E3, mid-flange, NGV/shroud, drum cover, H1)",6,buy,KLINGER Milam PSS 1 mm (mica) / Thermiculite 815,per flange,Klinger (AT) / Flexitallic (UK),0.3,,
-E3-602,hot bolting M5/M6/M8/M16 + nuts,140,buy,"1.4980 (A286-equiv.) / IN718 studs, silver-plated nuts",M5-M16,Boellhoff (DE) / Chinese GH2132,1.6,,torque per VDI 2230 (calc pending)
+E3-602,hot bolting M5/M6/M8/M16 + nuts (incl. E2/E3 flange 16 x M8 x 45 per E2),144,buy,"1.4980 (A286-equiv.) / IN718 studs, silver-plated nuts",M5-M16,Boellhoff (DE) / Chinese GH2132,1.7,,torque per VDI 2230 (calc pending)
 E3-603,cold bolting (PMG/B1/B2/cover/box/feet),60,buy,A4-70 / 8.8 Zn-flake,M5-M12,Wuerth (DE),0.6,,
 E3-604,"FKM O-rings (SFD centring 4, housings/ports 12)",16,buy,"FKM 75 Sh A, 200 C",various,Freudenberg (DE) / Trelleborg (SE),0.05,,replace at bearing overhaul
-E3-605,split piston ring for the GG NGV slip joint,1,make,Stellite 6 / IN718,D 73.2,local,0.01,,or E2-side seal
+E3-605,"E2/E3 flange gasket (mean dia 137 x 8 wide, per E2 flange calc)",1,buy,KLINGER Milam PSS 1 mm (mica) / Thermiculite 815,ID 129 / OD 145,Klinger (AT) / Flexitallic (UK),0.01,,slip-joint piston ring is E2 scope (E2 rear-ring groove x 112.5-114.5)
 E3-606,buffer-air orifice 2.4 mm + 40 um filter + check valve,1,buy,SS316,"1/4"" tube",Hy-Lok (KR) / Voss (DE),0.15,,from E2 compressor-delivery port
 E3-607,"oil fittings + tubes (2 supply, 2 scavenge, 2 buffer)",1,buy,"SS316 compression fittings, 6/12 mm tube",,Hy-Lok (KR) / Voss (DE) / Dk-Lok (KR),0.8,,routed through cone windows (B1)
 E3-608,glycol fittings G1/2 + hose,2,buy,"brass/SS, EPDM hose",G1/2,Voss (DE) / Gates EU,0.3,,

@@ -121,11 +121,15 @@ inner_wall = rv(hub_all + [(p[0], p[1] - 1.2) for p in hub_all][::-1])          
 # NGV inner-ring back wall (closes the hub cavity) at the NGV leading edge; rim-seal lip toward the blisk
 back_wall = ring(x_le, x_le + 2.0, 0.0, GEO['ngv_hub_le'] - 1.0)
 rim_lip = ring(x_te, x_te + 1.7, GEO['ngv_hub_te'] - 2.2, GEO['ngv_hub_te'] - 0.4)
-# front slip sleeve over the GG NGV shroud (OD 72.7, x 110.8..118.8): ID 73.2, x 112 .. 119.3
-slip = ring(112.0, X['id0'] + 0.01, 36.6, 38.1)
+# front slip bore over the GG NGV shroud (OD 72.7, x 110.8..118.8): ID 73.2 from the E2 mating face (x 116.0) to the interduct inlet (119.3).
+# The slip-joint piston ring sits in the E2 rear ring (E2 seal groove x 112.5-114.5, r 40: sim/engine/e2_design.json) - no ring on the E3 side.
+slip = ring(X['flangeE2'], X['id0'] + 0.01, 36.6, 38.1)
 step = ring(X['id0'], X['id0'] + 1.5, 35.35, 38.1)
 fr_x0 = X['flangeE2']
-front_flange = ring(fr_x0, fr_x0 + 6.0, 36.5, 75.0).fuse(ring(fr_x0 - 3.0, fr_x0, 56.0, 60.0))   # OD 150 + spigot OD 120 h7 x 3
+# E2/E3 flange adopted from E2 (sim/engine/e2_design.json 2026-10-21): E2 rear ring x 106-116, r_e3_flange_o 88, pcd_e3 160, n_e3_bolts 16 (M8),
+# e3_spigot_d 120 x depth 3.  E3 ring: IN718, 8 thick (x 116-124), OD 176, 16 x d9 on PCD 160, male spigot OD 120 h7 x 3 (x 113-116).
+FR = dict(OD=176.0, PCD=160.0, n=16, hole=9.0, t=8.0, phase=11.25)
+front_flange = ring(fr_x0, fr_x0 + FR['t'], 36.6, 0.5 * FR['OD']).fuse(ring(fr_x0 - 3.0, fr_x0, 56.0, 60.0))
 mid_x0 = X['drum0'] - 6.0
 mid_flange = ring(mid_x0, mid_x0 + 6.0, 38.0, 72.0)
 rear_flange = ring(x_te - 4.0, x_te, GEO['ngv_tip_te'] - 1.0, 66.0)
@@ -133,9 +137,10 @@ tc_boss = []
 for th in (45.0, 225.0, 135.0):                     # TE-510A, TE-510B, PT-524 (P45 static tap)
     tc_boss.append(radial_boss(X['tc_in'], th, 36.8, 52.0, 6.0))
 mod = outer_wall.fuse([inner_wall, back_wall, rim_lip, slip, step, front_flange, mid_flange, rear_flange] + tc_boss)
-for k in range(12):                                  # E2/E3 flange 12 x d6.6 PCD 135; mid flange 12 x M6 PCD 132 (to west cover)
+for k in range(FR['n']):                             # E2/E3 flange 16 x d9 (M8) on PCD 160 per E2; phase 11.25 deg (straddling the vertical) - confirm with E2
+    mod = mod.cut(Part.makeCylinder(0.5 * FR['hole'], FR['t'] + 2.0, P(fr_x0 - 1, 0.5 * FR['PCD'], FR['phase'] + 360.0 / FR['n'] * k), V(1, 0, 0)))
+for k in range(12):                                  # mid flange 12 x M6 PCD 132 (to west cover)
     th = 15 + 30 * k
-    mod = mod.cut(Part.makeCylinder(3.3, 8, P(fr_x0 - 1, 67.5, th), V(1, 0, 0)))
     mod = mod.cut(Part.makeCylinder(2.5, 8, P(mid_x0 - 1, 66.0, th), V(1, 0, 0)))
 for k in range(16):                                  # rear flange 16 x M5 PCD 120 (to the shroud ring)
     mod = mod.cut(Part.makeCylinder(2.1, 6, P(x_te - 5, 60.0, 11.25 + 22.5 * k), V(1, 0, 0)))
@@ -518,12 +523,16 @@ st = CR['stage']; pmr = CR['pmg']; th_ = CR['thermal']; rot = CR['rotor']; br = 
 def itf(name, pos, direction, size, counterpart, **kw):
     d = dict(name=name, ENG_mm=[round(v, 2) for v in pos], ROOF_m=roof(pos), direction=direction, size=size, counterpart=counterpart); d.update(kw); return d
 IF = []
-IF.append(itf('IF-E2E3 flange (E3 front, proposal)', [X['flangeE2'], 0, 0], [-1, 0, 0],
-              'mating face x 122.0; OD 150, PCD 135, 12 x M6 (holes 6.6) 1.4980/A286-class studs; male spigot OD 120 h7 x 3 (x 119-122); '
-              'gasket KLINGER Milam PSS 1 mm or IN718 C-seal; gas path ID 70.7 (r 35.35) at x 119.3',
-              'E2 combustor/pressure-casing rear flange (cad_out/engine/E2/E2_interfaces.json not yet published - reconcile OD/PCD/bolts)',
-              slip_joint='E3 slip sleeve ID 73.2 x 7.3 long (x 112.0-119.3) over the GG NGV shroud OD 72.7 (x 110.8-118.8); split piston ring (Stellite/IN718) '
-                         'seals casing air 2.9 bar from the 1.25 bar gas path; E2 may move the seal into its casing',
+IF.append(itf('IF-E2E3 flange (E3 front) - reconciled with E2', [X['flangeE2'], 0, 0], [-1, 0, 0],
+              'mating face x %.1f; OD %.0f, PCD %.0f, %d x M8 (holes %.0f, phase %.2f deg) 1.4980/A286-class or IN718 studs, silver-plated nuts; '
+              'E3 ring IN718 %.0f thick (x %.0f-%.0f); male spigot OD 120 h7 x 3 (x %.0f-%.0f) into the E2 recess (e3_spigot_d 120 / depth 3); '
+              'gasket mean dia 137 x 8 wide (E2 flange calc: W 34.4 kN, bolt area req 313 mm2 / avail 525 mm2), KLINGER Milam PSS 1 mm or Thermiculite 815; '
+              'gas path ID 70.7 (r 35.35) at x 119.3' % (fr_x0, FR['OD'], FR['PCD'], FR['n'], FR['hole'], FR['phase'], FR['t'], fr_x0, fr_x0 + FR['t'], fr_x0 - 3, fr_x0),
+              'E2 pressure-casing rear flange per sim/engine/e2_design.json (x_e3_flange 106-116, r_e3_flange_o 88, pcd_e3 160, n_e3_bolts 16, e3_spigot_d 120 x 3, '
+              'seal_groove_x 112.5-114.5 r 40); cad_out/engine/E2/E2_interfaces.json still to be published by E2 - bolt angular phase and gasket type to confirm',
+              status='ADOPTED from E2 (2026-10-21). Superseded E3 proposal: face x 122, OD 150, PCD 135, 12 x M6 (bolt root area 12 x 17.9 = 215 mm2 < 313 mm2 required)',
+              slip_joint='E3 slip bore ID 73.2 (x %.1f-119.3, radial clearance 0.25) over the GG NGV shroud OD 72.7 (x 110.8-118.8); the split piston ring is in the '
+                         'E2 rear ring (E2 seal groove x 112.5-114.5, r 40) - no ring on the E3 side; separates casing air 2.9 bar from the 1.25 bar gas path' % fr_x0,
               hub_lip='stationary hub cone lip r 17.8-19.0 at x 119.3; 1.0 mm axial gap to the E1 rotor hub TE (x 118.3, r 19.0); clears GG nut (x 118.8-126.8) and shaft end (127.8)'))
 IF.append(itf('H1 exhaust outlet to recuperator hot inlet', [XH1, Y_FL, 0], [0, 1, 0],
               'DN250 PN6 EN 1092-1 type 01 plate flange (OD 375, PCD 335, 12 x M16, holes 18), face y = %.0f; pipe 273 x 6.3; '
@@ -610,7 +619,7 @@ try:
     lab = [(150, 60, 'E3-101 interduct + NGV (SLM IN718)'), (209, 72, 'E3-103 FPT blisk (19)'), (236, 140, 'E3-102 shroud / diffuser W wall'),
            (262, 150, 'E3-110 collector drum'), (300, 270, 'H1: DN250 PN6 -> E4 recuperator (x 300, face y=+250, ROOF 8.100)'), (248, -40, 'B1 71905 hybrid (SFD)'),
            (344, -50, 'PMG 30 kW, 2-pole SmCo, 60k'), (430, -42, 'B2 7005 hybrid (SFD, preload)'), (318, 95, 'E3-112 support cone'),
-           (440, 120, 'E3-307 terminal box'), (122, -95, 'E2/E3 flange x=122 (proposal)'), (110, 22, 'GG turbine + nut (E1)'), (225, -330, 'feet -> skid z=-400')]
+           (440, 120, 'E3-307 terminal box'), (118, -95, 'E2/E3 flange x=116 (per E2)'), (110, 22, 'GG turbine + nut (E1)'), (225, -330, 'feet -> skid z=-400')]
     for x, y, s in lab:
         A.annotate(s, (x, y), fontsize=8, ha='center', bbox=dict(boxstyle='round,pad=0.2', fc='w', alpha=0.7))
     A.set_title('GR180-CCHP E3 - section z = 0 (ENG frame): interduct, FPT (NGV %d / rotor %d, 60k rpm, eta_ts %.3f), FPT/PMG rotor on B1/B2, '
@@ -662,10 +671,10 @@ for t in SENS:
     SUP[t] = ('buy', SENS[t]['desc'], 'Roessel / Electronic Sensor (DE), Jaquet / Baumer (CH), MMF (DE), Hansford (UK)', 'tag per docs/electrical/02_io_list')
 EXTRA = [
  ('E3-601', 'flange gaskets (E2/E3, mid-flange, NGV/shroud, drum cover, H1)', 6, 'buy', 'KLINGER Milam PSS 1 mm (mica) / Thermiculite 815', 'per flange', 'Klinger (AT) / Flexitallic (UK)', 0.30, '', ''),
- ('E3-602', 'hot bolting M5/M6/M8/M16 + nuts', 140, 'buy', '1.4980 (A286-equiv.) / IN718 studs, silver-plated nuts', 'M5-M16', 'Boellhoff (DE) / Chinese GH2132', 1.6, '', 'torque per VDI 2230 (calc pending)'),
+ ('E3-602', 'hot bolting M5/M6/M8/M16 + nuts (incl. E2/E3 flange 16 x M8 x 45 per E2)', 144, 'buy', '1.4980 (A286-equiv.) / IN718 studs, silver-plated nuts', 'M5-M16', 'Boellhoff (DE) / Chinese GH2132', 1.7, '', 'torque per VDI 2230 (calc pending)'),
  ('E3-603', 'cold bolting (PMG/B1/B2/cover/box/feet)', 60, 'buy', 'A4-70 / 8.8 Zn-flake', 'M5-M12', 'Wuerth (DE)', 0.6, '', ''),
  ('E3-604', 'FKM O-rings (SFD centring 4, housings/ports 12)', 16, 'buy', 'FKM 75 Sh A, 200 C', 'various', 'Freudenberg (DE) / Trelleborg (SE)', 0.05, '', 'replace at bearing overhaul'),
- ('E3-605', 'split piston ring for the GG NGV slip joint', 1, 'make', 'Stellite 6 / IN718', 'D 73.2', 'local', 0.01, '', 'or E2-side seal'),
+ ('E3-605', 'E2/E3 flange gasket (mean dia 137 x 8 wide, per E2 flange calc)', 1, 'buy', 'KLINGER Milam PSS 1 mm (mica) / Thermiculite 815', 'ID 129 / OD 145', 'Klinger (AT) / Flexitallic (UK)', 0.01, '', 'slip-joint piston ring is E2 scope (E2 rear-ring groove x 112.5-114.5)'),
  ('E3-606', 'buffer-air orifice 2.4 mm + 40 um filter + check valve', 1, 'buy', 'SS316', '1/4" tube', 'Hy-Lok (KR) / Voss (DE)', 0.15, '', 'from E2 compressor-delivery port'),
  ('E3-607', 'oil fittings + tubes (2 supply, 2 scavenge, 2 buffer)', 1, 'buy', 'SS316 compression fittings, 6/12 mm tube', '', 'Hy-Lok (KR) / Voss (DE) / Dk-Lok (KR)', 0.8, '', 'routed through cone windows (B1)'),
  ('E3-608', 'glycol fittings G1/2 + hose', 2, 'buy', 'brass/SS, EPDM hose', 'G1/2', 'Voss (DE) / Gates EU', 0.3, '', ''),

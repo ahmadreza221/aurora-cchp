@@ -593,33 +593,40 @@ def camber_theta(sec, x):
     """Camber-line theta of a section at axial x (held constant outside LE..TE)."""
     return np.interp(x, sec.xc, sec.th)
 
-def fc_build(verbose=True):
+def _fc():
     import FreeCAD as App, Part
-    V = App.Vector
-    T0 = __import__('time').time()
-    def log(*a):
-        if verbose: print('[%5.0fs]' % (__import__('time').time() - T0), *a); sys.stdout.flush()
-    os.makedirs(OUT, exist_ok=True); os.makedirs(FEA_DIR, exist_ok=True)
-    ngv = design_ngv(); rot = design_rotor(); rep = aero_report(ngv, rot, verbose=verbose)
-    def bs_wire(pts):     # closed, non-periodic interpolation (seam at the TE mid-point; periodic curves break ThruSections)
-        P = [V(*map(float, p)) for p in pts]
-        c = Part.BSplineCurve(); c.interpolate(P + [P[0]], PeriodicFlag=False)
-        return Part.Wire([c.toShape()])
-    def rev(prims):
-        edges = []
-        for pr in prims:
-            if pr[0] == 'L': edges.append(Part.LineSegment(V(pr[1][0], pr[1][1], 0), V(pr[2][0], pr[2][1], 0)).toShape())
-            elif pr[0] == 'A': edges.append(Part.Arc(V(pr[1][0], pr[1][1], 0), V(pr[2][0], pr[2][1], 0), V(pr[3][0], pr[3][1], 0)).toShape())
-            else:
-                b = Part.BezierCurve(); b.setPoles([V(p[0], p[1], 0) for p in pr[1]]); edges.append(b.toShape())
-        w = Part.Wire(Part.__sortEdges__(edges))
-        return Part.Face(w).revolve(V(0, 0, 0), V(1, 0, 0), 360)
-    def cyl(r, x0, x1): return Part.makeCylinder(r, x1 - x0, V(x0, 0, 0), V(1, 0, 0))
-    def ring(ri, ro, x0, x1): return cyl(ro, x0, x1).cut(cyl(ri, x0, x1))
+    return App, Part, App.Vector
 
-    # ---------------- rotor blade (single, centroids stacked on the +y axis, theta = 0) with integral R0.8 root fillet
-    ss = sorted(rot)
-    hub = rot[0.0]
+def bs_wire(pts):
+    """Closed, non-periodic B-spline interpolation (seam at the TE mid-point; periodic curves break ThruSections)."""
+    App, Part, V = _fc()
+    P = [V(*map(float, p)) for p in pts]
+    c = Part.BSplineCurve(); c.interpolate(P + [P[0]], PeriodicFlag=False)
+    return Part.Wire([c.toShape()])
+
+def rev_prims(prims):
+    App, Part, V = _fc()
+    edges = []
+    for pr in prims:
+        if pr[0] == 'L': edges.append(Part.LineSegment(V(pr[1][0], pr[1][1], 0), V(pr[2][0], pr[2][1], 0)).toShape())
+        elif pr[0] == 'A': edges.append(Part.Arc(V(pr[1][0], pr[1][1], 0), V(pr[2][0], pr[2][1], 0), V(pr[3][0], pr[3][1], 0)).toShape())
+        else:
+            b = Part.BezierCurve(); b.setPoles([V(p[0], p[1], 0) for p in pr[1]]); edges.append(b.toShape())
+    w = Part.Wire(Part.__sortEdges__(edges))
+    return Part.Face(w).revolve(V(0, 0, 0), V(1, 0, 0), 360)
+
+def cyl(r, x0, x1):
+    App, Part, V = _fc(); return Part.makeCylinder(r, x1 - x0, V(x0, 0, 0), V(1, 0, 0))
+def ring(ri, ro, x0, x1):
+    return cyl(ro, x0, x1).cut(cyl(ri, x0, x1))
+def rot_shape(sh, deg):
+    App, Part, V = _fc(); q = sh.copy(); q.rotate(V(0, 0, 0), V(1, 0, 0), deg); return q
+
+def fc_blade(rot):
+    """Single rotor blade loft (centroids stacked on +y, theta = 0) with the integral R0.8 root fillet, trimmed at R_TIP
+    (final) and R_TIP + TIP_STOCK (cast). Returns blade_raw, blade_f, blade_c."""
+    App, Part, V = _fc()
+    ss = sorted(rot); hub = rot[0.0]
     root = []
     for hk in FILLET_H:
         h = hk * FILLET_ROT / 0.8
@@ -629,117 +636,163 @@ def fc_build(verbose=True):
     capT = project_to_plane(rot[1.0].outline()[0], lambda x: np.full_like(np.asarray(x, float), R_TIP + 1.25))
     wires = [bs_wire(capH)] + [bs_wire(p_) for p_ in root] + [bs_wire(rot[s_].outline()[0]) for s_ in ss if s_ >= 0.2] + [bs_wire(capT)]
     blade_raw = Part.makeLoft(wires, True, False)
-    if blade_raw.Volume < 0: blade_raw.reverse()                    # loft of clockwise sections comes out inside-out
-    log('rotor blade loft (%d sections, integral root fillet R%.1f) valid %s vol %.1f' % (len(wires), FILLET_ROT, blade_raw.isValid(), blade_raw.Volume))
-    blade_f = blade_raw.common(cyl(R_TIP, 100, 125))
-    blade_c = blade_raw.common(cyl(R_TIP + TIP_STOCK, 100, 125))
+    if blade_raw.Volume < 0: blade_raw.reverse()
+    return blade_raw, blade_raw.common(cyl(R_TIP, 100, 125)), blade_raw.common(cyl(R_TIP + TIP_STOCK, 100, 125)), len(wires)
 
-    disc_f = rev(disc_profile('final')); disc_c = rev(disc_profile('cast'))
-    for d_ in (disc_f, disc_c): d_.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z_ROT)     # revolve seam mid-passage
-    log('disc final vol %.0f mm3, cast %.0f' % (disc_f.Volume, disc_c.Volume))
-    w1f = disc_f.fuse(blade_f)
-    piece_f = blade_f.cut(disc_f); piece_c = blade_c.cut(disc_c)          # blade + fillet above the hub
-    log('single-blade wheel valid %s; blade above hub vol final %.2f cast %.2f mm3' % (w1f.isValid(), piece_f.Volume, piece_c.Volume))
+def fc_disc(kind='final', P=None):
+    """Revolved wheel body; the revolve seam is put mid-passage (rotated by half a pitch)."""
+    App, Part, V = _fc()
+    d_ = rev_prims(disc_profile(kind, P)); d_.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z_ROT); return d_
 
-    def full_wheel(disc, piece):
-        ps = []
-        for k in range(Z_ROT):
-            q = piece.copy(); q.rotate(V(0, 0, 0), V(1, 0, 0), 360.0 * k / Z_ROT); ps.append(q)
-        w = disc.fuse(ps)
-        try: w = w.removeSplitter()
-        except Exception: pass
-        return w
-    wheel_f = full_wheel(disc_f, piece_f); log('full wheel final: valid %s, solids %d, vol %.0f' % (wheel_f.isValid(), len(wheel_f.Solids), wheel_f.Volume))
-    wheel_c = full_wheel(disc_c, piece_c); log('full wheel cast : valid %s, solids %d, vol %.0f' % (wheel_c.isValid(), len(wheel_c.Solids), wheel_c.Volume))
+def fc_full_wheel(disc, piece, Z=Z_ROT):
+    App, Part, V = _fc()
+    w = disc.fuse([rot_shape(piece, 360.0 * k / Z) for k in range(Z)])
+    try: w = w.removeSplitter()
+    except Exception: pass
+    return w
 
-    # ---------------- FEA sector (1/29, boundaries follow the mid-passage, exactly periodic)
-    sec_list = [rot[s_] for s_ in ss if 0 <= s_ <= 1]
-    s_vals = [s_ for s_ in ss if 0 <= s_ <= 1]
+def sector_theta_table(rot):
+    """Mid-passage boundary theta_left(x, r) of the 1/29 sector (left face = camber theta - half pitch), smoothed in x."""
+    sec_list = [rot[s_] for s_ in sorted(rot) if 0 <= s_ <= 1]; s_vals = [s_ for s_ in sorted(rot) if 0 <= s_ <= 1]
     half = math.pi / Z_ROT
-    xs = np.concatenate([np.linspace(103.0, 110.6, 8), np.linspace(110.8, 119.0, 42), np.linspace(119.3, 121.5, 4)])
+    xs = np.concatenate([[102.5, 106.0, 109.0, 110.3], np.linspace(110.8, 119.0, 42), [119.5, 120.5, 122.0]])
+    rr_st = np.array([1.5, 8.0, 14.0, 17.5, 19.0, 20.5, 22.0, 24.0, 26.5, 29.0, 31.5, 34.0, 36.0, 38.0, 41.0])
     def theta_mid(x, r):
-        # camber theta interpolated in span at the stream surface through (x, r); hub value below the hub, tip value above
         rh = float(r_hub(np.clip(x, X_PF, X_PR)))
         sp = np.clip((r**2 - rh**2) / (R_TIP**2 - rh**2), 0.0, 1.0)
-        th = [float(camber_theta(sc, x)) for sc in sec_list]
-        return float(np.interp(sp, s_vals, th))
-    rr_st = np.array([2.0, 8.0, 14.0, 17.0, 19.0, 21.0, 23.0, 26.0, 29.0, 32.0, 35.0, 37.0, 40.0])
-    sec_wires = []; TH = []
-    for x in xs:
-        th = np.array([theta_mid(x, r) for r in rr_st]); TH.append(th)
-    TH = np.array(TH)
-    # smooth in x (3-point) to keep the B-spline side faces fair
+        return float(np.interp(sp, s_vals, [float(camber_theta(sc, x)) for sc in sec_list]))
+    TH = np.array([[theta_mid(x, r) for r in rr_st] for x in xs])
     TH = np.vstack([TH[:1], (TH[:-2] + 2 * TH[1:-1] + TH[2:]) / 4, TH[-1:]])
-    for i, x in enumerate(xs):
-        thL = TH[i] - half; thR = thL + 2 * half
-        pl = [V(float(x), float(r * math.cos(t)), float(r * math.sin(t))) for r, t in zip(rr_st, thL)]          # r 2 -> 40
-        prr = [V(float(x), float(r * math.cos(t)), float(r * math.sin(t))) for r, t in zip(rr_st[::-1], thR[::-1])]  # r 40 -> 2
-        cL = Part.BSplineCurve(); cL.interpolate(pl); cR = Part.BSplineCurve(); cR.interpolate(prr)
-        a_out = Part.Arc(pl[-1], V(float(x), 40 * math.cos(thL[-1] + half), 40 * math.sin(thL[-1] + half)), prr[0])
-        a_in = Part.Arc(prr[-1], V(float(x), 2 * math.cos(thL[0] + half), 2 * math.sin(thL[0] + half)), pl[0])
-        sec_wires.append(Part.Wire([cL.toShape(), a_out.toShape(), cR.toShape(), a_in.toShape()]))
-    tool = Part.makeLoft(sec_wires, True, False)
-    if tool.Volume < 0: tool.reverse()
-    log('sector tool valid', tool.isValid(), 'vol %.0f' % tool.Volume)
-    sector = w1f.common(tool)
-    log('FEA sector: solids %d valid %s vol %.1f (x29 = %.0f vs wheel %.0f)' % (len(sector.Solids), sector.isValid(), sector.Volume, 29 * sector.Volume, wheel_f.Volume))
-    sector.exportStep(os.path.join(OUT, 'fea_sector.step'))
-    json.dump(dict(xs=xs.tolist(), r=rr_st.tolist(), theta_left=(TH - half).tolist(), Z=Z_ROT,
-                   blade_volume=piece_f.Volume, note='left boundary theta(x,r); right = left + 2pi/Z'),
-              open(os.path.join(FEA_DIR, 'sector_boundary.json'), 'w'), indent=1)
+    return xs, rr_st, TH - half, half
 
-    # ---------------- NGV
-    RB = ngv_bore_r()
+def fc_sector_tool(rot, ruled=True):
+    """Periodic wedge tool (r 1.5..41, x 102.5..122) whose side faces follow the mid-passage: left face theta_L(x, r),
+    right face = left rotated by one pitch (exactly periodic). Loft of planar x-sections (ruled -> no wiggles)."""
+    App, Part, V = _fc()
+    xs, rr_st, THL, half = sector_theta_table(rot)
+    sec_wires = []
+    for i, x in enumerate(xs):
+        thL = THL[i]; thR = thL + 2 * half
+        pl = [V(float(x), float(r * math.cos(t)), float(r * math.sin(t))) for r, t in zip(rr_st, thL)]
+        prr = [V(float(x), float(r * math.cos(t)), float(r * math.sin(t))) for r, t in zip(rr_st[::-1], thR[::-1])]
+        cL = Part.BSplineCurve(); cL.interpolate(pl); cR = Part.BSplineCurve(); cR.interpolate(prr)
+        ro, ri = rr_st[-1], rr_st[0]
+        a_out = Part.Arc(pl[-1], V(float(x), ro * math.cos(thL[-1] + half), ro * math.sin(thL[-1] + half)), prr[0])
+        a_in = Part.Arc(prr[-1], V(float(x), ri * math.cos(thL[0] + half), ri * math.sin(thL[0] + half)), pl[0])
+        sec_wires.append(Part.Wire([cL.toShape(), a_out.toShape(), cR.toShape(), a_in.toShape()]))
+    tool = Part.makeLoft(sec_wires, True, ruled)
+    if tool.Volume < 0: tool.reverse()
+    return tool, (xs, rr_st, THL, half)
+
+def fc_sector(w1f, rot, log=print):
+    """1/29 cyclic sector of the single-blade wheel for CalculiX (periodic side faces mid-passage)."""
+    App, Part, V = _fc()
+    best = None
+    for ruled in (True, False):
+        tool, tab = fc_sector_tool(rot, ruled)
+        wedge_vol = tab[3] * (tab[1][-1]**2 - tab[1][0]**2) * (tab[0][-1] - tab[0][0])
+        ok_tool = tool.isValid() and abs(tool.Volume / wedge_vol - 1) < 0.05
+        sec = w1f.common(tool)
+        sols = [s for s in sec.Solids if s.Volume > 1.0]
+        vol = sum(s.Volume for s in sols)
+        log('sector tool ruled=%s valid %s vol %.0f (wedge %.0f) -> sector solids %d vol %.1f (x%d = %.0f vs single-blade wheel %.0f)'
+            % (ruled, ok_tool, tool.Volume, wedge_vol, len(sols), vol, Z_ROT, Z_ROT * vol, w1f.Volume))
+        if len(sols) == 1 and ok_tool and sols[0].isValid():
+            best = (sols[0], tab); break
+    if best is None: raise RuntimeError('FEA sector boolean failed')
+    sec, (xs, rr_st, THL, half) = best
+    json.dump(dict(xs=xs.tolist(), r=rr_st.tolist(), theta_left=THL.tolist(), Z=Z_ROT, note='left boundary theta(x,r); right = left + 2pi/Z'),
+              open(os.path.join(FEA_DIR, 'sector_boundary.json'), 'w'), indent=1)
+    return sec
+
+def ngv_body(kind, RB):
+    """NGV rings + web (revolved), local u = x - X_NGV. kind 'final' / 'cast'. Returns (body, bore radius)."""
+    App, Part, V = _fc()
+    ck = kind == 'cast'
     def rvp(pts):
         return Part.Face(Part.makePolygon([V(X_NGV + u, r, 0) for u, r in pts] + [V(X_NGV + pts[0][0], pts[0][1], 0)])).revolve(V(0, 0, 0), V(1, 0, 0), 360)
-    def ngv_body(kind):
-        ck = kind == 'cast'
-        rb = RB - (CAST_SHROUD_STOCK if ck else 0.0)
-        u_web0 = 8.5 - (0.5 if ck else 0.0); r_web_b = 13.0 - (0.5 if ck else 0.0); u_in1 = 15.0 + (0.3 if ck else 0.0)
-        # outer ring: front land 0.3 (cast-friendly, was a knife edge), 26 deg entry chamfer, bore rb, OD 72.7, rib 75.9 x 1.5 at u 14.5-16
-        chl = (36.05 - rb) / math.tan(math.radians(26))
-        outer = rvp([(0, 36.05), (0, 36.35), (14.5, 36.35), (14.5, 37.95), (16.0, 37.95), (16.0, 36.35), (24.0, 36.35), (24.0, rb), (chl, rb)])
-        inner = rvp([(0, 21.25), (0, 22.25), (u_in1, 22.25), (u_in1, 21.25)])
-        web = rvp([(u_web0, r_web_b), (u_web0, 21.3), (10.0, 21.3), (10.0, r_web_b)])
-        return outer.fuse([inner, web]), rb
-    # vane (single, TE stacked at theta 0) with integral R1.0 fillets to both rings
-    def build_vane(rb):
-        hubs, shr = ngv[R_NGV_HUB], ngv[R_NGV_SHR]
-        mk = lambda w, r: Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m, w.dth)
-        inner = [mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H]
-        outer = [mk(shr, rb - hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H][::-1]
-        r_in_max, r_out_min = R_NGV_HUB + FILLET_H[-1] * FILLET_NGV / 0.8 + 1.0, rb - FILLET_H[-1] * FILLET_NGV / 0.8 - 1.0
-        mids = [ngv[r].outline()[0] for r in sorted(ngv) if r_in_max < r < r_out_min]
-        capI = project_to_plane(inner[0], lambda x: np.full_like(np.asarray(x, float), 21.60))
-        capO = project_to_plane(outer[-1], lambda x: np.full_like(np.asarray(x, float), rb + 0.55))
-        vw = [bs_wire(capI)] + [bs_wire(p_) for p_ in inner + mids + outer] + [bs_wire(capO)]
-        v_ = Part.makeLoft(vw, True, False)
-        if v_.Volume < 0: v_.reverse()
-        return v_, len(vw)
-    def ngv_full(kind):
-        body, rb = ngv_body(kind)
-        vane, nsec = build_vane(rb)
-        piece = vane.common(ring(21.3, rb + 0.65, X_NGV, X_NGV + 24)).cut(body)
-        ps = []
-        for k in range(Z_NGV):
-            q = piece.copy(); q.rotate(V(0, 0, 0), V(1, 0, 0), 360.0 * k / Z_NGV); ps.append(q)
-        body.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z_NGV)         # revolve seams between vanes
-        n = body.fuse(ps)
-        if kind == 'final':
-            for k in range(6):
-                a = math.radians(60 * k)
-                n = n.cut(Part.makeCylinder(1.6, 3.0, V(102.8, 16 * math.cos(a), 16 * math.sin(a)), V(1, 0, 0)))
-        try: n = n.removeSplitter()
-        except Exception: pass
-        return n, nsec, vane
-    ngv_f, nsec, vane = ngv_full('final'); log('NGV final: vane loft %d sections, valid %s, solids %d, vol %.0f, bore r %.3f' % (nsec, ngv_f.isValid(), len(ngv_f.Solids), ngv_f.Volume, RB))
-    ngv_c, _, _ = ngv_full('cast'); log('NGV cast : valid %s, vol %.0f' % (ngv_c.isValid(), ngv_c.Volume))
-    return dict(rep=rep, ngv=ngv, rot=rot, blade=blade_f, piece=piece_f, w1f=w1f, wheel_f=wheel_f, wheel_c=wheel_c, disc_f=disc_f,
-                sector=sector, ngv_f=ngv_f, ngv_c=ngv_c, vane=vane, ngv_bore_r=RB, log=log)
+    rb = RB - (CAST_SHROUD_STOCK if ck else 0.0)
+    u_web0 = 8.5 - (0.5 if ck else 0.0); r_web_b = 13.0 - (0.5 if ck else 0.0); u_in1 = 15.0 + (0.3 if ck else 0.0)
+    u_f = 0.0 - (0.3 if ck else 0.0)                                   # front land face (machined datum)
+    r_rib = 37.95 + (0.3 if ck else 0.0); u_r0, u_r1 = 14.5 - (0.3 if ck else 0.0), 16.0 + (0.3 if ck else 0.0)   # rib faces / OD machined
+    chl = (36.05 - rb) / math.tan(math.radians(26))
+    outer = rvp([(chl, rb), (u_f, 36.05 - (chl - u_f) * math.tan(math.radians(26)) if False else 36.05), (u_f, 36.35), (u_r0, 36.35), (u_r0, r_rib), (u_r1, r_rib), (u_r1, 36.35), (24.0, 36.35), (24.0, rb)])
+    inner = rvp([(0, 21.25), (0, 22.25), (u_in1, 22.25), (u_in1, 21.25)])
+    web = rvp([(u_web0, r_web_b), (u_web0, 21.3), (10.0, 21.3), (10.0, r_web_b)])
+    return outer.fuse([inner, web]), rb
+
+def fc_vane(ngv, rb):
+    """Single NGV vane loft (TE stacked at theta 0) with integral R1.0 fillets to both rings, buried in the rings."""
+    App, Part, V = _fc()
+    hubs, shr = ngv[R_NGV_HUB], ngv[R_NGV_SHR]
+    mk = lambda w, r: Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m, w.dth)
+    inner = [mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H]
+    outer = [mk(shr, rb - hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H][::-1]
+    r_in_max, r_out_min = R_NGV_HUB + FILLET_H[-1] * FILLET_NGV / 0.8 + 1.0, rb - FILLET_H[-1] * FILLET_NGV / 0.8 - 1.0
+    mids = [ngv[r].outline()[0] for r in sorted(ngv) if r_in_max < r < r_out_min]
+    capI = project_to_plane(inner[0], lambda x: np.full_like(np.asarray(x, float), 21.60))
+    capO = project_to_plane(outer[-1], lambda x: np.full_like(np.asarray(x, float), rb + 0.55))
+    vw = [bs_wire(capI)] + [bs_wire(p_) for p_ in inner + mids + outer] + [bs_wire(capO)]
+    v_ = Part.makeLoft(vw, True, False)
+    if v_.Volume < 0: v_.reverse()
+    return v_, len(vw)
+
+def fc_ngv(ngv, kind, RB):
+    """Complete NGV ring (21 vanes). Returns (ngv_shape, n_sections, vane_piece)."""
+    App, Part, V = _fc()
+    body, rb = ngv_body(kind, RB)
+    vane, nsec = fc_vane(ngv, rb)
+    piece = vane.common(ring(21.3, rb + 0.65, X_NGV, X_NGV + 24)).cut(body)
+    body.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z_NGV)
+    n = body.fuse([rot_shape(piece, 360.0 * k / Z_NGV) for k in range(Z_NGV)])
+    if kind == 'final':
+        for k in range(6):
+            a = math.radians(60 * k)
+            n = n.cut(Part.makeCylinder(1.6, 3.0, V(102.8, 16 * math.cos(a), 16 * math.sin(a)), V(1, 0, 0)))
+    try: n = n.removeSplitter()
+    except Exception: pass
+    return n, nsec, piece
+
+def fc_build(verbose=True, parts=('wheel', 'sector', 'ngv')):
+    App, Part, V = _fc()
+    T0 = __import__('time').time()
+    def log(*a):
+        if verbose: print('[%5.0fs]' % (__import__('time').time() - T0), *a); sys.stdout.flush()
+    os.makedirs(OUT, exist_ok=True); os.makedirs(FEA_DIR, exist_ok=True)
+    ngv = design_ngv(); rot = design_rotor(); rep = aero_report(ngv, rot, verbose=verbose)
+    R = dict(rep=rep, ngv=ngv, rot=rot, log=log, ngv_bore_r=ngv_bore_r())
+    blade_raw, blade_f, blade_c, nw = fc_blade(rot)
+    log('rotor blade loft (%d sections, integral root fillet R%.1f) valid %s vol %.1f' % (nw, FILLET_ROT, blade_raw.isValid(), blade_raw.Volume))
+    disc_f, disc_c = fc_disc('final'), fc_disc('cast')
+    log('disc final vol %.0f mm3, cast %.0f' % (disc_f.Volume, disc_c.Volume))
+    w1f = disc_f.fuse(blade_f)
+    piece_f = blade_f.cut(disc_f); piece_c = blade_c.cut(disc_c)
+    log('single-blade wheel valid %s; blade above hub vol final %.2f cast %.2f mm3' % (w1f.isValid(), piece_f.Volume, piece_c.Volume))
+    R.update(blade=blade_f, piece=piece_f, piece_c=piece_c, w1f=w1f, disc_f=disc_f, disc_c=disc_c)
+    if 'sector' in parts:
+        sector = fc_sector(w1f, rot, log)
+        sector.exportStep(os.path.join(OUT, 'fea_sector.step'))
+        log('FEA sector written: valid %s vol %.1f faces %d' % (sector.isValid(), sector.Volume, len(sector.Faces)))
+        R['sector'] = sector
+    if 'wheel' in parts:
+        wheel_f = fc_full_wheel(disc_f, piece_f); log('full wheel final: valid %s, solids %d, vol %.0f' % (wheel_f.isValid(), len(wheel_f.Solids), wheel_f.Volume))
+        wheel_c = fc_full_wheel(disc_c, piece_c); log('full wheel cast : valid %s, solids %d, vol %.0f' % (wheel_c.isValid(), len(wheel_c.Solids), wheel_c.Volume))
+        R.update(wheel_f=wheel_f, wheel_c=wheel_c)
+    if 'ngv' in parts:
+        RB = R['ngv_bore_r']
+        ngv_f, nsec, vpiece = fc_ngv(ngv, 'final', RB); log('NGV final: vane loft %d sections, valid %s, solids %d, vol %.0f, bore r %.3f' % (nsec, ngv_f.isValid(), len(ngv_f.Solids), ngv_f.Volume, RB))
+        ngv_c, _, _ = fc_ngv(ngv, 'cast', RB); log('NGV cast : valid %s, vol %.0f' % (ngv_c.isValid(), ngv_c.Volume))
+        R.update(ngv_f=ngv_f, ngv_c=ngv_c, vane_piece=vpiece)
+    return R
 
 if __name__ == '__main__' and '--aero' in sys.argv:
     ngv = design_ngv(); rot = design_rotor(); aero_report(ngv, rot)
     for k in ('final', 'cast'):
         A, xc, rc = polygon_area_centroid(sample_profile(disc_profile(k)))
         print('disc profile %-5s: meridional area %.1f mm2, centroid x %.2f r %.2f, volume %.0f mm3' % (k, A, xc, rc, 2 * math.pi * rc * A))
+    sys.exit(0)
+
+MODE = os.environ.get('E1_MODE', 'full')     # full | test-sector | aero (freecadcmd passes no CLI flags)
+if __name__ == '__main__' and MODE == 'test-sector':
+    R = fc_build(parts=('sector',))
     sys.exit(0)

@@ -1,0 +1,248 @@
+{
+ "board": "b2_sio",
+ "parts": 641,
+ "units": 653,
+ "sheets": [
+  {
+   "name": "Power",
+   "file": "power.kicad_sch",
+   "paper": "A2",
+   "parts": 42
+  },
+  {
+   "name": "MCU",
+   "file": "mcu.kicad_sch",
+   "paper": "A2",
+   "parts": 30
+  },
+  {
+   "name": "AFE_TC",
+   "file": "afe_tc.kicad_sch",
+   "paper": "A2",
+   "parts": 103
+  },
+  {
+   "name": "AFE_RTD",
+   "file": "afe_rtd.kicad_sch",
+   "paper": "A1",
+   "parts": 113
+  },
+  {
+   "name": "AI_4_20mA",
+   "file": "ai_4_20ma.kicad_sch",
+   "paper": "A1",
+   "parts": 169
+  },
+  {
+   "name": "IEPE",
+   "file": "iepe.kicad_sch",
+   "paper": "A2",
+   "parts": 61
+  },
+  {
+   "name": "Pulse_Inputs",
+   "file": "pulse_inputs.kicad_sch",
+   "paper": "A2",
+   "parts": 45
+  },
+  {
+   "name": "Digital_Inputs",
+   "file": "digital_inputs.kicad_sch",
+   "paper": "A2",
+   "parts": 46
+  },
+  {
+   "name": "CAN",
+   "file": "can.kicad_sch",
+   "paper": "A2",
+   "parts": 12
+  },
+  {
+   "name": "Connectors",
+   "file": "connectors.kicad_sch",
+   "paper": "A2",
+   "parts": 20
+  }
+ ],
+ "nets": 362,
+ "pins": 2026,
+ "pins_connected": 1831,
+ "pins_nc": 195,
+ "power_flags": [
+  "+24V",
+  "+24V_FLD",
+  "+3V3_SD",
+  "GND",
+  "GND_FLD"
+ ],
+ "generated_symbols": [
+  "STLM20",
+  "ST26C31",
+  "ISO1I813T",
+  "R1SX-0505"
+ ],
+ "warnings": [
+  "net 'RTD09_TE754_RET' has a single node [('J11', '2')] (dangling)",
+  "net 'RTD10_TE834_RET' has a single node [('J11', '5')] (dangling)",
+  "net 'RTD11_SPARE_RET' has a single node [('J11', '8')] (dangling)",
+  "net 'RTD12_TE708_RET' has a single node [('J11', '11')] (dangling)",
+  "net 'RTD13_SPARE_RET' has a single node [('J12', '2')] (dangling)",
+  "net 'RTD14_SPARE_RET' has a single node [('J12', '5')] (dangling)",
+  "net 'RTD15_SPARE_RET' has a single node [('J12', '8')] (dangling)",
+  "net 'RTD16_SPARE_RET' has a single node [('J12', '11')] (dangling)",
+  "sheet AFE_RTD: content does not fit on A2, using A1",
+  "sheet AI_4_20mA: content does not fit on A2, using A1"
+ ],
+ "files": [
+  "b2_sio.kicad_pro",
+  "b2_sio.kicad_sch",
+  "power.kicad_sch",
+  "mcu.kicad_sch",
+  "afe_tc.kicad_sch",
+  "afe_rtd.kicad_sch",
+  "ai_4_20ma.kicad_sch",
+  "iepe.kicad_sch",
+  "pulse_inputs.kicad_sch",
+  "digital_inputs.kicad_sch",
+  "can.kicad_sch",
+  "connectors.kicad_sch",
+  "symbols/b2_sio.kicad_sym",
+  "sym-lib-table",
+  "b2_sio.kicad_pcb"
+ ],
+ "out": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out",
+ "commands": [
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch erc --format json --severity-error --severity-warning -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_erc.json /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio.kicad_sch",
+   "rc": 0,
+   "out": "Found 9 violations\nSaved ERC Report to /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_erc.json\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export netlist --format kicadxml -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_netlist.xml /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio.kicad_sch",
+   "rc": 0,
+   "out": "",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export bom -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_bom.csv --fields Reference,Value,Footprint,MPN,Manufacturer,LCSC,${QUANTITY},${DNP} --labels Refs,Value,Footprint,MPN,Manufacturer,LCSC,Qty,DNP --group-by Value,Footprint,MPN,Manufacturer,LCSC,${DNP} --ref-range-delimiter  /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio.kicad_sch",
+   "rc": 0,
+   "out": "Wrote bill of materials to '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_bom.csv'.\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli pcb drc --format json -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_drc.json /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio.kicad_pcb",
+   "rc": 0,
+   "out": "Found 0 violations\nFound 0 unconnected items\nSaved DRC Report to /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_drc.json\n",
+   "err": ""
+  }
+ ],
+ "erc": {
+  "errors": 0,
+  "warnings": 9,
+  "by_type": {
+   "warning:isolated_pin_label": 8,
+   "warning:pin_to_pin": 1
+  },
+  "details": [
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD13_SPARE_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD14_SPARE_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD15_SPARE_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD16_SPARE_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD09_TE754_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD10_TE834_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD11_SPARE_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "isolated_pin_label",
+    "description": "Label connected to only one pin",
+    "sheet": "/",
+    "items": [
+     "Global Label 'RTD12_TE708_RET'"
+    ]
+   },
+   {
+    "severity": "warning",
+    "type": "pin_to_pin",
+    "description": "Pins of type Power output and Power output are connected",
+    "sheet": "/MCU/",
+    "items": [
+     "Symbol U5 Pin 81 [VCAP, Power output, Line]",
+     "Symbol U5 Pin 125 [VCAP, Power output, Line]"
+    ]
+   }
+  ]
+ },
+ "roundtrip": {
+  "mismatches": [],
+  "spec_nets": 362,
+  "netlist_nets": 557,
+  "netlist_named_nets": 362,
+  "components": 641
+ },
+ "bom": {
+  "path": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b2_sio/out/b2_sio_bom.csv",
+  "lines": 111
+ },
+ "pcb_drc": {
+  "violations": 0,
+  "types": []
+ },
+ "ok": true
+}

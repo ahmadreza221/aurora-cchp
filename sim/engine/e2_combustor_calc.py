@@ -85,26 +85,33 @@ G = dict(
     r_tunnel=10.5, x_tunnel_tube=(16.53, 92.96), r_tunnel_bore=8.5,
     x_ngv=94.8, r_ngv_o=36.35, r_ngv_rib=37.95, x_ngv_rib=(109.3, 110.8), x_ngv_end=118.8, r_ngv_in_i=21.25, r_ngv_in_o=22.25,
     x_ngv_inner_end=109.8, x_turb_exit=118.3, x_nut_end=126.8,
-    # E2 collector (cold, 1.4404)
-    x_drum_front=-30.0, t_front_wall=4.0, r_front_ring_o=60.0, r_lip_i=51.5, x_ring_lip=-20.33,
+    # E2 collector (cold, 1.4404).  Front ring bore r53.55 over the intake-outer OD r53.5 (x -11.33..-4.85), O-ring at x -7.5,
+    # stop lip r51.5 at x -20.33..-17.33 against the intake-outer lip face (takes the 1.8 kN forward pressure load of the core),
+    # 6x M4 radial screws at x -10.4 into the intake-outer wall rim (as the original can casing).
+    x_drum_front=-42.0, t_front_wall=4.0, r_front_ring_o=60.0, r_lip_i=51.5, x_ring_lip=-20.33, r_ring_bore=53.55,
     r_drum_i=118.0, t_drum=2.5, x_mid_A=(14.0, 20.0), r_flange_o=138.0, pcd_mid=256.0, n_mid_bolts=16, d_mid_bolt=8,
-    oring_x=-8.0,
-    # bulkhead + insulation
+    oring_x=-7.5, x_ring_screws=-10.4,
+    # bulkhead 6 mm 1.4948 (x 21..27).  Gas manifold = annular channel machined into the COLD face (r 33..42, 3 deep),
+    # closed by a 1.5 mm cover ring (x 19.5..21); the 8 injector stems cross the channel and pick the gas up through
+    # radial holes (sealed by a crush washer under the nut on the cold side and a gasket under the collar on the hot side).
     x_bh=21.0, t_bh=6.0, t_gasket=1.0, t_bh_ins=4.0, r_bh_bore=21.35, r_bh_hub_o=24.5, x_bh_hub_end=35.0,
-    gas_entry_deg=180.0, r_gas_boss=(138.5, 158.0), rib_x=(14.0, 21.0), rib_w=10.0,
-    # hot casing (1.4948)
-    r_case_i=85.0, t_case=3.0, x_case_shell_end=100.0, t_rear_plate=5.0, r_rear_bore=38.1,
-    x_rear_ring=(100.0, 116.0), x_e3_flange=(106.0, 116.0), r_e3_flange_o=88.0, pcd_e3=160.0, n_e3_bolts=16,
-    e3_spigot_d=120.0, e3_spigot_depth=3.0, seal_groove_x=(112.5, 114.5), r_seal_groove=40.0,
-    # combustor
-    x_dome=42.9, t_dome=1.2, t_liner=1.0, r_li_o=21.1, r_lo_i=54.0, x_li_front=28.0, x_li_end=98.0,
+    man_channel_r=(33.0, 42.0), man_channel_depth=3.0, t_man_cover=1.5, man_cover_r=(29.0, 46.0),
+    gas_entry_deg=180.0, x_gas_boss=0.0, fairing_c=(21.0, 46.0), fairing_R=8.0,
+    # hot casing (1.4948): shell r85/88 x 28..100, rear ring x 100..106 (r 60..88) + E2/E3 neck x 106..121 (r 60..75)
+    # E2/E3 flange per cad_out/engine/E3/E3_interfaces.json: E3 face x 122 = E2 face 121 + 1.0 gasket; OD 150, PCD 135,
+    # 12 x M6 studs, E3 male spigot OD 120 h7 (x 119..122) in the E2 bore (2 mm engagement after the gasket).
+    r_case_i=85.0, t_case=3.0, x_case_shell_end=100.0, t_rear_plate=6.0, r_rear_bore=60.0,
+    x_rear_ring=(100.0, 106.0), x_e3_neck=(106.0, 121.0), r_e3_flange_o=75.0, pcd_e3=135.0, n_e3_bolts=12, d_e3_bolt=6,
+    e3_spigot_d=120.0, e3_spigot_depth=2.0, x_e3_face=121.0, t_e3_gasket=1.0,
+    # combustor (liner located axially by 3 radial pins at x 50 through the casing; slip joints at the hub bore and the NGV)
+    x_dome=42.9, t_dome=1.2, t_liner=1.0, r_li_o=21.1, r_lo_i=54.0, x_li_front=24.0, x_li_end=98.0,
     x_lo_cyl_end=82.0, x_lo_cone_end=92.0, r_lo_sleeve_i=36.5, x_lo_end=106.5,
-    n_inj=8, r_inj=37.5, inj_a0_deg=0.0,
-    r_baffle=68.0, t_baffle=0.8, x_baffle=(54.0, 96.0),
-    # tunnel heat shield
-    r_shield_i=17.3, t_shield=0.3, x_shield=(17.5, 92.0),
-    # manifold
-    x_manifold=17.5, r_manifold=37.5, d_manifold=7.0,
+    n_inj=8, r_inj=37.5, inj_a0_deg=22.5, x_liner_pins=50.0, n_liner_pins=3,
+    r_baffle=68.0, t_baffle=0.8, x_baffle=(54.0, 99.0),
+    # tunnel heat shield (IN625 0.5 polished, dead-air gap r10.5..17.1 to the aluminium tunnel, dimple spacers)
+    r_shield_i=17.1, t_shield=0.5, x_shield=(21.0, 92.0),
+    # ports (azimuth deg from +y towards +z: 0 north, 90 top, 180 south, 270 bottom)
+    x_igniter=52.0, a_igniter=225.0, x_uv=52.0, a_uv=135.0, x_p3=65.0, a_p3=90.0, x_t3=85.0, a_t3=90.0, x_p2=-20.0, a_p2=90.0,
 )
 G['x_bh_back'] = G['x_bh'] + G['t_bh']                                   # 24.0
 G['x_hot_flange'] = (G['x_bh_back'] + G['t_gasket'], G['x_bh_back'] + G['t_gasket'] + 6.0)   # 28..34

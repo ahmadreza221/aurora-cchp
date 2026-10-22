@@ -100,7 +100,7 @@ ETA_PT_CYCLE, ETA_MECH_CYCLE = 0.78, 0.985
 # ---------------------------------------------------------------------------------------------------------------
 X = dict(
     id0=119.3,            # interduct inlet = stationary hub lip (1.0 mm behind E1 rotor TE at 118.3)
-    flangeE2=122.0,       # E2/E3 flange mating face (proposal, to be reconciled with cad_out/engine/E2)
+    flangeE2=116.0,       # E2/E3 flange mating face = E2 rear-ring face (sim/engine/e2_design.json: x_e3_flange 106-116, OD 176, PCD 160, 16 x M8, spigot d120 x 3)
     tc_in=133.0,          # FPT-inlet thermocouples TE-510A/B + P45 static tap PT-524
     drum0=145.0,          # collector drum west wall (bolted to the interduct mid-flange)
     ngv_le=189.3,         # interduct exit = FPT NGV leading edge (interduct length 70.0)

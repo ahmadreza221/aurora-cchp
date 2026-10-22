@@ -1,0 +1,120 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-10-21T22:07:52",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.6",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40",
+            "violations": []
+        },
+        {
+            "path": "/Power/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/6d720854-5f48-5c5f-91d3-05ce2049d629",
+            "violations": []
+        },
+        {
+            "path": "/MCU/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/0e7dd0ae-ffdc-54eb-a557-bbb33ac8746e",
+            "violations": [
+                {
+                    "description": "Pins of type Power output and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U6 Pin 81 [VCAP, Power output, Line]",
+                            "pos": {
+                                "x": 0.5207,
+                                "y": 2.3368
+                            },
+                            "uuid": "8266f74f-932b-5855-a96d-e26b4c59af29"
+                        },
+                        {
+                            "description": "Symbol U6 Pin 125 [VCAP, Power output, Line]",
+                            "pos": {
+                                "x": 0.5207,
+                                "y": 2.3622
+                            },
+                            "uuid": "4cf32c67-d17f-51f5-b695-e804a07e80ab"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/Memory/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/3e06b000-6b42-5bb0-a96a-d2f0de50a51b",
+            "violations": []
+        },
+        {
+            "path": "/SMCU/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/72568b39-02e5-5587-8e1b-e97b0471fd8d",
+            "violations": []
+        },
+        {
+            "path": "/CAN/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/bcaeebe5-3020-5f0b-a2e3-279cd71ad865",
+            "violations": []
+        },
+        {
+            "path": "/RS485/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/1730e5d4-ef51-5b0f-92fd-c902729e7a00",
+            "violations": []
+        },
+        {
+            "path": "/Ethernet/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/3cad9d92-1426-5aee-87a2-3678806b1f40",
+            "violations": []
+        },
+        {
+            "path": "/Speed_Inputs/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/0afde07f-a500-5499-a5f6-fbb312d8f804",
+            "violations": []
+        },
+        {
+            "path": "/Digital_Inputs/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/0da3f931-b113-595c-81b1-01606d1bca66",
+            "violations": []
+        },
+        {
+            "path": "/Relays/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/65df9b64-acc3-52c9-8bcc-b704f0599e73",
+            "violations": []
+        },
+        {
+            "path": "/Permits/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/165aaf1e-bf42-56a2-aa99-93e1f1a59142",
+            "violations": []
+        },
+        {
+            "path": "/Connectors/",
+            "uuid_path": "/84bc01ed-7f1c-52db-a9fe-fd1121abec40/dc5495d7-661a-50f4-b7ab-b85c35939afc",
+            "violations": []
+        }
+    ],
+    "source": "b1_ecu.kicad_sch"
+}

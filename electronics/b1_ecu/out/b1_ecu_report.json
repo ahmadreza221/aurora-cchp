@@ -1,0 +1,211 @@
+{
+ "board": "b1_ecu",
+ "parts": 381,
+ "units": 393,
+ "sheets": [
+  {
+   "name": "Power",
+   "file": "power.kicad_sch",
+   "paper": "A2",
+   "parts": 44
+  },
+  {
+   "name": "MCU",
+   "file": "mcu.kicad_sch",
+   "paper": "A2",
+   "parts": 40
+  },
+  {
+   "name": "Memory",
+   "file": "memory.kicad_sch",
+   "paper": "A2",
+   "parts": 6
+  },
+  {
+   "name": "SMCU",
+   "file": "smcu.kicad_sch",
+   "paper": "A2",
+   "parts": 22
+  },
+  {
+   "name": "CAN",
+   "file": "can.kicad_sch",
+   "paper": "A2",
+   "parts": 22
+  },
+  {
+   "name": "RS485",
+   "file": "rs485.kicad_sch",
+   "paper": "A2",
+   "parts": 45
+  },
+  {
+   "name": "Ethernet",
+   "file": "ethernet.kicad_sch",
+   "paper": "A2",
+   "parts": 19
+  },
+  {
+   "name": "Speed_Inputs",
+   "file": "speed_inputs.kicad_sch",
+   "paper": "A2",
+   "parts": 33
+  },
+  {
+   "name": "Digital_Inputs",
+   "file": "digital_inputs.kicad_sch",
+   "paper": "A2",
+   "parts": 55
+  },
+  {
+   "name": "Relays",
+   "file": "relays.kicad_sch",
+   "paper": "A2",
+   "parts": 50
+  },
+  {
+   "name": "Permits",
+   "file": "permits.kicad_sch",
+   "paper": "A2",
+   "parts": 30
+  },
+  {
+   "name": "Connectors",
+   "file": "connectors.kicad_sch",
+   "paper": "A2",
+   "parts": 15
+  }
+ ],
+ "nets": 332,
+ "pins": 1481,
+ "pins_connected": 1374,
+ "pins_nc": 107,
+ "power_flags": [
+  "+24V",
+  "+24V_FLD",
+  "+3V3A",
+  "GND",
+  "GND_FLD",
+  "VBAT"
+ ],
+ "generated_symbols": [
+  "STEF01",
+  "M95M04",
+  "STM1001",
+  "R1SX-0505",
+  "STISO621",
+  "STISO620",
+  "RTL8201F",
+  "RJ45_MAG_7499010211A",
+  "ST26C32",
+  "ISO1I813T",
+  "FINDER_50.12",
+  "STWD100"
+ ],
+ "warnings": [],
+ "files": [
+  "b1_ecu.kicad_pro",
+  "b1_ecu.kicad_sch",
+  "power.kicad_sch",
+  "mcu.kicad_sch",
+  "memory.kicad_sch",
+  "smcu.kicad_sch",
+  "can.kicad_sch",
+  "rs485.kicad_sch",
+  "ethernet.kicad_sch",
+  "speed_inputs.kicad_sch",
+  "digital_inputs.kicad_sch",
+  "relays.kicad_sch",
+  "permits.kicad_sch",
+  "connectors.kicad_sch",
+  "symbols/b1_ecu.kicad_sym",
+  "sym-lib-table",
+  "b1_ecu.kicad_pcb"
+ ],
+ "out": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out",
+ "commands": [
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch erc --format json --severity-error --severity-warning -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_erc.json /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.kicad_sch",
+   "rc": 0,
+   "out": "Found 1 violations\nSaved ERC Report to /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_erc.json\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export netlist --format kicadxml -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_netlist.xml /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.kicad_sch",
+   "rc": 0,
+   "out": "",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export pdf -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.pdf /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.kicad_sch",
+   "rc": 0,
+   "out": "Plotted to '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.pdf'.\nDone.\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch export bom -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_bom.csv --fields Reference,Value,Footprint,MPN,Manufacturer,LCSC,${QUANTITY},${DNP} --labels Refs,Value,Footprint,MPN,Manufacturer,LCSC,Qty,DNP --group-by Value,Footprint,MPN,Manufacturer,LCSC,${DNP} --ref-range-delimiter  /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.kicad_sch",
+   "rc": 0,
+   "out": "Wrote bill of materials to '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_bom.csv'.\n",
+   "err": "Fontconfig error: Cannot load default config file: File not found\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli pcb export step --board-only -f --no-optimize-step --user-origin 50x210mm -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_board.step /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.kicad_pcb",
+   "rc": 0,
+   "out": "STEP file '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_board.step' created.\n\nExport time 0.045 s\n",
+   "err": "2026-10-21 22:07:54.367 kicad-cli[54158:52903609] Error retrieving source file attributes: Error Domain=NSCocoaErrorDomain Code=260 \"The file \u201cb1_ecu_board.step\u201d couldn\u2019t be opened because there is no such file.\" UserInfo={NSFilePath=/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_board.step, NSURL=file:///Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_board.step, NSUnderlyingError=0xa12c14390 {Error Domain=NSPOSIXErrorDomain Code=2 \"No such file or directory\"}}\n"
+  },
+  {
+   "cmd": "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli pcb drc --format json -o /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_drc.json /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.kicad_pcb",
+   "rc": 0,
+   "out": "Found 0 violations\nFound 0 unconnected items\nSaved DRC Report to /Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_drc.json\n",
+   "err": ""
+  }
+ ],
+ "erc": {
+  "errors": 0,
+  "warnings": 1,
+  "by_type": {
+   "warning:pin_to_pin": 1
+  },
+  "details": [
+   {
+    "severity": "warning",
+    "type": "pin_to_pin",
+    "description": "Pins of type Power output and Power output are connected",
+    "sheet": "/MCU/",
+    "items": [
+     "Symbol U6 Pin 81 [VCAP, Power output, Line]",
+     "Symbol U6 Pin 125 [VCAP, Power output, Line]"
+    ]
+   }
+  ]
+ },
+ "roundtrip": {
+  "mismatches": [],
+  "spec_nets": 332,
+  "netlist_nets": 439,
+  "netlist_named_nets": 332,
+  "components": 381
+ },
+ "pdf": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu.pdf",
+ "bom": {
+  "path": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_bom.csv",
+  "lines": 127
+ },
+ "step": {
+  "path": "/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404/electronics/b1_ecu/out/b1_ecu_board.step",
+  "bbox": [
+   0.0,
+   0.0,
+   0.0,
+   220.0,
+   160.0,
+   1.51
+  ]
+ },
+ "pcb_drc": {
+  "violations": 0,
+  "types": []
+ },
+ "ok": true
+}

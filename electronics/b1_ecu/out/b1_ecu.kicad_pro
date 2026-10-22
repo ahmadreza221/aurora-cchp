@@ -1,0 +1,281 @@
+{
+  "board": {
+    "design_settings": {
+      "defaults": {},
+      "diff_pair_dimensions": [],
+      "drc_exclusions": [],
+      "rules": {},
+      "track_widths": [],
+      "via_dimensions": []
+    }
+  },
+  "boards": [],
+  "libraries": {
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
+  },
+  "meta": {
+    "filename": "b1_ecu.kicad_pro",
+    "version": 3
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "name": "Default",
+        "priority": 2147483647,
+        "clearance": 0.2,
+        "track_width": 0.2,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "pcb_color": "rgba(0, 0, 0, 0.000)"
+      }
+    ],
+    "meta": {
+      "version": 4
+    }
+  },
+  "erc": {
+    "erc_exclusions": [],
+    "meta": {
+      "version": 0
+    },
+    "rule_severities": {},
+    "pin_map": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        2,
+        2,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        1,
+        2,
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        2,
+        2
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        2
+      ],
+      [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    ]
+  },
+  "pcbnew": {
+    "page_layout_descr_file": ""
+  },
+  "schematic": {
+    "meta": {
+      "version": 1
+    }
+  },
+  "sheets": [
+    [
+      "84bc01ed-7f1c-52db-a9fe-fd1121abec40",
+      "Root"
+    ],
+    [
+      "6d720854-5f48-5c5f-91d3-05ce2049d629",
+      "Power"
+    ],
+    [
+      "0e7dd0ae-ffdc-54eb-a557-bbb33ac8746e",
+      "MCU"
+    ],
+    [
+      "3e06b000-6b42-5bb0-a96a-d2f0de50a51b",
+      "Memory"
+    ],
+    [
+      "72568b39-02e5-5587-8e1b-e97b0471fd8d",
+      "SMCU"
+    ],
+    [
+      "bcaeebe5-3020-5f0b-a2e3-279cd71ad865",
+      "CAN"
+    ],
+    [
+      "1730e5d4-ef51-5b0f-92fd-c902729e7a00",
+      "RS485"
+    ],
+    [
+      "3cad9d92-1426-5aee-87a2-3678806b1f40",
+      "Ethernet"
+    ],
+    [
+      "0afde07f-a500-5499-a5f6-fbb312d8f804",
+      "Speed_Inputs"
+    ],
+    [
+      "0da3f931-b113-595c-81b1-01606d1bca66",
+      "Digital_Inputs"
+    ],
+    [
+      "65df9b64-acc3-52c9-8bcc-b704f0599e73",
+      "Relays"
+    ],
+    [
+      "165aaf1e-bf42-56a2-aa99-93e1f1a59142",
+      "Permits"
+    ],
+    [
+      "dc5495d7-661a-50f4-b7ab-b85c35939afc",
+      "Connectors"
+    ]
+  ],
+  "text_variables": {}
+}

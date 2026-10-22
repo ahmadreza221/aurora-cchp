@@ -1,0 +1,231 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-10-21T22:12:17",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.6",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8",
+            "violations": [
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD13_SPARE_RET'",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 0.6604
+                            },
+                            "uuid": "7989fb7a-bc2d-58f0-af78-62a5a093b1e7"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                },
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD14_SPARE_RET'",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 0.7366
+                            },
+                            "uuid": "5ff39c11-f5ea-587b-b7a0-5e6e891e0ba3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                },
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD15_SPARE_RET'",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 0.8128
+                            },
+                            "uuid": "78bdd0e2-5f1f-5c3f-a721-3c3bed7ae938"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                },
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD16_SPARE_RET'",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 0.889
+                            },
+                            "uuid": "f375508c-a3ab-5dba-b7a1-e0ddf300e749"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                },
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD09_TE754_RET'",
+                            "pos": {
+                                "x": 4.5974,
+                                "y": 0.3048
+                            },
+                            "uuid": "56c0b06c-fe9f-5460-b2cc-8b220589577e"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                },
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD10_TE834_RET'",
+                            "pos": {
+                                "x": 4.5974,
+                                "y": 0.381
+                            },
+                            "uuid": "e6d2764e-fd31-56c8-bac1-b7412866b65b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                },
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD11_SPARE_RET'",
+                            "pos": {
+                                "x": 4.5974,
+                                "y": 0.4572
+                            },
+                            "uuid": "da2e56a6-be51-507e-bdbc-7c4682dd7544"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                },
+                {
+                    "description": "Label connected to only one pin",
+                    "items": [
+                        {
+                            "description": "Global Label 'RTD12_TE708_RET'",
+                            "pos": {
+                                "x": 4.5974,
+                                "y": 0.5334
+                            },
+                            "uuid": "f98857af-6e98-5020-87e3-2a390b95c837"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "isolated_pin_label"
+                }
+            ]
+        },
+        {
+            "path": "/Power/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/b1cb1237-4f17-54f0-b0ab-cb55bd729da9",
+            "violations": []
+        },
+        {
+            "path": "/MCU/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/5cf46117-e743-517c-875b-345bc0fd2e4e",
+            "violations": [
+                {
+                    "description": "Pins of type Power output and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U5 Pin 81 [VCAP, Power output, Line]",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 2.3368
+                            },
+                            "uuid": "4c7b6169-e182-5701-8e24-0614b32c94bc"
+                        },
+                        {
+                            "description": "Symbol U5 Pin 125 [VCAP, Power output, Line]",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 2.3622
+                            },
+                            "uuid": "d1ffc14d-efb3-56e7-a9dc-c3cbd52f918b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/AFE_TC/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/d6c56f72-3f21-5fd5-adaa-d2b727c585e1",
+            "violations": []
+        },
+        {
+            "path": "/AFE_RTD/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/934640fd-e7e8-59a8-9b46-8de14a9d916c",
+            "violations": []
+        },
+        {
+            "path": "/AI_4_20mA/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/cabf0c89-53ac-56d0-a098-62d2057eb04f",
+            "violations": []
+        },
+        {
+            "path": "/IEPE/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/119d773a-c455-57c9-a28e-882d9fad4658",
+            "violations": []
+        },
+        {
+            "path": "/Pulse_Inputs/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/a6e83f38-5be5-51b1-b1af-ad4dbd8f81df",
+            "violations": []
+        },
+        {
+            "path": "/Digital_Inputs/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/7698528d-3177-508a-a060-9b872662ea4e",
+            "violations": []
+        },
+        {
+            "path": "/CAN/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/e4eb04e9-c28a-5523-a72a-e1fb9be7e98c",
+            "violations": []
+        },
+        {
+            "path": "/Connectors/",
+            "uuid_path": "/6e3fafd2-477f-5ceb-b07e-d685a92c1be8/f730d64a-1624-58ee-af2d-178e496d291f",
+            "violations": []
+        }
+    ],
+    "source": "b2_sio.kicad_sch"
+}
