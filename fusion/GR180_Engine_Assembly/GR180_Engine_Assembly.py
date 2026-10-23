@@ -2,9 +2,9 @@
 
   Core GR180 v13A          cad_out/v13A/asm_parts/*.step   (minus parts replaced by E1 / E2 / E3)
   E1 GG turbine stage      fusion/E1/*.step                (blisk 29 blades, NGV 21 vanes, welded shaft)
-  E2 combustor             cad_out/engine/E2/*.step when built; until then the v13A combustor as a stand-in
+  E2 combustor             cad_out/engine/E2/E2-*.step when built; until then the v13A combustor as a stand-in
   E3 interduct+FPT+PMG     cad_out/engine/E3/E3-*.step
-  E4 recuperator           cad_out/engine/E4/E4_*.step     (ROOF mm -> ENG mm: -1680, -7850, -600)
+  E4 recuperator           cad_out/engine/E4/E4_*.step     (ROOF mm -> ENG mm, offset read from E4_interfaces.json)
 Engine frame: X = engine axis, mm (ENG). Geometry comes from the Python design code; change it there, not in Fusion.
 
 Utilities > Scripts and Add-Ins > + > pick this folder > Run (all sections in one go). The MCP driver runs it section
@@ -18,13 +18,16 @@ import adsk.fusion
 
 ROOT = '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404'
 SECTIONS = None          # None = everything; the MCP driver sets e.g. ['new', 'core']
+V13A_DIR = os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts')
+ENGINE_DIR = os.path.join(ROOT, 'cad_out', 'engine')     # E2/E3/E4 outputs (a session worktree's cad_out/engine before merge)
 DOC_NAME = 'GR180-CCHP Engine assembly'
 CM = 0.1                 # Fusion internal unit is cm
 
 REPLACED = {'Turbine', 'TurbineNut', 'NGV', 'Shaft', 'Exhaust', 'Balance_Slug'}            # by E1 / E3
 COMBUSTOR = {'CC_FrontCap', 'CC_Inner', 'CC_Outer', 'CC_RearCone', 'CC_Vaporisers', 'Casing',
-             'GasBulkhead', 'SupplyLines', 'SupplySeals'}                                   # by E2
-COLOURS = {'Core': (185, 189, 196), 'E1': (60, 110, 210), 'E2': (215, 140, 50), 'E2 stand-in': (200, 85, 75),
+             'GasBulkhead', 'SupplyLines', 'SupplySeals', 'Igniter', 'EGT_Probe'}             # by E2 (own igniter, T3/T4 on E2/E3)
+COLOURS = {'Core': (185, 189, 196), 'E1': (60, 110, 210), 'E2': (200, 85, 75), 'E2 stand-in': (200, 85, 75),
+           'E2 insulation': (240, 236, 220), 'E2 sensors': (50, 175, 100),
            'E3': (225, 160, 70), 'E3 PMG': (184, 108, 52), 'E3 sensors': (50, 175, 100), 'E4': (150, 156, 150),
            'E4 insulation': (240, 236, 220)}
 
@@ -120,14 +123,18 @@ def sec_new(app, design):
 def sec_core(app, design):
     root = design.rootComponent
     core = group(root, 'Core GR180 v13A')
-    has_e2 = bool(glob.glob(os.path.join(ROOT, 'cad_out', 'engine', 'E2', '*.step')))
+    has_e2 = bool(glob.glob(os.path.join(ENGINE_DIR, 'E2', 'E2-*.step')))
     legacy = None if has_e2 else group(root, 'E2 stand-in: v13A combustor (to be replaced)')
     n = 0
-    for f in sorted(glob.glob(os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts', '*.step'))):
+    for f in sorted(glob.glob(os.path.join(V13A_DIR, '*.step'))):
         name = os.path.splitext(os.path.basename(f))[0]
         if name in REPLACED or (name in COMBUSTOR and has_e2):
             continue
-        import_part(app, legacy if name in COMBUSTOR else core, f, name); n += 1
+        occ = import_part(app, legacy if name in COMBUSTOR else core, f, name); n += 1
+        if name == 'Fasteners' and has_e2:      # only the front screws stay; the rear ones held Rutten's casing/exhaust
+            for b in [occ.bRepBodies.item(i) for i in range(occ.bRepBodies.count)]:
+                if b.boundingBox.maxPoint.x >= 0:
+                    b.deleteMe()
     print('core parts', n, '| E2 built:', has_e2)
 
 
@@ -147,13 +154,18 @@ def sec_e1(app, design):
 
 
 def sec_e2(app, design):
-    files = sorted(glob.glob(os.path.join(ROOT, 'cad_out', 'engine', 'E2', '*.step')))
-    files = [f for f in files if 'assembly' not in os.path.basename(f).lower()]
+    files = sorted(glob.glob(os.path.join(ENGINE_DIR, 'E2', 'E2-*.step')))
     if not files:
         print('E2 not built yet'); return
-    g = group(design.rootComponent, 'E2 combustor + pressure casing')
+    root = design.rootComponent
+    g = group(root, 'E2 combustor + pressure casing + collector')
+    ins = group(root, 'E2 insulation')
+    sens = group(root, 'E2 sensors + igniter')
     for f in files:
-        import_part(app, g, f, os.path.splitext(os.path.basename(f))[0])
+        name = os.path.splitext(os.path.basename(f))[0]
+        num = int(name.split('_')[0].split('-')[1])
+        tgt = sens if num >= 500 else (ins if num in (160, 161) else g)
+        import_part(app, tgt, f, name)
     print('E2 parts', len(files))
 
 
@@ -162,7 +174,7 @@ def sec_e3(app, design):
     g = group(root, 'E3 interduct + FPT + bearings + PMG + collector')
     pmg = group(root, 'E3 PMG active parts')
     sens = group(root, 'E3 sensors')
-    files = sorted(glob.glob(os.path.join(ROOT, 'cad_out', 'engine', 'E3', 'E3-*.step')))
+    files = sorted(glob.glob(os.path.join(ENGINE_DIR, 'E3', 'E3-*.step')))
     for f in files:
         name = os.path.splitext(os.path.basename(f))[0]
         num = int(name.split('_')[0].split('-')[1])
@@ -173,21 +185,24 @@ def sec_e3(app, design):
 
 def sec_e4(app, design):
     root = design.rootComponent
-    move = (-1680.0, -7850.0, -600.0)          # E4 is modelled in the ROOF frame (mm)
+    import json                                # E4 is modelled in the ROOF frame: ENG = ROOF - (ENG origin in ROOF)
+    i0 = json.load(open(os.path.join(ENGINE_DIR, 'E4', 'E4_interfaces.json')))['interfaces'][0]
+    move = tuple(e - r * 1000.0 for r, e in zip(i0['roof_m'], i0['eng_mm']))
     g = group(root, 'E4 recuperator', move)
     ins = group(root, 'E4 insulation', move)
     n = 0
     for key in ('core', 'headers_plenums', 'ducts', 'ports', 'supports', 'insulation'):
-        f = os.path.join(ROOT, 'cad_out', 'engine', 'E4', 'E4_%s.step' % key)
+        f = os.path.join(ENGINE_DIR, 'E4', 'E4_%s.step' % key)
         if os.path.exists(f):
             import_part(app, ins if key == 'insulation' else g, f, 'E4 ' + key); n += 1
     ins.isLightBulbOn = False                  # hidden by default; switch on in the browser
-    print('E4 parts', n)
+    print('E4 parts', n, 'offset', [round(v, 1) for v in move])
 
 
 def sec_colour(app, design):
     root = design.rootComponent
-    keys = [('E3 PMG', 'E3 PMG'), ('E3 sensors', 'E3 sensors'), ('E4 insulation', 'E4 insulation'),
+    keys = [('E2 insulation', 'E2 insulation'), ('E2 sensors', 'E2 sensors'),
+            ('E3 PMG', 'E3 PMG'), ('E3 sensors', 'E3 sensors'), ('E4 insulation', 'E4 insulation'),
             ('E2 stand-in', 'E2 stand-in'), ('Core', 'Core'), ('E1', 'E1'), ('E2', 'E2'), ('E3', 'E3'), ('E4', 'E4')]
     for i in range(root.occurrences.count):
         o = root.occurrences.item(i)
@@ -197,6 +212,23 @@ def sec_colour(app, design):
     app.activeViewport.camera.isFitView = True
     app.activeViewport.fit()
     print('coloured', root.occurrences.count, 'groups')
+
+
+def sec_clear(app, design):
+    """Empty the open assembly document (rebuild in place, keeps its name and version history)."""
+    assert app.activeDocument.name.startswith(DOC_NAME), app.activeDocument.name
+    root = design.rootComponent
+    for o in [root.occurrences.item(i) for i in range(root.occurrences.count)]:
+        o.deleteMe()
+    print('cleared')
+
+
+def sec_power_only(app, design):
+    """Show the engine up to the generator: hide E4 and the insulation."""
+    root = design.rootComponent
+    for o in [root.occurrences.item(i) for i in range(root.occurrences.count)]:
+        o.isLightBulbOn = not (o.component.name.startswith('E4') or 'insulation' in o.component.name)
+    app.activeViewport.fit()
 
 
 def sec_save(app, design):
