@@ -23,7 +23,10 @@ D2_REPLACED = {'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
 D_SKIP = {'GR180_Starter', 'GR180_NoseCone', 'GR180_Exhaust'}      # replaced by the generator pod and the exhaust diffuser
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
-STYLE = [('Plenum_Can', (200, 205, 215), 0.35), ('Dish_Skirt', (200, 205, 215), 0.45), ('Rear_Ring', (90, 95, 100), 1.0),
+STYLE = [('Filter_Box_Posts', (55, 60, 65), 1.0), ('Filter_Box', (200, 205, 215), 0.3), ('Lid_Grille', (60, 60, 65), 0.6),
+         ('V-Cell', (235, 235, 230), 0.85), ('Toggle_Latches', (240, 190, 0), 1.0), ('Pod_Cradle', (55, 60, 65), 1.0),
+         ('Weight_Relief', (55, 60, 65), 1.0), ('End_Ring', (245, 110, 10), 1.0), ('Diffuser_Weldment', (245, 110, 10), 1.0),
+         ('Plenum_Can', (200, 205, 215), 0.35), ('Dish_Skirt', (200, 205, 215), 0.45), ('Rear_Ring', (90, 95, 100), 1.0),
          ('Port_FOD', (60, 60, 65), 0.4), ('Diffuser_Stub', (245, 110, 10), 1.0), ('Flange_DN125', (245, 110, 10), 1.0),
          ('Inlet_Flange', (90, 95, 100), 1.0), ('Front_Pedestal', (55, 60, 65), 1.0), ('Body_Sleeve', (190, 55, 45), 1.0),
          ('Engine_Shaft', (190, 55, 45), 1.0), ('Clamp', (90, 95, 100), 1.0), ('SFD', (120, 200, 200), 1.0), ('O-rings', (30, 30, 30), 1.0),
