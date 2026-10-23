@@ -214,6 +214,51 @@ def sec_colour(app, design):
     print('coloured', root.occurrences.count, 'groups')
 
 
+# x-ray look: every part its own colour, shells see-through. First match wins: (name substrings, label, rgb, opacity)
+XRAY = [
+    (('IntakeOuter', 'Casing', 'CC_Outer', 'Collector', 'WestCover', 'Hot_Pressure_Casing', 'Collector_Drum', 'C2_Inlet',
+      'C1_Outlet', 'Insulation', 'HeatShield', 'Heat_Shield', 'Support_Cone', 'PMG_Housing', 'B1_Bearing_Housing',
+      'B2_Housing', 'End_Cover', 'Interduct', 'Shroud', 'Bulkhead', 'E3B-110', 'E2B-1'), 'shell (glass)', (170, 200, 225), 0.18),
+    (('Compressor',), 'compressor', (205, 210, 220), 1.0),
+    (('Diffuser',), 'diffuser', (120, 150, 190), 1.0),
+    (('Intake', 'NoseCone'), 'intake', (150, 155, 165), 1.0),
+    (('blisk', 'Blisk'), 'turbine rotor', (230, 175, 40), 1.0),
+    (('NGV',), 'NGV', (60, 110, 210), 1.0),
+    (('shaft', 'Shaft', 'Tie_Stud', 'Nut', 'Locknut', 'HeatDam'), 'shaft', (190, 55, 45), 1.0),
+    (('Bearing', 'Wave', 'Oring', 'SFD', 'PistonRing', 'Gasket'), 'bearings + seals', (245, 215, 60), 1.0),
+    (('Magnet', 'CF_Sleeve'), 'PMG rotor magnets', (200, 60, 170), 1.0),
+    (('Stator_Core',), 'stator core', (80, 85, 95), 1.0),
+    (('Winding',), 'stator winding (copper)', (200, 110, 50), 1.0),
+    (('CC_', 'Liner', 'Vaporiser', 'Baffle'), 'combustor liner', (235, 95, 60), 1.0),
+    (('Supply', 'Gas', 'Injector', 'Manifold', 'Fitting'), 'gas system', (250, 190, 0), 1.0),
+    (('Starter',), 'starter', (60, 60, 70), 1.0),
+    (('Terminal',), 'terminal box', (40, 120, 220), 1.0),
+    (('Foot', 'Feet', 'E3B-4'), 'feet', (90, 95, 100), 1.0),
+    (('TE-', 'PT-', 'SE-', 'VE-', 'RPM', 'EGT', 'Igniter', 'IGN', 'UV', 'BE-'), 'sensors', (40, 180, 100), 1.0),
+    (('Fan',), 'fan', (120, 200, 240), 1.0),
+    (('Fasteners', 'Studs'), 'fasteners', (70, 70, 75), 1.0),
+]
+
+
+def sec_xray(app, design):
+    """Per-part colours, see-through shells, everything visible except E4 (power section only)."""
+    root = design.rootComponent
+    n = 0
+    for g in [root.occurrences.item(i) for i in range(root.occurrences.count)]:
+        g.appearance = None
+        g.isLightBulbOn = not g.component.name.startswith('E4')
+        for o in [g.childOccurrences.item(j) for j in range(g.childOccurrences.count)]:
+            o.isLightBulbOn = True
+            for keys, label, rgb, op in XRAY:
+                if any(k in o.component.name for k in keys):
+                    o.appearance = coloured(app, design, label, rgb)
+                    o.component.opacity = op             # opacity lives on the component in the Fusion API
+                    n += 1
+                    break
+    app.activeViewport.fit()
+    print('styled', n, 'parts')
+
+
 def sec_clear(app, design):
     """Empty the open assembly document (rebuild in place, keeps its name and version history)."""
     assert app.activeDocument.name.startswith(DOC_NAME), app.activeDocument.name
