@@ -223,7 +223,7 @@ def sec_exh_c(app, design):
             continue
         import_part(app, ins if 'Insulation' in name else g, f, name); n += 1
     for f in sorted(glob.glob(os.path.join(VC_DIR, 'FRAME', 'C-*.step'))):
-        if VARIANT == 'C2' and os.path.basename(f).startswith('C-401'):
+        if VARIANT == 'C2' and os.path.basename(f).startswith(('C-401', 'C-410')):   # E2-C2 own foot, C2 frame replaces rails
             continue
         import_part(app, fr, f, os.path.splitext(os.path.basename(f))[0]); n += 1
     print('C exhaust + frame parts', n)
