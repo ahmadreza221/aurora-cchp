@@ -1,0 +1,936 @@
+{
+ "title": "GR180 version E self-built HS PMG - electromagnetic design, FEM verification, DC-link window, losses",
+ "date": "2026-10-24",
+ "script": "sim/variant_e/eg_em.py",
+ "layout": "cad/variant_e/eg_layout.py",
+ "tools": "eg_fem2d.py (2D nonlinear FEM, gmsh) + eg_bridge.py (diode bridge)",
+ "mesh": {
+  "nodes": 17552,
+  "triangles": 34896,
+  "h_gap_mm": 0.7,
+  "regions": {
+   "shaft": 652,
+   "magnet": 2593,
+   "sleeve": 6607,
+   "gap1": 2165,
+   "gap2": 2201,
+   "gap3": 2357,
+   "iron": 11244,
+   "slot_air": 2832,
+   "slot_top": 3174,
+   "slot_bot": 912,
+   "shield": 159
+  }
+ },
+ "design_temperatures_C": {
+  "magnet_hot": 100.0,
+  "magnet_cold": 20.0,
+  "copper": 120.0,
+  "screen": 90.0
+ },
+ "geometry": {
+  "EM": {
+   "rotor_OD": 120.0,
+   "sleeve_t": 7.0,
+   "magnet_OD": 106.0,
+   "magnet_ID": 74.0,
+   "shield_t": 1.5,
+   "magnet_L": 272.0,
+   "L_end_fringe": 4.0,
+   "gap": 3.0,
+   "bore": 126.0,
+   "stator_OD": 262.0,
+   "stack": 270.0,
+   "slots": 24,
+   "slot_shape": "open_rect",
+   "slot_w": 8.6,
+   "wedge_h": 3.8,
+   "slot_depth": 37.0,
+   "pitch": 10,
+   "turns_coil": 2,
+   "paths": 2,
+   "layers": 2,
+   "lam": "NO10",
+   "lam_t": 0.1,
+   "stack_factor": 0.95,
+   "Br20": 1.1,
+   "alpha_Br": -0.00035,
+   "mu_r": 1.05,
+   "sigma_SmCo": 1180000.0,
+   "sigma_shaft20": 4500000.0,
+   "N_ph": 8
+  },
+  "slot": {
+   "r1_mm": 66.8,
+   "r2_mm": 100.0,
+   "A_winding_mm2": 285.9,
+   "tooth_w_bore_mm": 7.89,
+   "tooth_w_root_mm": 17.58
+  },
+  "L_eff_mm": 274.0,
+  "U_tip_m_s": 219.9,
+  "masses": {
+   "magnets_kg": 10.34,
+   "cu_screen_kg": 0.83,
+   "sleeve_kg": 1.16,
+   "iron_teeth_kg": 22.0,
+   "iron_yoke_kg": 44.4,
+   "copper_slot_kg": 9.1,
+   "copper_end_kg": 9.5
+  }
+ },
+ "winding": {
+  "WIND": {
+   "strands": 1260,
+   "strand_d": 0.2,
+   "strand_od": 0.226,
+   "construction": "7 x 180 x 0.20 (180-strand bunches, 7 bunches rope-laid, compacted), lay 30 / 60 mm",
+   "bare_w": 7.3,
+   "bare_h": 7.65,
+   "ins_w": 7.7,
+   "ins_h": 8.05,
+   "liner": 0.31,
+   "separator": 0.5,
+   "wedge_t": 3.0,
+   "end_straight": 12.0,
+   "end_angle_deg": 32.0,
+   "lead_end": "front",
+   "Cu_mm2": 39.584067435231404
+  },
+  "N_ph_series": 8,
+  "paths": 2,
+  "coils": 24,
+  "turns_coil": 2,
+  "pitch": "10/12 (1-11)",
+  "winding_factors": {
+   "1": 0.925,
+   "3": 0.4619,
+   "5": 0.0531,
+   "7": 0.0408,
+   "11": 0.1218,
+   "13": 0.1218,
+   "23": 0.925,
+   "25": 0.925
+  },
+  "end_winding": {
+   "L_ew_H": 1.0412416766043535e-05,
+   "nose_height_mm": 68.2,
+   "overhang_mm": 88.2,
+   "end_length_per_turn_mm": 281.9,
+   "r_top_mm": 75.05,
+   "r_bot_mm": 91.65,
+   "k_img": 0.4,
+   "gmr_mm": 5.32
+  },
+  "end_winding_sensitivity_uH": {
+   "k_img 0": 9.5,
+   "k_img 1": 11.8
+  },
+  "MLT_m": 1.1038,
+  "R_ph_20C_mOhm": 2.071,
+  "R_ph_hot_mOhm": 2.885,
+  "R_lead_mOhm": 0.206,
+  "J_A_mm2_at_335kW": 4.63,
+  "A_rms_kA_m": 44.5
+ },
+ "no_load": {
+  "T_magnet_C": 100.0,
+  "Br_T": 1.0692,
+  "Psi_peak_Wb": 0.1391,
+  "Psi_2D_Wb": 0.13707,
+  "E_ph_V": 360.5,
+  "E_ll_V": 624.4,
+  "E_ll_cold_20C_V": 642.4,
+  "E_ll_120C_V": 619.9,
+  "emf_harmonics_ratio": {
+   "3": 0.00012,
+   "5": 1e-05,
+   "7": 0.0,
+   "11": 0.0,
+   "13": 0.0,
+   "23": 0.0,
+   "25": 0.0
+  },
+  "B_gap_fund_T": 0.5575,
+  "B_gap_harm_pct": {
+   "3": 0.06,
+   "5": 0.02,
+   "7": 0.01,
+   "23": 11.45,
+   "25": 11.63
+  },
+  "cogging_pp_Nm": 0.0039,
+  "iron_loss": {
+   "teeth_W": 233.79878548201475,
+   "yoke_W": 842.0792752874826,
+   "total_W": 1075.8780607694973,
+   "m_teeth_kg": 21.981028814219485,
+   "m_yoke_kg": 44.35753432481867,
+   "B_teeth_max_T": 1.2506527206625542,
+   "B_teeth_p95_T": 1.0235815566637747,
+   "B_yoke_max_T": 1.3444314358431826,
+   "B_yoke_p50_T": 1.054758009763012,
+   "grade": "NO10",
+   "build_factor": {
+    "teeth": 1.25,
+    "yoke": 1.15
+   }
+  },
+  "a0_deg": -75.0,
+  "newton_iters": 3.0833333333333335
+ },
+ "inductance": {
+  "L_d_2D_uH": 86.25,
+  "L_q_2D_uH": 86.32,
+  "L_end_uH": 10.41,
+  "L_s_uH": 97.98,
+  "X_s_Ohm": 0.3591,
+  "x_pu_335kW": 0.363
+ },
+ "bridge": {
+  "model": "eg_bridge.py: 6-pulse diodes (1.0 V + 1 mOhm), stiff AFE DC link, no DC choke (the 98 uH machine inductance smooths the current)",
+  "hot_magnets": [
+   {
+    "case": "250 kW net (rated, TIT 730 C, 30 C)",
+    "P_shaft_kW": 269.6,
+    "P_em_kW": 265.7,
+    "V_dc": 713.4,
+    "I_dc": 369.4,
+    "P_dc_kW": 263.5,
+    "I_rms": 285.0,
+    "I1_rms": 282.3,
+    "harmonics": {
+     "5": 0.1215,
+     "7": 0.0596,
+     "11": 0.0217,
+     "13": 0.0147,
+     "17": 0.008,
+     "19": 0.0063,
+     "23": 0.0044,
+     "25": 0.0038
+    },
+    "thd_pct": 13.8,
+    "disp_deg": -29.6,
+    "torque_ripple_6f_pct": 8.8,
+    "torque_pp_pct": 17.5,
+    "x_pu": 0.281,
+    "P_cu_W": 703,
+    "magnets": "hot"
+   },
+   {
+    "case": "770 C design point, 30 C",
+    "P_shaft_kW": 305.8,
+    "P_em_kW": 301.9,
+    "V_dc": 695.8,
+    "I_dc": 430.2,
+    "P_dc_kW": 299.3,
+    "I_rms": 329.8,
+    "I1_rms": 327.4,
+    "harmonics": {
+     "5": 0.1052,
+     "7": 0.0529,
+     "11": 0.0205,
+     "13": 0.0144,
+     "17": 0.008,
+     "19": 0.0062,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 12.1,
+    "disp_deg": -31.5,
+    "torque_ripple_6f_pct": 8.2,
+    "torque_pp_pct": 16.7,
+    "x_pu": 0.326,
+    "P_cu_W": 941,
+    "magnets": "hot"
+   },
+   {
+    "case": "850 C peak / 315 kW el cap",
+    "P_shaft_kW": 332.4,
+    "P_em_kW": 328.5,
+    "V_dc": 682.9,
+    "I_dc": 476.3,
+    "P_dc_kW": 325.3,
+    "I_rms": 363.5,
+    "I1_rms": 361.3,
+    "harmonics": {
+     "5": 0.0945,
+     "7": 0.048,
+     "11": 0.0191,
+     "13": 0.0136,
+     "17": 0.0078,
+     "19": 0.0062,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 10.9,
+    "disp_deg": -32.9,
+    "torque_ripple_6f_pct": 7.9,
+    "torque_pp_pct": 16.4,
+    "x_pu": 0.36,
+    "P_cu_W": 1143,
+    "magnets": "hot"
+   },
+   {
+    "case": "thermal rating 335 kW shaft",
+    "P_shaft_kW": 335.0,
+    "P_em_kW": 331.1,
+    "V_dc": 681.6,
+    "I_dc": 481.0,
+    "P_dc_kW": 327.8,
+    "I_rms": 366.9,
+    "I1_rms": 364.8,
+    "harmonics": {
+     "5": 0.0935,
+     "7": 0.0475,
+     "11": 0.019,
+     "13": 0.0135,
+     "17": 0.0077,
+     "19": 0.0061,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 10.8,
+    "disp_deg": -33.0,
+    "torque_ripple_6f_pct": 7.8,
+    "torque_pp_pct": 16.4,
+    "x_pu": 0.363,
+    "P_cu_W": 1165,
+    "magnets": "hot"
+   }
+  ],
+  "cold_magnets": [
+   {
+    "case": "250 kW net (rated, TIT 730 C, 30 C)",
+    "P_shaft_kW": 269.6,
+    "P_em_kW": 265.7,
+    "V_dc": 741.2,
+    "I_dc": 355.7,
+    "P_dc_kW": 263.6,
+    "I_rms": 275.2,
+    "I1_rms": 272.3,
+    "harmonics": {
+     "5": 0.1287,
+     "7": 0.0622,
+     "11": 0.0219,
+     "13": 0.0147,
+     "17": 0.0081,
+     "19": 0.0065,
+     "23": 0.0047,
+     "25": 0.0041
+    },
+    "thd_pct": 14.6,
+    "disp_deg": -28.8,
+    "torque_ripple_6f_pct": 9.1,
+    "torque_pp_pct": 17.9,
+    "x_pu": 0.264,
+    "P_cu_W": 655,
+    "magnets": "cold 20 C"
+   },
+   {
+    "case": "770 C design point, 30 C",
+    "P_shaft_kW": 305.8,
+    "P_em_kW": 301.9,
+    "V_dc": 724.3,
+    "I_dc": 413.4,
+    "P_dc_kW": 299.4,
+    "I_rms": 317.8,
+    "I1_rms": 315.2,
+    "harmonics": {
+     "5": 0.1125,
+     "7": 0.056,
+     "11": 0.0212,
+     "13": 0.0146,
+     "17": 0.008,
+     "19": 0.0062,
+     "23": 0.0042,
+     "25": 0.0035
+    },
+    "thd_pct": 12.9,
+    "disp_deg": -30.7,
+    "torque_ripple_6f_pct": 8.5,
+    "torque_pp_pct": 17.0,
+    "x_pu": 0.305,
+    "P_cu_W": 874,
+    "magnets": "cold 20 C"
+   },
+   {
+    "case": "850 C peak / 315 kW el cap",
+    "P_shaft_kW": 332.4,
+    "P_em_kW": 328.5,
+    "V_dc": 711.6,
+    "I_dc": 457.7,
+    "P_dc_kW": 325.7,
+    "I_rms": 350.3,
+    "I1_rms": 348.0,
+    "harmonics": {
+     "5": 0.1016,
+     "7": 0.0513,
+     "11": 0.0201,
+     "13": 0.0141,
+     "17": 0.0079,
+     "19": 0.0062,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 11.7,
+    "disp_deg": -32.0,
+    "torque_ripple_6f_pct": 8.1,
+    "torque_pp_pct": 16.6,
+    "x_pu": 0.337,
+    "P_cu_W": 1062,
+    "magnets": "cold 20 C"
+   },
+   {
+    "case": "thermal rating 335 kW shaft",
+    "P_shaft_kW": 335.0,
+    "P_em_kW": 331.1,
+    "V_dc": 710.4,
+    "I_dc": 462.1,
+    "P_dc_kW": 328.3,
+    "I_rms": 353.6,
+    "I1_rms": 351.2,
+    "harmonics": {
+     "5": 0.1006,
+     "7": 0.0508,
+     "11": 0.02,
+     "13": 0.0141,
+     "17": 0.0079,
+     "19": 0.0062,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 11.6,
+    "disp_deg": -32.1,
+    "torque_ripple_6f_pct": 8.1,
+    "torque_pp_pct": 16.5,
+    "x_pu": 0.34,
+    "P_cu_W": 1082,
+    "magnets": "cold 20 C"
+   }
+  ],
+  "magnets_120C": [
+   {
+    "case": "250 kW net (rated, TIT 730 C, 30 C)",
+    "P_shaft_kW": 269.6,
+    "P_em_kW": 265.7,
+    "V_dc": 706.4,
+    "I_dc": 373.0,
+    "P_dc_kW": 263.5,
+    "I_rms": 287.6,
+    "I1_rms": 284.9,
+    "harmonics": {
+     "5": 0.1197,
+     "7": 0.0589,
+     "11": 0.0216,
+     "13": 0.0147,
+     "17": 0.008,
+     "19": 0.0063,
+     "23": 0.0043,
+     "25": 0.0037
+    },
+    "thd_pct": 13.6,
+    "disp_deg": -29.8,
+    "torque_ripple_6f_pct": 8.7,
+    "torque_pp_pct": 17.4,
+    "x_pu": 0.286,
+    "P_cu_W": 716,
+    "magnets": "120 C"
+   },
+   {
+    "case": "770 C design point, 30 C",
+    "P_shaft_kW": 305.8,
+    "P_em_kW": 301.9,
+    "V_dc": 688.6,
+    "I_dc": 434.7,
+    "P_dc_kW": 299.3,
+    "I_rms": 332.9,
+    "I1_rms": 330.6,
+    "harmonics": {
+     "5": 0.1033,
+     "7": 0.052,
+     "11": 0.0203,
+     "13": 0.0142,
+     "17": 0.008,
+     "19": 0.0062,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 11.9,
+    "disp_deg": -31.8,
+    "torque_ripple_6f_pct": 8.2,
+    "torque_pp_pct": 16.6,
+    "x_pu": 0.332,
+    "P_cu_W": 959,
+    "magnets": "120 C"
+   },
+   {
+    "case": "850 C peak / 315 kW el cap",
+    "P_shaft_kW": 332.4,
+    "P_em_kW": 328.5,
+    "V_dc": 675.6,
+    "I_dc": 481.4,
+    "P_dc_kW": 325.3,
+    "I_rms": 367.1,
+    "I1_rms": 365.0,
+    "harmonics": {
+     "5": 0.0927,
+     "7": 0.0471,
+     "11": 0.0189,
+     "13": 0.0134,
+     "17": 0.0077,
+     "19": 0.0061,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 10.7,
+    "disp_deg": -33.1,
+    "torque_ripple_6f_pct": 7.8,
+    "torque_pp_pct": 16.3,
+    "x_pu": 0.366,
+    "P_cu_W": 1166,
+    "magnets": "120 C"
+   },
+   {
+    "case": "thermal rating 335 kW shaft",
+    "P_shaft_kW": 335.0,
+    "P_em_kW": 331.1,
+    "V_dc": 674.3,
+    "I_dc": 486.2,
+    "P_dc_kW": 327.8,
+    "I_rms": 370.5,
+    "I1_rms": 368.4,
+    "harmonics": {
+     "5": 0.0917,
+     "7": 0.0466,
+     "11": 0.0187,
+     "13": 0.0133,
+     "17": 0.0077,
+     "19": 0.0061,
+     "23": 0.0041,
+     "25": 0.0034
+    },
+    "thd_pct": 10.6,
+    "disp_deg": -33.3,
+    "torque_ripple_6f_pct": 7.8,
+    "torque_pp_pct": 16.3,
+    "x_pu": 0.37,
+    "P_cu_W": 1188,
+    "magnets": "120 C"
+   }
+  ],
+  "window": {
+   "limits": {
+    "V_dc_min": 660.0,
+    "V_dc_max_op": 760.0,
+    "note": "standard 400 V AFE (380-480/500 V class, e.g. ABB ACS880-207 / Danfoss VACON NXA / Siemens S120 ALM / Inovance): DC must stay >= sqrt2 x 440 V x 1.06 = 660 V to export into a 400 V +10 % grid; upper operating limit 760 V (below the brake-chopper threshold ~780-800 V; check the datasheet)"
+   },
+   "P_vs_Vdc_100pct": [
+    {
+     "V_dc": 660,
+     "P_dc_kW": 370.2,
+     "I_rms": 424.8
+    },
+    {
+     "V_dc": 680,
+     "P_dc_kW": 331.0,
+     "I_rms": 371.1
+    },
+    {
+     "V_dc": 700,
+     "P_dc_kW": 290.8,
+     "I_rms": 319.0
+    },
+    {
+     "V_dc": 720,
+     "P_dc_kW": 249.9,
+     "I_rms": 268.4
+    },
+    {
+     "V_dc": 740,
+     "P_dc_kW": 208.3,
+     "I_rms": 219.6
+    },
+    {
+     "V_dc": 760,
+     "P_dc_kW": 166.5,
+     "I_rms": 172.5
+    },
+    {
+     "V_dc": 780,
+     "P_dc_kW": 124.8,
+     "I_rms": 127.4
+    },
+    {
+     "V_dc": 800,
+     "P_dc_kW": 83.4,
+     "I_rms": 84.3
+    },
+    {
+     "V_dc": 840,
+     "P_dc_kW": 9.7,
+     "I_rms": 11.7
+    },
+    {
+     "V_dc": 880,
+     "P_dc_kW": 0.0,
+     "I_rms": 0.0
+    }
+   ],
+   "partload_speed_schedule": [
+    {
+     "P_dc_kW": 60.0,
+     "speed_pct": 93.9,
+     "rpm": 32848,
+     "f_Hz": 547.5,
+     "V_dc": 760.0
+    },
+    {
+     "P_dc_kW": 100.0,
+     "speed_pct": 96.2,
+     "rpm": 33668,
+     "f_Hz": 561.1,
+     "V_dc": 760.0
+    },
+    {
+     "P_dc_kW": 150.0,
+     "speed_pct": 99.1,
+     "rpm": 34672,
+     "f_Hz": 577.9,
+     "V_dc": 760.0
+    },
+    {
+     "P_dc_kW": 200.0,
+     "speed_pct": 100.0,
+     "note": "reachable at 100 % speed with V_dc <= 760 V"
+    },
+    {
+     "P_dc_kW": 250.0,
+     "speed_pct": 100.0,
+     "note": "reachable at 100 % speed with V_dc <= 760 V"
+    }
+   ],
+   "fsnl_max_speed_pct": {
+    "hot": 86.1,
+    "cold": 83.7
+   },
+   "start": {
+    "speed_pct": 55,
+    "f_Hz": 320.8,
+    "E_ll_cold_V": 353.3,
+    "motoring_current_A": 101,
+    "V_ll_required": 355.5,
+    "inverter_max_V_ll": 430.1,
+    "ok": true,
+    "bridge_blocks": 1.0,
+    "bridge_cut_in_speed_pct_at_660V": 72.6,
+    "sequence": "K2 (start inverter + sine filter) closed, K1 (diode bridge) open: motor 0 -> 55 % (light-off ~22 %); open K2, close K1 (bridge blocks: sqrt2 x E(55 %) = 500 V < 660 V); GT accelerates on fuel with the AFE holding V_dc at 760 V: no export below 86 % speed (hot magnets), then the load ramps in with speed; the speed controller sets V_dc, the fuel controller sets TIT / power"
+   },
+   "alternative_690V": {
+    "stack 220": {
+     "N_ph": 12,
+     "E_ll_V": 766,
+     "L_s_uH": 184.5,
+     "V_dc_306_332": [
+      808,
+      785
+     ],
+     "sqrt2_E": 1083,
+     "window": "690 V-class AFE on a 525 V winding: 870-1100 V",
+     "fsnl_speed_pct": 101.6
+    },
+    "stack 230": {
+     "N_ph": 12,
+     "E_ll_V": 800,
+     "L_s_uH": 191.7,
+     "V_dc_306_332": [
+      856,
+      835
+     ],
+     "sqrt2_E": 1131,
+     "window": "690 V-class AFE on a 525 V winding: 870-1100 V",
+     "fsnl_speed_pct": 97.2
+    }
+   },
+   "alternative_note": "690 V-class AFE + 400/525 V 350 kVA transformer: wider window (1100/870 = 1.26) -> export from ~10 % load at 100 % speed, but +1.2 % loss (~4 kW), +~1.1 t, +cost, rewound stator (3 turns / coil); the 400 V AFE + part-load speed schedule is preferred for 24/7 base load at 250-315 kW el",
+   "stack_trade": [
+    {
+     "stack_mm": 250.0,
+     "E_ll_V": 578.8,
+     "L_s_uH": 91.6,
+     "V_dc_270": 651,
+     "V_dc_332": 619
+    },
+    {
+     "stack_mm": 260.0,
+     "E_ll_V": 601.6,
+     "L_s_uH": 94.8,
+     "V_dc_270": 682,
+     "V_dc_332": 651
+    },
+    {
+     "stack_mm": 270.0,
+     "E_ll_V": 624.4,
+     "L_s_uH": 98.0,
+     "V_dc_270": 713,
+     "V_dc_332": 683
+    },
+    {
+     "stack_mm": 280.0,
+     "E_ll_V": 647.2,
+     "L_s_uH": 101.2,
+     "V_dc_270": 745,
+     "V_dc_332": 715
+    }
+   ],
+   "verdict": "standard 400 V AFE works at 250 / 306 / 332 kW shaft at 100 % speed for magnets 20-120 C (V_dc in the 660-760 V band); below ~166 kW the speed is lowered (schedule); full-speed no-load is not possible (sqrt2 E > 760 V) -> idle at <= 86 % speed"
+  }
+ },
+ "load_335kW": {
+  "T_fem_Nm": -90.35,
+  "T_expected_Nm": -90.25,
+  "ripple_pp_pct": 16.16,
+  "ripple_6f_pct": 7.79,
+  "iron_loss": {
+   "teeth_W": 203.92928363847219,
+   "yoke_W": 686.8145585500132,
+   "total_W": 890.7438421884854,
+   "m_teeth_kg": 21.981028814219485,
+   "m_yoke_kg": 44.35753432481867,
+   "B_teeth_max_T": 1.400795112249096,
+   "B_teeth_p95_T": 0.9738223012263011,
+   "B_yoke_max_T": 1.3076670421074934,
+   "B_yoke_p50_T": 0.9409923000918436,
+   "grade": "NO10",
+   "build_factor": {
+    "teeth": 1.25,
+    "yoke": 1.15
+   }
+  },
+  "proximity": {
+   "slot_W": 7.512750347989784,
+   "end_W": 2.3531603589981334,
+   "total_W": 9.865910706987918,
+   "k_cu_slot": 0.5545540408410115
+  },
+  "newton_iters": 3.05
+ },
+ "rotor_losses_335kW": {
+  "screen_W": 53.0,
+  "shaft_W": 2.4,
+  "shaft_without_screen_W": 952.5,
+  "per_harmonic": {
+   "5": {
+    "shaft": 1.8,
+    "shield": 39.1
+   },
+   "7": {
+    "shaft": 0.5,
+    "shield": 10.1
+   },
+   "11": {
+    "shaft": 0.1,
+    "shield": 2.1
+   },
+   "13": {
+    "shaft": 0.0,
+    "shield": 1.1
+   },
+   "17": {
+    "shaft": 0.0,
+    "shield": 0.4
+   },
+   "19": {
+    "shaft": 0.0,
+    "shield": 0.3
+   }
+  },
+  "mu_shaft_incremental": 300.0,
+  "magnets_by_segmentation_harmonic_W": {
+   "12 x 272": 946.6,
+   "12 x 20": 493.9,
+   "12 x 10": 236.2,
+   "12 x 5": 77.8,
+   "12 x 2": 14.2,
+   "16 x 2": 14.2,
+   "24 x 5": 77.2,
+   "8 x 2": 14.3
+  },
+  "magnets_slot_harmonics_W": {
+   "12 x 272": 146.167,
+   "12 x 20": 69.403,
+   "12 x 10": 40.095,
+   "12 x 5": 13.081,
+   "12 x 2": 2.337,
+   "16 x 2": 2.318,
+   "24 x 5": 12.177,
+   "8 x 2": 2.356
+  },
+  "slot_harmonic_gap_field_T": {
+   "23": 0.06384,
+   "25": 0.06482
+  },
+  "magnets_unscreened_stepping_6_12_18f_W": {
+   "12 x 272": 6065.8,
+   "12 x 20": 2495.1,
+   "12 x 10": 1067.8,
+   "12 x 5": 323.1,
+   "12 x 2": 56.9,
+   "16 x 2": 55.9,
+   "24 x 5": 275.4,
+   "8 x 2": 57.9
+  },
+  "stepping_note": "magnetostatic stepping (no Cu-screen reaction) used only for the physical current-harmonic orders 6/12/18; higher orders in the sampled rotor-frame B are P1-mesh noise",
+  "chosen_segmentation": {
+   "n_circ": 12,
+   "lamination_mm": 2.0,
+   "note": "each 30 deg arc segment laminated from 2 mm axial slices bonded with an insulating epoxy layer (>= 1 kOhm between slices)"
+  },
+  "sleeve_note": "CFRP: carbon fibres conduct along the hoop only; the axial current path is the resin (~1e2 S/m) -> < 5 W"
+ },
+ "losses": [
+  {
+   "case": "250 kW net (rated, TIT 730 C, 30 C)",
+   "P_shaft_kW": 269.6,
+   "losses_W": {
+    "copper_dc_W": 703,
+    "litz_proximity_W": 6,
+    "iron_W": 965,
+    "magnets_W": 16.3,
+    "cu_screen_and_shaft_W": 54,
+    "sleeve_end_rings_W": 5,
+    "windage_W": 1307,
+    "bearings_W": 1586
+   },
+   "total_W": 4643,
+   "P_terminals_kW": 264.96,
+   "eta_generator": 0.9828,
+   "eta_electromagnetic": 0.9934,
+   "rotor_heat_W": 76,
+   "stator_heat_W": 1674
+  },
+  {
+   "case": "770 C design point, 30 C",
+   "P_shaft_kW": 305.8,
+   "losses_W": {
+    "copper_dc_W": 941,
+    "litz_proximity_W": 8,
+    "iron_W": 927,
+    "magnets_W": 16.7,
+    "cu_screen_and_shaft_W": 56,
+    "sleeve_end_rings_W": 5,
+    "windage_W": 1307,
+    "bearings_W": 1586
+   },
+   "total_W": 4847,
+   "P_terminals_kW": 300.95,
+   "eta_generator": 0.9842,
+   "eta_electromagnetic": 0.9936,
+   "rotor_heat_W": 78,
+   "stator_heat_W": 1876
+  },
+  {
+   "case": "850 C peak / 315 kW el cap",
+   "P_shaft_kW": 332.4,
+   "losses_W": {
+    "copper_dc_W": 1143,
+    "litz_proximity_W": 10,
+    "iron_W": 894,
+    "magnets_W": 16.6,
+    "cu_screen_and_shaft_W": 56,
+    "sleeve_end_rings_W": 5,
+    "windage_W": 1307,
+    "bearings_W": 1586
+   },
+   "total_W": 5018,
+   "P_terminals_kW": 327.38,
+   "eta_generator": 0.9849,
+   "eta_electromagnetic": 0.9936,
+   "rotor_heat_W": 77,
+   "stator_heat_W": 2047
+  },
+  {
+   "case": "thermal rating 335 kW shaft",
+   "P_shaft_kW": 335.0,
+   "losses_W": {
+    "copper_dc_W": 1165,
+    "litz_proximity_W": 10,
+    "iron_W": 891,
+    "magnets_W": 16.5,
+    "cu_screen_and_shaft_W": 55,
+    "sleeve_end_rings_W": 5,
+    "windage_W": 1307,
+    "bearings_W": 1586
+   },
+   "total_W": 5036,
+   "P_terminals_kW": 329.96,
+   "eta_generator": 0.985,
+   "eta_electromagnetic": 0.9935,
+   "rotor_heat_W": 77,
+   "stator_heat_W": 2066
+  }
+ ],
+ "windage": {
+  "gap_W": 1194.1359786168814,
+  "end_faces_W": 51.924216839796216,
+  "steps_labyrinths_W": 60.70080536036635,
+  "total_W": 1306.7610008170439,
+  "Re_theta": 35206.055091749084,
+  "Re_axial": 11652.870474719786,
+  "axial_flow_factor": 1.052133463625019,
+  "C_M": 0.0032604750790811137,
+  "v_axial_m_s": 36.394308488761766,
+  "air_C": 60.0,
+  "m_air_kg_s": 0.045
+ },
+ "bearings": {
+  "front_W": 804.6422779146241,
+  "rear_W": 781.7824789707777,
+  "Fr_N": 196.96,
+  "note": "Palmgren, VG32 oil jet, 300 N spring preload (+50 N locating), e_rotor.friction_W"
+ },
+ "short_circuit": {
+  "I_ss_rms": 1004,
+  "I_ss_pu": 2.75,
+  "I_peak_transient_A": 2839,
+  "T_peak_Nm": 298.5,
+  "T_peak_over_rated": 3.27,
+  "T_ideal_Nm": 296.2,
+  "note": "SPM without damper circuits: no subtransient; torque alternates at the stator frequency (583 Hz, far above the 166 Hz quill mode); converter-side faults are cleared by the DC fuses / AFE; quill and hex sized for x5 rated (e_rotor.json)"
+ },
+ "demagnetisation": {
+  "case": "sudden 3-ph terminal short at 35,000 rpm, first transient peak i_d = -2 Psi / L_s (worst instant, no decay)",
+  "i_d_peak_A": -2839,
+  "grade": "Sm2Co17 YXG-32H class: Br 1.10-1.13 T, HcJ >= 1990 kA/m at 20 C (beta -0.19 %/K), squareness Hk >= 0.70 HcJ",
+  "by_temperature": {
+   "100 C": {
+    "B_parallel_min_T": -0.622,
+    "B_parallel_p01_T": -0.489,
+    "HcJ_kA_m": 1688,
+    "Hk_kA_m": 1181,
+    "B_knee_T": -0.489,
+    "volume_below_knee_pct": 2.33
+   },
+   "120 C": {
+    "B_parallel_min_T": -0.625,
+    "B_parallel_p01_T": -0.493,
+    "HcJ_kA_m": 1612,
+    "Hk_kA_m": 1128,
+    "B_knee_T": -0.427,
+    "volume_below_knee_pct": 4.57
+   },
+   "150 C": {
+    "B_parallel_min_T": -0.631,
+    "B_parallel_p01_T": -0.499,
+    "HcJ_kA_m": 1498,
+    "Hk_kA_m": 1049,
+    "B_knee_T": -0.334,
+    "volume_below_knee_pct": 9.676
+   }
+  }
+ },
+ "vs_preliminary": {
+  "e_pmg_json": "sim/variant_e/e_pmg.json: stack 190, 10 turns, x 0.46 pu, V_dc 617 V at 335 kW (below a 400 V AFE window), windage 2.2 kW (factor 2 too high: P = 0.5 C_M pi rho w^3 R^4 L), no rotor eddy screen"
+ },
+ "runtime_s": 446
+}
