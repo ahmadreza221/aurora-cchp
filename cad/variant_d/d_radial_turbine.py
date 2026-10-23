@@ -10,7 +10,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() els
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 if not os.path.exists(os.path.join(ROOT, 'cad_out')):
     ROOT = os.environ.get('GR180_ROOT', os.getcwd())
-OUT = os.path.join(ROOT, 'cad_out', 'variant_d', 'RT'); os.makedirs(OUT, exist_ok=True)
+OUT = os.environ.get('GR180_RT_OUT') or os.path.join(ROOT, 'cad_out', 'variant_d', 'RT'); os.makedirs(OUT, exist_ok=True)
 
 # ---------------------------------------------------------------- first meanline (single shaft, design point)
 N = 115000.0; m = 0.40; T04 = 1073.15; P04 = 2.87e5; cp, g = 1148.0, 1.333
@@ -38,7 +38,7 @@ for k, v in MEAN.items():
     print('%-16s %s' % (k, round(v, 3) if isinstance(v, float) else v))
 
 # ---------------------------------------------------------------- geometry
-X0 = 105.0                  # wheel back-plate face / inlet hub side (v13A turbine sat at x 107..122)
+X0 = float(os.environ.get('GR180_RT_X0', '105'))   # wheel back-plate face; 140 for the full D2 assembly (plenum starts behind the casing at x 116)
 B4 = round(b4, 1)
 R4 = D4 / 2; X6 = X0 + 47.0; R6H, R6T = D6h / 2, D6t / 2
 def hub(a):  return (X6 - (X6 - X0) * math.cos(a), R4 - (R4 - R6H) * math.sin(a))
@@ -92,6 +92,13 @@ parts['RT-120_Turbine_Housing_Plenum'] = shell.fuse(front_wall).fuse(rear_wall).
 parts['RT-121_Exducer_Shroud'] = shroud
 parts['RT-130_Tie_Nut'] = Part.makeCylinder(6.0, 8.0, V(X6 + 8, 0, 0), V(1, 0, 0))
 
+if os.environ.get('GR180_RT_X0'):            # full D2 assembly: shaft extension + exhaust diffuser behind the exducer
+    parts['RT-140_Shaft_Extension'] = Part.makeCylinder(4.0, X0 - 5 - 122.0, V(122.0, 0, 0), V(1, 0, 0))
+    xd0, xd1 = X6 + 12, X6 + 140
+    dif = Part.makeCone(R6T + 3.4, 72.0, xd1 - xd0, V(xd0, 0, 0), V(1, 0, 0)).cut(
+        Part.makeCone(R6T + 0.4, 69.5, xd1 - xd0, V(xd0, 0, 0), V(1, 0, 0)))
+    fl = Part.makeCylinder(105.0, 16.0, V(xd1, 0, 0), V(1, 0, 0)).cut(Part.makeCylinder(69.5, 18, V(xd1 - 1, 0, 0), V(1, 0, 0)))
+    parts['RT-180_Exhaust_Diffuser_DN150'] = dif.fuse(fl).removeSplitter()
 info = dict(meanline=MEAN, parts={})
 for k, s in parts.items():
     s.exportStep(os.path.join(OUT, k + '.step'))

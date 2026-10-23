@@ -12,12 +12,14 @@ import adsk.fusion
 ROOT = '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404'
 MODE = 'v12'             # 'v12' original | 'v13A' drawing-corrected | 'D' single-shaft turbo-generator concept (v13A + front PMG pod)
 DOC_NAME = {'v12': 'GR180 v12 original turbojet', 'v13A': 'GR180 v13A turbojet (drawing-corrected)',
-            'D': 'GR180-D Single-shaft turbo-generator (concept)', 'RT': 'GR180-D Radial turbine stage (concept)'}[MODE]
+            'D': 'GR180-D Single-shaft turbo-generator (concept)', 'RT': 'GR180-D Radial turbine stage (concept)',
+            'D2': 'GR180-D2 Single-shaft + radial turbine (full assembly)'}[MODE]
+D2_SKIP = D_SKIP | {'GR180_Turbine', 'GR180_NGV', 'GR180_TurbineNut', 'D-180_Exhaust_Diffuser_DN150'}   # axial stage -> radial stage
 D_SKIP = {'GR180_Starter', 'GR180_NoseCone', 'GR180_Exhaust'}      # replaced by the generator pod and the exhaust diffuser
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
 STYLE = [('Turbine_Wheel', (230, 175, 40), 1.0), ('Nozzle_Ring', (60, 110, 210), 1.0), ('Housing_Plenum', (170, 200, 225), 0.25),
-         ('Exducer_Shroud', (170, 200, 225), 0.35), ('Tie_Nut', (90, 90, 95), 1.0),
+         ('Exducer_Shroud', (170, 200, 225), 0.35), ('Tie_Nut', (90, 90, 95), 1.0), ('Shaft_Extension', (190, 55, 45), 1.0),
          ('Generator_Housing', (170, 200, 225), 0.25), ('Front_Cap', (170, 200, 225), 0.35), ('Inlet_Screen', (150, 150, 155), 0.25),
          ('Stator_Core', (80, 85, 95), 1.0), ('Winding', (200, 110, 50), 1.0), ('PMG_Rotor', (200, 60, 170), 1.0),
          ('Quill', (190, 55, 45), 1.0), ('Coupling', (150, 150, 160), 1.0), ('Struts', (60, 60, 65), 1.0), ('Terminal', (40, 120, 220), 1.0),
@@ -72,10 +74,14 @@ def run(_context):
         steps = {'GR180_' + os.path.splitext(os.path.basename(f))[0]: f
                  for f in glob.glob(os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts', '*.step'))}
         stls = {}
-        if MODE == 'D':
-            steps = {k: v for k, v in steps.items() if k not in D_SKIP}
+        if MODE in ('D', 'D2'):
             steps.update({os.path.splitext(os.path.basename(f))[0]: f
                           for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'D-*.step'))})
+            if MODE == 'D2':
+                steps.update({os.path.splitext(os.path.basename(f))[0]: f
+                              for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'RT2', 'RT-*.step'))})
+            skip = D2_SKIP if MODE == 'D2' else D_SKIP
+            steps = {k: v for k, v in steps.items() if k not in skip}
     n = 0
     for name in sorted(set(steps) | set(stls)):
         if name in SKIP:
