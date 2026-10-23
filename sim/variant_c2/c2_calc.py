@@ -308,8 +308,10 @@ E2C2 = dict(C1=dict(side='north', rect_x=(-26.0, 7.5), rect_z=(-40.0, 115.0), y_
                     DN=100, PN=16, pipe_od=114.3, pipe_t=2.0, flange=(220.0, 180.0, 8, 18.0, 20.0), face_y=190.0, t_wall=2.5,
                     why='lowered to mid-height: the version-C exhaust insulation fills x >= 22 above z 200 and x >= 116 below z 165'),
             C2=dict(side='south', rect_x=(47.0, 95.0), rect_z=(-239.0, -40.0), y_rect=-155.0, face_y=-170.0, t_wall=3.0, rect_flange_t=15.0,
-                    rect_flange_rim=15.0, n_bolts=10, d_bolt=10, round_axis_xz=(71.0, -139.5), DN=125,
-                    why='mirrored to the south (north side carries C1); narrowed to x 47..95 and rim 15 so the flange (x 32..110) clears the exhaust insulation (x >= 116)'))
+                    rect_flange_rim=18.0, n_bolts=14, d_bolt=8, round_axis_xz=(71.0, -139.5), DN=125,
+                    why='mirrored to the south (north side carries C1); narrowed to x 47..95, rim 18 with 14 x M8 (459 mm2 >= 390 required) so the flange '
+                        '(x 29..113) clears the exhaust insulation (x >= 116)'))
+E2C2['a_liner_pins'] = (30.0, 160.0, 300.0)                                       # variant A 255 deg is inside the south C2 duct
 A_c2 = (E2C2['C2']['rect_x'][1] - E2C2['C2']['rect_x'][0]) * (E2C2['C2']['rect_z'][1] - E2C2['C2']['rect_z'][0]) * 1e-6
 rhoR = c15['P2'] * 0.95 / (287.0 * c15['T2r'])
 E2C2['C2_port_velocity'] = (c15['ma'] * (1 - BETA)) / (rhoR * A_c2); E2C2['C2_port_dump_kPa'] = 0.5 * rhoR * E2C2['C2_port_velocity'] ** 2 / 1e3

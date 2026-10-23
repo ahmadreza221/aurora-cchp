@@ -335,16 +335,21 @@
    "face_y": -170.0,
    "t_wall": 3.0,
    "rect_flange_t": 15.0,
-   "rect_flange_rim": 15.0,
-   "n_bolts": 10,
-   "d_bolt": 10,
+   "rect_flange_rim": 18.0,
+   "n_bolts": 14,
+   "d_bolt": 8,
    "round_axis_xz": [
     71.0,
     -139.5
    ],
    "DN": 125,
-   "why": "mirrored to the south (north side carries C1); narrowed to x 47..95 and rim 15 so the flange (x 32..110) clears the exhaust insulation (x >= 116)"
+   "why": "mirrored to the south (north side carries C1); narrowed to x 47..95, rim 18 with 14 x M8 (459 mm2 >= 390 required) so the flange (x 29..113) clears the exhaust insulation (x >= 116)"
   },
+  "a_liner_pins": [
+   30.0,
+   160.0,
+   300.0
+  ],
   "C2_port_velocity": 30.86401442612605,
   "C2_port_dump_kPa": 0.6177326505430045
  }
