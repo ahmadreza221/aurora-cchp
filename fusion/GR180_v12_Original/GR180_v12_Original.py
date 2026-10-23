@@ -13,7 +13,8 @@ ROOT = '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404'
 MODE = 'v12'             # 'v12' original | 'v13A' drawing-corrected | 'D' single-shaft turbo-generator concept (v13A + front PMG pod)
 DOC_NAME = {'v12': 'GR180 v12 original turbojet', 'v13A': 'GR180 v13A turbojet (drawing-corrected)',
             'D': 'GR180-D Single-shaft turbo-generator (concept)', 'RT': 'GR180-D Radial turbine stage (concept)',
-            'D2': 'GR180-D2 Single-shaft + radial turbine (full assembly)'}[MODE]
+            'D2': 'GR180-D2 Single-shaft + radial turbine (full assembly)',
+            'E': 'GR180-E 250 kW single-shaft turbo-generator'}[MODE]
 D2_SKIP = D_SKIP | {'GR180_Turbine', 'GR180_NGV', 'GR180_TurbineNut', 'D-180_Exhaust_Diffuser_DN150'}   # axial stage -> radial stage
 SHOW_AUX = False         # user (2026-10-23): auxiliaries skid (gas train, oil, glycol) hidden for now
 SHOW_FILTER_BOX = False  # user (2026-10-23): leave the V-cell filter box out for now, add it later
@@ -26,7 +27,20 @@ D2_REPLACED = {'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
 D_SKIP = {'GR180_Starter', 'GR180_NoseCone', 'GR180_Exhaust'}      # replaced by the generator pod and the exhaust diffuser
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
-STYLE = [('Pod_Housing', (170, 200, 225), 0.3), ('Front_Cover', (170, 200, 225), 0.35), ('Glycol_Jacket', (120, 170, 220), 0.35),
+STYLE = [('Compressor_Wheel', (205, 210, 220), 1.0), ('Turbine_Wheel', (230, 175, 40), 1.0), ('Nozzle_Ring', (60, 110, 210), 1.0),
+         ('Liner', (235, 95, 60), 1.0), ('Swirler', (240, 190, 0), 1.0), ('Gas_Lance', (240, 190, 0), 1.0), ('Igniter', (40, 180, 100), 1.0),
+         ('UV_Flame', (40, 180, 100), 1.0), ('Combustor_Casing', (170, 200, 225), 0.3), ('Top_Cover', (170, 200, 225), 0.4),
+         ('Transition_Cone', (235, 95, 60), 1.0), ('Hangers', (90, 95, 100), 1.0), ('Outer_Casing', (170, 200, 225), 0.3),
+         ('Inlet_Shroud', (170, 200, 225), 0.4), ('Back_Plate', (120, 150, 190), 1.0), ('Hot_Plenum', (235, 140, 90), 0.5),
+         ('Cool_Pressure', (170, 200, 225), 0.25), ('Heat_Shield', (150, 150, 160), 1.0), ('Shroud_Diffuser', (170, 200, 225), 0.4),
+         ('Bearing_Housing', (170, 200, 225), 0.35), ('Core_Shaft', (190, 55, 45), 1.0), ('Generator_Shaft', (190, 55, 45), 1.0),
+         ('Spacer_Sleeve', (190, 55, 45), 1.0), ('Clamp_Nut', (150, 150, 160), 1.0), ('Slinger', (150, 150, 160), 1.0),
+         ('Diffuser_Cone', (245, 110, 10), 1.0), ('Elbow', (245, 110, 10), 1.0), ('Turning_Vanes', (245, 110, 10), 1.0),
+         ('Intake_Plenum', (200, 205, 215), 0.3), ('Filter_Interface', (90, 95, 100), 1.0), ('Base_Frame', (55, 60, 65), 1.0),
+         ('Pedestals', (55, 60, 65), 1.0), ('Saddles', (55, 60, 65), 1.0), ('AV_Mounts', (30, 30, 30), 1.0),
+         ('End_Bell', (170, 200, 225), 0.35), ('Winding_End', (200, 110, 50), 1.0), ('Magnets_Sleeve', (200, 60, 170), 1.0),
+         ('Speed_Wheel', (150, 150, 160), 1.0), ('Quill', (190, 55, 45), 1.0),
+         ('Pod_Housing', (170, 200, 225), 0.3), ('Front_Cover', (170, 200, 225), 0.35), ('Glycol_Jacket', (120, 170, 220), 0.35),
          ('Magnet', (200, 60, 170), 1.0), ('Carbon_Sleeve', (40, 40, 45), 1.0), ('End_Rings', (150, 150, 160), 1.0),
          ('Locknut', (150, 150, 160), 1.0), ('Seal_Spacer', (150, 150, 160), 1.0), ('Dowel', (110, 110, 115), 1.0),
          ('Screws', (110, 110, 115), 1.0), ('Phase_Studs', (200, 110, 50), 1.0), ('Terminal_Block', (230, 200, 120), 1.0),
@@ -99,7 +113,11 @@ def run(_context):
         design.designType = adsk.fusion.DesignTypes.DirectDesignType
     design.fusionUnitsManager.distanceDisplayUnits = adsk.fusion.DistanceUnits.MillimeterDistanceUnits
     root = design.rootComponent
-    if MODE == 'RT':                             # version D radial turbine stage on its own page
+    if MODE == 'E':                              # version E (250 kW), all subsystem folders
+        steps = {os.path.splitext(os.path.basename(f))[0]: f
+                 for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_e', '*', 'E-*.step'))}
+        stls = {}
+    elif MODE == 'RT':                             # version D radial turbine stage on its own page
         steps = {os.path.splitext(os.path.basename(f))[0]: f
                  for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'RT', 'RT-*.step'))}
         stls = {}
