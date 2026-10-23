@@ -204,7 +204,7 @@ cap = Part.read(os.path.join(ROOT, 'cad_out', 'variant_d', 'D-102_Generator_Fron
 capf = cap.Solids[0]
 for so in cap.Solids[1:]:
     capf = capf.fuse(so)
-hb_ = Part.makeCylinder(7.0, 14.0, V(-284.0, 0, 34.0), V(0, 0, 1))                                # Hall-cable gland boss M12 (SE-001A)
+hb_ = Part.makeCylinder(7.0, 24.0, V(-284.0, 0, 34.0), V(0, 0, 1))                                # Hall-cable gland boss M12 (SE-001A)
 capf = capf.fuse(hb_).cut(Part.makeCylinder(3.5, 30.0, V(-284.0, 0, 30.0), V(0, 0, 1))).removeSplitter()
 capf.exportStep(os.path.join(POD_OUT, 'D-102P_Generator_Front_Cap_D2A.step'))
 json.dump(dict(note='D2A ported pod shell (concept D-101 + bosses/holes) and front cap with the Hall-cable gland; use these instead of '

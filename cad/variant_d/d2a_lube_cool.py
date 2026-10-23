@@ -86,11 +86,11 @@ parts['OL-220_Oil_Feed_Lines_8x1'] = (lp, 1.2, 'make',
 lines_s = [
     [(-262.0, 0.0, -73.0), (-262.0, 0.0, -82.0), (-262.0, -70.0, -92.0), (-139.0, -70.0, -98.0), (-125.0, -170.0, -103.0), (-120.0, -170.0, -107.0), (-120.0, -182.0, -107.0)],
     [(-139.0, 0.0, -71.0), (-139.0, 0.0, -85.0), (-139.0, -70.0, -98.0)],
-    [rad(-30.0, 275.0, 107.0), rad(-30.0, 275.0, 112.0), (-30.0, -150.0, -112.0), (-90.0, -170.0, -112.0), (-90.0, -182.0, -112.0)],
+    [rad(-30.0, 275.0, 107.0), rad(-30.0, 275.0, 115.0), (-30.0, -150.0, -112.0), (-90.0, -170.0, -112.0), (-90.0, -182.0, -112.0)],
 ]
 ls = comp([tube_path(p, 6.0) for p in lines_s])
 lsp = tube_path([(C['x1'] + 2, C['y'], C['z']), (C['x1'] + 7, C['y'], C['z']), (C['x1'] + 15, S_[0], S_[1]), (205.0, S_[0], S_[1]), (205.0, S_[0], zl + 20), (205.0, ps['y'] + 30, zl + 20)], 5.0)
-parts['OL-221_Oil_Drain_Scavenge_Lines'] = (ls.fuse(lsp).removeSplitter(), 1.3, 'make',
+parts['OL-221_Oil_Drain_Scavenge_Lines'] = (comp([ls, lsp]), 1.3, 'make',
     'gravity drains 12 x 1 (pod G1/4 bottom ports, core 275 deg bulkhead) falling continuously to the collector; suction line 10 x 1 to '
     'the scavenge pump; TE-705/706 in the collector inlets', 'tube Sandvik (SE); fittings VOSS (DE)')
 
@@ -124,7 +124,7 @@ ry0, ry1 = R['y0'], R['y0'] + R['w']
 rz0, rz1 = R['z0'], R['z0'] + R['h']
 xm = 0.5 * (rx0 + rx1)
 rad_ = box(rx0, rx1, ry0, ry1, rz0, rz1)
-rad_ = rad_.fuse(cyl((xm, ry1 - 15, rz0 + 10), (xm, ry1 + 12, rz0 + 10), 8.0))      # outlet (bottom, +y tank) to y -163
+rad_ = rad_.fuse(cyl((xm, ry1 - 15, rz0 + 10), (xm, ry1 + 5, rz0 + 10), 8.0))       # outlet (bottom, +y tank) to y -170
 rad_ = rad_.fuse(cyl((xm, ry0 + 10, rz1 - 2), (xm, ry0 + 10, rz1 + 5), 8.0))       # inlet (top, -y tank)
 parts['GC-310_Radiator_Core'] = (rad_.removeSplitter(), 2.6, 'buy',
     'Al bar-and-plate glycol/air core 280 x 320 x 52 with side tanks, 2.0 kW at ITD ~21 K, 1300 m3/h (NTU ~1.05, eps 0.58: est); '
@@ -148,7 +148,7 @@ parts['GC-313_Expansion_Tank_1L'] = (et.removeSplitter(), 0.6, 'buy',
     'in the loop', 'MAHLE / Behr (DE) truck expansion-tank class, Reflex (DE)')
 ztop = G4[1] + 180.0                                                          # top run above the shroud
 hoses = [
-    [(xm, ry1 + 13, rz0 + 10), (xm, G1[0], rz0 + 10), (385.0, G1[0], G1[1]), (-145.0, G1[0], G1[1]), (-145.0, -259.0, -60.0), (gp['x1'], -259.0, -60.0)],   # radiator -> pump
+    [(xm, ry1 + 5, rz0 + 10), (xm, G1[0], rz0 + 10), (385.0, G1[0], G1[1]), (-145.0, G1[0], G1[1]), (-145.0, -259.0, -60.0), (gp['x1'], -259.0, -60.0)],   # radiator -> pump
     [(gp['x0'], -259.0, -60.0), (-293.0, -259.0, -60.0), (-293.0, -259.0, 40.0), (-293.0, -120.0, 52.0), (-244.0, -120.0, 52.0), rad(-244.0, 135.0, 80.0), rad(-244.0, 135.0, 71.0)],  # pump -> PMG
     [rad(-170.5, 135.0, 71.0), rad(-170.5, 135.0, 80.0), (-170.5, -150.0, 56.6), (-170.5, -255.0, 56.6), (L['x1'] - 10, -255.0, 10.0), (L['x1'] - 10, L['y'], 10.0), (L['x1'] - 10, L['y'], -50.0)],  # PMG -> cooler
     [(L['x0'] + 10, L['y'], -50.0), (L['x0'] + 10, L['y'], -20.0), (L['x0'] + 10, G4[0], G4[1]), (305.0, G4[0], G4[1]), (305.0, G4[0], ztop), (396.0, G4[0], ztop), (396.0, ry0 + 10, ztop), (xm, ry0 + 10, rz1 + 5)],  # cooler -> radiator

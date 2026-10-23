@@ -57,7 +57,7 @@ FCV_KVS = 1.6                 # Bürkert 2836 class, orifice ~8 mm (confirm Kvs 
 # ------------------------------------------------------------------ AUX skid (AX-610) - RHS 60 x 40 x 3 like FR-110
 SKID = dict(x=(-300.0, 425.0), y=(-460.0, -160.0), z_top=-126.0, h=60.0, w=40.0)
 DECK = dict(x=(-300.0, 425.0), y=(-420.0, -200.0), t=3.0)
-DECK_HOLES = [(306.0, -395.0, 15.0)]          # (x, y, r): gas inlet hose from below
+DECK_HOLES = [(306.0, -395.0, 15.0), (105.0, -290.0, 15.0), (-200.0, -322.0, 15.0), (-235.0, -400.0, 15.0)]   # (x, y, r): gas inlet from below, 2 harness risers
 AV = [(-270.0, -440.0), (-270.0, -180.0), (395.0, -440.0), (395.0, -180.0)]
 
 # ------------------------------------------------------------------ oil module (rear inner deck x > 113.5: no height limit) + front low units
@@ -89,9 +89,10 @@ TRAY = dict(x=(-255.0, 380.0), y=(-330.0, -290.0), z=(-170.0, -140.0))      # ca
 IGN_TRAFO = dict(x=(0.0, 57.0), y=(-300.0, -196.0), z=(-123.0, -63.0))   # on the AUX deck, front (HT lead ~0.8 m under the core)
 
 # ------------------------------------------------------------------ engine-side sensor / port positions (ENG)
-CASING_BOSSES = {'PT-521 P2 static tap M8x1': (75.0, 200.0), 'TE-502 T3 TC M8x1': (90.0, 200.0),
-                 'buffer-air bleed M8x1 (orifice 2.2)': (105.0, 200.0)}
-UV = dict(x=55.0, ang=180.0, r0=55.0, r_tube=150.0, r_end=250.0)          # between sticks 165 / 195 deg
+CASING_BOSSES = {'PT-521 P2 static tap M8x1': (60.0, 200.0), 'TE-502 T3 TC M8x1': (70.0, 200.0),
+                 'buffer-air bleed M8x1 (orifice 2.2)': (80.0, 200.0)}   # all x <= 80: clear of the FR-160 rear posts (x >= 87.5)
+UV = dict(x=40.0, ang=210.0, r0=55.0, r_tube=120.0, r_end=200.0)          # primary zone, between sticks 195 / 225 deg, low (z > -116)
+N1_CORE = dict(x=-20.0, ang=300.0, r0=38.0, r1=52.0)                       # turboSPEED DS05 in a new M5 port in the v13A shroud (inducer tip)
 POD_PORTS = {   # name: (x, angle deg, kind)
     'glycol in G1/4': (-244.0, 135.0, 'g14'), 'glycol out G1/4': (-170.5, 135.0, 'g14'),
     'oil jet front M8x1': (-265.0, 90.0, 'm8'), 'oil jet rear M8x1': (-136.0, 90.0, 'm8s'),
