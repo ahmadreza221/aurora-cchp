@@ -1,0 +1,254 @@
+<meta charset="utf-8">
+<title>GR180-CCHP Engine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: full-height workbench, 3-D canvas left, part tree + data sheet right (stacks on phones) */
+:root{
+  --bg:#eef0f2; --panel:#f8f9fa; --fg:#1b2026; --muted:#5d6670; --line:#d5dade;
+  --accent:#2f62c9; --hot:#c8552f; --warn:#a86a00;
+  --f-ui:"Vazirmatn",Tahoma,"Segoe UI",sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --canvas-top:#f5f6f7; --canvas-bot:#d9dde1;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121518; --panel:#181c20; --fg:#e4e8ec; --muted:#97a1ab; --line:#2a3036;
+  --accent:#6d9bff; --hot:#ff8a5c; --warn:#e2a93b; --canvas-top:#20262c; --canvas-bot:#0d1013; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121518; --panel:#181c20; --fg:#e4e8ec; --muted:#97a1ab; --line:#2a3036;
+  --accent:#6d9bff; --hot:#ff8a5c; --warn:#e2a93b; --canvas-top:#20262c; --canvas-bot:#0d1013; color-scheme:dark}
+html,body{height:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:14px}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 340px;height:100%;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+.stage{position:relative;min-width:0;background:linear-gradient(var(--canvas-top),var(--canvas-bot))}
+#c{display:block;width:100%;height:100%;touch-action:none}
+.hud{position:absolute;inset:12px 12px auto 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;pointer-events:none}
+.hud>*{pointer-events:auto}
+.brand{font-weight:800;font-size:15px;letter-spacing:.02em;margin-inline-end:auto}
+.brand small{display:block;font-weight:400;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+button,.chip{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--panel);color:var(--fg);
+  border-radius:6px;padding:5px 10px;cursor:pointer}
+button:hover{border-color:var(--accent)} button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sliders{position:absolute;inset:auto 12px 12px 12px;display:flex;gap:16px;flex-wrap:wrap;background:color-mix(in srgb,var(--panel) 88%,transparent);
+  border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px}
+.sliders label{display:flex;gap:8px;align-items:center}
+.sliders input{width:140px;accent-color:var(--accent)}
+#load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-family:var(--f-mono);font-size:13px}
+aside{background:var(--panel);border-inline-start:1px solid var(--line);overflow:auto;direction:rtl;min-width:0}
+aside section{padding:14px 16px;border-bottom:1px solid var(--line)}
+h2{font-size:13px;font-weight:800;margin:0 0 8px;letter-spacing:.02em;text-wrap:balance}
+.note{font-size:12.5px;line-height:1.7;color:var(--muted);margin:0}
+.note b{color:var(--warn)}
+.grp{border:1px solid var(--line);border-radius:6px;margin-bottom:6px}
+.grp>header{display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer}
+.sw{width:12px;height:12px;border-radius:3px;flex:none;border:1px solid rgba(0,0,0,.2)}
+.grp header span.n{margin-inline-start:auto;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.grp ul{list-style:none;margin:0;padding:0 8px 6px;display:none;direction:ltr}
+.grp.open ul{display:block}
+.grp li{font-family:var(--f-mono);font-size:11.5px;padding:3px 4px;border-radius:4px;cursor:pointer;overflow-wrap:anywhere}
+.grp li:hover,.grp li.sel{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;margin:0;font-size:12.5px}
+dt{color:var(--muted)} dd{margin:0;overflow-wrap:anywhere}
+dd.m{font-family:var(--f-mono);direction:ltr;text-align:right}
+table{border-collapse:collapse;width:100%;font-size:12px}
+td{padding:3px 0;border-bottom:1px dashed var(--line);vertical-align:top}
+td:last-child{font-family:var(--f-mono);direction:ltr;text-align:left;white-space:nowrap;padding-inline-start:8px}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
+  aside{border-inline-start:0;border-top:1px solid var(--line);overflow:visible}
+  .sliders input{width:110px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <div class="stage">
+    <canvas id="c" aria-label="مدل سه‌بعدی موتور GR180-CCHP"></canvas>
+    <div id="load">در حال بارگذاری مدل (۱۱ مگابایت)…</div>
+    <div class="hud">
+      <div class="brand">GR180-CCHP · موتور<small>ENG frame · mm · x = engine axis</small></div>
+      <button id="v-iso" type="button">ایزومتریک</button>
+      <button id="v-side" type="button">نمای کنار</button>
+      <button id="v-front" type="button">نمای ورودی</button>
+      <button id="t-cut" type="button" aria-pressed="false">برش نیم‌مقطع</button>
+      <button id="t-ins" type="button" aria-pressed="false">عایق ریکوپراتور</button>
+    </div>
+    <div class="sliders">
+      <label for="s-explode">انفجاری <input id="s-explode" type="range" min="0" max="1" step="0.01" value="0"></label>
+      <label for="s-cut">محل برش <input id="s-cut" type="range" min="-1" max="1" step="0.01" value="0"></label>
+    </div>
+  </div>
+  <aside>
+    <section>
+      <h2>قطعات طراحی‌شده</h2>
+      <p class="note">روی هر قطعه در مدل یا فهرست کلیک کنید. تیک گروه آن را پنهان یا نمایان می‌کند.
+      <b>محفظهٔ احتراق E2 در حال طراحی است</b>؛ تا آماده شود محفظهٔ قدیمی v13A (قرمز) جای آن نشان داده می‌شود.</p>
+    </section>
+    <section><div id="groups"></div></section>
+    <section>
+      <h2>قطعهٔ انتخاب‌شده</h2>
+      <dl id="info"><dt>—</dt><dd>یک قطعه را انتخاب کنید.</dd></dl>
+    </section>
+    <section>
+      <h2>اعداد اصلی طراحی (پیوسته، ورودی ۱۵ °C)</h2>
+      <table>
+        <tr><td>دور هسته / TIT</td><td>115k rpm / 800 °C</td></tr>
+        <tr><td>E1 توربین هسته: NGV / پره</td><td>21 / 29, IN713LC</td></tr>
+        <tr><td>E1 دیسک بدون سوراخ، جوش اصطکاکی</td><td>42CrMo4 shaft</td></tr>
+        <tr><td>E2 انژکتور</td><td>7 (not 8)</td></tr>
+        <tr><td>E3 توربین قدرت: NGV / پره</td><td>23 / 19, IN718</td></tr>
+        <tr><td>E3 دور طراحی / توان شفت</td><td>60k rpm / 24.9 kW</td></tr>
+        <tr><td>E3 یاتاقان‌ها</td><td>71905 + 7005 hybrid, SFD</td></tr>
+        <tr><td>E3 ژنراتور PMG</td><td>30 kW, J 6.47e-4 kg·m²</td></tr>
+        <tr><td>E4 ریکوپراتور</td><td>plate-fin 347H, ε 0.90</td></tr>
+        <tr><td>سوخت</td><td>≈ 11.7 m³/h city gas</td></tr>
+      </table>
+    </section>
+  </aside>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+
+const FA = {core:'هستهٔ GR180 (v13A)', E1:'E1 توربین و NGV هسته', E2:'E2 محفظهٔ احتراق و بدنهٔ فشاری',
+  E3:'E3 کانال رابط، توربین قدرت، یاتاقان، کلکتور', E3pmg:'E3 ژنراتور PMG', E3sens:'E3 حسگرها',
+  E4:'E4 ریکوپراتور', E4ins:'E4 عایق ریکوپراتور', legacy:'محفظهٔ قدیمی v13A (موقت تا E2)'};
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.localClippingEnabled = true;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 1, 0.005, 50);
+const controls = new OrbitControls(camera, canvas); controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 1.6));
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(2, 3, 2); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 0.8); rim.position.set(-2, 1, -3); scene.add(rim);
+
+const clip = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);   // ENG y -> world -z; keeps the near half hidden
+let cutOn = false;
+const groups = {}, meshes = [];
+let model, center = new THREE.Vector3(), radius = 1, selected = null;
+
+function resize(){
+  const r = canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+
+function view(dir){
+  const d = new THREE.Vector3(...dir).normalize().multiplyScalar(radius * 2.6);
+  camera.position.copy(center).add(d); controls.target.copy(center); controls.update();
+}
+
+fetch('engine.json').then(r => { if (!r.ok) throw new Error(r.status + ' ' + r.statusText); return r.text(); })
+.then(t => new Promise((ok, bad) => new GLTFLoader().parse(t, '', ok, bad))).then(g => {
+  model = g.scene; scene.add(model);
+  const root = model.children[0];
+  for (const gn of root.children){
+    const info = {node: gn, items: [], base: gn.position.clone()};
+    groups[gn.name] = info;
+    for (const part of gn.children) info.items.push(part);
+  }
+  model.traverse(o => { if (o.isMesh){
+    o.material = o.material.clone(); o.material.clippingPlanes = []; o.material.flatShading = true;
+    o.userData.baseColor = o.material.color.clone(); meshes.push(o);
+  }});
+  const box = new THREE.Box3().setFromObject(model); box.getCenter(center);
+  radius = box.getSize(new THREE.Vector3()).length() / 2;
+  for (const k in groups){
+    const b = new THREE.Box3().setFromObject(groups[k].node);
+    // explode direction in the group's parent frame (root is rotated z-up -> y-up and scaled mm -> m)
+    groups[k].dir = root.worldToLocal(b.getCenter(new THREE.Vector3())).sub(root.worldToLocal(center.clone()));
+  }
+  // focus on the engine itself (E4 makes the box wide)
+  if (groups.E4ins) groups.E4ins.node.visible = false;
+  view([-1, 0.6, 1.2]);
+  buildList(); syncIns(); document.getElementById('load').hidden = true;
+}).catch(err => { document.getElementById('load').textContent = 'بارگذاری مدل نشد: ' + err.message; });
+
+function partOf(o){ while (o && !o.userData.group && o.parent) o = o.parent; return o; }
+function swatch(gn){
+  let c = null; gn.traverse(o => { if (!c && o.isMesh) c = o.userData.baseColor; });
+  return c ? '#' + c.getHexString() : '#999';
+}
+function buildList(){
+  const host = document.getElementById('groups');
+  for (const [k, g] of Object.entries(groups)){
+    const el = document.createElement('div'); el.className = 'grp';
+    const id = 'g-' + k;
+    el.innerHTML = `<header><input type="checkbox" id="${id}" checked aria-label="${FA[k] || k}">
+      <span class="sw" style="background:${swatch(g.node)}"></span><span>${FA[k] || k}</span><span class="n">${g.items.length}</span></header><ul></ul>`;
+    const ul = el.querySelector('ul');
+    for (const p of g.items){
+      const li = document.createElement('li'); li.textContent = p.name; li.tabIndex = 0;
+      li.onclick = () => select(p, true); li.onkeydown = e => { if (e.key === 'Enter') select(p, true); };
+      p.userData.li = li; ul.appendChild(li);
+    }
+    el.querySelector('header').onclick = e => { if (e.target.tagName !== 'INPUT') el.classList.toggle('open'); };
+    el.querySelector('input').onchange = e => { g.node.visible = e.target.checked; if (k === 'E4ins') syncIns(); };
+    host.appendChild(el);
+  }
+}
+function syncIns(){
+  const b = document.getElementById('t-ins'), on = groups.E4ins ? groups.E4ins.node.visible : false;
+  b.setAttribute('aria-pressed', on);
+  const cb = document.getElementById('g-E4ins'); if (cb) cb.checked = on;
+}
+
+const FIELDS = [['group','گروه'],['desc','شرح'],['material','جنس / روش ساخت'],['mass_kg','جرم (kg)'],['bbox_mm','ابعاد (mm)']];
+function select(p, fly){
+  if (selected){ selected.traverse(o => { if (o.isMesh) o.material.emissive.setHex(0); }); selected.userData.li?.classList.remove('sel'); }
+  selected = p;
+  p.traverse(o => { if (o.isMesh) o.material.emissive.setHex(0x3355aa); });
+  p.userData.li?.classList.add('sel');
+  const u = p.userData, dl = document.getElementById('info');
+  dl.innerHTML = `<dt>نام</dt><dd class="m">${p.name}</dd>` + FIELDS.filter(([k]) => u[k] !== undefined && u[k] !== '')
+    .map(([k, t]) => `<dt>${t}</dt><dd class="${k === 'group' ? '' : 'm'}">${k === 'group' ? (FA[u[k]] || u[k]) : Array.isArray(u[k]) ? u[k].join(' × ') : u[k]}</dd>`).join('');
+  if (fly){
+    const b = new THREE.Box3().setFromObject(p), c = b.getCenter(new THREE.Vector3());
+    const r = Math.max(b.getSize(new THREE.Vector3()).length() / 2, 0.02);
+    const d = camera.position.clone().sub(controls.target).normalize().multiplyScalar(r * 3.2);
+    controls.target.copy(c); camera.position.copy(c).add(d); controls.update();
+  }
+}
+
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down = null;
+canvas.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+canvas.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4) return;
+  const r = canvas.getBoundingClientRect();
+  ptr.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const hits = ray.intersectObjects(meshes.filter(m => { let v = true; m.traverseAncestors(a => { if (!a.visible) v = false; }); return v && m.visible; }), false)
+    .filter(h => !cutOn || clip.distanceToPoint(h.point) >= 0);
+  if (hits.length) select(partOf(hits[0].object), false);
+});
+
+document.getElementById('v-iso').onclick = () => view([-1, 0.6, 1.2]);
+document.getElementById('v-side').onclick = () => view([0, 0.05, 1]);
+document.getElementById('v-front').onclick = () => view([-1, 0.05, 0.001]);
+document.getElementById('t-cut').onclick = e => {
+  cutOn = !cutOn; e.currentTarget.setAttribute('aria-pressed', cutOn);
+  for (const m of meshes) m.material.clippingPlanes = cutOn ? [clip] : [];
+  if (cutOn) view([0, 0.15, 1]);
+};
+document.getElementById('t-ins').onclick = () => { if (groups.E4ins){ groups.E4ins.node.visible = !groups.E4ins.node.visible; syncIns(); } };
+document.getElementById('s-cut').oninput = e => { clip.constant = e.target.value * 0.25; };   // m from the engine axis plane
+document.getElementById('s-explode').oninput = e => {
+  const f = +e.target.value;
+  for (const g of Object.values(groups)) g.node.position.copy(g.base).addScaledVector(g.dir, f * 1.2);
+};
+
+resize();
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>

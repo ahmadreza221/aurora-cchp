@@ -36,3 +36,7 @@ fusion/_*.json
 sim/cfd/e1_stage/ngv/
 sim/cfd/e1_stage/test_*/
 sim/cfd/e1_stage/geometry/*.stl
+
+# web viewer meshes (regenerate: cad/engine/engine_viewer_export.py)
+viewer/engine/engine.glb
+viewer/engine/engine.json
