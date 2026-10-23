@@ -44,30 +44,28 @@ def radial(x, ang_deg, r0, r1, rr, ri=0.0):
 
 
 def tube_path(pts, ro, ri=0.0):
-    """swept tube along a polyline (balls in the corners), hollow if ri > 0."""
+    """swept tube along a polyline (balls in the corners); solid envelope unless ri > 0 (then hollow)."""
     pts = [V(*p) for p in pts]
-    sh = None
+    segs = []
     for p0, p1 in zip(pts[:-1], pts[1:]):
         d = p1 - p0
-        if d.Length < 1e-6:
-            continue
-        c = Part.makeCylinder(ro, d.Length, p0, d)
-        sh = c if sh is None else sh.fuse(c)
-    for p in pts[1:-1]:
-        sh = sh.fuse(Part.makeSphere(ro, p))
+        if d.Length > 1e-6:
+            segs.append(Part.makeCylinder(ro, d.Length, p0, d))
+    segs += [Part.makeSphere(ro, p) for p in pts[1:-1]]
+    sh = segs[0].multiFuse(segs[1:]).removeSplitter() if len(segs) > 1 else segs[0]
     if ri > 0:
-        hole = None
+        hs = []
         for p0, p1 in zip(pts[:-1], pts[1:]):
             d = p1 - p0
-            if d.Length < 1e-6:
-                continue
-            e = V(d.x, d.y, d.z).normalize() * 0.01
-            c = Part.makeCylinder(ri, d.Length + 0.02, p0 - e, d)
-            hole = c if hole is None else hole.fuse(c)
-        for p in pts[1:-1]:
-            hole = hole.fuse(Part.makeSphere(ri, p))
-        sh = sh.cut(hole)
-    return sh.removeSplitter()
+            if d.Length > 1e-6:
+                e = V(d.x, d.y, d.z).normalize() * 0.01
+                hs.append(Part.makeCylinder(ri, d.Length + 0.02, p0 - e, d))
+        hs += [Part.makeSphere(ri, p) for p in pts[1:-1]]
+        hole = hs[0].multiFuse(hs[1:]) if len(hs) > 1 else hs[0]
+        sh = sh.cut(hole).removeSplitter()
+    if not sh.isValid():
+        sh.fix(1e-4, 1e-4, 1e-4)
+    return sh
 
 
 def hexbar(p0, p1, af):

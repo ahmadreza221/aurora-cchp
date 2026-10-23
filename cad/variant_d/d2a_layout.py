@@ -60,28 +60,33 @@ DECK = dict(x=(-300.0, 425.0), y=(-420.0, -200.0), t=3.0)
 DECK_HOLES = [(306.0, -395.0, 15.0)]          # (x, y, r): gas inlet hose from below
 AV = [(-270.0, -440.0), (-270.0, -180.0), (395.0, -440.0), (395.0, -180.0)]
 
-# ------------------------------------------------------------------ oil module (front of the inner deck), units low (z <= 92)
+# ------------------------------------------------------------------ oil module (rear inner deck x > 113.5: no height limit) + front low units
 Z_DECK = -123.0
-OIL_TANK = dict(x0=-285.0, y0=-330.0, dx=180.0, dy=160.0, dz=140.0)        # 4.0 L gross, 3.0 L oil
-OIL_PUMP_P = dict(x=-245.0, y=-290.0)       # vertical BLDC motor on the lid (pump submerged)
-OIL_PUMP_S = dict(x=-185.0, y=-290.0)       # scavenge pump + motor on the lid
-OIL_FILTER = dict(x0=-275.0, x1=-135.0, y=-205.0, z=52.0, r=30.0)            # horizontal cartridge filter on the lid
-LAMINOVA = dict(x0=-85.0, x1=85.0, y=-235.0, z=-90.0, r=28.0)                # oil<->glycol tube cooler, horizontal
-SEPARATOR = dict(x=-60.0, y=-300.0, z0=Z_DECK, h=120.0, r=40.0)              # oil-mist separator (low, drains to the collector)
-COLLECTOR = dict(x0=-95.0, x1=-35.0, y=-200.0, z=-105.0, r=16.0)             # scavenge drain collector (lowest point)
+OIL_TANK = dict(x0=125.0, y0=-305.0, dx=175.0, dy=100.0, dz=220.0)          # 3.85 L gross, 3.0 L oil; lid z 97
+OIL_PUMP_P = dict(x=150.0, y=-280.0, r=22.5, h=90.0)      # vertical 24 V BLDC motor on the lid, gear pump submerged
+OIL_PUMP_S = dict(x=195.0, y=-280.0, r=22.5, h=90.0)      # scavenge gear pump + motor on the lid (suction from the collector)
+OIL_FILTER = dict(x=160.0, y=-225.0, r=30.0, h=150.0)     # spin-on 10 um filter + head on the lid
+SEPARATOR = dict(x=262.0, y=-250.0, r=40.0, h=130.0)      # coalescing oil-mist separator on the lid (drains back into the tank)
+LAMINOVA = dict(x0=-135.0, x1=-15.0, y=-270.0, z=-90.0, r=28.0)              # oil<->glycol tube cooler, horizontal (front, low)
+COLLECTOR = dict(x0=-135.0, x1=-75.0, y=-200.0, z=-107.0, r=16.0)            # scavenge drain collector (lowest point)
+OIL_MANIFOLD = dict(x=(-55.0, -15.0), y=(-225.0, -195.0), z=(-110.0, -80.0))  # PT-701 / PSL-702 / TE-708 distribution block
+LANE_OIL_P = (-188.0, -30.0)    # (y, z) oil pressure lane
+LANE_OIL_S = (-188.0, -60.0)    # scavenge lane
+LANE_GLY_1 = (-159.0, 20.0)     # radiator -> pump suction (between the skid and FR-110)
+LANE_GLY_4 = (-159.0, 45.0)     # oil cooler -> radiator inlet
 
 # ------------------------------------------------------------------ glycol loop
 GLYCOL = dict(flow_L_min=2.5, hose_id=8.0, hose_od=15.0, hose_L_m=4.5)
 JACKET = dict(turns=8, pitch=10.5, groove_w=8.0, groove_d=3.0, d_mean=92.0)   # G-201 after the D2A lead-out change
 RADIATOR = dict(x0=370.0, w=280.0, h=320.0, t=52.0, y0=-455.0, z0=-110.0, area_density_m2_m3=900.0, U_air_W_m2K=40.0, air_m3_h=1300.0)
 FAN = dict(x0=318.0, x1=370.0, r=155.0)
-GLY_PUMP = dict(x0=190.0, x1=320.0, y0=-262.0, y1=-170.0, z1=2.0)           # wet-rotor circulator envelope
-EXP_TANK = dict(x0=330.0, x1=420.0, y0=-455.0, y1=-375.0, z0=215.0, z1=315.0)
+GLY_PUMP = dict(x0=-285.0, x1=-155.0, y0=-305.0, y1=-213.0, z1=2.0)         # wet-rotor circulator envelope (ports at the x ends)
+EXP_TANK = dict(x0=360.0, x1=430.0, y0=-330.0, y1=-250.0, z0=240.0, z1=340.0)
 
 # ------------------------------------------------------------------ electrical
 JB = dict(x=(-300.0, -150.0), y=(-460.0, -340.0), z=(-100.0, 200.0))        # 300 x 150 x 120 steel terminal box, door -y
 TRAY = dict(x=(-255.0, 380.0), y=(-330.0, -290.0), z=(-170.0, -140.0))      # cable tray under the deck, between the end cross members
-IGN_TRAFO = dict(x=(150.0, 255.0), y=(-282.0, -222.0), z=(-123.0, -53.0))   # on the AUX deck (HT lead ~0.9 m under the core)
+IGN_TRAFO = dict(x=(0.0, 57.0), y=(-300.0, -196.0), z=(-123.0, -63.0))   # on the AUX deck, front (HT lead ~0.8 m under the core)
 
 # ------------------------------------------------------------------ engine-side sensor / port positions (ENG)
 CASING_BOSSES = {'PT-521 P2 static tap M8x1': (75.0, 200.0), 'TE-502 T3 TC M8x1': (90.0, 200.0),
@@ -89,9 +94,9 @@ CASING_BOSSES = {'PT-521 P2 static tap M8x1': (75.0, 200.0), 'TE-502 T3 TC M8x1'
 UV = dict(x=55.0, ang=180.0, r0=55.0, r_tube=150.0, r_end=250.0)          # between sticks 165 / 195 deg
 POD_PORTS = {   # name: (x, angle deg, kind)
     'glycol in G1/4': (-244.0, 135.0, 'g14'), 'glycol out G1/4': (-170.5, 135.0, 'g14'),
-    'oil jet front M8x1': (-265.5, 90.0, 'm8'), 'oil jet rear M8x1': (-136.0, 90.0, 'm8'),
-    'oil drain front G1/4': (-262.0, 270.0, 'g14'), 'oil drain rear G1/4': (-133.0, 270.0, 'g14'),
-    'PT100 front bearing M8x1': (-262.0, 225.0, 'm8'), 'PT100 rear bearing M8x1': (-137.0, 225.0, 'm8'),
+    'oil jet front M8x1': (-265.0, 90.0, 'm8'), 'oil jet rear M8x1': (-136.0, 90.0, 'm8s'),
+    'oil drain front G1/4': (-262.0, 270.0, 'g14'), 'oil drain rear G1/8': (-139.0, 270.0, 'g18'),
+    'PT100 front bearing M8x1': (-262.0, 225.0, 'm8'), 'PT100 rear bearing M8x1': (-137.0, 225.0, 'm8s'),
     'VE-011 accelerometer M6 pad': (-250.0, 180.0, 'pad'), 'VE-012 accelerometer M6 pad': (-145.0, 180.0, 'pad'),
     'buffer air G1/8': (-153.0, 210.0, 'g18'), 'stator lead-out (potted)': (-153.5, 90.0, 'lead'),
 }

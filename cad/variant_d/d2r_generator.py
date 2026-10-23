@@ -12,6 +12,7 @@ V = App.Vector
 HERE = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() else os.path.join(os.getcwd(), 'cad', 'variant_d')
 sys.path.insert(0, HERE)
 import d2r_layout as L
+import d2a_layout as LA          # D2A (aux session 2026-10-23): pod lead-out gap, terminal box / glycol port moves, ported shell
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 OUT = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2', 'GENERATOR'); os.makedirs(OUT, exist_ok=True)
 for f in os.listdir(OUT):
@@ -39,14 +40,16 @@ def hexprism(x0, x1, af):
 G = L.GEN
 parts = {}
 # ---------------------------------------------------------------- G-201 glycol jacket sleeve (Al), helical groove shown as rings
-j0, j1 = G['jacket']
+j0 = G['jacket'][0]
+j1 = LA.JACKET_X1_D2A          # D2A: jacket ends at x -160 (was -148) -> 14 mm gap to G-204 for the stator lead-out through the shell
 jk = cyl(j0, j1, G['jacket_r'][1], G['jacket_r'][0])
-for k in range(9):                                                  # 9 turns pitch 11, groove 8 x 3 (helix modelled as rings)
-    xg = j0 + 8.0 + 11.0 * k
+for k in range(LA.JACKET['turns']):                                 # 8 turns pitch 10.5, groove 8 x 3 (helix modelled as rings)
+    xg = j0 + 8.0 + LA.JACKET['pitch'] * k
     jk = jk.cut(cyl(xg, xg + 8.0, G['jacket_r'][1] + 1, G['groove_r']))
 for xo in (j0 + 2.0, j1 - 4.5):                                     # O-ring grooves
     jk = jk.cut(cyl(xo, xo + 2.5, G['jacket_r'][1] + 1, G['jacket_r'][1] - 1.6))
-parts['G-201_Glycol_Jacket_Sleeve'] = (jk, 2.70, 'Al 6082-T6 turned, helical groove 8 x 3 mm pitch 11 (9 turns), 2 x O-ring 94 x 2 EPDM, pressed in the pod bore 98 H7')
+parts['G-201_Glycol_Jacket_Sleeve'] = (jk, 2.70, 'Al 6082-T6 turned, helical groove 8 x 3 mm pitch 10.5 (8 turns), 2 x O-ring 94 x 2 EPDM, pressed in the pod bore 98 H7; '
+                                       'ends at x -160 so the stator leads leave through the shell gap x -158..-150 (D2A)')
 
 # ---------------------------------------------------------------- G-210 stator core + G-211 winding
 s0, s1 = G['stack']
@@ -158,16 +161,57 @@ parts['G-204_Rear_End_Shield'] = (rs, 2.70, 'Al 6082-T6 (or 1.4057), cartridge b
 QG = L.QUILL_GUARD
 qg = cyl(QG['x0'], QG['x1'], QG['ro'], QG['ri']).fuse(cyl(QG['x0'], QG['x0'] + 2.0, QG['flange_r'], QG['ri'])).removeSplitter()
 parts['G-150_Quill_Guard_Tube'] = (qg, 2.70, 'Al 6060 tube 20 x 1.5 + flange, 3 x M4 to the pod rear plate; stationary fairing round the quill in the intake')
-tb = L.TBOX
+tb = LA.TBOX_D2A               # D2A: x -210..-146 over the lead-out slot (was x -232..-168)
 box = Part.makeBox(tb['x'][1] - tb['x'][0], tb['y'][1] - tb['y'][0], tb['z'][1] - tb['z'][0], V(tb['x'][0], tb['y'][0], tb['z'][0]))
 box = box.cut(Part.makeBox(tb['x'][1] - tb['x'][0] - 6, tb['y'][1] - tb['y'][0] - 6, tb['z'][1] - tb['z'][0] - 3,
                            V(tb['x'][0] + 3, tb['y'][0] + 3, tb['z'][0] + 3)))
 box = box.cut(Part.makeCylinder(55.0, tb['x'][1] - tb['x'][0] + 2, V(tb['x'][0] - 1, 0, 0), XA))   # saddle on the d110 pod
-gland = Part.makeCylinder(10.0, 8.0, V(tb['x'][1], 0, 70.0), XA)
+gland = Part.makeCylinder(10.0, 8.0, V(tb['x'][0] - 8.0, 0, 70.0), XA)                       # D2A: gland on the FRONT face
 parts['G-240_Terminal_Box'] = (box.fuse(gland).removeSplitter(), 2.70,
-                               'Al box 64 x 52 x 30 (IP65) saddled on the pod: 3 x M6 phase studs on a PEEK block, PT100/PTC terminals, M32 EMC gland, lid')
-ports = [Part.makeCylinder(6.0, 12.0, V(x, 0, 55.0), V(0, 0, 1)) for x in L.GLYCOL_PORTS]
-parts['G-241_Glycol_Port_Fittings_x2'] = (Part.makeCompound(ports), 7.9, '2 x G1/4 straight fittings 1.4404 for 8 mm hose, in the pod shell over the jacket groove ends')
+                               'Al box 64 x 52 x 30 (IP65) saddled on the pod over the potted lead-out slot: 3 x M6 phase studs on a PEEK block, '
+                               'PT100/PTC terminals, M32 EMC gland on the front face')
+d135 = V(0, math.cos(math.radians(135)), math.sin(math.radians(135)))
+ports = [Part.makeCylinder(6.0, 10.0, V(x, 0, 0) + d135 * 61.0, d135) for x in LA.GLYCOL_PORTS_D2A]   # on the shell bosses (r 61)
+parts['G-241_Glycol_Port_Fittings_x2'] = (Part.makeCompound(ports), 7.9, '2 x G1/4 straight fittings 1.4404 for 8 mm hose at 135 deg (towards the -y AUX skid), '
+                                          'over groove 0 (in, x -244) and groove 7 (out, x -170.5) of the jacket')
+
+# ---------------------------------------------------------------- D2A: ported pod shell D-101 + front cap D-102 -> D2/POD (replace the concept STEPs)
+POD_OUT = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2', 'POD'); os.makedirs(POD_OUT, exist_ok=True)
+
+
+def rdir(a):
+    return V(0, math.cos(math.radians(a)), math.sin(math.radians(a)))
+
+
+shell = Part.read(os.path.join(ROOT, 'cad_out', 'variant_d', 'D-101_Generator_Housing_Jacket.step'))
+shell = Part.makeSolid(shell.Shells[0]) if not shell.Solids else shell.Solids[0]
+BOSS = {'g14': (10.0, 6.0, 4.0), 'm8': (8.0, 5.0, 3.4), 'm8s': (6.0, 5.0, 3.4), 'g18': (7.0, 5.0, 3.0), 'pad': (13.0, 3.0, 0.0)}   # boss r, height, hole r (m8s/g18 next to the plenum wall x -130)
+for name, (x, a, kind) in LA.POD_PORTS.items():
+    d = rdir(a)
+    if kind == 'lead':
+        slot = Part.makeBox(8.0, 24.0, 12.0, V(x - 4.0, -12.0, 47.0))   # 8 x 24 slot through the top of the shell
+        shell = shell.cut(slot)
+        continue
+    rb, hb, rh = BOSS[kind]
+    shell = shell.fuse(Part.makeCylinder(rb, hb + 1.0, V(x, 0, 0) + d * 54.0, d))
+    if rh > 0:
+        shell = shell.cut(Part.makeCylinder(rh, 20.0, V(x, 0, 0) + d * 47.0, d))
+    else:
+        shell = shell.cut(Part.makeCylinder(2.5, 7.0, V(x, 0, 0) + d * (55.0 + hb - 6.0), d))      # M6 blind tapped hole
+shell = shell.removeSplitter()
+shell.exportStep(os.path.join(POD_OUT, 'D-101P_Generator_Housing_D2A_ported.step'))
+cap = Part.read(os.path.join(ROOT, 'cad_out', 'variant_d', 'D-102_Generator_Front_Cap.step'))
+capf = cap.Solids[0]
+for so in cap.Solids[1:]:
+    capf = capf.fuse(so)
+hb_ = Part.makeCylinder(7.0, 14.0, V(-284.0, 0, 34.0), V(0, 0, 1))                                # Hall-cable gland boss M12 (SE-001A)
+capf = capf.fuse(hb_).cut(Part.makeCylinder(3.5, 30.0, V(-284.0, 0, 30.0), V(0, 0, 1))).removeSplitter()
+capf.exportStep(os.path.join(POD_OUT, 'D-102P_Generator_Front_Cap_D2A.step'))
+json.dump(dict(note='D2A ported pod shell (concept D-101 + bosses/holes) and front cap with the Hall-cable gland; use these instead of '
+                    'cad_out/variant_d/D-101/D-102 in D2 checks', ports={k: dict(x=v[0], angle_deg=v[1], kind=v[2]) for k, v in LA.POD_PORTS.items()},
+               valid=[shell.isValid(), capf.isValid()], mass_kg_Al=[round(shell.Volume * 2.7e-6, 3), round(capf.Volume * 2.7e-6, 3)]),
+          open(os.path.join(POD_OUT, 'd2a_pod_ports.json'), 'w'), indent=1)
+print('ported pod shell valid', shell.isValid(), 'cap valid', capf.isValid())
 
 info = dict(note='D2R generator pod internals', frame='ENG mm', parts={})
 mrot = 0.0

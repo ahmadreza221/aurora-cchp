@@ -59,7 +59,7 @@ F = LY.FAN
 ry0, ry1 = R['y0'], R['y0'] + R['w']
 rz0, rz1 = R['z0'], R['z0'] + R['h']
 sh = box(F['x0'], F['x1'], ry0 - 3, ry1 + 3, rz0 - 3, rz1 + 3).cut(box(F['x0'] - 1, F['x1'] + 1, ry0, ry1, rz0, rz1))
-sh = sh.fuse(box(F['x0'], F['x0'] + 2, ry0, ry1, rz0, rz1).cut(cyl((F['x0'] - 1, 0.5 * (ry0 + ry1), 0.5 * (rz0 + rz1)), (F['x0'] + 3, 0.5 * (ry0 + ry1), 0.5 * (rz0 + rz1)), F['r'])))
+sh = sh.fuse(box(F['x0'], F['x0'] + 2, ry0, ry1, rz0, rz1).cut(cyl((F['x0'] - 1, 0.5 * (ry0 + ry1), 0.5 * (rz0 + rz1)), (F['x0'] + 3, 0.5 * (ry0 + ry1), 0.5 * (rz0 + rz1)), F['r'] - 12)))
 for yy in (ry0 + 20, ry1 - 20):                                           # feet to the deck
     sh = sh.fuse(box(F['x0'], R['x0'] + R['t'], yy - 15, yy + 15, zt + LY.DECK['t'], rz0 - 3))
 parts['AX-613_Radiator_Fan_Shroud'] = (sh.removeSplitter(), 2.4, 'make',

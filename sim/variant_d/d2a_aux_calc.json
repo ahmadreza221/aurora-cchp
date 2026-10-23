@@ -288,7 +288,7 @@
    "motor_W": 60
   },
   "tank": {
-   "gross_L": 4.03,
+   "gross_L": 3.85,
    "oil_charge_L": 3.0,
    "dwell_min": 0.98,
    "heater_W": 200,
