@@ -15,6 +15,8 @@ DOC_NAME = {'v12': 'GR180 v12 original turbojet', 'v13A': 'GR180 v13A turbojet (
             'D': 'GR180-D Single-shaft turbo-generator (concept)', 'RT': 'GR180-D Radial turbine stage (concept)',
             'D2': 'GR180-D2 Single-shaft + radial turbine (full assembly)'}[MODE]
 D2_SKIP = D_SKIP | {'GR180_Turbine', 'GR180_NGV', 'GR180_TurbineNut', 'D-180_Exhaust_Diffuser_DN150'}   # axial stage -> radial stage
+SHOW_FILTER_BOX = False  # user (2026-10-23): leave the V-cell filter box out for now, add it later
+FILTER_BOX = {'INT-150*', 'INT-151*', 'INT-152*', 'INT-153*', 'FR-160*'}
 D2_REPLACED = {'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
                'TURBINE': {'RT-*'}, 'ROTOR': {'GR180_Shaft', 'RT-140_Shaft_Extension', 'D-140_Quill_Shaft', 'GR180_FrontBearing*',
                                              'GR180_RearBearing*', 'D-141*', 'D-142*', 'GR180_Compressor', 'GR180_ShaftTunnel',
@@ -115,6 +117,8 @@ def run(_context):
                         continue
                     steps.update({os.path.splitext(os.path.basename(f))[0]: f for f in fs})
                     skip |= D2_REPLACED.get(sub, set())   # detailed subsystem replaces the concept parts
+            if not SHOW_FILTER_BOX:
+                skip |= FILTER_BOX
             skip = {k for k in steps if k in skip or any(k.startswith(p) for p in skip if p.endswith('*'))} | skip
             steps = {k: v for k, v in steps.items() if k not in skip}
     n = 0
