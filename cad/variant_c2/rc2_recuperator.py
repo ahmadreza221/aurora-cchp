@@ -251,9 +251,11 @@ add('HX-140', 'Insulation_Coil_Box', ins_h, 'mineral wool', RHO['ins'] * 0.5, 'i
 # frame (extends the version-C base frame): rail extensions, 2 cross beams, 4 columns, 2 top beams
 PO = LAY['portal']; (xc0, xc1), (yc0, yc1) = PO['x_cols'], PO['y_cols']; zb0, zb1 = 380.0, 420.0; zr0, zr1 = -310.0, -250.0
 fr = []
-fr.append(Part.makeCompound([box(xc0 - 20, -69.5, sy * 100 - 20 if sy > 0 else -120, sy * 120 if sy > 0 else -100, zr0, zr1) for sy in (-1, 1)] +
-                            [box(467.6, xc1 + 20, 100 if sy > 0 else -120, 120 if sy > 0 else -100, zr0, zr1) for sy in (-1, 1)]))
-fr.append(Part.makeCompound([box(xc - 20, xc + 20, yc0 - 20, yc1 + 20, zr0, zr1) for xc in (xc0, xc1)]))
+def rhs_x(x0, x1, y0, y1, z0, z1, t=3.0): return box(x0, x1, y0, y1, z0, z1).cut(box(x0 - 1, x1 + 1, y0 + t, y1 - t, z0 + t, z1 - t))
+def rhs_y(x0, x1, y0, y1, z0, z1, t=3.0): return box(x0, x1, y0, y1, z0, z1).cut(box(x0 + t, x1 - t, y0 - 1, y1 + 1, z0 + t, z1 - t))
+fr.append(Part.makeCompound([rhs_x(xc0 - 20, -69.5, 100 if sy > 0 else -120, 120 if sy > 0 else -100, zr0, zr1) for sy in (-1, 1)] +
+                            [rhs_x(467.6, xc1 + 20, 100 if sy > 0 else -120, 120 if sy > 0 else -100, zr0, zr1) for sy in (-1, 1)]))
+fr.append(Part.makeCompound([rhs_y(xc - 20, xc + 20, yc0 - 20, yc1 + 20, zr0, zr1) for xc in (xc0, xc1)]))
 fr.append(Part.makeCompound([box(xc - 30, xc + 30, yc - 30, yc + 30, zr1, zb0).cut(box(xc - 26, xc + 26, yc - 26, yc + 26, zr1 - 1, zb0 + 1)) for xc in (xc0, xc1) for yc in (yc0, yc1)]))
 fr.append(Part.makeCompound([box(xc0 - 30, xc1 + 30, yc - 20, yc + 20, zb0, zb1).cut(box(xc0 - 31, xc1 + 31, yc - 17, yc + 17, zb0 + 3, zb1 - 3)) for yc in (yc0, yc1)]))
 FRN = [('C2F-01', 'Rail_Extensions_RHS60x40_x4', 'RHS 60x40x3 1.4301, bolted to the C-410 rails'), ('C2F-02', 'Cross_Beams_RHS60x40_x2', 'RHS 60x40x3 1.4301'),
