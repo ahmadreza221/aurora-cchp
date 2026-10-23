@@ -1,0 +1,35 @@
+Design point 115k rpm / TIT 800 C / intake 15 C (chilled) / 50 m / no booster, target component efficiencies
+                                                   unit   original   as-built    change
+air flow                                           kg/s     0.3949     0.3949         0
+exhaust gas flow                                   kg/s     0.3972     0.3971         0
+compressor exit T2                                    C      165.4      165.4         0
+compressor exit P2                              bar abs      3.087      3.087         0
+recuperator effectiveness (net)                       -      0.900      0.905     +0.00
+recuperator cold exit T2r (combustor inlet)           C      565.5      569.0     +3.45
+combustor exit P3 (TIT 800 C)                   bar abs      2.874      2.874         0
+FPT exit = recuperator hot inlet                      C      610.0      611.3     +1.36
+recuperator hot exit -> D-101 -> HX-1                 C      261.7      218.7    -43.02
+recuperator duty                                     kW      158.8      169.7    +10.88
+FPT shaft power                                      kW      25.64      24.86     -0.78
+PMG terminal power                                   kW      24.35      24.11     -0.24
+DC into the inverter (rectifier 0.985)               kW      23.99      23.75     -0.24
+AC out of the inverter                               kW      23.38      23.15     -0.23
+engine auxiliaries (oil pump, ECU, fans)             kW       0.45       0.45         0
+NET electric at the engine (before HVAC)             kW      22.93      22.70     -0.23
+electrical efficiency (LHV)                           %       20.5       20.6     +0.10
+fuel CH4                                            g/s      2.236      2.203     -0.03
+fuel power (LHV)                                     kW      111.8      110.1     -1.64
+gas, CH4 basis (0.717 kg/Nm3)                     Nm3/h      11.23      11.06     -0.17
+gas, city gas LHV 34.5 MJ/m3                       m3/h      11.66      11.49     -0.17
+exhaust heat to HX-1, gas side to 100 C              kW       69.4       48.9    -20.48
+hot water from HX-1 (x 0.95)                         kW       65.9       46.4    -19.45
+CHP heat to 90 C (x 0.90, cycle def.)                kW       66.3       47.7    -18.63
+total efficiency (P_net + CHP heat)/fuel              %       79.9       63.9    -15.93
+
+Site, Borazjan design hour 46 C DB / 28 C WB (sim/hvac/hvac_results.json, as-built engine):
+  MAX-COOLING          T1 17.2 C | cooling 34.6 (coil 14.3, hall 17.8, unmet  0.0) | HVAC aux 4.87 | NET 16.75 kW
+  BALANCED             T1 15.0 C | cooling 29.4 (coil 17.0, hall  9.9, unmet  7.9) | HVAC aux 3.03 | NET 19.32 kW
+  MAX-POWER            T1 15.0 C | cooling 27.0 (coil 17.0, hall  7.5, unmet 10.3) | HVAC aux 2.12 | NET 20.23 kW
+  MAX-POWER T1=12C     T1 12.0 C | cooling 27.0 (coil 20.4, hall  4.1, unmet 13.7) | HVAC aux 2.12 | NET 21.24 kW
+  MAX-POWER-HALL-OFF   T1 15.0 C | cooling 19.5 (coil 17.0, hall  0.0, unmet 17.8) | HVAC aux 2.00 | NET 20.35 kW
+  NO-COOLING           T1 46.0 C | cooling  0.0 (coil  0.0, hall  0.0, unmet 17.8) | HVAC aux 1.45 | NET 12.67 kW

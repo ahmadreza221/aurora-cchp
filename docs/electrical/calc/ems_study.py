@@ -6,7 +6,8 @@
 
 Source of truth for the HVAC side (chillers, pumps, tower, hall, auxiliary power) is the HVAC session's mode model:
 sim/hvac/hvac_results.json ['modes'] (written by sim/hvac/hvac_design.py, same Borazjan design hour 46 C DB / 28 C WB).
-This script adds only the ENGINE-side levers the ECU owns, using the same cycle model (sim/life_study.py):
+This script adds only the ENGINE-side levers the ECU owns, using the same cycle model (sim/life_study.py, as-built E3/E4
+engine, docs/08_design_point_update.md):
   * intake set-point T1 = 12 C instead of 15 C in MAX-POWER (more coil load, taken from the hall share)
   * peak TIT 815 C in MAX-POWER (counted by the life counter)
 and the break-even of the intake coil versus outdoor temperature, plus an AUTO example.
@@ -35,7 +36,7 @@ COIL_DP_PENALTY = 0.35       # kW, intake-coil air-side pressure drop (roof_site
 
 def p_eng(T1, TIT=800):
     """AC power after the engine's own auxiliaries, intake air at T1 (same basis as MODES[...]['P_eng'])."""
-    r = L.point(115e3, TIT, 'target', T_amb_C=T1, alt_m=H.ALT, booster=False)
+    r = L.point(115e3, TIT, 'target', T_amb_C=T1, alt_m=H.ALT, booster=False, asbuilt=True)
     return r['P_el'] / 1e3 - COIL_DP_PENALTY, r['ma']
 
 
@@ -64,7 +65,7 @@ RATIO_COOL_PER_QCHP = None                  # filled from the HVAC design point 
 
 
 def pel(n, tit, t1=15.0):
-    return L.point(n, tit, 'target', T_amb_C=t1, alt_m=H.ALT, booster=False)['P_el'] / 1e3
+    return L.point(n, tit, 'target', T_amb_C=t1, alt_m=H.ALT, booster=False, asbuilt=True)['P_el'] / 1e3
 
 
 def bisect(f, lo, hi, target):
@@ -86,7 +87,7 @@ def operating_point(p_target, tit_part=750.0, n_min=100e3):
 
 
 def part_load():
-    full = L.point(115e3, 800, 'target', T_amb_C=15.0, alt_m=H.ALT, booster=False)
+    full = L.point(115e3, 800, 'target', T_amb_C=15.0, alt_m=H.ALT, booster=False, asbuilt=True)
     bal = MODES['BALANCED']
     k_cool = bal['cool'] / (full['Q_chp'] / 1e3)
     aux = bal['aux'] + CTRL_KW
@@ -100,7 +101,7 @@ def part_load():
                            ('peak 8 kW', SITE_KW['peak'], 0.0), ('peak + recharge', SITE_KW['peak'], CHARGE_KW)):
         p_req = site + aux + chg
         n, tit = operating_point(p_req)
-        r = L.point(n, tit, 'target', T_amb_C=15.0, alt_m=H.ALT, booster=False)
+        r = L.point(n, tit, 'target', T_amb_C=15.0, alt_m=H.ALT, booster=False, asbuilt=True)
         cool = k_cool * r['Q_chp'] / 1e3
         coil = H.coil_kW(15.0, r['ma'])
         hall = max(cool - coil, 0.0)
@@ -109,11 +110,11 @@ def part_load():
         print('  %-26s %6.1f | %5.1f %5.0f | %6.1f %5.1f%% | %6.1f %6.1f %6.1f %6.1f | %9.0f' % (
             lab, p_req, n / 1e3, tit, r['P_el'] / 1e3, r['eta_el'] * 100, r['Q_chp'] / 1e3, cool, coil, hall, min(r['life_blade'], 9.99e6)))
     n, tit = 100e3, 750.0
-    r = L.point(n, tit, 'target', T_amb_C=15.0, alt_m=H.ALT, booster=False)
+    r = L.point(n, tit, 'target', T_amb_C=15.0, alt_m=H.ALT, booster=False, asbuilt=True)
     print('  alternative for low load: 100k / 750 C = %.1f kW at %.1f %% and the surplus into the battery / EH-950 (battery cycling ~12 %% loss)'
           % (r['P_el'] / 1e3, r['eta_el'] * 100))
     print('  hall cooling demand (insulated hall, HVAC rev B): %.1f kW -> the gap is covered by the 3 company split ACs, whose extra'
-          % bal['hall'])
+          % (bal['hall'] + bal['hall_unmet']))
     print('  electric load raises the turbine set-point and therefore the exhaust heat: the loop is self-balancing (06 §5-b)')
     print('\nv2: grid export (after the DG permit): turbine at 115k / 800 C, HVAC BALANCED')
     for lab, site in (('typical', SITE_KW['typical']), ('peak', SITE_KW['peak'])):

@@ -25,6 +25,8 @@ sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 import cchp_study as C          # noqa: E402
+import life_study as L          # noqa: E402
+import gas_props as GP          # noqa: E402
 import roof_site_study as RS    # noqa: E402
 
 # ----------------------------------------------------------------------------------------------- site
@@ -36,7 +38,7 @@ WB_RECIRC = 0.5                                             # rooftop plume-reci
 CW_SUPPLY = 32.0                                            # cooling water to the chillers (docs/03 sec 8)
 DER = 0.92                                                  # chiller derate at 32 C cooling water (roof_site_study)
 CPW = 4.19                                                  # kJ/kg K
-CP_GAS = C.CP_LOW / 1e3                                     # 1.080 kJ/kg K exhaust (same as cchp_study)
+CP_GAS = C.CP_LOW / 1e3                                     # replaced below DESIGN by the real mean cp over the HX-1 range
 HOURS_YEAR = 8000.0                                         # 24/7 with maintenance stops (docs/03 sec 4)
 SUMMER_FRACTION = 0.70                                      # cooling season Apr-Nov
 EC_PER_TDS = 1 / 0.65                                       # uS/cm per ppm TDS (typical 0.55-0.75 ppm per uS/cm)
@@ -105,11 +107,14 @@ def engine_case(T_in, TIT=800, N=115e3):
     T_ex = r['T_stack_in'] - 273.15
     coil = RS.inlet_coil_kW(r['ma'], RS.OUT['T'], RS.OUT['w'], T_in) if T_in < RS.OUT['T'] else 0.0
     P = c['P_net'] - (0.35e3 if T_in < RS.OUT['T'] else 0)
+    exh = GP.exhaust(r['far'])                              # as-built engine: real cp(T) (docs/08_design_point_update.md)
     return dict(T_in=T_in, TIT=TIT, N=N, ma=r['ma'], mf=r['mf'], mg=mg, T_ex=T_ex,
-                Q_gas=mg * CP_GAS * (T_ex - 100.0), Q_hw=c['Q_hw'] / 1e3, Q_cool=c['Q_cool'] * DER / 1e3,
+                cp_gas=exh.cp_mean(T_ex + 273.15, 373.15) / 1e3,
+                Q_gas=mg * (exh.h(T_ex + 273.15) - exh.h(373.15)) / 1e3, Q_hw=c['Q_hw'] / 1e3, Q_cool=c['Q_cool'] * DER / 1e3,
                 coil=coil, P_net=P / 1e3, F=c['F'] / 1e3, P_aux_engine=r['P_aux'] / 1e3, P_shaft=r['P_shaft'] / 1e3)
 
 DESIGN = engine_case(15.0)                                  # summer design: intake chilled to 15 C
+CP_GAS = DESIGN['cp_gas']                                   # 1.037 kJ/kg K real (constant-cp model had 1.080)
 CASES = {'design 15C intake': DESIGN, 'spec nominal 22C': engine_case(22.0),
          'no intake coil 46C': engine_case(46.0), 'peak 815C, 15C intake': engine_case(15.0, 815)}
 
@@ -185,8 +190,16 @@ def hx_mass(g, L_tot, Nt, Lt, Nr):
     return dict(core=core, dry=core + casing + headers + insul, water=water,
                 op=core + casing + headers + insul + water, W=W, H=H, D=D)
 
-def design_hx():
+TOWER_KEEP = 60            # ton class of rev B, kept after the engine update for the same reasons as HX-1
+HX1_KEEP = (8, 0.60, 15)   # tubes/row, tube length m, rows: rev B geometry (sized for 69 kW at the old 262 C exhaust), kept after
+                           # the engine update (docs/08): with the as-built 219 C exhaust it reaches ~92 C gas exit and it can carry the fuel boost (sec. 14b)
+
+def design_hx(fixed=None):
     mw = DESIGN['Q_gas'] / (CPW * (HW_SUPPLY - HW_RETURN))
+    if fixed:
+        Nt, Lt, Nr = fixed
+        r = hx_rate(HXG, Nt, Lt, Nr, DESIGN['mg'], DESIGN['T_ex'], mw, HW_RETURN, ua_factor=0.9)
+        return dict(Nt=Nt, Lt=Lt, Nr=Nr, mw=mw, design=r, mass=hx_mass(HXG, r['L_tot'], Nt, Lt, Nr))
     best = None
     for Nt in range(5, 15):
         for Lt in (0.5, 0.6, 0.7, 0.8):
@@ -370,13 +383,13 @@ def glycol_loop(case):
     """Engine auxiliary loop (docs/electrical M-751, TE-GLY, DC-1): rectifier B3 -> PMG jacket -> oil cooler OC-1 -> DC-1
     (adiabatic pre-cooling pads) -> HX-4 trim when the tower runs. docs/electrical: TE-GLY ALM 58 / FSD 65 C; docs/06 section 2: PMG glycol 35-40 C target."""
     core = 2 * bearing_loss_W(115e3, 15.0)                  # 2 x 608 hybrid 8x22x7 (dm 15 mm), turbine oil ~10 cSt
-    fpt = 2 * bearing_loss_W(60e3, 23.5)                    # FPT/PMG pair, 15x32 class, only if it joins the oil system
+    fpt = 334.0 + 338.0                                     # FPT/PMG bearings B1 + B2 (E3, docs/engine/E3_fpt_pmg.md), if they join
     soak, pump = 400.0, 50.0                                # turbine-side heat soak into the oil (estimate), M-710 pump
     oil_core = (core + soak + pump) / 1e3                   # confirmed: closed-loop pressurised oil on the core 608s
     oil_all = oil_core + fpt / 1e3
     oil_design = math.ceil(oil_core * 1.25 * 10) / 10       # OC-1 sized for the core system (+25 %)
-    pmg = case['P_shaft'] * 0.05                            # PMG 95 % (concept_study)
-    rect = case['P_shaft'] * 0.95 * 0.015                   # SiC active rectifier ~1.5 %
+    pmg = 0.844                                             # PMG jacket heat to glycol at the design point (E3 sec. 11-4)
+    rect = case['P_shaft'] * L.ASBUILT['eta_gen'] * 0.015   # SiC active rectifier ~1.5 % of the PMG terminal power
     panels = 0.2                                            # air/water coolers of RP-1 / PEB (docs/electrical)
     Q_gly = pmg + rect + oil_core + panels
     Q_des = 4.0                                             # DC-1 design (FPT/PMG oil, 30 kW core later)
@@ -469,6 +482,7 @@ MODE_SPEC = {   # chillers, CW flow fraction (None = package), tower fan rule, h
 ALT_SPEC = {     # single SC10-class chiller option (CH-2 not installed)
     'SINGLE BALANCED':    dict(ch=('CH-1',), cw=None, fan='hold', hall='rest', T1=15.0, defer=False),
     'SINGLE MAX-COOLING': dict(ch=('CH-1',), cw=1.0, fan='max', hall='rest', T1=15.0, defer=False),
+    'BALANCED COLD-CW':   dict(ch=('CH-1', 'CH-2'), cw=1.0, fan='max', hall='rest', T1=15.0, defer=False),  # heat-limited: buy COP
 }
 ER_LOAD = 2.5
 HALL_DEMAND = None                                          # set in main (insulated roof, design hour)
@@ -503,6 +517,11 @@ def plant_solve(active, Q_hw_avail, demand, cw_frac, fan, ctx):
     return dict(cool=cool, cap=cap, Q_in=Q_in, cop=cop, Tc=Tc, T_ch_in=T_ch_in, Q_rej=Q_rej, L=L, L_ch=L_ch,
                 rng=rng_ch, surplus=Q_hw_avail - Q_in)
 
+def boosted(case, ctx):
+    """Extra hot-water heat Q_hw_add (kW) bought with fuel at eta_add (heat-shortfall options, section 16)."""
+    q = ctx.get('Q_hw_add', 0.0)
+    return dict(case, Q_hw=case['Q_hw'] + q, F=case['F'] + q / ctx.get('eta_add', 0.90)) if q else case
+
 def run_mode(mode, ctx):
     sp = MODE_SPEC[mode] if mode in MODE_SPEC else ALT_SPEC[mode]
     pk = PKG[ctx['rev']]
@@ -510,13 +529,13 @@ def run_mode(mode, ctx):
     cw = pk['cw_frac'] if sp['cw'] is None else sp['cw']
     hall_dem = HALL_DEMAND
     if not active:
-        case = engine_case(46.0, ctx.get('TIT', 800), ctx.get('N', 115e3))
+        case = boosted(engine_case(46.0, ctx.get('TIT', 800), ctx.get('N', 115e3)), ctx)
         res = dict(cool=0.0, cap=0.0, Q_in=0.0, cop=0.0, Tc=float('nan'), Q_rej=0.0, L=0.0, rng=0.0, surplus=case['Q_hw'])
         T1, fan, coil, hall = 46.0, 0.0, 0.0, 0.0
     else:
         T1 = sp['T1']
         for _ in range(8):
-            case = engine_case(T1, ctx.get('TIT', 800), ctx.get('N', 115e3))
+            case = boosted(engine_case(T1, ctx.get('TIT', 800), ctx.get('N', 115e3)), ctx)
             coil = coil_kW(T1, case['ma'])
             demand = coil + ER_LOAD + (0.0 if sp['hall'] == 'off' else hall_dem)
             prio = coil + ER_LOAD                               # intake coil and electrical room come first
@@ -621,13 +640,16 @@ def main():
     out['cases'] = CASES
 
     # ---------------------------------------------------------------- HX
-    hx = design_hx()
+    hx_min = design_hx()                                    # smallest bank that meets the 100 C basis (for reference)
+    hx = design_hx(fixed=HX1_KEEP)
     r, m = hx['design'], hx['mass']
     ex = exhaust_system(hx)
     dpt = dew_points(DESIGN)
     print('\n[1] EXHAUST/WATER HX  HX-1  (316L helical-finned tubes, counter-cross-flow, gas 1 pass, water %d passes)' % hx['Nr'])
-    print('  duty (gas side) %.1f kW, water %.2f kg/s (%.1f m3/h) %.0f->%.0f C, gas %.0f->100 C' % (
-        DESIGN['Q_gas'], hx['mw'], m3h(hx['mw'], 87), HW_RETURN, HW_SUPPLY, DESIGN['T_ex']))
+    print('  duty (gas side) %.1f kW, water %.2f kg/s (%.1f m3/h) %.0f->%.0f C, gas %.0f->100 C (basis; kept rev B bank reaches %.0f C'
+          ' with 10 %% UA margin; smallest bank for the basis would be %d x %d x %.2f m, %.0f kg dry)' % (
+        DESIGN['Q_gas'], hx['mw'], m3h(hx['mw'], 87), HW_RETURN, HW_SUPPLY, DESIGN['T_ex'], r['Tg_out'], hx_min['Nt'], hx_min['Nr'],
+        hx_min['Lt'], hx_min['mass']['dry']))
     lm = ((DESIGN['T_ex'] - HW_SUPPLY) - (100 - HW_RETURN)) / math.log((DESIGN['T_ex'] - HW_SUPPLY) / (100 - HW_RETURN))
     print('  LMTD (counterflow) %.1f K; required UA %.0f W/K (+10 %% margin)' % (lm, DESIGN['Q_gas'] * 1e3 / lm / 0.9))
     print('  geometry: %d tubes/row x %d rows, tube length %.2f m, OD %.1f mm x %.2f, fins %.0f/m x %.1f x %.1f mm' % (
@@ -680,7 +702,13 @@ def main():
                 return t_
     selA = select_tower(L_cw, Q_rej, 1.0)
     sel = select_tower(L_cw * pk['cw_frac'] + L_hx4, Q_rej + Q_hx4, pk['tower_fan_speed'])
+    sel_rule = sel['S']
+    if sel['S'] < TOWER_KEEP:
+        sel = tower_cold_water(TOWER_KEEP, L_cw * pk['cw_frac'] + L_hx4, Q_rej + Q_hx4, WB_TOWER + WB_RECIRC, pk['tower_fan_speed'])
     print('\n[3] COOLING TOWER CT-1 (open, induced draft, FRP; %s)' % pk['label'])
+    if sel_rule != sel['S']:
+        print('  as-built engine: the rule alone gives %d ton; the %d ton class is KEPT (fuel-boost option 14b, wet-bulb margin,'
+              ' unchanged plant model)' % (sel_rule, sel['S']))
     print('  rev A rule: Tc <= %.0f C at full fan, rated CW flow -> %d ton class; rev B rule: Tc <= %.0f C at %.0f %% fan,'
           ' %.0f %% CW flow + HX-4 -> %d ton class' % (CW_SUPPLY, selA['S'], CW_SUPPLY, pk['tower_fan_speed'] * 100,
                                                      pk['cw_frac'] * 100, sel['S']))
@@ -1070,6 +1098,52 @@ def main():
     out['recheck'] = dict(demand=demand, coil_28=coil_28, tower_single=sel_s, tower_single_fan_kW=fan_s,
                           tower_single_kg=TOWER_SIZES[sel_s['S']][3], tower_single_dia=TOWER_SIZES[sel_s['S']][1],
                           single=single, pair_balanced=b, part=part)
+
+    # ---------------------------------------------------------------- heat shortfall with the as-built engine
+    print('\n[14b] HEAT SHORTFALL (as-built engine, exhaust %.0f C): can SC10 + SC5 still carry the hall %.1f kW? options'
+          % (DESIGN['T_ex'], hall_ins))
+    b = modes['BALANCED']
+    print('  BALANCED: hot water %.1f kW of %.1f kW chiller heat capacity -> HEAT-limited, not chiller-limited; cooling %.1f kW'
+          ' = coil %.1f + elec room %.1f + hall %.1f (unmet %.1f)' % (b['Q_in'], ch['Qmax'], b['cool'], b['coil'], b['er'], b['hall'],
+                                                                     b['hall_unmet']))
+    opt = {}
+    def row(key, lab, m, fuel_add=0.0, note=''):
+        opt[key] = dict(label=lab, T1=m['T1'], cool=m['cool'], hall=m['hall'], unmet=m['hall_unmet'], aux=m['aux'], net=m['net'],
+                        net_hall=m['net'] - m['hall_unmet'] / C.COP_SPLIT, F=m['F'], fuel_add=fuel_add, note=note)
+    row('O0', 'BALANCED as is (coil first, T1 15 C)', b, note='hall short; company split ACs cover the rest')
+    row('O1', 'MAX-COOLING (hall first, coil takes the rest)', modes['MAX-COOLING'], note='no hardware')
+    # O2: keep the original 69 kW HX-1 (8 tubes/row) -> lower gas exit; O2b: same + hot water 85/78 C
+    big = hx_rate(HXG, hx['Nt'], hx['Lt'], hx['Nr'], DESIGN['mg'], DESIGN['T_ex'], hx['mw'], HW_RETURN)
+    sel_r = hx_rate(HXG, hx_min['Nt'], hx_min['Lt'], hx_min['Nr'], DESIGN['mg'], DESIGN['T_ex'], hx['mw'], HW_RETURN)
+    big78 = hx_rate(HXG, hx['Nt'], hx['Lt'], hx['Nr'], DESIGN['mg'], DESIGN['T_ex'], hx['mw'], 78.0)
+    for key, lab, r_ in (('O2', 'credit of the kept HX-1 (8 x 15 x 0.6 m) vs the 100 C basis', big), ('O2b', 'same + hot water 85/78 C', big78)):
+        q = (r_['Q'] - sel_r['Q']) * 0.95
+        row(key, lab, run_mode('BALANCED', dict(ctx, Q_hw_add=q, eta_add=1e9)),
+            note='gas out %.0f C, +%.1f kW heat%s' % (r_['Tg_out'], q, ', chiller COP at 85 C to be confirmed' if key == 'O2b' else ''))
+    # O3: fuel-fired boost sized for zero hall shortfall in BALANCED (recuperator cold-side bypass in the engine, or duct burner)
+    lo, hi = 0.0, 30.0
+    for _ in range(30):
+        mid = 0.5 * (lo + hi)
+        lo, hi = (mid, hi) if run_mode('BALANCED', dict(ctx, Q_hw_add=mid))['hall_unmet'] > 0.05 else (lo, mid)
+    q3 = hi
+    m3 = run_mode('BALANCED', dict(ctx, Q_hw_add=q3))
+    row('O3', 'fuel boost to zero shortfall (recup. bypass / duct burner)', m3, q3 / 0.90,
+        note='+%.1f kW heat, HX-1 duty %.1f kW' % (q3, DESIGN['Q_gas'] + q3 / 0.95))
+    # O4: electric trim (small air-cooled chiller on the CHW loop or the company split ACs), COP 2.6 at 46 C
+    o4 = dict(b, net=b['net'] - b['hall_unmet'] / C.COP_SPLIT, hall=b['hall'] + b['hall_unmet'], hall_unmet=0.0)
+    row('O4', 'BALANCED + electric trim for the shortfall (COP %.1f)' % C.COP_SPLIT, o4, note='%.1f kW electric' % (b['hall_unmet'] / C.COP_SPLIT))
+    # O5: heat-limited plant -> colder cooling water raises the COP: BALANCED rules with full tower fan and 100 % CW flow
+    m5 = run_mode('BALANCED COLD-CW', ctx)
+    row('O5', 'BALANCED + full tower fan / 100 % CW (cold CW, higher COP)', m5,
+        note='CW %.1f C, COP %.3f; +%.1f kW cooling for +%.2f kW aux' % (m5['Tc'], m5['cop'], m5['cool'] - b['cool'], m5['aux'] - b['aux']))
+    print('  %-4s %-58s %5s %6s %6s %6s %6s %7s %7s %7s  %s' % ('', 'option', 'T1', 'cool', 'hall', 'unmet', 'aux', 'NET', 'NET*',
+                                                              'fuel', 'note'))
+    for k, o in opt.items():
+        print('  %-4s %-58s %5.1f %6.1f %6.1f %6.1f %6.2f %7.2f %7.2f %7.1f  %s' % (k, o['label'], o['T1'], o['cool'], o['hall'], o['unmet'],
+              o['aux'], o['net'], o['net_hall'], o['F'], o['note']))
+    print('  * NET with the whole hall covered (unmet part by split ACs at COP %.1f): the fair comparison; fuel in kW' % C.COP_SPLIT)
+    out['shortfall'] = dict(Q_in=b['Q_in'], Qmax=ch['Qmax'], options=opt, Q_boost=q3, HX1_kept=big, HX1_kept78=big78,
+                           HX1_min=dict(Nt=hx_min['Nt'], Nr=hx_min['Nr'], Lt=hx_min['Lt'], dry=hx_min['mass']['dry']))
 
     # ---------------------------------------------------------------- fire suppression (FK-5-1-12)
     print('\n[15] FIRE SUPPRESSION, clean agent FK-5-1-12 (NFPA 2001 / ISO 14520 total flooding)')

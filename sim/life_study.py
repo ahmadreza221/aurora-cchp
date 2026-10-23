@@ -37,14 +37,39 @@ def creep_hours(sig, T_metal_K):
 
 EFF = {'target': dict(eta_c=0.73, eta_t=0.82, eta_pt=0.78), 'as-is': dict(eta_c=0.70, eta_t=0.80, eta_pt=0.75)}
 
-def point(N, TIT_C, eff='target', eps=0.90, T_amb_C=15.0, alt_m=0.0, booster=True):
+# As-built engine (docs/08_design_point_update.md).  Used by cchp_study, sim/hvac and docs/electrical/calc via asbuilt=True;
+# the engine sizing scripts (sim/engine/*) keep the original cycle (asbuilt=False) as their design basis.
+#  * E3 (docs/engine/E3_fpt_pmg.md): FPT aero 25.41 kW (E1 meanline P03 0.94 % below the cycle), bearings/seals 0.54 kW
+#    -> shaft 24.86 kW; PMG 24.86 -> 24.11 kW at the terminals (eta 0.970 here, 0.975 at the 30 kW rating).
+#    The FPT was matched to the cycle's back-pressure budget (recuperator hot side 3.5 %), so the budget dp is kept here.
+#  * E4 (sim/engine/e4_recuperator_calc.py): eps net 0.905 at design flow (clean 0.913 - 0.008), higher at part flow;
+#    duty and exhaust temperature with real cp(T) -> 169 kW, hot outlet ~219 C (constant-cp model: 159 kW, 262 C).
+E4_EPS_CLEAN = [(0.50, 0.941), (0.75, 0.926), (1.00, 0.913)]       # (flow / design flow, clean effectiveness), E4 sec. 5
+E4_EPS_LOSS, E4_FLOW_DES = 0.008, 0.3949                            # maldistribution + longitudinal conduction; kg/s
+ASBUILT = dict(fpt_k=0.9762, fpt_loss=540.0, eta_gen=0.970, real_cp=True)
+
+def eps_e4(ma):
+    x = ma / E4_FLOW_DES
+    pts = E4_EPS_CLEAN
+    if x <= pts[0][0]:
+        e = pts[0][1]
+    else:
+        i = 1 if x <= pts[1][0] else 2
+        (x0, e0), (x1, e1) = pts[i - 1], pts[i]
+        e = e0 + (x - x0) / (x1 - x0) * (e1 - e0)                  # linear, extrapolated above design flow
+    return e - E4_EPS_LOSS
+
+def point(N, TIT_C, eff='target', eps=0.90, T_amb_C=15.0, alt_m=0.0, booster=True, asbuilt=False):
     """Compressor runs on corrected speed N/sqrt(theta); physical flow = corrected flow * delta/sqrt(theta)."""
     th = (T_amb_C + 273.15) / 288.15; de = (1 - 2.25577e-5 * alt_m) ** 5.25588
     PR, ma_c = line(N / math.sqrt(th)); ma = ma_c * de / math.sqrt(th)
+    extra = dict(ASBUILT) if asbuilt else {}
+    if asbuilt:
+        eps = eps_e4(ma)
     r = cs.cycle(dict(EFF[eff], arch='fpt', ma=ma, PR=PR, TIT=TIT_C + 273.15, eps=eps,
-                      T_amb=T_amb_C + 273.15, P_amb=101325.0 * de, booster=booster))
+                      T_amb=T_amb_C + 273.15, P_amb=101325.0 * de, booster=booster, **extra))
     sb = 283.0 * (N / 120e3) ** 2
-    r.update(N=N, PR=PR, ma=ma, sig_blade=sb, sig_bore=640.0 * (N / 120e3) ** 2,
+    r.update(N=N, PR=PR, ma=ma, eps=eps, sig_blade=sb, sig_bore=640.0 * (N / 120e3) ** 2,
              life_blade=creep_hours(1.5 * sb, TIT_C + 273.15 - 70), T4=None)
     return r
 

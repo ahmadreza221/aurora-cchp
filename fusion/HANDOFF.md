@@ -4,7 +4,8 @@
 
 ## Context
 - Project: GR180-based micro gas turbine CCHP. >20 kW 3-phase electric (η_el ≈ 20 %, total ≈ 55 %), absorption chiller,
-  DHW, 24/7 duty, ground-level open-field install in Borazjan (50 m altitude, ambient up to 46 °C).
+  DHW, 24/7 duty, rooftop install on the company building's reinforced-concrete roof in Borazjan (site ~50 m altitude,
+  ambient up to 46 °C, engine intake chilled to 15 °C). Design point: `docs/06_master_design.md` §2.
 - Precision matters: the parts are made by CNC, SLM and vacuum investment casting (IN713LC).
 - **The geometry source is the Python code**, not Fusion:
   - `cad/engine/gg_turbine.py`: turbine stage geometry.

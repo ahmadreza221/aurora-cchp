@@ -45,7 +45,7 @@ IO = [
     ('PSH-111', 'سوئیچ فشار بالای مدار آب داغ 5.0 bar', 'SAFE-DI', 'NC contact', 'HX-1 outlet', 'SR1', 'SI17 سری با TSHH-111 (قبل از PSV 5.5 bar)'),
     ('TE-112', 'دمای برگشت آب به HX-1', 'AI-RTD', '0-150 °C', 'HX-1 inlet', 'B6-R', 'L 70 °C → bypass جزئی (میعان اسیدی)'),
     ('PT-111', 'فشار استاتیک مدار آب داغ', 'AI-mA', '0-10 bar', 'P-1 suction', 'B6-R', 'L 0.8 bar نشتی؛ H 4.5 bar'),
-    ('FT-111', 'دبی مدار اولیه آب داغ (electromagnetic)', 'AI-mA', '0-15 m³/h', 'P-1 discharge', 'B6-R', 'L 6 m³/h'),
+    ('FT-111', 'دبی مدار اولیه آب داغ (electromagnetic)', 'AI-mA', '0-15 m³/h', 'P-1 discharge', 'B6-R', 'L 4.5 m³/h (design 6.2)'),
     ('FSL-111', 'فلوسوئیچ مدار اولیه (paddle/thermal)', 'SAFE-DI', 'NC contact', 'HX-1 inlet', 'SR1', 'SI18 با تأخیر 10 s → K-EX؛ reset خودکار وقتی دبی برگشت'),
     ('P-1-CMD', 'فرمان پمپ دوقلوی P-1A/B', 'DO', 'relay', 'PS-1', 'B6-R', 'همیشه روشن وقتی موتور روشن است + 15 min run-on'),
     ('P-1-FLT', 'خطای پمپ P-1 (هر دو هد)', 'DI', 'dry contact', 'PS-1', 'B6-R', ''),

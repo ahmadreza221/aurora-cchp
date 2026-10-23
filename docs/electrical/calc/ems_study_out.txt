@@ -2,52 +2,52 @@ EMS modes at the Borazjan summer design hour (DB 46 C / WB 28 C). HVAC side from
 net = AC power left for the company after engine and HVAC auxiliaries; el-eq = net + (hall + elec-room cooling)/COP 2.6
 
 mode                               chillers      T1  P_eng   cool   coil   hall  unmet    aux     NET
-MAX-COOLING                        CH-1+CH-2     15   22.6   37.3   17.0   17.8    0.0   4.98   17.60
-BALANCED                           CH-1+CH-2     15   22.6   37.3   17.0   17.8    0.0   3.28   19.30
-MAX-POWER                          CH-1          15   22.6   30.1   17.0   10.6    7.2   2.24   20.34
-MAX-POWER T1=12C                   CH-1          12   23.6   30.1   20.4    7.2   10.6   2.24   21.33
-MAX-POWER-HALL-OFF                 CH-1          15   22.6   19.5   17.0    0.0   17.8   2.07   20.51
-NO-COOLING                         -             46   14.5    0.0    0.0    0.0   17.8   1.46   12.99
+MAX-COOLING                        CH-1+CH-2     17   21.6   34.6   14.3   17.8    0.0   4.87   16.75
+BALANCED                           CH-1+CH-2     15   22.3   29.4   17.0    9.9    7.9   3.03   19.32
+MAX-POWER                          CH-1          15   22.3   27.0   17.0    7.5   10.3   2.12   20.23
+MAX-POWER T1=12C                   CH-1          12   23.4   27.0   20.4    4.1   13.7   2.12   21.24
+MAX-POWER-HALL-OFF                 CH-1          15   22.3   19.5   17.0    0.0   17.8   2.00   20.35
+NO-COOLING                         -             46   14.1    0.0    0.0    0.0   17.8   1.45   12.67
 
 engine-side levers in MAX-POWER (ECU): CH-1 only, hall gets the rest of CH-1
 mode                                  T1   TIT  P_eng   coil   hall    aux     NET   el-eq  note
-MAX-POWER (HVAC model, T1 15 C)       15   800   22.6   17.0   10.6   2.24   20.34    25.4  
-MAX-POWER, T1 12 C                    12   800   23.6   20.4    7.2   2.24   21.33    25.1  
-MAX-POWER, T1 12 C + TIT 815 C        12   815   24.7   20.4    7.2   2.24   22.42    26.2  
+MAX-POWER (HVAC model, T1 15 C)       15   800   22.3   17.0    7.5   2.12   20.23    24.1  
+MAX-POWER, T1 12 C                    12   800   23.4   20.4    4.1   2.12   21.24    23.8  
+MAX-POWER, T1 12 C + TIT 815 C        12   815   24.5   20.4    4.1   2.12   22.34    24.9  
 
-net gain vs BALANCED (19.30 kW): MAX-COOLING -1.70, MAX-POWER +1.04, MAX-POWER T1=12C +2.04, MAX-POWER-HALL-OFF +1.21, NO-COOLING -6.31, MAX-POWER, T1 12 C +2.03, MAX-POWER, T1 12 C + TIT 815 C +3.12
+net gain vs BALANCED (19.32 kW): MAX-COOLING -2.57, MAX-POWER +0.92, MAX-POWER T1=12C +1.92, MAX-POWER-HALL-OFF +1.03, NO-COOLING -6.65, MAX-POWER, T1 12 C +1.92, MAX-POWER, T1 12 C + TIT 815 C +3.02
 
-break-even of the intake coil: CH-1 for the coil only (aux 2.07 kW) vs NO-COOLING (aux 1.46 kW), engine at 15 C vs outdoor:
+break-even of the intake coil: CH-1 for the coil only (aux 2.00 kW) vs NO-COOLING (aux 1.45 kW), engine at 15 C vs outdoor:
      DB |  P_15C  P_out |   gain | verdict
-     46 |   22.5   14.1 |   +7.8 | run CH-1 for the coil
-     42 |   22.5   14.9 |   +7.0 | run CH-1 for the coil
-     38 |   22.5   15.9 |   +6.0 | run CH-1 for the coil
-     34 |   22.5   16.9 |   +5.0 | run CH-1 for the coil
-     30 |   22.5   18.0 |   +3.9 | run CH-1 for the coil
-     26 |   22.5   19.2 |   +2.8 | run CH-1 for the coil
-     22 |   22.5   20.3 |   +1.6 | run CH-1 for the coil
-     20 |   22.5   20.9 |   +1.0 | run CH-1 for the coil
-     18 |   22.5   21.6 |   +0.3 | run CH-1 for the coil
+     46 |   22.3   13.7 |   +8.0 | run CH-1 for the coil
+     42 |   22.3   14.6 |   +7.2 | run CH-1 for the coil
+     38 |   22.3   15.6 |   +6.2 | run CH-1 for the coil
+     34 |   22.3   16.6 |   +5.1 | run CH-1 for the coil
+     30 |   22.3   17.7 |   +4.0 | run CH-1 for the coil
+     26 |   22.3   18.9 |   +2.9 | run CH-1 for the coil
+     22 |   22.3   20.1 |   +1.7 | run CH-1 for the coil
+     20 |   22.3   20.7 |   +1.1 | run CH-1 for the coil
+     18 |   22.3   21.3 |   +0.4 | run CH-1 for the coil
   (aux difference held at the design-hour value; HVAC season changeover 16/20 C with 48 h hold covers the low end)
 
 AUTO example, summer noon, company demand 20.0 kW:
   BALANCED      net 19.3 kW -> deficit 0.7 kW from the battery
-  MAX-POWER (HVAC model, T1 15 C) net 20.3 kW -> deficit -0.3 kW
-  MAX-POWER, T1 12 C             net 21.3 kW -> deficit -1.3 kW
-  MAX-POWER, T1 12 C + TIT 815 C net 22.4 kW -> deficit -2.4 kW
+  MAX-POWER (HVAC model, T1 15 C) net 20.2 kW -> deficit -0.2 kW
+  MAX-POWER, T1 12 C             net 21.2 kW -> deficit -1.2 kW
+  MAX-POWER, T1 12 C + TIT 815 C net 22.3 kW -> deficit -2.3 kW
 
 v1: grid as automatic backup, ZERO EXPORT (and island in a grid outage): turbine follows the site load
-  HVAC aux 3.28 kW (BALANCED) + controls 0.3 kW; cooling per kW of recoverable heat 0.563 (HVAC design point 37.3 kW / 66.2 kW)
+  HVAC aux 3.03 kW (BALANCED) + controls 0.3 kW; cooling per kW of recoverable heat 0.618 (HVAC design point 29.4 kW / 47.6 kW)
   case                        P_req |  N1 k   TIT |   P_el    eta |  Q_rec   cool   coil   hall |   blade h
   (rule: TIT 750 C and the lowest speed; below 13.7 kW lower TIT at 100k; peak TIT 800 C only for export)
-  typical 5 kW                  8.6 | 100.0   644 |    8.6  12.6% |   41.0   23.1   14.4    8.7 |   9990000
-  typical + recharge           10.6 | 100.0   685 |   10.6  14.7% |   43.6   24.5   14.4   10.1 |   9990000
-  peak 8 kW                    11.6 | 100.0   706 |   11.6  15.7% |   44.8   25.3   14.4   10.8 |   9990000
-  peak + recharge              13.6 | 100.0   747 |   13.6  17.5% |   47.3   26.7   14.4   12.3 |   4242453
-  alternative for low load: 100k / 750 C = 13.7 kW at 17.6 % and the surplus into the battery / EH-950 (battery cycling ~12 % loss)
+  typical 5 kW                  8.3 | 100.0   647 |    8.3  12.5% |   26.2   16.2   14.4    1.8 |   9990000
+  typical + recharge           10.3 | 100.0   688 |   10.3  14.8% |   27.5   17.0   14.4    2.6 |   9990000
+  peak 8 kW                    11.3 | 100.0   708 |   11.3  15.8% |   28.2   17.4   14.4    3.0 |   9990000
+  peak + recharge              13.3 | 100.0   749 |   13.3  17.8% |   29.6   18.3   14.4    3.9 |   3763448
+  alternative for low load: 100k / 750 C = 13.4 kW at 17.8 % and the surplus into the battery / EH-950 (battery cycling ~12 % loss)
   hall cooling demand (insulated hall, HVAC rev B): 17.8 kW -> the gap is covered by the 3 company split ACs, whose extra
   electric load raises the turbine set-point and therefore the exhaust heat: the loop is self-balancing (06 §5-b)
 
 v2: grid export (after the DG permit): turbine at 115k / 800 C, HVAC BALANCED
-  site typical   5.0 kW -> export  14.0 kW (net after HVAC 19.3 kW); MAX-POWER T1 12 C with the hall empty: export  16.0 kW
-  site peak      8.0 kW -> export  11.0 kW (net after HVAC 19.3 kW); MAX-POWER T1 12 C with the hall empty: export  13.0 kW
+  site typical   5.0 kW -> export  14.0 kW (net after HVAC 19.3 kW); MAX-POWER T1 12 C with the hall empty: export  15.9 kW
+  site peak      8.0 kW -> export  11.0 kW (net after HVAC 19.3 kW); MAX-POWER T1 12 C with the hall empty: export  12.9 kW

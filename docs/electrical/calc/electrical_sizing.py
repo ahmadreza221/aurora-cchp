@@ -11,17 +11,19 @@ Run:  python3 docs/electrical/calc/electrical_sizing.py
 import math
 
 # ---------------------------------------------------------------- design basis (docs/03 §1, §5, §9; sim/cchp_study.py)
-P_SHAFT_V1 = 25.6e3      # FPT shaft power, 115k / TIT 800 C / intake chilled to 15 C (sim: life_study.point)
+P_SHAFT_V1 = 24.86e3     # FPT shaft power, 115k / TIT 800 C / intake 15 C: E3 as-built (docs/engine/E3_fpt_pmg.md, docs/08)
+P_TERM_V1 = 24.11e3      # PMG terminal power at that point (E3: 758 W PMG losses)
 P_DESIGN = 30e3          # modular rating of FPT, PMG, rectifier, inverter (docs/03 §0)
-ETA_PMG, ETA_REC = 0.95, 0.985
+ETA_PMG, ETA_REC = 0.975, 0.985   # PMG at the 30 kW rating (E3); active rectifier B3
 N2_RATED, N2_MAX_GOV, N2_TRIP_SMCU = 60e3, 65e3, 71.5e3
-E_LL_RATED = 360.0       # PMG back-EMF, line-line rms at 60k rpm (design rule chosen below)
-L_S = 100e-6             # PMG synchronous inductance per phase (assumed, high-speed SPM)
+E_LL_RATED = 358.0       # PMG back-EMF, line-line rms at 60k rpm (E3 design; target 360)
+L_S = 322e-6             # PMG synchronous inductance per phase (E3: 2-pole SPM, 24 slots, 28 turns/phase)
 V_MP, V_OC, V_CHOP_ON, V_CHOP_FULL, V_OVP_HW = 720.0, 780.0, 800.0, 830.0, 900.0   # DC link (PV-emulation window)
 I_MPPT_MAX = 36.0        # per-MPPT current limit of the reference hybrid inverter (Deye SUN-30K-SG01HP3-EU-BM3: 3x 36 A, 150-850 V)
 
-# rotor of the free power turbine + PMG (assumed until the FPT/PMG CAD exists)
-J_FPT, J_PMG, J_SHAFT = 4.0e-4, 3.0e-4, 1.0e-4   # kg m^2
+# rotor of the free power turbine + PMG, from the E3 CAD: blisk 3.04, magnets 1.61, shaft 1.17, sleeve/rings 0.39 e-4 + bearing
+# inner rings = 6.47e-4 kg m^2 (was assumed 4 + 3 + 1 = 8.0e-4 before the CAD existed)
+J_ROTOR = 6.47e-4        # kg m^2
 
 # loads (docs/03 §0, §2; company ~20 kW of pumps + split/packaged AC)
 INV_P = 30e3             # inverter rating, 3-phase 400/230 V
@@ -43,9 +45,9 @@ def hdr(t):
 
 def pmg_rectifier():
     hdr('1. PMG / active rectifier window')
-    p_dc = P_SHAFT_V1 * ETA_PMG * ETA_REC
-    print('v1 DC power into the inverter PV port: %.1f kW (shaft %.1f kW x PMG %.2f x rectifier %.3f)'
-          % (p_dc / 1e3, P_SHAFT_V1 / 1e3, ETA_PMG, ETA_REC))
+    p_dc = P_TERM_V1 * ETA_REC
+    print('v1 DC power into the inverter PV port: %.1f kW (shaft %.2f kW -> PMG terminals %.2f kW (eta %.3f here, %.3f at 30 kW)'
+          ' x rectifier %.3f)' % (p_dc / 1e3, P_SHAFT_V1 / 1e3, P_TERM_V1 / 1e3, P_TERM_V1 / P_SHAFT_V1, ETA_PMG, ETA_REC))
     for poles in (2, 4):
         f = [n / 60 * poles / 2 for n in (50e3, N2_RATED, N2_MAX_GOV, N2_TRIP_SMCU)]
         print('  %d-pole PMG: f_e = %.0f / %.0f / %.0f / %.0f Hz at 50k / 60k / 65k / 71.5k rpm -> f_sw >= 30 x f_e = %.0f kHz'
@@ -68,9 +70,9 @@ def pmg_rectifier():
 
 def overspeed():
     hdr('2. FPT load loss: overspeed with NO electrical braking')
-    J = J_FPT + J_PMG + J_SHAFT
+    J = J_ROTOR
     w0 = 2 * math.pi * N2_RATED / 60
-    print('J (FPT + PMG + shaft) = %.1e kg m^2 (assumed); stored energy at 60k = %.1f kJ' % (J, 0.5 * J * w0 ** 2 / 1e3))
+    print('J (FPT + PMG + shaft, E3 CAD) = %.2e kg m^2; stored energy at 60k = %.1f kJ' % (J, 0.5 * J * w0 ** 2 / 1e3))
     for p in (P_SHAFT_V1, P_DESIGN):
         for pct in (1.05, 1.10, 1.20):
             dt = 0.5 * J * ((w0 * pct) ** 2 - w0 ** 2) / p
@@ -82,6 +84,16 @@ def overspeed():
         print('    tau %4.1f s: E %5.0f kJ -> runaway bound %.0fk rpm (%.0f %%), windage/turbine torque roll-off ignored'
               % (tau, e / 1e3, wf * 60 / 2 / math.pi / 1e3, wf / w0 * 100))
     print('  => braking must be local hardware (< 20 ms), continuous, and redundant (DC chopper + independent PMG brake).')
+
+
+def pmg_brake(n, R):
+    """Diode bridge + R on the PMG terminals with commutation overlap: (P W, V_dc, I_dc, overlap angle deg)."""
+    w = 2 * math.pi * n / 60
+    e = E_LL_RATED * n / N2_RATED
+    vdc = 1.35 * e / (1 + 3 * w * L_S / (math.pi * R))
+    idc = vdc / R
+    mu = math.degrees(math.acos(max(-1.0, 1 - 2 * w * L_S * idc / (math.sqrt(2) * e))))
+    return vdc ** 2 / R, vdc, idc, mu
 
 
 def dump_resistor():
@@ -97,10 +109,22 @@ def dump_resistor():
     for lab, e in cases:
         print('  %-80s %6.0f kJ' % (lab, e / 1e3))
     print('  rating: 36 kW peak (10 s), >= 400 kJ adiabatic, 6 kW continuous, IP23 + rain hood, NC thermal switch')
-    for n in (N2_RATED, 66e3, N2_TRIP_SMCU):
-        vdc = 1.35 * E_LL_RATED * n / N2_RATED
-        print('  independent PMG brake (diode bridge + chopper, R 8 ohm): %.1fk rpm -> %.0f V DC -> %.1f kW'
-              % (n / 1e3, vdc, vdc ** 2 / 8.0 / 1e3))
+    print('  independent PMG brake (diode bridge + resistor), with the E3 source reactance L_s %.0f uH: commutation overlap'
+          ' V_dc = 1.35 E_LL / (1 + 3 w L_s / (pi R)) (valid to mu ~60 deg; above it optimistic)' % (L_S * 1e6))
+    for R in (8.0, 6.0, 5.0):
+        row, n_eq = [], {}
+        for n in (N2_RATED, 66e3, N2_TRIP_SMCU):
+            p, vdc, idc, mu = pmg_brake(n, R)
+            row.append('%.1fk %.0f V %.0f A mu %.0f -> %.1f kW' % (n / 1e3, vdc, idc, mu, p / 1e3))
+        for P_ in (P_SHAFT_V1, P_DESIGN):
+            n = 40e3
+            while n < 90e3 and pmg_brake(n, R)[0] < P_:
+                n += 100.0
+            n_eq[P_] = n
+        print('    R %.0f ohm: %s | holds %.2f kW at %.1fk, %.0f kW at %.1fk rpm' % (
+            R, '; '.join(row), P_SHAFT_V1 / 1e3, n_eq[P_SHAFT_V1] / 1e3, P_DESIGN / 1e3, n_eq[P_DESIGN] / 1e3))
+    print('  => with L_s 322 uH the 8 ohm brake only balances the shaft power at the 71.5k trip speed: use 5 ohm (3 x 15 ohm),'
+          ' I_dc ~70 A (1.4 pu, short time; I_sc 102 A); confirm with a circuit simulation (bridge + L_s) before ordering')
 
 
 def precharge():
@@ -127,7 +151,7 @@ INVERTERS = [
 SPLIT_RLA, SPLIT_LRA = 5.5, 27.0     # 12,000 BTU fixed-speed wall split (~1.2 kW), LRA ~5x RLA (measure at commissioning)
 FRIDGE_RLA, FRIDGE_LRA = 0.8, 8.0
 PUMP_FLC_3PH = 3.0e3 / (math.sqrt(3) * 400 * 0.86 * 0.82) * 0.95   # 3 kW pump on VFD, input current per phase (VFD PF ~0.95)
-AUX_HVAC_KW = 3.3                    # HVAC aux BALANCED (docs/hvac rev B), mostly three-phase
+AUX_HVAC_KW = 3.04                   # HVAC aux BALANCED (docs/hvac rev B, as-built engine docs/08), mostly three-phase
 CTRL_KW = 0.3
 PHASE_1PH_KW = {'L1': ('split 1 + fridge + lighting 0.6 kW', 1.2 + 0.15 + 0.6), 'L2': ('split 2 + PCs 0.8 kW', 1.2 + 0.8),
                 'L3': ('split 3 + TV/sockets 0.4 kW + ER single-phase HVAC (FCU-E/AC-E) 0.9 kW', 1.2 + 0.4 + 0.9)}

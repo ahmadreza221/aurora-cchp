@@ -10,6 +10,7 @@ Design-point cycle (ISA 15 C), air flow of the GR180 compressor at ~117-120k rpm
 Run:  uv run sim/concept_study.py
 """
 import math
+import gas_props as GP
 
 CP_A, G_A, R_A = 1005.0, 1.40, 287.0
 CP_G, G_G = 1148.0, 1.333
@@ -23,6 +24,9 @@ def gas_booster_kW(mf, p_out_bar_abs, p_in_bar_abs=1.03, T=293.0, eta=0.50):
     return mf * R_CH4 * T * math.log(p_out_bar_abs / p_in_bar_abs) / eta / 1e3
 
 def cycle(c):
+    """Optional as-built keys (defaults = original constant-cp model): fpt_k (FPT aero-work factor), fpt_loss (W, FPT
+    bearing/seal loss instead of the 1.5 % mechanical loss), eta_gen (PMG, default 0.95), real_cp (recuperator duty and
+    exhaust temperatures with real cp(T), sim/gas_props.py) - see life_study.ASBUILT."""
     ma, PR, T3 = c['ma'], c['PR'], c['TIT']
     eps = c.get('eps', 0.0)
     dp_rc, dp_rh = (0.025, 0.035) if eps > 0 else (0.0, 0.0)
@@ -44,20 +48,27 @@ def cycle(c):
         else:                                                 # gas generator + free power turbine
             w_t = w_c / (0.985 * (1 + f)); T4 = T3 - w_t / CP_G
             P4 = P3 * ((T3 - w_t / (CP_G * c['eta_t'])) / T3) ** (1 / EX_G) * (1 - 0.015)   # + interduct
-            dh = CP_G * T4 * (1 - (P_exit / P4) ** EX_G); w_pt = c['eta_pt'] * dh
+            dh = CP_G * T4 * (1 - (P_exit / P4) ** EX_G); w_pt = c['eta_pt'] * dh * c.get('fpt_k', 1.0)
             T_hot = T4 - w_pt / CP_G
-            P_shaft = mg * w_pt * 0.985
+            P_shaft = mg * w_pt * 0.985 if c.get('fpt_loss') is None else mg * w_pt - c['fpt_loss']
         T_hot_in = T_hot
     T_after_rec = T_hot - ma * CP_A * (T2r - T2) / (mg * CP_G)
+    Q_rec = ma * CP_A * (T2r - T2)
     mf = ma * f
-    P_el_gross = P_shaft * 0.95 * 0.96                        # high-speed PMG 95 % x active rectifier + 3-ph inverter 96 %
+    if c.get('real_cp'):                                      # same temperatures 165 -> 566 / 610 C, real duty (E4)
+        exh = GP.exhaust(f)
+        Q_rec = ma * (GP.AIR.h(T2r) - GP.AIR.h(T2))
+        T_after_rec = exh.T_of_h(exh.h(T_hot) - Q_rec / mg)
+    P_el_gross = P_shaft * c.get('eta_gen', 0.95) * 0.96                        # high-speed PMG 95 % x active rectifier + 3-ph inverter 96 %
     P_aux = (gas_booster_kW(mf, P3 / 1e5 + 1.0) * 1e3 if c.get('booster', True) else 0.0) + 450.0  # booster + oil pump, ECU, fans, water pump
     P_net = P_el_gross - P_aux
     Q_fuel = mf * LHV
     Q_chp = mg * CP_G_LOW * max(T_after_rec - 363.0, 0) * 0.90  # water HX to 90 C stack, 10 % HX/piping losses
+    if c.get('real_cp'):
+        Q_chp = mg * max(exh.h(T_after_rec) - exh.h(363.0), 0) * 0.90
     return dict(P3=P3, P_shaft=P_shaft, P_el=P_net, P_aux=P_aux, eta_el=P_net / Q_fuel, Q_chp=Q_chp,
                 eta_tot=(P_net + Q_chp) / Q_fuel, mf=mf, T2r=T2r, T_hot=T_hot, T_stack_in=T_after_rec, Q_fuel=Q_fuel,
-                Q_rec=ma * CP_A * (T2r - T2), T2=T2)
+                Q_rec=Q_rec, T2=T2, far=f)
 
 CORE = dict(ma=0.40, PR=3.2)
 CONCEPTS = [
