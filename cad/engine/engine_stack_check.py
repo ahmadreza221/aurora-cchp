@@ -58,11 +58,9 @@ for i, a in enumerate(keys):
         jt = JOINT_TOUCH.get((a, b)) or JOINT_TOUCH.get((b, a))
         if jt:
             res['joint_contacts'][jt] = dict(a=a, b=b, overlap_mm3=round(max(v, 0.0), 3), distance_mm=round(A.distToShape(B)[0], 3))
-        elif A.BoundBox.intersect(B.BoundBox) and v <= 1.0:
-            try:
-                d = A.distToShape(B)[0]
-                if d < 5.0: res['near_misses_mm']['%s / %s' % (a, b)] = round(d, 2)
-            except Exception: pass
+        elif v <= 1.0 and A.BoundBox.intersect(B.BoundBox) and (sa, sb) != ('E3', 'core') and (sb, sa) != ('E3', 'core'):
+            res['near_misses_mm']['%s / %s' % (a, b)] = 'bounding boxes overlap, no solid overlap'   # distToShape is too slow on B-spline parts
+        if res['pairs_checked'] % 200 == 0: say('  ... %d pairs' % res['pairs_checked'])
 say('pairs checked %d, interferences %d' % (res['pairs_checked'], len(res['interferences'])))
 
 # flange coincidence from the published interface files (all converted to ENG mm)

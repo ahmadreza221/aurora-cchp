@@ -380,6 +380,7 @@ ci = V(pH.x, y_el_start, z_el_end)          # tight bend (R < r_ins): insulation
 _ap = [ci + V(0, R_E * math.sin(a), R_E * math.cos(a)) for a in [math.radians(22.5 * k) for k in range(5)]]
 _pc = [cyl(ro + T_INS_HOT, _ap[k], _ap[k + 1]) for k in range(4)] + [Part.makeSphere(ro + T_INS_HOT, q) for q in _ap[1:4]]
 o_ins = _pc[0].fuse(_pc[1:])
+o_ins = o_ins.common(box(pH.x - 400, pH.x + 400, pH.y + bH, pH.y + 1000, pH.z - 1000, pH.z + 400))   # spheres (r > R_E) must not bulge back past the E4 flange into E3
 INSUL += [cyl(ro + T_INS_HOT, pH + V(0, bH, 0), V(pH.x, y_el_start, pH.z)), o_ins,
           cyl(ro + T_INS_HOT, endp, V(endp.x, endp.y, Z_PLT))]
 INFO['H1_route'] = dict(elbow_R=R_E, bellows_y=(pH.y + bH, y_el_start), entry=(endp.x, endp.y, Z_PLT))
