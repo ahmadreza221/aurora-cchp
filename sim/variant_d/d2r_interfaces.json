@@ -2,17 +2,22 @@
  "title": "GR180 D2R rotor / turbine / generator interfaces",
  "frame": "ENG mm (x engine axis downstream, z up); ROOF m via X = 1.880 + x/1000 (engine-frame EP-1 2026-10-23)",
  "exhaust_start": {
-  "x": 176.0,
-  "ID_mm": 70.7,
-  "flange_OD_mm": 104.0,
-  "bolts": "6 x M6 on PCD 94",
-  "face": "exducer shroud T-121 rear face, gas leaves axially, c ~300 m/s, ~600 C, no swirl at design",
+  "x": 199.0,
+  "ID_mm": 74.8,
+  "vband_OD_mm": 100.0,
+  "joint": "V-band (EX-111 ring on the exhaust side), Inconel clamp",
+  "exducer_exit": {
+   "x": 169.0,
+   "ID_mm": 70.7
+  },
+  "face": "T-121 shroud rear face; the shroud already carries the first diffuser cone 70.7 -> 74.8 (4.3 deg half angle) from x 172",
+  "gas": "~600 C, c ~270 m/s at x 199, no swirl at design",
   "roof": [
-   2.056,
+   2.079,
    7.85,
    0.6
   ],
-  "mating": "EXHAUST agent diffuser inlet: ID 70.7, cone from here to DN200"
+  "mating": "EXHAUST agent EX-111 V-band inlet ring (x 199-207, ID 74.8, OD 100) - unchanged"
  },
  "casing_rear_flange": {
   "x": 116.0,
@@ -23,32 +28,18 @@
   "bolts": "4 x M5 PCD 88 at 45/135/225/315 deg (longer bolts, M5x20 A286)",
   "stack": "casing flange | T-116 support flange (x 116-118) | T-120 housing front wall (x 118-121)"
  },
- "turbine_housing_mounts": {
-  "pads": "2 pads y = +/-(73..85), x 128-142, z -10..10, one vertical M10 bolt each at x 135, y +/-79",
-  "roof_left": [
-   2.015,
-   7.929,
-   0.6
+ "turbine_housing_support": {
+  "x_collar": [
+   128.0,
+   146.0
   ],
-  "roof_right": [
-   2.015,
-   7.771,
-   0.6
-  ],
-  "note": "turbine housing carries the hot end on the engine frame (FRAME agent); the 0.3 mm casing sheet must not carry it"
- },
- "turbine_housing_envelope": {
-  "x": [
-   118.0,
-   155.0
-  ],
-  "OD": 146.0,
-  "pads_y": 85.0
+  "shell_OD": 168.0,
+  "note": "plenum shell OD 168 kept from RT2 so the FRAME collar FR-130 (centre-line ears, sliding) clamps it at x 128-146; the 0.3 mm casing sheet must not carry the hot end"
  },
  "tit_probe": {
-  "x": 138.0,
-  "z_top": 80.0,
-  "thread": "M8x1 boss, K-type 3 mm sheathed, tip in the plenum at r ~68"
+  "x": 150.0,
+  "z_top": 91.0,
+  "thread": "M8x1 boss, K-type 3 mm sheathed, tip in the plenum at r ~78"
  },
  "generator_pod": {
   "bore_r": 49.0,
@@ -82,7 +73,7 @@
   "quill_guard": {
    "x": [
     -108.0,
-    -74.0
+    -64.0
    ],
    "OD": 20.0
   }
@@ -102,9 +93,13 @@
  "rotor_axial": {
   "core_locating_bearing_x": 6.8,
   "quill_axial_float_mm": 0.5,
-  "engine_nose_cup": [
-   -70.0,
-   -43.0
+  "quill_socket_x": [
+   -57.5,
+   -45.5
+  ],
+  "shaft_hex_x": [
+   -56.0,
+   -44.5
   ]
  }
 }
