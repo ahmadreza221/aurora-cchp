@@ -296,9 +296,9 @@ LAY = dict(
     hx=dict(z=(570.0 + L_mm + 40.0, 570.0 + L_mm + 40.0 + hx['height_m'] * 1e3 + 40.0), tubes_per_row=hx['n_tubes_per_row'], rows=hx['n_rows'],
             Pt=HX['Pt'] * 1e3, Pl=HX['Pl'] * 1e3, Do=HX['Do'] * 1e3, fin_D=HX['fin_D'] * 1e3, water_DN=32),
     stack=dict(DN=200, D=320.0, h=150.0),
-    risers=dict(C1=dict(x=-11.0, y=300.0, DN=100), C2=dict(x=71.0, y=-300.0, DN=125)),
+    risers=dict(C1=dict(x=-11.0, y=345.0, DN=100), C2=dict(x=71.0, y=-380.0, DN=125)),     # outside the top beams (y +-235) incl. bellows and insulation
     insulation=dict(recup_mm=50.0, hx_mm=30.0, risers_C1_mm=20.0, risers_C2_mm=60.0),
-    portal=dict(x_cols=(-140.0, X0 + H_mm + 30.0), y_cols=(-215.0, 215.0), z_beam=(500.0, 540.0), rails_y=(-215.0, 215.0), rails_x=(-170.0, X0 + H_mm + 60.0)),
+    portal=dict(x_cols=(-200.0, X0 + H_mm + 30.0), y_cols=(-215.0, 215.0), z_beam=(500.0, 540.0), rails_y=(-215.0, 215.0), rails_x=(-170.0, X0 + H_mm + 60.0)),
 )
 LAY['core']['z_hdr_top'] = LAY['core']['z'][1] - LAY['core']['end_bar'] - LAY['core']['window_len'] / 2
 LAY['core']['z_hdr_bot'] = LAY['core']['z'][0] + LAY['core']['end_bar'] + LAY['core']['window_len'] / 2
