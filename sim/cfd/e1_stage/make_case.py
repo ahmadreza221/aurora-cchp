@@ -346,8 +346,8 @@ SIMPLE
 
 relaxationFactors
 {
-    fields    { p 0.3; rho 0.05; }
-    equations { U 0.7; e 0.7; h 0.7; "(k|omega)" 0.7; }
+    fields    { p 1; rho 1; }                  // SIMPLEC (consistent): no pressure / density under-relaxation
+    equations { U 0.9; e 0.8; h 0.8; "(k|omega)" 0.9; }
 }
 ''')
     w('system/decomposeParDict', 'dictionary', 'numberOfSubdomains %d;\nmethod scotch;\n' % NP)

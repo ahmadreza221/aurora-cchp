@@ -34,3 +34,5 @@ graphify-out/*.pending.json
 # Fusion script diagnostics (fusion/GR180_E1_Import writes _e1_verify.json)
 fusion/_*.json
 sim/cfd/e1_stage/ngv/
+sim/cfd/e1_stage/test_*/
+sim/cfd/e1_stage/geometry/*.stl
