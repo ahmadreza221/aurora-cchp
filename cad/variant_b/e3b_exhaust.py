@@ -20,11 +20,11 @@ HERE = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() els
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 if not os.path.exists(os.path.join(ROOT, 'sim', 'variant_b', 'e3b_exhaust_results.json')):
     ROOT = os.environ.get('GR180_ROOT', os.getcwd())
-OUT = os.path.join(ROOT, 'cad_out', 'variant_b', 'E3B'); os.makedirs(OUT, exist_ok=True)
+OUT = os.environ.get('GR180_EXH_OUT') or os.path.join(ROOT, 'cad_out', 'variant_b', 'E3B'); os.makedirs(OUT, exist_ok=True)   # variant C: own folder
 E3_DIR = os.path.join(ROOT, 'cad_out', 'engine', 'E3')
 E2B_DIR = os.path.join(ROOT, 'cad_out', 'variant_b', 'E2B')
 GG_ASM = os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts')
-RS = json.load(open(os.path.join(ROOT, 'sim', 'variant_b', 'e3b_exhaust_results.json')))
+RS = json.load(open(os.environ.get('GR180_EXH_JSON') or os.path.join(ROOT, 'sim', 'variant_b', 'e3b_exhaust_results.json')))
 D = RS['design']
 CR = json.load(open(os.path.join(E3_DIR, 'E3_calc_results.json')))
 GEO, X = CR['geometry']['GEO'], CR['geometry']['X']
@@ -389,7 +389,7 @@ except ImportError:
 
 # =====================================================================================================================
 # BOM (docs/06 sec.5 columns) with CAD masses
-BOMF = os.path.join(ROOT, 'docs', 'bom', 'variant_b_e3b_bom.csv')
+BOMF = os.environ.get('GR180_EXH_BOM') or os.path.join(ROOT, 'docs', 'bom', 'variant_b_e3b_bom.csv')
 SUP = {
  'E3B-110': ('make', 'laser cut + press-brake (U-shell 3 mm, 2 bends R20; end plates 3 mm), hood rect-to-round 2 halves bump-bent, stub rolled 219.1 x 3 '
              'or 1.4828 welded tube, PN6 flange; TIG / robot MAG-free (TIG or plasma) welding, captive A286 M8 studs; stress relief 900 C, leak test 0.3 bar',

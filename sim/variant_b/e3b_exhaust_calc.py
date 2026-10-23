@@ -55,8 +55,8 @@ K_TOP = 0.3           # plenum -> top opening (flow already mostly vertical in t
 K_HOOD = 0.10         # rect -> round transition, ~constant area, 40 deg walls (on q5)                       # REF Idelchik 5-x
 LAMBDA = 0.02         # pipe friction
 T_HOOD_DEG = 40.0     # max hood wall angle from vertical (x expansion side)
-V_SIDE_MAX_FACTOR = 1.0   # side velocity <= radial-diffuser exit velocity (no re-acceleration above V4)
-DP_TARGET = 0.0060    # collector static loss p4 -> p5 target, fraction of Pa (caller: 0.5-0.8 % for the exhaust)
+V_SIDE_MAX_FACTOR = float(os.environ.get('GR180_EXH_VSIDE', '1.0'))   # side velocity <= radial-diffuser exit velocity (no re-acceleration above V4)
+DP_TARGET = float(os.environ.get('GR180_EXH_DP', '0.0060'))    # collector static loss p4 -> p5 target, fraction of Pa (caller: 0.5-0.8 % for the exhaust)
 
 PIPE = {200: dict(OD=219.1, t=3.0, fl_OD=320.0, fl_PCD=280.0, n=8, bolt='M16', hole=18.0, fl_t=20.0),   # EN 1092-1 PN6 type 01
         250: dict(OD=273.0, t=3.0, fl_OD=375.0, fl_PCD=335.0, n=12, bolt='M16', hole=18.0, fl_t=22.0)}
@@ -259,7 +259,7 @@ def main():
                            net_p3_to_p5_Pa=p5Bn - sBn['p3'], dP0_P03_to_P05_Pa=sBn['P03'] - (p5Bn + c['q5']),
                            old_E3_model=old_e3, old_same_model=dict(dp_static=old_m['dp_static'], V_side=old_m['V_side'], V_top=old_m['V_top'],
                                                                      V5=old_m['V5'], dP=old_m['dP']))
-    json.dump(out, open(os.path.join(HERE, 'e3b_exhaust_results.json'), 'w'), indent=1)
+    json.dump(out, open(os.environ.get('GR180_EXH_JSON') or os.path.join(HERE, 'e3b_exhaust_results.json'), 'w'), indent=1)   # variant C: own json
     # ---------------------------------------------------------------- report
     f = out['fpt']; s = out['selected']
     print('\nselected: DN%d, box inner %d x %d (a %d), hood h %d, outlet axis x %.1f, flange face z %.0f' % (c['DN'], 2 * a, 2 * a, a, h, XC, z_fl1))
