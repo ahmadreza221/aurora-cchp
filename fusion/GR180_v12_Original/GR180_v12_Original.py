@@ -10,10 +10,11 @@ import adsk.core
 import adsk.fusion
 
 ROOT = '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404'
-DOC_NAME = 'GR180 v12 original turbojet'
+MODE = 'v12'             # 'v12' = repo-root files (original) | 'v13A' = cad_out/v13A/asm_parts (drawing-corrected)
+DOC_NAME = 'GR180 v12 original turbojet' if MODE == 'v12' else 'GR180 v13A turbojet (drawing-corrected)'
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
-STYLE = [('Casing', (215, 185, 160), 0.25), ('CC_Outer', (215, 185, 160), 0.35), ('Intake_outer', (225, 140, 150), 0.6),
+STYLE = [('Casing', (215, 185, 160), 0.25), ('CC_Outer', (215, 185, 160), 0.35), ('Intake_outer', (225, 140, 150), 0.6), ('IntakeOuter', (225, 140, 150), 0.6), ('ShaftTunnel', (120, 200, 200), 1.0),
          ('Intake', (225, 140, 150), 1.0), ('NoseCone', (200, 200, 205), 1.0), ('Starter', (30, 170, 40), 1.0),
          ('Compressor', (205, 210, 220), 1.0), ('Diffuser', (225, 120, 170), 1.0), ('Exhaust', (245, 110, 10), 1.0),
          ('Turbine', (230, 175, 40), 1.0), ('NGV', (60, 110, 210), 1.0), ('Shaft_tunnel', (120, 200, 200), 1.0),
@@ -53,8 +54,13 @@ def run(_context):
     design.designType = adsk.fusion.DesignTypes.DirectDesignType
     design.fusionUnitsManager.distanceDisplayUnits = adsk.fusion.DistanceUnits.MillimeterDistanceUnits
     root = design.rootComponent
-    steps = {os.path.splitext(os.path.basename(f))[0]: f for f in glob.glob(os.path.join(ROOT, 'GR180_*.step'))}
-    stls = {os.path.splitext(os.path.basename(f))[0]: f for f in glob.glob(os.path.join(ROOT, 'GR180_*.stl'))}
+    if MODE == 'v12':
+        steps = {os.path.splitext(os.path.basename(f))[0]: f for f in glob.glob(os.path.join(ROOT, 'GR180_*.step'))}
+        stls = {os.path.splitext(os.path.basename(f))[0]: f for f in glob.glob(os.path.join(ROOT, 'GR180_*.stl'))}
+    else:
+        steps = {'GR180_' + os.path.splitext(os.path.basename(f))[0]: f
+                 for f in glob.glob(os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts', '*.step'))}
+        stls = {}
     n = 0
     for name in sorted(set(steps) | set(stls)):
         if name in SKIP:
@@ -84,5 +90,5 @@ def run(_context):
     if not folder:
         projects = [app.data.dataProjects.item(i) for i in range(app.data.dataProjects.count)]
         folder = next((p for p in projects if p.name == 'Default Project'), projects[0]).rootFolder
-    app.activeDocument.saveAs(DOC_NAME, folder, 'User original GR180 v12 turbojet (FreeCAD), repo root STEP/STL', '')
+    app.activeDocument.saveAs(DOC_NAME, folder, 'GR180 turbojet %s (FreeCAD build_gr180.py output)' % MODE, '')
     print('parts', n, '| saved as', DOC_NAME)
