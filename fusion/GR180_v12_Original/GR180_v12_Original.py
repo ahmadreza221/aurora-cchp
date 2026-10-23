@@ -15,10 +15,18 @@ DOC_NAME = {'v12': 'GR180 v12 original turbojet', 'v13A': 'GR180 v13A turbojet (
             'D': 'GR180-D Single-shaft turbo-generator (concept)', 'RT': 'GR180-D Radial turbine stage (concept)',
             'D2': 'GR180-D2 Single-shaft + radial turbine (full assembly)'}[MODE]
 D2_SKIP = D_SKIP | {'GR180_Turbine', 'GR180_NGV', 'GR180_TurbineNut', 'D-180_Exhaust_Diffuser_DN150'}   # axial stage -> radial stage
+D2_REPLACED = {'INTAKE': {'D-160_Inlet_Screen'}, 'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
+               'TURBINE': {'RT-*'}, 'ROTOR': {'GR180_Shaft', 'RT-140_Shaft_Extension', 'D-140_Quill_Shaft', 'GR180_FrontBearing*',
+                                             'GR180_RearBearing*', 'D-141*', 'D-142*'},
+               'GENERATOR': {'D-1*'}, 'FRAME': set(), 'AUX': set()}
 D_SKIP = {'GR180_Starter', 'GR180_NoseCone', 'GR180_Exhaust'}      # replaced by the generator pod and the exhaust diffuser
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
-STYLE = [('Turbine_Wheel', (230, 175, 40), 1.0), ('Nozzle_Ring', (60, 110, 210), 1.0), ('Housing_Plenum', (170, 200, 225), 0.25),
+STYLE = [('Cartridge', (230, 230, 220), 0.2), ('FOD_Guard', (60, 60, 65), 0.35), ('Insulation', (240, 236, 220), 0.15),
+         ('Plenum_Bell', (200, 205, 215), 0.45), ('Tube_Sheet', (200, 205, 215), 0.6), ('Skirt', (200, 205, 215), 0.45),
+         ('Yoke', (90, 95, 100), 1.0), ('Clamp', (90, 95, 100), 1.0), ('Tail_Fairing', (170, 200, 225), 0.5),
+         ('Diffuser_Elbow', (245, 110, 10), 1.0), ('VBand', (90, 95, 100), 1.0), ('Flange_DN200', (245, 110, 10), 1.0),
+         ('Support_Lugs', (60, 60, 65), 1.0), ('Turbine_Wheel', (230, 175, 40), 1.0), ('Nozzle_Ring', (60, 110, 210), 1.0), ('Housing_Plenum', (170, 200, 225), 0.25),
          ('Exducer_Shroud', (170, 200, 225), 0.35), ('Tie_Nut', (90, 90, 95), 1.0), ('Shaft_Extension', (190, 55, 45), 1.0),
          ('Generator_Housing', (170, 200, 225), 0.25), ('Front_Cap', (170, 200, 225), 0.35), ('Inlet_Screen', (150, 150, 155), 0.25),
          ('Stator_Core', (80, 85, 95), 1.0), ('Winding', (200, 110, 50), 1.0), ('PMG_Rotor', (200, 60, 170), 1.0),
@@ -58,9 +66,16 @@ def coloured(app, design, rgb):
 
 def run(_context):
     app = adsk.core.Application.get()
-    app.documents.add(adsk.core.DocumentTypes.FusionDesignDocumentType)
-    design = adsk.fusion.Design.cast(app.activeProduct)
-    design.designType = adsk.fusion.DesignTypes.DirectDesignType
+    existing = next((d for d in app.documents if d.name.split(' v')[0] == DOC_NAME or d.name == DOC_NAME), None)
+    if existing:                                 # rebuild in place: keeps one file with version history
+        existing.activate()
+        design = adsk.fusion.Design.cast(app.activeProduct)
+        for o in [design.rootComponent.occurrences.item(i) for i in range(design.rootComponent.occurrences.count)]:
+            o.deleteMe()
+    else:
+        app.documents.add(adsk.core.DocumentTypes.FusionDesignDocumentType)
+        design = adsk.fusion.Design.cast(app.activeProduct)
+        design.designType = adsk.fusion.DesignTypes.DirectDesignType
     design.fusionUnitsManager.distanceDisplayUnits = adsk.fusion.DistanceUnits.MillimeterDistanceUnits
     root = design.rootComponent
     if MODE == 'RT':                             # version D radial turbine stage on its own page
@@ -77,10 +92,18 @@ def run(_context):
         if MODE in ('D', 'D2'):
             steps.update({os.path.splitext(os.path.basename(f))[0]: f
                           for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'D-*.step'))})
+            skip = set(D2_SKIP if MODE == 'D2' else D_SKIP)
             if MODE == 'D2':
                 steps.update({os.path.splitext(os.path.basename(f))[0]: f
                               for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'RT2', 'RT-*.step'))})
-            skip = D2_SKIP if MODE == 'D2' else D_SKIP
+                d2 = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2')
+                for sub in ('INTAKE', 'EXHAUST', 'FRAME', 'ROTOR', 'TURBINE', 'GENERATOR', 'AUX'):
+                    fs = [f for f in glob.glob(os.path.join(d2, sub, '*.step')) if '_assembly' not in f]
+                    if not fs:
+                        continue
+                    steps.update({os.path.splitext(os.path.basename(f))[0]: f for f in fs})
+                    skip |= D2_REPLACED.get(sub, set())   # detailed subsystem replaces the concept parts
+            skip = {k for k in steps if k in skip or any(k.startswith(p) for p in skip if p.endswith('*'))} | skip
             steps = {k: v for k, v in steps.items() if k not in skip}
     n = 0
     for name in sorted(set(steps) | set(stls)):
@@ -111,5 +134,8 @@ def run(_context):
     if not folder:
         projects = [app.data.dataProjects.item(i) for i in range(app.data.dataProjects.count)]
         folder = next((p for p in projects if p.name == 'Default Project'), projects[0]).rootFolder
-    app.activeDocument.saveAs(DOC_NAME, folder, 'GR180 turbojet %s (FreeCAD build_gr180.py output)' % MODE, '')
+    if existing:
+        app.activeDocument.save('rebuilt (%s)' % MODE)
+    else:
+        app.activeDocument.saveAs(DOC_NAME, folder, 'GR180 turbojet %s (FreeCAD build_gr180.py output)' % MODE, '')
     print('parts', n, '| saved as', DOC_NAME)
