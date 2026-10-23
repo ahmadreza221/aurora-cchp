@@ -1,0 +1,240 @@
+{
+ "x_io_lip": -17.33,
+ "x_io_step": -11.33,
+ "x_io_end": -4.85,
+ "r_io_lip_o": 53.0,
+ "r_io_lip_i": 51.0,
+ "r_core": 53.5,
+ "x_ch_exit": 7.6,
+ "r_ch_i": 45.5,
+ "r_ch_o": 53.5,
+ "A_ch": 1477.19,
+ "n_ch": 13,
+ "x_diff_back": 2.0,
+ "r_tunnel": 10.5,
+ "x_tunnel_tube": [
+  16.53,
+  92.96
+ ],
+ "r_tunnel_bore": 8.5,
+ "x_ngv": 94.8,
+ "r_ngv_o": 36.35,
+ "r_ngv_rib": 37.95,
+ "x_ngv_rib": [
+  109.3,
+  110.8
+ ],
+ "x_ngv_end": 118.8,
+ "r_ngv_in_i": 21.25,
+ "r_ngv_in_o": 22.25,
+ "x_ngv_inner_end": 109.8,
+ "x_turb_exit": 118.3,
+ "x_nut_end": 126.8,
+ "x_ring_lip": -20.33,
+ "r_lip_i": 51.5,
+ "r_ring_bore": 53.55,
+ "oring_x": -8.0,
+ "r_front_ring_o": 60.0,
+ "r_rear_bore": 38.45,
+ "x_rear_ring": [
+  100.0,
+  115.0
+ ],
+ "r_e3_flange_o": 88.0,
+ "pcd_e3": 160.0,
+ "n_e3_bolts": 16,
+ "d_e3_bolt": 8,
+ "e3_bolt_a0_deg": 11.25,
+ "e3_spigot_d": 120.0,
+ "e3_spigot_depth": 3.0,
+ "e3_groove_ri": 55.5,
+ "x_e3_face": 115.0,
+ "t_e3_gasket": 1.0,
+ "seal_groove_x": [
+  112.5,
+  114.5
+ ],
+ "r_seal_groove": 40.0,
+ "gasket_e3_r": [
+  64.5,
+  72.5
+ ],
+ "x_e3_flange": [
+  106.0,
+  115.0
+ ],
+ "x_dome": 42.9,
+ "t_dome": 1.2,
+ "t_liner": 1.0,
+ "r_li_o": 21.1,
+ "r_lo_i": 54.0,
+ "x_li_front": 28.0,
+ "x_li_end": 98.0,
+ "x_lo_cyl_end": 82.0,
+ "x_lo_cone_end": 92.0,
+ "r_lo_sleeve_i": 36.5,
+ "x_lo_end": 106.5,
+ "n_inj": 7,
+ "r_inj": 37.5,
+ "inj_a0_deg": 0.0,
+ "x_liner_pins": 50.0,
+ "n_liner_pins": 3,
+ "a_liner_pins": [
+  30.0,
+  170.0,
+  255.0
+ ],
+ "r_shield_i": 17.3,
+ "t_shield": 0.3,
+ "x_shield": [
+  17.5,
+  92.0
+ ],
+ "x_igniter": 52.0,
+ "a_igniter": 225.0,
+ "x_uv": 52.0,
+ "a_uv": 135.0,
+ "x_p3": 65.0,
+ "a_p3": 90.0,
+ "x_twall": 60.0,
+ "a_twall": [
+  45.0,
+  200.0
+ ],
+ "z_skid": -400.0,
+ "foot_w": 260.0,
+ "x_bh_hub_end": 35.0,
+ "r_bh_bore": 21.35,
+ "t_gasket": 1.0,
+ "x_casing_front": -30.0,
+ "x_cone": [
+  -4.85,
+  3.0
+ ],
+ "r_case_i": 72.0,
+ "t_case": 3.0,
+ "x_mid_A": [
+  14.0,
+  20.0
+ ],
+ "r_flange_o": 96.0,
+ "pcd_mid": 168.0,
+ "n_mid_bolts": 16,
+ "d_mid_bolt": 8,
+ "mid_bolt_a0_deg": 11.25,
+ "x_bh": 21.0,
+ "t_bh": 6.0,
+ "r_bh_hub_o": 23.0,
+ "n_windows": 7,
+ "window_r": [
+  46.0,
+  68.0
+ ],
+ "window_deg": 40.0,
+ "retainer_r": 24.5,
+ "retainer_d": 6.0,
+ "retainer_a_deg": [
+  30.0,
+  150.0,
+  270.0
+ ],
+ "retainer_gap": 0.3,
+ "x_manifold": 15.0,
+ "r_manifold": 37.5,
+ "d_manifold": 12.0,
+ "t_manifold": 1.0,
+ "d_stem": 8.0,
+ "t_stem": 1.0,
+ "gas_entry_deg": 180.0,
+ "x_gas_boss": 8.0,
+ "d_feed": 12.0,
+ "t_feed": 1.0,
+ "r_feed_knee": 64.0,
+ "x_case_shell_end": 100.0,
+ "x_p2": 10.0,
+ "a_p2": 120.0,
+ "x_t2": 10.0,
+ "a_t2": 60.0,
+ "x_bleed": 10.0,
+ "a_bleed": 150.0,
+ "x_foot": [
+  2.5,
+  10.5
+ ],
+ "insulation": {
+  "rear": 25.0
+ },
+ "x_bh_back": 27.0,
+ "x_hot_flange": [
+  28.0,
+  34.0
+ ],
+ "x_dome_hot": 44.1,
+ "r_lo_o": 55.0,
+ "r_li_i": 20.1,
+ "gasket_mid_r": [
+  72.5,
+  77.0
+ ],
+ "holes": {
+  "outer_film": {
+   "n": 224,
+   "d": 1.3,
+   "x": [
+    45.9,
+    56.1,
+    67.1,
+    83.5
+   ]
+  },
+  "secondary": {
+   "n": 21,
+   "d": 5.1000000000000005,
+   "x": [
+    62.1
+   ]
+  },
+  "dilution": {
+   "n": 42,
+   "d": 5.7,
+   "x": [
+    72.1,
+    79.1
+   ]
+  },
+  "inner_film": {
+   "n": 60,
+   "d": 1.9000000000000001,
+   "x": [
+    45.6,
+    57.1,
+    69.1,
+    81.1
+   ]
+  },
+  "dome_cool": {
+   "n": 56,
+   "d": 1.4000000000000001,
+   "x": null
+  }
+ },
+ "injector": {
+  "x_union": 27.0,
+  "x_backplate": [
+   33.0,
+   36.0
+  ],
+  "n": 7,
+  "r": 37.5,
+  "cup_id": 16.0,
+  "cup_len": 6.0,
+  "cb_d": 5.0,
+  "n_vanes": 10,
+  "vane_angle": 45.0,
+  "r_vane_exit": 9.5,
+  "r_sw": 13.5,
+  "slot_h": 3.26,
+  "n_gas": 6,
+  "d_gas": 0.8500000000000001
+ }
+}
