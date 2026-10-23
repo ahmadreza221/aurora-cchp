@@ -1,0 +1,736 @@
+{
+ "title": "GR180 D2 intake / exhaust / frame 1-D numbers",
+ "date": "2026-10-23",
+ "frame": "ENG mm",
+ "intake": {
+  "geometry": {
+   "r_pod": 55.0,
+   "r_tube_sheet_opening": 162.0,
+   "x_tube_sheet_face": -136.0,
+   "x_pod_rear": -108.0,
+   "x_dish_face": -46.3,
+   "r_lip": 47.5,
+   "r_fairing_max": 61.0,
+   "x_fairing_end": -102.0,
+   "fairing_R": 15.0,
+   "plenum_fillet_R": 40.0,
+   "guard_r": 100.0,
+   "guard_x": [
+    -118.0,
+    -46.3
+   ],
+   "strut_d": 8.0,
+   "n_struts": 3,
+   "cartridge": {
+    "OD": 445,
+    "ID": 324,
+    "L": 660
+   }
+  },
+  "p_amb_Pa": 100726,
+  "site_30C_pair": {
+   "T_C": 30.0,
+   "rho": 1.1577,
+   "Q_m3_s": 0.3412,
+   "Q_m3_h": 1228,
+   "elements": [
+    {
+     "name": "filter cartridge (pair_cyl_cyl_F9, clean)",
+     "v_m_s": null,
+     "K": null,
+     "dp_Pa": 69.0
+    },
+    {
+     "name": "bore annulus 324/110 + terminal box blockage (Cd 1, 50x30 mm)",
+     "v_m_s": 4.68,
+     "K": null,
+     "dp_Pa": 1.0
+    },
+    {
+     "name": "3 yoke legs d12 in the tube-sheet opening (Cd 1.2)",
+     "v_m_s": 4.68,
+     "K": null,
+     "dp_Pa": 0.8
+    },
+    {
+     "name": "turn 1 axial->radial (pod tail fairing R15 / plenum fillet R40), K 0.4",
+     "v_m_s": 8.0,
+     "K": 0.4,
+     "dp_Pa": 14.8
+    },
+    {
+     "name": "FOD guard (6 mm mesh, f 0.69, cylinder r100 + front ring), K 0.60",
+     "v_m_s": 5.31,
+     "K": 0.6048483511867258,
+     "dp_Pa": 9.9
+    },
+    {
+     "name": "3 pod struts d8 across the radial gap (Cd 1.2, blockage 0.073)",
+     "v_m_s": 16.92,
+     "K": null,
+     "dp_Pa": 14.6
+    },
+    {
+     "name": "turn 2 radial->axial round the v13A intake lip, K 0.3",
+     "v_m_s": 18.53,
+     "K": 0.3,
+     "dp_Pa": 59.6
+    }
+   ],
+   "housing_dp_Pa": 100.7,
+   "total_dp_Pa": 169.7,
+   "total_pct_of_p_amb": 0.169,
+   "eye_contraction_common_with_v13A_Pa": 204.0,
+   "throat_v_m_s": 132.6
+  },
+  "site_30C_single": {
+   "T_C": 30.0,
+   "rho": 1.1577,
+   "Q_m3_s": 0.3412,
+   "Q_m3_h": 1228,
+   "elements": [
+    {
+     "name": "filter cartridge (single_cyl_F9, clean)",
+     "v_m_s": null,
+     "K": null,
+     "dp_Pa": 138.0
+    },
+    {
+     "name": "bore annulus 324/110 + terminal box blockage (Cd 1, 50x30 mm)",
+     "v_m_s": 4.68,
+     "K": null,
+     "dp_Pa": 1.0
+    },
+    {
+     "name": "3 yoke legs d12 in the tube-sheet opening (Cd 1.2)",
+     "v_m_s": 4.68,
+     "K": null,
+     "dp_Pa": 0.8
+    },
+    {
+     "name": "turn 1 axial->radial (pod tail fairing R15 / plenum fillet R40), K 0.4",
+     "v_m_s": 8.0,
+     "K": 0.4,
+     "dp_Pa": 14.8
+    },
+    {
+     "name": "FOD guard (6 mm mesh, f 0.69, cylinder r100 + front ring), K 0.60",
+     "v_m_s": 5.31,
+     "K": 0.6048483511867258,
+     "dp_Pa": 9.9
+    },
+    {
+     "name": "3 pod struts d8 across the radial gap (Cd 1.2, blockage 0.073)",
+     "v_m_s": 16.92,
+     "K": null,
+     "dp_Pa": 14.6
+    },
+    {
+     "name": "turn 2 radial->axial round the v13A intake lip, K 0.3",
+     "v_m_s": 18.53,
+     "K": 0.3,
+     "dp_Pa": 59.6
+    }
+   ],
+   "housing_dp_Pa": 100.7,
+   "total_dp_Pa": 238.8,
+   "total_pct_of_p_amb": 0.237,
+   "eye_contraction_common_with_v13A_Pa": 204.0,
+   "throat_v_m_s": 132.6
+  },
+  "build1_no_cartridge_30C": {
+   "T_C": 30.0,
+   "rho": 1.1577,
+   "Q_m3_s": 0.3412,
+   "Q_m3_h": 1228,
+   "elements": [
+    {
+     "name": "filter cartridge (none, clean)",
+     "v_m_s": null,
+     "K": null,
+     "dp_Pa": 0.0
+    },
+    {
+     "name": "bore annulus 324/110 + terminal box blockage (Cd 1, 50x30 mm)",
+     "v_m_s": 4.68,
+     "K": null,
+     "dp_Pa": 1.0
+    },
+    {
+     "name": "3 yoke legs d12 in the tube-sheet opening (Cd 1.2)",
+     "v_m_s": 4.68,
+     "K": null,
+     "dp_Pa": 0.8
+    },
+    {
+     "name": "turn 1 axial->radial (pod tail fairing R15 / plenum fillet R40), K 0.4",
+     "v_m_s": 8.0,
+     "K": 0.4,
+     "dp_Pa": 14.8
+    },
+    {
+     "name": "FOD guard (6 mm mesh, f 0.69, cylinder r100 + front ring), K 0.60",
+     "v_m_s": 5.31,
+     "K": 0.6048483511867258,
+     "dp_Pa": 9.9
+    },
+    {
+     "name": "3 pod struts d8 across the radial gap (Cd 1.2, blockage 0.073)",
+     "v_m_s": 16.92,
+     "K": null,
+     "dp_Pa": 14.6
+    },
+    {
+     "name": "turn 2 radial->axial round the v13A intake lip, K 0.3",
+     "v_m_s": 18.53,
+     "K": 0.3,
+     "dp_Pa": 59.6
+    }
+   ],
+   "housing_dp_Pa": 100.7,
+   "total_dp_Pa": 100.7,
+   "total_pct_of_p_amb": 0.1,
+   "eye_contraction_common_with_v13A_Pa": 204.0,
+   "throat_v_m_s": 132.6
+  },
+  "chilled_15C_pair": {
+   "T_C": 15.0,
+   "rho": 1.218,
+   "Q_m3_s": 0.3243,
+   "Q_m3_h": 1168,
+   "elements": [
+    {
+     "name": "filter cartridge (pair_cyl_cyl_F9, clean)",
+     "v_m_s": null,
+     "K": null,
+     "dp_Pa": 65.6
+    },
+    {
+     "name": "bore annulus 324/110 + terminal box blockage (Cd 1, 50x30 mm)",
+     "v_m_s": 4.45,
+     "K": null,
+     "dp_Pa": 0.9
+    },
+    {
+     "name": "3 yoke legs d12 in the tube-sheet opening (Cd 1.2)",
+     "v_m_s": 4.45,
+     "K": null,
+     "dp_Pa": 0.8
+    },
+    {
+     "name": "turn 1 axial->radial (pod tail fairing R15 / plenum fillet R40), K 0.4",
+     "v_m_s": 7.61,
+     "K": 0.4,
+     "dp_Pa": 14.1
+    },
+    {
+     "name": "FOD guard (6 mm mesh, f 0.69, cylinder r100 + front ring), K 0.60",
+     "v_m_s": 5.05,
+     "K": 0.6048483511867258,
+     "dp_Pa": 9.4
+    },
+    {
+     "name": "3 pod struts d8 across the radial gap (Cd 1.2, blockage 0.073)",
+     "v_m_s": 16.09,
+     "K": null,
+     "dp_Pa": 13.9
+    },
+    {
+     "name": "turn 2 radial->axial round the v13A intake lip, K 0.3",
+     "v_m_s": 17.61,
+     "K": 0.3,
+     "dp_Pa": 56.7
+    }
+   ],
+   "housing_dp_Pa": 95.7,
+   "total_dp_Pa": 161.3,
+   "total_pct_of_p_amb": 0.16,
+   "eye_contraction_common_with_v13A_Pa": 194.0,
+   "throat_v_m_s": 126.0
+  },
+  "change_out_dp_Pa": 500,
+  "budget_Pa": 1000,
+  "rule_of_thumb": "each 1 kPa of inlet loss ~ -1.2..-1.5 % shaft power (~0.3 kW of 25 kW net) [est]",
+  "dirty_at_change_out_Pa": 601,
+  "interface": {
+   "name": "FI-1 tube sheet",
+   "opening_ID_mm": 324,
+   "gasket_face": "flat annulus r 162..226 on the -x face",
+   "sheet_OD_mm": 500,
+   "thickness_mm": 6,
+   "x_face": -136.0,
+   "yoke": "3 legs M12 on r 150, 120 deg (not 4)",
+   "cartridge": "Camfil CamPulse GTC 445/324 x 660 class, F9; pair (cyl/cyl, 1320 mm) for 70 Pa",
+   "note": "the cartridge face seals on the tube sheet; yoke legs pass inside the cartridge bore; closed end cap at the front"
+  }
+ },
+ "exhaust": {
+  "meanline": {
+   "T6_C": 614.9,
+   "P6_bar": 1.0857,
+   "rho6": 0.426,
+   "c6_m_s": 239.5,
+   "M6": 0.411,
+   "q6_Pa": 12217,
+   "P0_6_bar": 1.2078,
+   "exducer_D": [
+    74.0,
+    22.0
+   ],
+   "x_exducer_exit": 199.0,
+   "Q_flange_m3_s": 0.939
+  },
+  "choice": {
+   "name": "L100_16deg_DN200",
+   "L_diffuser": 100,
+   "two_theta": 16,
+   "D_in": 74.8,
+   "D_diff_exit": 102.9,
+   "DN": "DN200",
+   "elbow_R": 203.2,
+   "elements": [
+    {
+     "name": "hub dump at the exducer exit (annulus -> full bore)",
+     "dp_Pa": 142
+    },
+    {
+     "name": "conical diffuser 2theta 16 deg, L 100, D 74.8 -> 102.9 (Gibson x1.4)",
+     "dp_Pa": 915
+    },
+    {
+     "name": "expansion D 103 -> DN200 ID 215.1 (45deg_cone)",
+     "dp_Pa": 1614
+    },
+    {
+     "name": "DN200 90 deg SR elbow up R 203, K 0.25 (distorted inflow)",
+     "dp_Pa": 36
+    }
+   ],
+   "dp0_total_Pa": 2707,
+   "dp0_pct_of_P0": 2.24,
+   "duct_elbow_plus_exit_q_Pa": 178,
+   "duct_pct_of_P0": 0.147,
+   "v_elbow_m_s": 25.8,
+   "p6_minus_p_flange_Pa": -9369,
+   "turbine_work_gain_vs_dump_kW": 7.04,
+   "x_extent_from_exducer_mm": 509
+  },
+  "alt_DN150": {
+   "name": "same diffuser, DN150 elbow",
+   "L_diffuser": 100,
+   "two_theta": 16,
+   "D_in": 74.8,
+   "D_diff_exit": 102.9,
+   "DN": "DN150",
+   "elbow_R": 152.4,
+   "elements": [
+    {
+     "name": "hub dump at the exducer exit (annulus -> full bore)",
+     "dp_Pa": 142
+    },
+    {
+     "name": "conical diffuser 2theta 16 deg, L 100, D 74.8 -> 102.9 (Gibson x1.4)",
+     "dp_Pa": 915
+    },
+    {
+     "name": "expansion D 103 -> DN150 ID 164.3 (45deg_cone)",
+     "dp_Pa": 1003
+    },
+    {
+     "name": "DN150 90 deg SR elbow up R 152, K 0.25 (distorted inflow)",
+     "dp_Pa": 104
+    }
+   ],
+   "dp0_total_Pa": 2164,
+   "dp0_pct_of_P0": 1.79,
+   "duct_elbow_plus_exit_q_Pa": 522,
+   "duct_pct_of_P0": 0.432,
+   "v_elbow_m_s": 44.3,
+   "p6_minus_p_flange_Pa": -9636,
+   "turbine_work_gain_vs_dump_kW": 7.24,
+   "x_extent_from_exducer_mm": 407
+  },
+  "baseline_D2_long_cone": {
+   "name": "D2 RT-180 long cone (2theta ~25 deg, 74.8 -> 139) + DN150 flange",
+   "L_diffuser": 144,
+   "two_theta": 25.0,
+   "D_in": 74.8,
+   "D_diff_exit": 138.6,
+   "DN": "DN150",
+   "elbow_R": 152.4,
+   "elements": [
+    {
+     "name": "hub dump at the exducer exit (annulus -> full bore)",
+     "dp_Pa": 142
+    },
+    {
+     "name": "conical diffuser 2theta 25 deg, L 144, D 74.8 -> 138.6 (Gibson x1.4)",
+     "dp_Pa": 4243
+    },
+    {
+     "name": "expansion D 139 -> DN150 ID 164.3 (45deg_cone)",
+     "dp_Pa": 68
+    },
+    {
+     "name": "DN150 90 deg SR elbow up R 152, K 0.25 (distorted inflow)",
+     "dp_Pa": 104
+    }
+   ],
+   "dp0_total_Pa": 4558,
+   "dp0_pct_of_P0": 3.77,
+   "duct_elbow_plus_exit_q_Pa": 522,
+   "duct_pct_of_P0": 0.432,
+   "v_elbow_m_s": 44.3,
+   "p6_minus_p_flange_Pa": -7242,
+   "turbine_work_gain_vs_dump_kW": 5.44,
+   "x_extent_from_exducer_mm": 433,
+   "note": "RT-180 ends in a flange with no elbow; elbow loss counted for comparison"
+  },
+  "no_diffuser": {
+   "name": "no diffuser: exducer dumps into the DN200 elbow",
+   "L_diffuser": 0,
+   "two_theta": 0,
+   "D_in": 74.8,
+   "D_diff_exit": 74.8,
+   "DN": "DN200",
+   "elbow_R": 203.2,
+   "elements": [
+    {
+     "name": "hub dump at the exducer exit (annulus -> full bore)",
+     "dp_Pa": 142
+    },
+    {
+     "name": "expansion D 75 -> DN200 ID 215.1 (45deg_cone)",
+     "dp_Pa": 7516
+    },
+    {
+     "name": "DN200 90 deg SR elbow up R 203, K 0.25 (distorted inflow)",
+     "dp_Pa": 36
+    }
+   ],
+   "dp0_total_Pa": 7693,
+   "dp0_pct_of_P0": 6.37,
+   "duct_elbow_plus_exit_q_Pa": 178,
+   "duct_pct_of_P0": 0.147,
+   "v_elbow_m_s": 25.8,
+   "p6_minus_p_flange_Pa": -4382,
+   "turbine_work_gain_vs_dump_kW": 3.29,
+   "x_extent_from_exducer_mm": 423
+  },
+  "sweep": [
+   {
+    "name": "L0_12deg_DN200",
+    "D_diff_exit": 74.8,
+    "dp0_total_Pa": 7693,
+    "p6_minus_p_flange_Pa": -4382,
+    "turbine_work_gain_vs_dump_kW": 3.29,
+    "x_extent_from_exducer_mm": 423
+   },
+   {
+    "name": "L0_14deg_DN200",
+    "D_diff_exit": 74.8,
+    "dp0_total_Pa": 7693,
+    "p6_minus_p_flange_Pa": -4382,
+    "turbine_work_gain_vs_dump_kW": 3.29,
+    "x_extent_from_exducer_mm": 423
+   },
+   {
+    "name": "L0_16deg_DN200",
+    "D_diff_exit": 74.8,
+    "dp0_total_Pa": 7693,
+    "p6_minus_p_flange_Pa": -4382,
+    "turbine_work_gain_vs_dump_kW": 3.29,
+    "x_extent_from_exducer_mm": 423
+   },
+   {
+    "name": "L0_18deg_DN200",
+    "D_diff_exit": 74.8,
+    "dp0_total_Pa": 7693,
+    "p6_minus_p_flange_Pa": -4382,
+    "turbine_work_gain_vs_dump_kW": 3.29,
+    "x_extent_from_exducer_mm": 423
+   },
+   {
+    "name": "L0_20deg_DN200",
+    "D_diff_exit": 74.8,
+    "dp0_total_Pa": 7693,
+    "p6_minus_p_flange_Pa": -4382,
+    "turbine_work_gain_vs_dump_kW": 3.29,
+    "x_extent_from_exducer_mm": 423
+   },
+   {
+    "name": "L60_12deg_DN200",
+    "D_diff_exit": 87.4,
+    "dp0_total_Pa": 4011,
+    "p6_minus_p_flange_Pa": -8064,
+    "turbine_work_gain_vs_dump_kW": 6.06,
+    "x_extent_from_exducer_mm": 477
+   },
+   {
+    "name": "L60_14deg_DN200",
+    "D_diff_exit": 89.5,
+    "dp0_total_Pa": 3724,
+    "p6_minus_p_flange_Pa": -8351,
+    "turbine_work_gain_vs_dump_kW": 6.27,
+    "x_extent_from_exducer_mm": 476
+   },
+   {
+    "name": "L60_16deg_DN200",
+    "D_diff_exit": 91.7,
+    "dp0_total_Pa": 3525,
+    "p6_minus_p_flange_Pa": -8550,
+    "turbine_work_gain_vs_dump_kW": 6.42,
+    "x_extent_from_exducer_mm": 474
+   },
+   {
+    "name": "L60_18deg_DN200",
+    "D_diff_exit": 93.8,
+    "dp0_total_Pa": 3417,
+    "p6_minus_p_flange_Pa": -8658,
+    "turbine_work_gain_vs_dump_kW": 6.5,
+    "x_extent_from_exducer_mm": 473
+   },
+   {
+    "name": "L60_20deg_DN200",
+    "D_diff_exit": 96.0,
+    "dp0_total_Pa": 3383,
+    "p6_minus_p_flange_Pa": -8693,
+    "turbine_work_gain_vs_dump_kW": 6.53,
+    "x_extent_from_exducer_mm": 472
+   },
+   {
+    "name": "L80_12deg_DN200",
+    "D_diff_exit": 91.6,
+    "dp0_total_Pa": 3382,
+    "p6_minus_p_flange_Pa": -8693,
+    "turbine_work_gain_vs_dump_kW": 6.53,
+    "x_extent_from_exducer_mm": 494
+   },
+   {
+    "name": "L80_14deg_DN200",
+    "D_diff_exit": 94.4,
+    "dp0_total_Pa": 3140,
+    "p6_minus_p_flange_Pa": -8935,
+    "turbine_work_gain_vs_dump_kW": 6.71,
+    "x_extent_from_exducer_mm": 493
+   },
+   {
+    "name": "L80_16deg_DN200",
+    "D_diff_exit": 97.3,
+    "dp0_total_Pa": 3015,
+    "p6_minus_p_flange_Pa": -9060,
+    "turbine_work_gain_vs_dump_kW": 6.81,
+    "x_extent_from_exducer_mm": 492
+   },
+   {
+    "name": "L80_18deg_DN200",
+    "D_diff_exit": 100.1,
+    "dp0_total_Pa": 3009,
+    "p6_minus_p_flange_Pa": -9067,
+    "turbine_work_gain_vs_dump_kW": 6.81,
+    "x_extent_from_exducer_mm": 490
+   },
+   {
+    "name": "L80_20deg_DN200",
+    "D_diff_exit": 103.0,
+    "dp0_total_Pa": 3092,
+    "p6_minus_p_flange_Pa": -8984,
+    "turbine_work_gain_vs_dump_kW": 6.75,
+    "x_extent_from_exducer_mm": 489
+   },
+   {
+    "name": "L100_12deg_DN200",
+    "D_diff_exit": 95.8,
+    "dp0_total_Pa": 2922,
+    "p6_minus_p_flange_Pa": -9154,
+    "turbine_work_gain_vs_dump_kW": 6.88,
+    "x_extent_from_exducer_mm": 512
+   },
+   {
+    "name": "L100_14deg_DN200",
+    "D_diff_exit": 99.4,
+    "dp0_total_Pa": 2745,
+    "p6_minus_p_flange_Pa": -9331,
+    "turbine_work_gain_vs_dump_kW": 7.01,
+    "x_extent_from_exducer_mm": 511
+   },
+   {
+    "name": "L100_16deg_DN200",
+    "D_diff_exit": 102.9,
+    "dp0_total_Pa": 2707,
+    "p6_minus_p_flange_Pa": -9369,
+    "turbine_work_gain_vs_dump_kW": 7.04,
+    "x_extent_from_exducer_mm": 509
+   },
+   {
+    "name": "L100_18deg_DN200",
+    "D_diff_exit": 106.5,
+    "dp0_total_Pa": 2806,
+    "p6_minus_p_flange_Pa": -9269,
+    "turbine_work_gain_vs_dump_kW": 6.96,
+    "x_extent_from_exducer_mm": 507
+   },
+   {
+    "name": "L100_20deg_DN200",
+    "D_diff_exit": 110.1,
+    "dp0_total_Pa": 3004,
+    "p6_minus_p_flange_Pa": -9072,
+    "turbine_work_gain_vs_dump_kW": 6.81,
+    "x_extent_from_exducer_mm": 505
+   },
+   {
+    "name": "L120_12deg_DN200",
+    "D_diff_exit": 100.0,
+    "dp0_total_Pa": 2586,
+    "p6_minus_p_flange_Pa": -9490,
+    "turbine_work_gain_vs_dump_kW": 7.13,
+    "x_extent_from_exducer_mm": 530
+   },
+   {
+    "name": "L120_14deg_DN200",
+    "D_diff_exit": 104.3,
+    "dp0_total_Pa": 2481,
+    "p6_minus_p_flange_Pa": -9595,
+    "turbine_work_gain_vs_dump_kW": 7.21,
+    "x_extent_from_exducer_mm": 528
+   },
+   {
+    "name": "L120_16deg_DN200",
+    "D_diff_exit": 108.5,
+    "dp0_total_Pa": 2530,
+    "p6_minus_p_flange_Pa": -9545,
+    "turbine_work_gain_vs_dump_kW": 7.17,
+    "x_extent_from_exducer_mm": 526
+   },
+   {
+    "name": "L120_18deg_DN200",
+    "D_diff_exit": 112.8,
+    "dp0_total_Pa": 2730,
+    "p6_minus_p_flange_Pa": -9345,
+    "turbine_work_gain_vs_dump_kW": 7.02,
+    "x_extent_from_exducer_mm": 524
+   },
+   {
+    "name": "L120_20deg_DN200",
+    "D_diff_exit": 117.1,
+    "dp0_total_Pa": 3031,
+    "p6_minus_p_flange_Pa": -9044,
+    "turbine_work_gain_vs_dump_kW": 6.79,
+    "x_extent_from_exducer_mm": 522
+   },
+   {
+    "name": "L150_12deg_DN200",
+    "D_diff_exit": 106.3,
+    "dp0_total_Pa": 2246,
+    "p6_minus_p_flange_Pa": -9829,
+    "turbine_work_gain_vs_dump_kW": 7.38,
+    "x_extent_from_exducer_mm": 557
+   },
+   {
+    "name": "L150_14deg_DN200",
+    "D_diff_exit": 111.6,
+    "dp0_total_Pa": 2249,
+    "p6_minus_p_flange_Pa": -9826,
+    "turbine_work_gain_vs_dump_kW": 7.38,
+    "x_extent_from_exducer_mm": 554
+   },
+   {
+    "name": "L150_16deg_DN200",
+    "D_diff_exit": 117.0,
+    "dp0_total_Pa": 2421,
+    "p6_minus_p_flange_Pa": -9654,
+    "turbine_work_gain_vs_dump_kW": 7.25,
+    "x_extent_from_exducer_mm": 552
+   },
+   {
+    "name": "L150_18deg_DN200",
+    "D_diff_exit": 122.3,
+    "dp0_total_Pa": 2753,
+    "p6_minus_p_flange_Pa": -9322,
+    "turbine_work_gain_vs_dump_kW": 7.0,
+    "x_extent_from_exducer_mm": 549
+   },
+   {
+    "name": "L150_20deg_DN200",
+    "D_diff_exit": 127.7,
+    "dp0_total_Pa": 3184,
+    "p6_minus_p_flange_Pa": -8891,
+    "turbine_work_gain_vs_dump_kW": 6.68,
+    "x_extent_from_exducer_mm": 546
+   },
+   {
+    "name": "L200_12deg_DN200",
+    "D_diff_exit": 116.8,
+    "dp0_total_Pa": 1957,
+    "p6_minus_p_flange_Pa": -10119,
+    "turbine_work_gain_vs_dump_kW": 7.6,
+    "x_extent_from_exducer_mm": 602
+   },
+   {
+    "name": "L200_14deg_DN200",
+    "D_diff_exit": 123.9,
+    "dp0_total_Pa": 2118,
+    "p6_minus_p_flange_Pa": -9957,
+    "turbine_work_gain_vs_dump_kW": 7.48,
+    "x_extent_from_exducer_mm": 598
+   },
+   {
+    "name": "L200_16deg_DN200",
+    "D_diff_exit": 131.0,
+    "dp0_total_Pa": 2455,
+    "p6_minus_p_flange_Pa": -9621,
+    "turbine_work_gain_vs_dump_kW": 7.23,
+    "x_extent_from_exducer_mm": 595
+   },
+   {
+    "name": "L200_18deg_DN200",
+    "D_diff_exit": 138.2,
+    "dp0_total_Pa": 2956,
+    "p6_minus_p_flange_Pa": -9119,
+    "turbine_work_gain_vs_dump_kW": 6.85,
+    "x_extent_from_exducer_mm": 591
+   },
+   {
+    "name": "L200_20deg_DN200",
+    "D_diff_exit": 145.3,
+    "dp0_total_Pa": 3543,
+    "p6_minus_p_flange_Pa": -8532,
+    "turbine_work_gain_vs_dump_kW": 6.41,
+    "x_extent_from_exducer_mm": 588
+   }
+  ],
+  "flange": {
+   "std": "EN 1092-1 type 01 PN6 DN200",
+   "D": 320,
+   "K": 280,
+   "bolts": "8 x M16",
+   "hole": 18,
+   "b": 20,
+   "face": "+z"
+  },
+  "criterion": "duct (elbow + exit dynamic head) <= 1 % of P0: 0.15 % for DN200 (0.43 % for DN150)",
+  "note": "q6 at the exducer is ~10 % of P0; the meanline (eta_ts 0.80, p6 = back pressure) throws it away. The short diffuser + dump into the DN200 elbow recovers most of it (p6 below the flange static), which is a GAIN vs the meanline; the dp0 numbers are internal losses of that recovery, not extra back pressure.",
+  "bought_wheel_exducer_64": {
+   "c6_m_s": 323.5,
+   "q6_Pa": 22288,
+   "note": "higher exit q -> the diffuser matters even more; rerun with GR180_D2_EXD_D=64"
+  }
+ },
+ "frame_supports": {
+  "axial_growth_at_rear_collar_mm": 0.95,
+  "axial_growth_at_exhaust_lugs_mm": 2.94,
+  "radial_growth_plenum_mm": 1.06,
+  "slot_length_each_side_mm": 6.0,
+  "mass_est_kg": {
+   "engine_core": 11.0,
+   "generator_pod": 9.0,
+   "intake": 6.5,
+   "exhaust": 7.0,
+   "frame": 16.0,
+   "cartridge_pair": 24.0
+  },
+  "mounts": "4 x elastomer mounts, static deflection ~2.5 mm -> f_n ~ 10 Hz (est); run 1917 Hz: isolation > 99.9 %",
+  "load_per_mount_N": 180,
+  "f_n_Hz_est": 10.0
+ }
+}
