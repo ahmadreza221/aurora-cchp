@@ -15,14 +15,21 @@ DOC_NAME = {'v12': 'GR180 v12 original turbojet', 'v13A': 'GR180 v13A turbojet (
             'D': 'GR180-D Single-shaft turbo-generator (concept)', 'RT': 'GR180-D Radial turbine stage (concept)',
             'D2': 'GR180-D2 Single-shaft + radial turbine (full assembly)'}[MODE]
 D2_SKIP = D_SKIP | {'GR180_Turbine', 'GR180_NGV', 'GR180_TurbineNut', 'D-180_Exhaust_Diffuser_DN150'}   # axial stage -> radial stage
-D2_REPLACED = {'INTAKE': {'D-160_Inlet_Screen'}, 'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
+D2_REPLACED = {'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
                'TURBINE': {'RT-*'}, 'ROTOR': {'GR180_Shaft', 'RT-140_Shaft_Extension', 'D-140_Quill_Shaft', 'GR180_FrontBearing*',
-                                             'GR180_RearBearing*', 'D-141*', 'D-142*'},
-               'GENERATOR': {'D-1*'}, 'FRAME': set(), 'AUX': set()}
+                                             'GR180_RearBearing*', 'D-141*', 'D-142*', 'GR180_Compressor', 'GR180_ShaftTunnel',
+                                             'GR180_WaveSpring*', 'GR180_Balance_Slug'},
+               'GENERATOR': {'D-1*'}, 'FRAME': set(), 'AUX': set(), 'INTAKE': {'D-160_Inlet_Screen', 'D-150*'}}
 D_SKIP = {'GR180_Starter', 'GR180_NoseCone', 'GR180_Exhaust'}      # replaced by the generator pod and the exhaust diffuser
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
-STYLE = [('Cartridge', (230, 230, 220), 0.2), ('FOD_Guard', (60, 60, 65), 0.35), ('Insulation', (240, 236, 220), 0.15),
+STYLE = [('Plenum_Can', (200, 205, 215), 0.35), ('Dish_Skirt', (200, 205, 215), 0.45), ('Rear_Ring', (90, 95, 100), 1.0),
+         ('Port_FOD', (60, 60, 65), 0.4), ('Diffuser_Stub', (245, 110, 10), 1.0), ('Flange_DN125', (245, 110, 10), 1.0),
+         ('Inlet_Flange', (90, 95, 100), 1.0), ('Front_Pedestal', (55, 60, 65), 1.0), ('Body_Sleeve', (190, 55, 45), 1.0),
+         ('Engine_Shaft', (190, 55, 45), 1.0), ('Clamp', (90, 95, 100), 1.0), ('SFD', (120, 200, 200), 1.0), ('O-rings', (30, 30, 30), 1.0),
+         ('Oil_Feed', (240, 190, 0), 1.0), ('Scavenge', (240, 190, 0), 1.0), ('Seal_Retainer', (150, 150, 160), 1.0),
+         ('End_Shield', (170, 200, 225), 0.35), ('Bearing_Cover', (170, 200, 225), 0.35), ('Quill_Guard', (170, 200, 225), 0.35),
+         ('Glycol', (40, 120, 220), 1.0), ('Wave_Spring', (245, 215, 60), 1.0), ('Cartridge', (230, 230, 220), 0.2), ('FOD_Guard', (60, 60, 65), 0.35), ('Insulation', (240, 236, 220), 0.15),
          ('Plenum_Bell', (200, 205, 215), 0.45), ('Tube_Sheet', (200, 205, 215), 0.6), ('Skirt', (200, 205, 215), 0.45),
          ('Yoke', (90, 95, 100), 1.0), ('Clamp', (90, 95, 100), 1.0), ('Tail_Fairing', (170, 200, 225), 0.5),
          ('Diffuser_Elbow', (245, 110, 10), 1.0), ('VBand', (90, 95, 100), 1.0), ('Flange_DN200', (245, 110, 10), 1.0),
@@ -115,7 +122,10 @@ def run(_context):
         occ.component.name = name.replace('GR180_', '')
         if name in steps:
             k0 = occ.component.occurrences.count
-            app.importManager.importToTarget(app.importManager.createSTEPImportOptions(steps[name]), occ.component)
+            try:
+                app.importManager.importToTarget(app.importManager.createSTEPImportOptions(steps[name]), occ.component)
+            except RuntimeError as e:             # a file being rewritten by a design script: skip it, report it
+                print('SKIPPED', name, str(e)[:80]); occ.deleteMe(); continue
             for child in [occ.component.occurrences.item(i) for i in range(k0, occ.component.occurrences.count)]:
                 for b in [child.bRepBodies.item(j) for j in range(child.bRepBodies.count)]:
                     b.moveToComponent(occ)
