@@ -22,11 +22,17 @@ D2_REPLACED = {'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
                'TURBINE': {'RT-*'}, 'ROTOR': {'GR180_Shaft', 'RT-140_Shaft_Extension', 'D-140_Quill_Shaft', 'GR180_FrontBearing*',
                                              'GR180_RearBearing*', 'D-141*', 'D-142*', 'GR180_Compressor', 'GR180_ShaftTunnel',
                                              'GR180_WaveSpring*', 'GR180_Balance_Slug'},
-               'GENERATOR': {'D-1*'}, 'FRAME': set(), 'AUX': set(), 'INTAKE': {'D-160_Inlet_Screen', 'D-150*'}}
+               'GENERATOR': {'D-1*'}, 'POD': {'D-1*'}, 'FRAME': set(), 'AUX': set(), 'INTAKE': {'D-160_Inlet_Screen', 'D-150*'}}
 D_SKIP = {'GR180_Starter', 'GR180_NoseCone', 'GR180_Exhaust'}      # replaced by the generator pod and the exhaust diffuser
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
-STYLE = [('Filter_Box_Posts', (55, 60, 65), 1.0), ('Filter_Box', (200, 205, 215), 0.3), ('Lid_Grille', (60, 60, 65), 0.6),
+STYLE = [('Pod_Housing', (170, 200, 225), 0.3), ('Front_Cover', (170, 200, 225), 0.35), ('Glycol_Jacket', (120, 170, 220), 0.35),
+         ('Magnet', (200, 60, 170), 1.0), ('Carbon_Sleeve', (40, 40, 45), 1.0), ('End_Rings', (150, 150, 160), 1.0),
+         ('Locknut', (150, 150, 160), 1.0), ('Seal_Spacer', (150, 150, 160), 1.0), ('Dowel', (110, 110, 115), 1.0),
+         ('Screws', (110, 110, 115), 1.0), ('Phase_Studs', (200, 110, 50), 1.0), ('Terminal_Block', (230, 200, 120), 1.0),
+         ('Gasket', (30, 30, 30), 1.0), ('Lead-out', (30, 30, 30), 1.0), ('Cable_Glands', (30, 30, 30), 1.0),
+         ('Hose_Nipples', (40, 120, 220), 1.0), ('Plug', (110, 110, 115), 1.0), ('Shim', (150, 150, 160), 1.0),
+         ('Filter_Box_Posts', (55, 60, 65), 1.0), ('Filter_Box', (200, 205, 215), 0.3), ('Lid_Grille', (60, 60, 65), 0.6),
          ('V-Cell', (235, 235, 230), 0.85), ('Toggle_Latches', (240, 190, 0), 1.0), ('Pod_Cradle', (55, 60, 65), 1.0),
          ('Weight_Relief', (55, 60, 65), 1.0), ('End_Ring', (245, 110, 10), 1.0), ('Diffuser_Weldment', (245, 110, 10), 1.0),
          ('Plenum_Can', (200, 205, 215), 0.35), ('Dish_Skirt', (200, 205, 215), 0.45), ('Rear_Ring', (90, 95, 100), 1.0),
@@ -112,7 +118,7 @@ def run(_context):
                 steps.update({os.path.splitext(os.path.basename(f))[0]: f
                               for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'RT2', 'RT-*.step'))})
                 d2 = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2')
-                for sub in ('INTAKE', 'EXHAUST', 'FRAME', 'ROTOR', 'TURBINE', 'GENERATOR') + (('AUX',) if SHOW_AUX else ()):
+                for sub in ('INTAKE', 'EXHAUST', 'FRAME', 'ROTOR', 'TURBINE', 'GENERATOR', 'POD') + (('AUX',) if SHOW_AUX else ()):
                     fs = [f for f in glob.glob(os.path.join(d2, sub, '*.step')) if '_assembly' not in f]
                     if not fs:
                         continue
