@@ -138,21 +138,17 @@ drum = drum.removeSplitter()
 add('E2C2-101', 'Collector_Drum', drum, '1.4404 (316L): machined front ring, 4 mm front wall, 2.5 mm rolled shell, 10 mm flange, TIG',
     RHO['S1_4404'], 'cold')
 
-# ---------------------------------------------------------------- E2-102 C1 outlet nozzle (ear + rect->round transition + DN100 PN16 flange)
-t1 = C1['t_wall']; x0, x1 = C1['rect_x']; z0, z1 = C1['rect_z']; yr, yt = C1['y_rect'], C1['y_trans']
-ro1 = C1['pipe_od'] / 2; ri1 = ro1 - C1['pipe_t']; xc1, zc1 = C1['round_centre_xz']
-ear_o = box(x0 - t1, x1 + t1, -t1, yr, z0 - t1, z1 + t1)
-ear_i = box(x0, x1, -t1 - 1, yr + 1, z0, z1)
-ear = ear_o.cut(ear_i).cut(Part.makeCylinder(RDO - 0.5, 400, V(-200, 0, 0), V(1, 0, 0)))
-tr_o = Part.makeLoft([rect_wire(yr, x0 - t1, x1 + t1, z0 - t1, z1 + t1), circ_wire(yt, xc1, zc1, ro1)], True, True)
-tr_i = Part.makeLoft([rect_wire(yr - 0.01, x0, x1, z0, z1), circ_wire(yt + 0.01, xc1, zc1, ri1)], True, True)
-trans = tr_o.cut(tr_i)
-yfl = C1['face_y'] - C1['flange'][4]
-stub = tube(ro1, ri1, V(xc1, yt, zc1), V(xc1, yfl, zc1))
-D_, K_, nb_, dh_, b_ = C1['flange']
-fl1 = plate_flange(V(xc1, yfl, zc1), V(0, 1, 0), D_, 2 * ri1, K_, nb_, dh_, b_)
-c1n = ear.fuse([trans, stub, fl1]).removeSplitter()
-add('E2C2-102', 'C1_Outlet_Nozzle', c1n, '1.4404 sheet 2.5 mm + EN 10217-7 pipe 114.3x2 + EN 1092-1 type 11 DN100 PN16 flange, TIG to E2-101',
+# ---------------------------------------------------------------- E2C2-102 C1 outlet (version C2, simplified): north ear + boot turning UP ->
+# round DN100 PN16 flange facing +z at (x -9, y 290), outside the version-C exhaust insulation; a straight riser + braided hose goes up to R-C2
+C1 = G['C1']; t1 = C1['t_wall']; x0, x1 = C1['rect_x']; z0, z1 = C1['rect_z']; (yb0, yb1), (bx0, bx1), bz1 = C1['boot_y'], C1['boot_x'], C1['boot_z_top']
+xc1, yc1 = C1['nozzle_xy']; ro1 = C1['pipe_od'] / 2; ri1 = ro1 - C1['pipe_t']; zf1 = C1['face_z']; D_, K_, nb_, dh_, b_ = C1['flange']
+yr = yb1                                                                                     # (used by the drum insulation cut)
+c1_o = box(x0 - t1, x1 + t1, -t1, yb0 + 1, z0 - t1, z1 + t1).fuse(box(bx0 - t1, bx1 + t1, yb0 - t1, yb1 + t1, z0 - t1, bz1 + t1))
+c1_i = box(x0, x1, -t1 - 1, yb0 + 2, z0, z1).fuse(box(bx0, bx1, yb0, yb1, z0, bz1))
+c1n = c1_o.cut(c1_i).cut(Part.makeCylinder(RDO - 0.5, 400, V(-200, 0, 0), V(1, 0, 0)))
+c1n = c1n.fuse(tube(ro1, ri1, V(xc1, yc1, bz1 - 1), V(xc1, yc1, zf1 - b_))).cut(Part.makeCylinder(ri1, 20, V(xc1, yc1, bz1 - 5), V(0, 0, 1)))
+c1n = c1n.fuse(plate_flange(V(xc1, yc1, zf1 - b_), V(0, 0, 1), D_, 2 * ri1, K_, nb_, dh_, b_)).removeSplitter()
+add('E2C2-102', 'C1_Outlet_Ear_Boot_DN100', c1n, '1.4404 sheet 2.5 mm ear + boot, EN 10217-7 114.3x2 stub, EN 1092-1 type 11 DN100 PN16 flange facing up, TIG to E2C2-101',
     RHO['S1_4404'], 'cold')
 
 # ---------------------------------------------------------------- E2-103 front support foot (engine axial fixed point)
@@ -185,7 +181,7 @@ add('E2C2-110', 'Bulkhead', bh, '1.4948 (304H) plate 6 mm, machined; 3 retainer 
 shd = ring(XB1, XB1 + G['t_bh_ins'] + 0.5, G['r_bh_hub_o'] + 0.3, RCI - 0.5)
 for a in A_INJ:
     shd = shd.cut(Part.makeCylinder(9.0, 10, P(XB1 - 1, RI, a), V(1, 0, 0)))
-add('E2C2-111', 'Bulkhead_HeatShield', shd, 'microporous panel 4 mm (Promat MICROTHERM) + IN625 0.5 mm cover, 6 tack studs', RHO['ins'] * 1.6, 'hot')
+if False: add('E2C2-111', 'Bulkhead_HeatShield', shd, 'microporous panel 4 mm (Promat MICROTHERM) + IN625 0.5 mm cover, 6 tack studs', RHO['ins'] * 1.6, 'hot')
 
 # E2-115 gas manifold (316L): torus 8x0.8 + 7 stems 6x0.8 + feed tube 10x1 to the drum boss
 xm, rm, dm, tm = G['x_manifold'], G['r_manifold'], G['d_manifold'], G['t_manifold']
@@ -293,7 +289,7 @@ for a in G['a_twall']:
     baf = baf.cut(radial_hole(G['x_twall'], a, rb_ - 1, rb_ + 2, 2.0))                     # TE-507 sheath passages
 for x, a, rh in ((G['x_igniter'], G['a_igniter'], 7.5), (G['x_uv'], G['a_uv'], 8.0)):
     baf = baf.cut(radial_hole(x, a, rb_ - 1, rb_ + 2, rh))                                  # igniter / UV sight-tube clearance
-add('E2C2-140', 'Perforated_Baffle', baf, '1.4948 sheet 0.8 mm, 40 % open (Ø3 holes, not modelled), 6 tabs welded to the casing', RHO['S1_4948'] * 0.6, 'hot')
+if False: add('E2C2-140', 'Perforated_Baffle', baf, '1.4948 sheet 0.8 mm, 40 % open (Ø3 holes, not modelled), 6 tabs welded to the casing', RHO['S1_4948'] * 0.6, 'hot')
 
 # =====================================================================================================================
 # E2-150 hot pressure casing (1.4948): flange, shell, solid rear ring (E2/E3 flange), bosses
@@ -306,6 +302,7 @@ rring = rring.cut(ring(XR1 - G['e3_spigot_depth'], XR1 + 1, G['e3_groove_ri'], G
 rring = rring.cut(ring(G['seal_groove_x'][0], G['seal_groove_x'][1], G['r_rear_bore'] - 0.5, G['r_seal_groove']))  # piston-ring groove
 for k in range(G['n_e3_bolts']):                                                                                # 16 x M8 blind tapped, depth 14
     rring = rring.cut(Part.makeCylinder(3.4, 14.01, P(XR1 - 14.0, G['pcd_e3'] / 2, G['e3_bolt_a0_deg'] + 360.0 / G['n_e3_bolts'] * k), V(1, 0, 0)))
+KEEP_CASE_BOSSES = ('igniter', 'uv')       # version C2: P3, T3 and liner-wall TC bosses dropped (control needs P2 only)
 BOSS_CASE = [  # key, x, azimuth, boss radius, top radius, bore radius
     ('igniter', G['x_igniter'], G['a_igniter'], 13.0, RCO + 12.0, 6.0),
     ('uv', G['x_uv'], G['a_uv'], 15.0, RCO + 14.0, 7.0),
@@ -314,38 +311,36 @@ BOSS_CASE = [  # key, x, azimuth, boss radius, top radius, bore radius
     ('tw1', G['x_twall'], G['a_twall'][0], 7.0, RCO + 10.0, 0.6),
     ('tw2', G['x_twall'], G['a_twall'][1], 7.0, RCO + 10.0, 0.6)] + \
     [('pin%d' % i, G['x_liner_pins'], a, 8.0, RCO + 9.0, 3.05) for i, a in enumerate(G['a_liner_pins'])]
+BOSS_CASE = [b_ for b_ in BOSS_CASE if b_[0] in KEEP_CASE_BOSSES or b_[0].startswith('pin')]
 cb = [radial_boss(x, a, RCO - 1.5, rt, rb) for _, x, a, rb, rt, _ in BOSS_CASE]
 case = hfl.fuse([hshell, rring] + cb)
 for _, x, a, rb, rt, bo in BOSS_CASE:
     case = case.cut(radial_hole(x, a, RCI - 2, rt + 1, bo))
-c2_in = MIRROR_Y(box(C2['rect_x'][0], C2['rect_x'][1], 0.0, C2['y_rect'] + 1, C2['rect_z'][0], C2['rect_z'][1]))   # south opening
+c2_in = box(C2['rect_x'][0], C2['rect_x'][1], -C2['boot_y'][0], 0.0, C2['rect_z'][0], C2['rect_z'][1])   # south opening
 case = case.cut(c2_in).removeSplitter()
 add('E2C2-150', 'Hot_Pressure_Casing', case, '1.4948 (304H): flange + rolled 3 mm shell + forged/machined rear ring, TIG, PWHT none; hydro 11.1 barg',
     RHO['S1_4948'], 'hot')
 
-# E2-151 C2 inlet duct (1.4948 3 mm) + rectangular flange (E2/E4)
-t2 = C2['t_wall']; ax0, ax1 = C2['rect_x']; az0, az1 = C2['rect_z']; y2r = C2['y_rect']; y2f = C2['face_y']; rim = C2['rect_flange_rim']
-d_o = box(ax0 - t2, ax1 + t2, -t2, y2r, az0 - t2, az1 + t2)
-d_i = box(ax0, ax1, -t2 - 1, y2r + 1, az0, az1)
-duct = d_o.cut(d_i).cut(Part.makeCylinder(RCO - 0.5, 300, V(-100, 0, 0), V(1, 0, 0)))
-rfl = box(ax0 - rim, ax1 + rim, y2r, y2f, az0 - rim, az1 + rim).cut(box(ax0, ax1, y2r - 1, y2f + 1, az0, az1))
-bx = (ax0 - rim / 2, ax1 + rim / 2); bz = (az0 - rim / 2, az1 + rim / 2)
-C2_BOLTS = [(bx[0], bz[0]), (bx[1], bz[0]), (bx[0], bz[1]), (bx[1], bz[1]), (0.5 * sum(bx), bz[0]), (0.5 * sum(bx), bz[1])]
-for f in (0.2, 0.4, 0.6, 0.8): C2_BOLTS += [(bx[0], bz[0] + f * (bz[1] - bz[0])), (bx[1], bz[0] + f * (bz[1] - bz[0]))]   # 14 x M8
-for bx_, bz_ in C2_BOLTS:
-    rfl = rfl.cut(Part.makeCylinder(4.5, 20, V(bx_, y2r - 1, bz_), V(0, 1, 0)))
-c2d = MIRROR_Y(duct.fuse(rfl).removeSplitter())                                 # south side
-add('E2C2-151', 'C2_Inlet_Duct_RectFlange', c2d, '1.4948 sheet 3 mm box duct (south) + 15 mm rectangular flange (14 x M8 clearance), TIG to E2C2-150',
+# E2C2-151 C2 inlet (version C2, simplified): south box duct + boot turning UP -> round DN125 PN16 flange facing +z at (x 55, y -340)
+t2 = C2['t_wall']; ax0, ax1 = C2['rect_x']; az0, az1 = C2['rect_z']; (yb20, yb21), (bx20, bx21) = C2['boot_y'], C2['boot_x']
+xc2, yc2 = C2['nozzle_xy']; ro2 = C2['pipe_od'] / 2; ri2 = ro2 - C2['pipe_t']; zf2 = C2['face_z']; D2, K2, nb2, dh2, b2 = C2['flange']
+y2r = yb21; y2f = yb21                                                                       # (used below by the insulation cut)
+c2_o = box(ax0 - t2, ax1 + t2, -yb20 - 1, t2, az0 - t2, az1 + t2).fuse(box(bx20 - t2, bx21 + t2, -yb21 - t2, -yb20 + t2, az0 - t2, az1 + t2))
+c2_i = box(ax0, ax1, -yb20 - 2, t2 + 1, az0, az1).fuse(box(bx20, bx21, -yb21, -yb20, az0, az1))
+c2d = c2_o.cut(c2_i).cut(Part.makeCylinder(RCO - 0.5, 300, V(-100, 0, 0), V(1, 0, 0)))
+c2d = c2d.fuse(tube(ro2, ri2, V(xc2, yc2, az1 - 1), V(xc2, yc2, zf2 - b2))).cut(Part.makeCylinder(ri2, 20, V(xc2, yc2, az1 - 5), V(0, 0, 1)))
+c2d = c2d.fuse(plate_flange(V(xc2, yc2, zf2 - b2), V(0, 0, 1), D2, 2 * ri2, K2, nb2, dh2, b2)).removeSplitter()
+add('E2C2-151', 'C2_Inlet_Duct_Boot_DN125', c2d, '1.4948 sheet 3 mm box duct + boot, 139.7x2 stub, EN 1092-1 type 11 DN125 PN16 flange facing up, TIG to E2C2-150',
     RHO['S1_4948'], 'hot')
 
 # =====================================================================================================================
 # insulation envelopes (removable, microporous + 0.5 mm 1.4301 cladding): hot casing 50 mm, drum 25 mm
 ti_h, ti_d = G['insulation']['hot'], G['insulation']['drum']
 ins_h = ring(C2['rect_x'][0] - C2['t_wall'] + 0.5, XR0, RCO, RCO + ti_h)      # starts behind the mid-flange nuts/studs
-ins_h = ins_h.cut(MIRROR_Y(box(ax0 - t2 - 3, ax1 + t2 + 3, -t2 - 3, y2r + 5, az0 - t2 - 3, az1 + t2 + 3)))
+ins_h = ins_h.cut(box(ax0 - t2 - 3, ax1 + t2 + 3, -yb20 - 5, t2 + 3, az0 - t2 - 3, az1 + t2 + 3))
 for _, x, a, rb, rt, bo in BOSS_CASE: ins_h = ins_h.cut(radial_boss(x, a, RCO - 1, RCO + ti_h + 2, rb + 2.0))
 ins_d = ring(xdf + G['t_front_wall'], XM0, RDO, RDO + ti_d)
-ins_d = ins_d.cut(box(x0 - t1 - 3, x1 + t1 + 3, -t1 - 3, yr + 5, z0 - t1 - 3, z1 + t1 + 3)).cut(box(fx0 - 3, fx1 + 3, -fw, fw, zs - 1, -60))
+ins_d = ins_d.cut(box(x0 - t1 - 3, x1 + t1 + 3, -t1 - 3, yb0 + 5, z0 - t1 - 3, z1 + t1 + 3)).cut(box(fx0 - 3, fx1 + 3, -fw, fw, zs - 1, -60))
 for _, x, a, rb, h, bo in BOSS_DRUM: ins_d = ins_d.cut(radial_boss(x, a, RDO - 1, RDO + ti_d + 2, rb + 2.0))
 ins_d = ins_d.cut(cyl(G['d_feed'] / 2 + 3, pf0, pf1 + nf * 60))
 add('E2C2-160', 'Insulation_HotCasing', ins_h, 'microporous 50 mm (Promat MICROTHERM Overstitched) in 0.5 mm 1.4301 cladding, 2 half shells', RHO['ins'] * 1.3, 'ins')
@@ -390,6 +385,7 @@ for i, (tg, a) in enumerate((('E2C2-505', G['a_twall'][0]), ('E2C2-506', G['a_tw
 inst['E2C2-507'] = ('PT-521_P2_Tap', probe(G['x_p2'], G['a_p2'], RDO + 12.0, [(15.0, 6.0), (40.0, 3.0)]), 'P2 tap + 300 mm sense line to PT-521 (0-6 bar abs)', 'Voss (DE)')
 inst['E2C2-508'] = ('Gas_Inlet_Fitting_L10', probe(G['x_gas_boss'], G['gas_entry_deg'], RDO + 14.0, [(24.0, 11.0), (40.0, 5.0)]), 'DIN 2353 L10 bulkhead union 316, gas from PT-605 / FCV-620', 'Voss (DE) / Stauff (DE)')
 inst['E2C2-509'] = ('Buffer_Air_Fitting_L6', probe(G['x_bleed'], G['a_bleed'], RDO + 12.0, [(18.0, 7.0), (40.0, 3.0)]), 'DIN 2353 L6 union 316 -> E3-606 orifice/filter -> E3 B1 seal', 'Voss (DE) / Stauff (DE)')
+for _drop in ('E2C2-503', 'E2C2-504', 'E2C2-505', 'E2C2-506'): inst.pop(_drop, None)     # version C2: control/protection only
 for tg, (nm, shp, desc, sup) in inst.items():
     add(tg, nm, shp, desc, RHO['misc'], 'sensor', note=sup)
 
@@ -469,25 +465,12 @@ pr_ = RS['pressure']; dp_ = RS['design_point']
 def itf(name, pos, direction, size, counterpart, **kw):
     d = dict(name=name, ENG_mm=[round(v, 2) for v in pos], ROOF_m=roof(pos), direction=direction, size=size, counterpart=counterpart); d.update(kw); return d
 IF = []
-IF.append(itf('C1 compressor-delivery outlet (to the R-C2 C1 riser)', [xc1, C1['face_y'], zc1], [0, 1, 0],
-              'EN 1092-1 type 11 DN100 PN16 weld-neck, face y %.0f (D 220, K 180, 8 x M16 holes 18, straddling the vertical); pipe 114.3 x 2.0' % C1['face_y'],
-              'E4 cold-inlet spool E4-SP-C1 (straight: flange axis = E4 top-header axis, ENG z %.1f)' % zc1,
-              fluid='air %.3f kg/s, %.0f C, %.3f bar abs (after the collector, -%.2f %%)' % (dp_['ma'], dp_['T2_C'], pr_['P_C1'], RS['collector']['dp_total_pct']),
-              design='3.0 barg / 250 C', movement_mm=dict(dx=round(RS['thermal_growth_mm']['C1 flange centre: dx'], 2),
-                                                          dy=round([v for k, v in RS['thermal_growth_mm'].items() if k.startswith('C1 flange centre: dy')][0], 2)),
-              status='E2 published 2026-10-23; E4 adopts'))
-IF.append(itf('C2 recuperated-air inlet (from the R-C2 C2 riser, SOUTH side)', [0.5 * (ax0 + ax1), -y2f, 0.5 * (az0 + az1)], [0, -1, 0],
-              'RECTANGULAR flange, face y %.0f: duct inside %.0f (x) x %.0f (z) mm, flange %.0f x %.0f x %.0f thick, %d x M10 (holes 11) on the rim centre line, '
-              'sheet gasket 8 wide (Thermiculite 815 / Milam PSS); a round DN125 flange does not fit (E3 drum cover r 235 at x 145, E3 H1 flange)' %
-              (y2f, ax1 - ax0, az1 - az0, ax1 - ax0 + 2 * rim, az1 - az0 + 2 * rim, C2['rect_flange_t'], len(C2_BOLTS)),
-              'E4 cold-outlet spool E4-SP-C2: rectangular flange + rect-to-round transition to the DN125 bellows on axis ENG x %.0f / z %.1f (E4 bottom header)' %
-              tuple(C2['round_axis_xz_E4']),
-              rect_inner_mm=[ax1 - ax0, az1 - az0], rect_flange_mm=[ax1 - ax0 + 2 * rim, az1 - az0 + 2 * rim], rect_bolts_xz_mm=[[round(a, 1), round(b, 1)] for a, b in C2_BOLTS],
-              round_axis_ENG_mm=[C2['round_axis_xz_E4'][0], None, C2['round_axis_xz_E4'][1]],
-              fluid='air %.3f kg/s, %.0f C, %.3f bar abs' % (dp_['ma'] * (1 - RS['beta_recuperator_bypass']), dp_['T2r_C'], pr_['P_C2']),
-              design='3.0 barg / 620 C', movement_mm=dict(dx=round(RS['thermal_growth_mm']['C2 flange centre: dx'], 2),
-                                                          dy=round([v for k, v in RS['thermal_growth_mm'].items() if k.startswith('C2 flange centre: dy')][0], 2)),
-              status='E2 published 2026-10-23; E4 adopts (E4 owns the C1/C2 bolting and gaskets)'))
+IF.append(itf('C1 compressor-delivery outlet (to the R-C2 C1 riser)', [xc1, yc1, zf1], [0, 0, 1],
+              'EN 1092-1 type 11 DN100 PN16 (D 220, K 180, 8 x M16), face z %.0f, pipe 114.3 x 2.0' % zf1, 'R-C2 C1 riser: straight pipe + braided hose DN100',
+              fluid='air %.3f kg/s, %.0f C' % (dp_['ma'], dp_['T2_C']), design='3.0 barg / 250 C'))
+IF.append(itf('C2 recuperated-air inlet (from the R-C2 C2 riser)', [xc2, yc2, zf2], [0, 0, 1],
+              'EN 1092-1 type 11 DN125 PN16 (D 250, K 210, 8 x M16), face z %.0f, pipe 139.7 x 2.0' % zf2, 'R-C2 C2 riser: straight pipe + braided hose DN125',
+              fluid='air ~0.38 kg/s, ~516 C', design='3.0 barg / 620 C'))
 IF.append(itf('IF-E2E3 rear flange (E2 side)', [G['x_e3_face'], 0, 0], [1, 0, 0],
               'E2 face x %.1f + 1.0 mm gasket (E3-605) = E3 face x %.1f; OD %.0f, PCD %.0f, %d x M8 blind tapped (depth 14) in the E2 ring, phase %.2f deg; '
               'annular spigot groove r %.1f..%.1f (OD 120 H7) x %.1f..%.1f for the E3 spigot OD 120 h7 x 3; piston ring E2-171 in the bore groove x %.1f..%.1f r %.1f' %

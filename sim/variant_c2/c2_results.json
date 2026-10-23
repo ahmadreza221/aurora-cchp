@@ -1,14 +1,14 @@
 {
  "dp": {
   "collector_E2": 2.185581233424699,
-  "comb_hot_E2": 3.8350317722784744,
+  "comb_hot_E2": 3.550932874091562,
   "exhaust_box_C": 0.894,
-  "rec_cold": 1.2807473350435667,
-  "rec_hot": 1.0696510518169497,
-  "hx_hot": 0.06291614601255369,
+  "rec_cold": 1.2804653634119174,
+  "rec_hot": 1.069102402650974,
+  "hx_hot": 0.06290894477793528,
   "stack": 0.2,
-  "FPT_back_pressure_total_pct": 2.2265671978295036,
-  "compressor_to_combustor_pct": 7.141507258815705
+  "FPT_back_pressure_total_pct": 2.2260113474289094,
+  "compressor_to_combustor_pct": 6.8669106224563015
  },
  "R_C2": {
   "W": 0.3,
@@ -16,48 +16,48 @@
   "nc": 75,
   "nh": 76,
   "fin_hot": "H-OSF 2.0/5.0",
-  "Lcf": 0.0617264337492021,
+  "Lcf": 0.0617397005940578,
   "Ld": 0.1,
-  "Ltot": 0.3117264337492021,
+  "Ltot": 0.3117397005940578,
   "end_bar": 0.025,
-  "eps_raw": 0.8076109235327388,
-  "eps_net": 0.7999999999919707,
-  "NTU": 3.6572518875256326,
-  "UA": 1475.1795640183504,
-  "lam": 0.006136545168620862,
-  "dcond": 0.003610923540768085,
-  "Q_kW": 142.64197490604482,
-  "Tc_out_C": 519.1325571166371,
-  "Th_out_C": 276.5082635383261,
-  "Tc_out_net_C": 515.8012054482484,
-  "dph_core_Pa": 956.5360219426227,
-  "dpc_core_Pa": 462.00214949077014,
-  "dpc_dist_Pa": 1910.5787936216898,
-  "Gh": 3.934706172131309,
+  "eps_raw": 0.8076108934263341,
+  "eps_net": 0.7999999999919893,
+  "NTU": 3.6572299941041346,
+  "UA": 1475.1165101432491,
+  "lam": 0.006136509573254671,
+  "dcond": 0.0036108934343447308,
+  "Q_kW": 142.475639752936,
+  "Tc_out_C": 518.7334924501438,
+  "Th_out_C": 276.38578381076786,
+  "Tc_out_net_C": 515.4059146051393,
+  "dph_core_Pa": 955.9833950701935,
+  "dpc_core_Pa": 461.84297062981767,
+  "dpc_dist_Pa": 1909.8853781126627,
+  "Gh": 3.9347421150542794,
   "Gc": 10.05150935721094,
   "Reh": [
-   360.3977789772349,
-   269.8879650228938
+   360.4425937517218,
+   269.98357117462416
   ],
   "Rec": [
-   552.0468816627344,
-   378.5291657069148
+   552.0224511330727,
+   378.6478682914044
   ],
-  "area_cold": 29.2375689668041,
-  "area_hot": 47.94372189828055,
+  "area_cold": 29.239051011570783,
+  "area_hot": 47.94576234737747,
   "mass": {
-   "fins_cold": 2.7607301810415015,
+   "fins_cold": 2.7613235439943837,
    "dist_fins": 5.609412000000001,
-   "fins_hot": 22.575531180582132,
-   "parting_sheets": 44.66416342758568,
-   "cap_sheets": 2.9776108951723788,
-   "side_bars": 13.15111478701134,
+   "fins_hot": 22.576491978375586,
+   "parting_sheets": 44.666064301116606,
+   "cap_sheets": 2.97773762007444,
+   "side_bars": 13.151674488662112,
    "end_bars": 17.313,
-   "braze_BNi2": 3.8168046864987564,
-   "total": 112.86836715789178
+   "braze_BNi2": 3.81694963762781,
+   "total": 112.87265356985094
   },
   "window_area": 0.012834375,
-  "vol_L": 55.54965049410782,
+  "vol_L": 55.552014645861114,
   "fin_c": "C-OSF 1.2/2.0",
   "candidates_ok": 3,
   "budget": {
@@ -66,22 +66,22 @@
   }
  },
  "HX_C2": {
-  "Q_kW": 75.83337243636088,
-  "m_w_kg_s": 0.9049328453026357,
-  "m3_h": 3.341290505732809,
-  "LMTD": 85.65103361919833,
-  "Vmax": 5.142892740733533,
-  "Re": 2476.788694647468,
-  "h_gas": 55.38655883291028,
-  "eta_fin": 0.6044406473422661,
-  "U_per_m": 15.88666852695489,
-  "L_tube_m": 55.730755148228106,
+  "Q_kW": 75.78144362806285,
+  "m_w_kg_s": 0.9043131697859528,
+  "m3_h": 3.3390024730558254,
+  "LMTD": 85.61478399633286,
+  "Vmax": 5.142257123574732,
+  "Re": 2477.0391859643805,
+  "h_gas": 55.38452129765962,
+  "eta_fin": 0.6044484199663478,
+  "U_per_m": 15.886312824849977,
+  "L_tube_m": 55.71742007795922,
   "n_tubes_per_row": 7,
   "n_rows": 14,
   "height_m": 0.462,
-  "dp_Pa": 63.37228805455819,
+  "dp_Pa": 63.36503461104929,
   "mass_tubes_kg": 65.01326819629841,
-  "V_water_DN32": 0.8539569447550064,
+  "V_water_DN32": 0.8533721762678054,
   "n_passes": 14,
   "note": "serpentine: one tube row = one pass, 7 parallel tubes per row"
  },
@@ -93,23 +93,23 @@
    "mg": 0.3978,
    "T2": 438.7859,
    "P2": 309125.025,
-   "T2r": 788.9512,
-   "P3": 287048.8389,
-   "T5": 878.0363,
-   "Th_in": 876.4925,
-   "P_exit": 102967.7098,
-   "T_rec_hot_out": 582.9315,
-   "Q_rec": 133996.9027,
-   "P_shaft": 27617.3724,
-   "P_el": 25419.1299,
-   "Q_fuel": 140311.1338,
-   "gas_m3h": 14.6412,
-   "eta_el": 0.1812,
-   "Q_hw": 75833.3724,
-   "eta_tot": 0.7216,
+   "T2r": 788.5559,
+   "P3": 287897.6858,
+   "T5": 877.5404,
+   "Th_in": 875.9984,
+   "P_exit": 102967.1499,
+   "T_rec_hot_out": 582.7714,
+   "Q_rec": 133845.6378,
+   "P_shaft": 27840.3392,
+   "P_el": 25630.0008,
+   "Q_fuel": 140492.8287,
+   "gas_m3h": 14.6601,
+   "eta_el": 0.1824,
+   "Q_hw": 75781.4436,
+   "eta_tot": 0.7218,
    "T_stack_C": 100.0,
-   "Q_hw_cycle_model": 87424.7154,
-   "Q_cooling_absorption": 53083.3607
+   "Q_hw_cycle_model": 87358.8174,
+   "Q_cooling_absorption": 53047.0105
   },
   {
    "T_amb_C": 30.0,
@@ -118,23 +118,23 @@
    "mg": 0.3781,
    "T2": 461.6274,
    "P2": 309125.025,
-   "T2r": 793.3981,
-   "P3": 287048.8389,
-   "T5": 877.8037,
-   "Th_in": 876.3408,
-   "P_exit": 102967.7098,
-   "T_rec_hot_out": 598.1674,
-   "Q_rec": 120675.9511,
-   "P_shaft": 23381.0094,
-   "P_el": 21412.5896,
-   "Q_fuel": 131094.3014,
-   "gas_m3h": 13.6794,
-   "eta_el": 0.1633,
-   "Q_hw": 77306.8772,
-   "eta_tot": 0.753,
+   "T2r": 793.0021,
+   "P3": 287897.6858,
+   "T5": 877.3068,
+   "Th_in": 875.8457,
+   "P_exit": 102967.1499,
+   "T_rec_hot_out": 598.007,
+   "Q_rec": 120531.8916,
+   "P_shaft": 23593.3303,
+   "P_el": 21613.3921,
+   "Q_fuel": 131267.3413,
+   "gas_m3h": 13.6975,
+   "eta_el": 0.1647,
+   "Q_hw": 77257.7932,
+   "eta_tot": 0.7532,
    "T_stack_C": 100.0,
-   "Q_hw_cycle_model": 89123.4496,
-   "Q_cooling_absorption": 54114.8141
+   "Q_hw_cycle_model": 89060.7136,
+   "Q_cooling_absorption": 54080.4552
   },
   {
    "T_amb_C": 40.0,
@@ -143,27 +143,27 @@
    "mg": 0.366,
    "T2": 476.8551,
    "P2": 309125.025,
-   "T2r": 796.3737,
-   "P3": 287048.8389,
-   "T5": 877.6622,
-   "Th_in": 876.2533,
-   "P_exit": 102967.7098,
-   "T_rec_hot_out": 608.3312,
-   "Q_rec": 112508.1295,
-   "P_shaft": 20776.5752,
-   "P_el": 18949.446,
-   "Q_fuel": 125435.682,
-   "gas_m3h": 13.0889,
-   "eta_el": 0.1511,
-   "Q_hw": 78212.2459,
-   "eta_tot": 0.7746,
+   "T2r": 795.9771,
+   "P3": 287897.6858,
+   "T5": 877.1648,
+   "Th_in": 875.7576,
+   "P_exit": 102967.1499,
+   "T_rec_hot_out": 608.1704,
+   "Q_rec": 112368.4872,
+   "P_shaft": 20982.3697,
+   "P_el": 19144.0761,
+   "Q_fuel": 125603.4161,
+   "gas_m3h": 13.1064,
+   "eta_el": 0.1524,
+   "Q_hw": 78164.9061,
+   "eta_tot": 0.7747,
    "T_stack_C": 100.0,
-   "Q_hw_cycle_model": 90167.2064,
-   "Q_cooling_absorption": 54748.5722
+   "Q_hw_cycle_model": 90106.4091,
+   "Q_cooling_absorption": 54715.4342
   }
  ],
- "K_hot_water_real_over_cycle": 0.8674134316330921,
- "performance_note": "constant-cp project cycle (concept_study constants) with the actual E2 / C exhaust / R-C2 / HX-C2 losses; Q_hw = cycle value x 0.867 (real-gas / constant-cp at 15 C), to a 100 C stack. Real-gas R-C2 hot outlet at 15 C: 277 C (cycle model 310 C) -> HX-C2 real duty 75.8 kW",
+ "K_hot_water_real_over_cycle": 0.8674733228147035,
+ "performance_note": "constant-cp project cycle (concept_study constants) with the actual E2 / C exhaust / R-C2 / HX-C2 losses; Q_hw = cycle value x 0.867 (real-gas / constant-cp at 15 C), to a 100 C stack. Real-gas R-C2 hot outlet at 15 C: 276 C (cycle model 310 C) -> HX-C2 real duty 75.8 kW",
  "reference_concept_model_15C": {
   "P_el_kW": 23.35909959269351,
   "eta_el": 0.16861398743341283,
@@ -185,11 +185,11 @@
     390.0,
     410.0
    ],
-   "z_bellows": [
+   "z_joint": [
     410.0,
     470.0
    ],
-   "z_plenum": [
+   "z_trans": [
     470.0,
     560.0
    ],
@@ -207,91 +207,146 @@
    ],
    "z": [
     570.0,
-    881.7264337492021
+    881.7397005940578
    ],
+   "frame": 20.0,
+   "frame_rim": 25.0,
    "stack_axis": "x",
    "layer_width_axis": "y",
    "flow": "+z (hot up, cold down)",
    "window_len": 100.0,
    "end_bar": 25.0,
-   "n_modules": 2,
-   "z_hdr_top": 806.7264337492021,
+   "n_modules": 1,
+   "z_hdr_top": 806.7397005940578,
    "z_hdr_bot": 645.0
   },
   "headers": {
-   "R": 45.0,
-   "t": 1.5,
-   "north": "cold inlet C1 (top window, z = core top - end bar - window/2)",
-   "south": "cold outlet C2 (bottom window)"
-  },
-  "hood": {
-   "z": [
-    881.7264337492021,
-    921.7264337492021
-   ]
+   "north": {
+    "y": [
+     150.0,
+     360.0
+    ],
+    "nozzle_xy": [
+     -9.0,
+     290.0
+    ],
+    "DN": 100
+   },
+   "south": {
+    "y": [
+     -150.0,
+     -410.0
+    ],
+    "nozzle_xy": [
+     55.0,
+     -340.0
+    ],
+    "DN": 125
+   },
+   "height": 110.0,
+   "wall": 3.0,
+   "note": "box header bolted (gasket) to the core side frame around the cold window, nozzle + flange on its BOTTOM"
   },
   "hx": {
    "z": [
-    921.7264337492021,
-    1423.726433749202
+    901.7397005940578,
+    1421.739700594058
    ],
-   "tubes_per_row": 7,
+   "body_x": [
+    -90.0,
+    524.0000000000001
+   ],
+   "body_y": [
+    -170.0,
+    170.0
+   ],
+   "cone_h": 80.0,
+   "water_DN": 32,
+   "duty_kW": 75.78144362806285,
    "rows": 14,
-   "Pt": 38.0,
-   "Pl": 33.0,
-   "Do": 16.0,
-   "fin_D": 34.0,
-   "water_DN": 32
+   "tubes_per_row": 7
   },
   "stack": {
    "DN": 200,
-   "D": 320.0,
-   "h": 150.0
+   "D": 320.0
   },
   "risers": {
    "C1": {
-    "x": -11.0,
-    "y": 345.0,
-    "DN": 100
+    "xy": [
+     -9.0,
+     290.0
+    ],
+    "DN": 100,
+    "hose_L": 300.0
    },
    "C2": {
-    "x": 71.0,
-    "y": -380.0,
-    "DN": 125
+    "xy": [
+     55.0,
+     -340.0
+    ],
+    "DN": 125,
+    "hose_L": 300.0
    }
   },
   "insulation": {
    "recup_mm": 50.0,
-   "hx_mm": 30.0,
+   "headers_mm": 30.0,
    "risers_C1_mm": 20.0,
-   "risers_C2_mm": 60.0
+   "risers_C2_mm": 30.0
   },
-  "portal": {
-   "x_cols": [
-    -200.0,
-    544.0000000000001
-   ],
-   "y_cols": [
-    -215.0,
-    215.0
-   ],
-   "z_beam": [
-    500.0,
-    540.0
-   ],
+  "frame": {
    "rails_y": [
-    -215.0,
-    215.0
+    -110.0,
+    110.0
    ],
    "rails_x": [
-    -170.0,
-    574.0000000000001
+    -230.0,
+    590.0
+   ],
+   "x_cols": [
+    -200.0,
+    560.0
+   ],
+   "y_cols": [
+    -185.0,
+    185.0
+   ],
+   "z_top": [
+    380.0,
+    420.0
+   ],
+   "z_base": [
+    -310.0,
+    -250.0
    ]
+  }
+ },
+ "construction_comparison_eps080": {
+  "note": "E4 model (sim/engine/e4_recuperator_calc.run_comparison) at eps 0.80 / 0.75, hot <= 1000 Pa, cold <= 2400 Pa, W 0.30",
+  "plate_fin_OSF": {
+   "vol_L": 50.0,
+   "core_kg": 129.1
+  },
+  "primary_surface_welded": {
+   "vol_L": 36.1,
+   "core_kg": 28.6,
+   "note": "foil folding dies + automated edge welding"
+  },
+  "straight_tube_6x0p3": {
+   "vol_L": 167.9,
+   "core_kg": 270.6,
+   "tubes": 3941,
+   "eps075_vol_L": 130.0,
+   "eps075_kg": 215.8
+  },
+  "SLM_gyroid": {
+   "vol_L": 31.8,
+   "core_kg": 99.6
   }
  },
  "E2_C2": {
   "C1": {
-   "side": "north",
+   "side": "north, boot up",
    "rect_x": [
     -26.0,
     7.5
@@ -300,12 +355,20 @@
     -40.0,
     115.0
    ],
-   "y_rect": 140.0,
-   "y_trans": 168.0,
-   "round_centre_xz": [
-    -11.0,
-    37.5
+   "boot_y": [
+    230.0,
+    350.0
    ],
+   "boot_x": [
+    -69.0,
+    51.0
+   ],
+   "boot_z_top": 130.0,
+   "nozzle_xy": [
+    -9.0,
+    290.0
+   ],
+   "face_z": 170.0,
    "DN": 100,
    "PN": 16,
    "pipe_od": 114.3,
@@ -317,12 +380,17 @@
     18.0,
     20.0
    ],
-   "face_y": 190.0,
    "t_wall": 2.5,
-   "why": "lowered to mid-height: the version-C exhaust insulation fills x >= 22 above z 200 and x >= 116 below z 165"
+   "y_rect": 230.0,
+   "face_y": 290.0,
+   "round_centre_xz": [
+    -9.0,
+    170.0
+   ],
+   "why": "ear north at mid-height, boot turns UP outside the exhaust insulation (|y| > 211 above z 200); round DN100 flange only"
   },
   "C2": {
-   "side": "south",
+   "side": "south, boot up",
    "rect_x": [
     47.0,
     95.0
@@ -331,26 +399,45 @@
     -239.0,
     -40.0
    ],
-   "y_rect": -155.0,
-   "face_y": -170.0,
-   "t_wall": 3.0,
-   "rect_flange_t": 15.0,
-   "rect_flange_rim": 18.0,
-   "n_bolts": 14,
-   "d_bolt": 8,
-   "round_axis_xz": [
-    71.0,
-    -139.5
+   "boot_y": [
+    290.0,
+    390.0
    ],
+   "boot_x": [
+    5.0,
+    105.0
+   ],
+   "nozzle_xy": [
+    55.0,
+    -340.0
+   ],
+   "face_z": 2.0,
    "DN": 125,
-   "why": "mirrored to the south (north side carries C1); narrowed to x 47..95, rim 18 with 14 x M8 (459 mm2 >= 390 required) so the flange (x 29..113) clears the exhaust insulation (x >= 116)"
+   "PN": 16,
+   "pipe_od": 139.7,
+   "pipe_t": 2.0,
+   "flange": [
+    250.0,
+    210.0,
+    8,
+    18.0,
+    22.0
+   ],
+   "t_wall": 3.0,
+   "y_rect": -290.0,
+   "face_y": -340.0,
+   "round_axis_xz": [
+    55.0,
+    2.0
+   ],
+   "why": "south duct (x 47..95 clears the mid-flange nuts and the exhaust insulation x >= 116), boot turns UP at y -340; round DN125 flange only"
   },
   "a_liner_pins": [
    30.0,
    160.0,
    300.0
   ],
-  "C2_port_velocity": 30.86401442612605,
-  "C2_port_dump_kPa": 0.6177326505430045
+  "C2_port_velocity": 30.848550525787598,
+  "C2_port_dump_kPa": 0.6174231458877799
  }
 }
