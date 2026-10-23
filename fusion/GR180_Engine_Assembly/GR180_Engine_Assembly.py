@@ -20,6 +20,8 @@ ROOT = '/Users/ahmadrezaasiyaeemoghadam/Desktop/GR180-v12-backup-20261021-1404'
 SECTIONS = None          # None = everything; the MCP driver sets e.g. ['new', 'core']
 V13A_DIR = os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts')
 ENGINE_DIR = os.path.join(ROOT, 'cad_out', 'engine')     # E2/E3/E4 outputs (a session worktree's cad_out/engine before merge)
+VARIANT = 'A'            # 'A' recuperated (E2 + E4) | 'B' simple cycle (E2-B + compact exhaust E3B, no E4)
+VB_DIR = os.path.join(ROOT, 'cad_out', 'variant_b')     # variant-B outputs (E2B/, E3B/)
 DOC_NAME = 'GR180-CCHP Engine assembly'
 CM = 0.1                 # Fusion internal unit is cm
 
@@ -123,7 +125,7 @@ def sec_new(app, design):
 def sec_core(app, design):
     root = design.rootComponent
     core = group(root, 'Core GR180 v13A')
-    has_e2 = bool(glob.glob(os.path.join(ENGINE_DIR, 'E2', 'E2-*.step')))
+    has_e2 = VARIANT == 'B' or bool(glob.glob(os.path.join(ENGINE_DIR, 'E2', 'E2-*.step')))
     legacy = None if has_e2 else group(root, 'E2 stand-in: v13A combustor (to be replaced)')
     n = 0
     for f in sorted(glob.glob(os.path.join(V13A_DIR, '*.step'))):
@@ -167,6 +169,23 @@ def sec_e2(app, design):
         tgt = sens if num >= 500 else (ins if num in (160, 161) else g)
         import_part(app, tgt, f, name)
     print('E2 parts', len(files))
+
+
+def sec_e2b(app, design):
+    """Variant B combustor (simple cycle, no recuperator ports)."""
+    files = sorted(glob.glob(os.path.join(VB_DIR, 'E2B', 'E2B-*.step')))
+    if not files:
+        print('E2-B not built yet'); return
+    root = design.rootComponent
+    g = group(root, 'E2-B combustor + casing (simple cycle)')
+    ins = group(root, 'E2-B insulation')
+    sens = group(root, 'E2-B sensors + igniter')
+    for f in files:
+        name = os.path.splitext(os.path.basename(f))[0]
+        num = int(name.split('_')[0].split('-')[1])
+        tgt = sens if num >= 500 else (ins if 'Insulation' in name else g)
+        import_part(app, tgt, f, name)
+    print('E2-B parts', len(files))
 
 
 def sec_e3(app, design):
@@ -218,7 +237,7 @@ def sec_colour(app, design):
 XRAY = [
     (('IntakeOuter', 'Casing', 'CC_Outer', 'Collector', 'WestCover', 'Hot_Pressure_Casing', 'Collector_Drum', 'C2_Inlet',
       'C1_Outlet', 'Insulation', 'HeatShield', 'Heat_Shield', 'Support_Cone', 'PMG_Housing', 'B1_Bearing_Housing',
-      'B2_Housing', 'End_Cover', 'Interduct', 'Shroud', 'Bulkhead', 'E3B-110', 'E2B-1'), 'shell (glass)', (170, 200, 225), 0.18),
+      'B2_Housing', 'End_Cover', 'Interduct', 'Shroud', 'Bulkhead', 'Front_Casing', 'E3B-110'), 'shell (glass)', (170, 200, 225), 0.18),
     (('Compressor',), 'compressor', (205, 210, 220), 1.0),
     (('Diffuser',), 'diffuser', (120, 150, 190), 1.0),
     (('Intake', 'NoseCone'), 'intake', (150, 155, 165), 1.0),
