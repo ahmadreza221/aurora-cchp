@@ -2,8 +2,8 @@
 # requires-python = ">=3.9"
 # dependencies = []
 # ///
-"""GR180 version E - ducts: large low-loss intake plenum with a filter-bank interface, compressor discharge pipe + cool
-pressure casing + combustor annulus, transition duct + 360 deg hot plenum, long conical exhaust diffuser + elbow.
+"""GR180 version E - ducts: large low-loss intake plenum with a filter-bank interface, deswirl annulus + cool pressure
+casing + combustor annulus (no discharge pipe), transition duct + 360 deg hot plenum, long conical exhaust diffuser + elbow.
 1-D loss budget (incompressible loss coefficients on the local dynamic head, Idelchik / Miller values; filter media
 linear in flow) checked against the cycle budget in sim/variant_e/e_cycle.json:
     intake <= 0.25 % (mid-life filters) | casing path 0.8 % | transition + plenum 1.0 % | diffuser Cp 0.62, elbow K 0.20.
@@ -72,24 +72,23 @@ def intake(T_C=30.0, m=M):
                                    frame='EN ISO 16890 / EN 1822 holding frames 610 x 610 pitch, 9 cells, knife-edge seals, filter house + hood = plant scope'))
 
 
-# ================================================================ CASING PATH (compressor scroll exit -> combustor dome)
+# ================================================================ CASING PATH (deswirl annulus -> cool casing -> combustor dome)
 def casing_path():
     T2 = DP['stations']['compressor_out']['T_C'] + 273.15
     P2 = DP['stations']['compressor_out']['P_bar'] * 1e5
     rho = P2 / (R_AIR * T2)
-    D_pipe = 0.2545
-    V_pipe = M / (rho * pi / 4 * D_pipe ** 2)
+    A_ann = pi * (0.305 ** 2 - 0.261 ** 2)
+    V_ann = M / (rho * A_ann)
     el = []
-    el.append(('DN250 discharge pipe 1.2 m + 2 x 90 deg long-radius bends (K 2 x 0.20 + fL/D 0.07)', 0.47 * q(rho, V_pipe)))
-    el.append(('flexible metal bellows DN250 (K 0.10)', 0.10 * q(rho, V_pipe)))
-    el.append(('dump into the cool pressure casing (K 1.0)', 1.0 * q(rho, V_pipe)))
-    V_cc = 12.0
-    el.append(('flow round the hot plenum in the cool casing (V ~%.0f m/s, K 1.5)' % V_cc, 1.5 * q(rho, V_cc)))
+    el.append(('deswirl-annulus exit r 261..305 (V %.1f m/s) dumped into the cool pressure casing (K 1.0) - bend + deswirl are in eta_c' % V_ann, 1.0 * q(rho, V_ann)))
+    V_cc = 9.0
+    el.append(('flow round the floating hot plenum (gap ~27 mm, V ~%.0f m/s, K 1.5)' % V_cc, 1.5 * q(rho, V_cc)))
     V_an = CB['design_770']['casing']['annulus_velocity_m_s']
     el.append(('entry into the combustor annulus + annulus friction + 180 deg turn at the dome (V %.0f m/s, K 1.6)' % V_an, 1.6 * q(rho, V_an)))
+    V_pipe = V_ann
     tot = sum(e[1] for e in el)
     return dict(elements=[dict(item=e[0], dp_Pa=round(e[1])) for e in el], total_Pa=round(tot), total_pct=round(100 * tot / P2, 3),
-                cycle_budget_pct=100 * BUD['dp_casing'], pipe_velocity_m_s=round(V_pipe, 1))
+                cycle_budget_pct=100 * BUD['dp_casing'], annulus_velocity_m_s=round(V_pipe, 1))
 
 
 # ================================================================ TRANSITION + HOT PLENUM
@@ -99,10 +98,10 @@ def transition():
     rho = P4 / (292.3 * T4)
     mg = M * (1 - BUD['leak_lost'] - BUD['buffer']) + DP['fuel_kg_s']
     D_L = CB['design_770']['liner']['D_mm'] / 1e3
-    A_tr = 0.320 * 0.160                                                   # transition exit: diffusing round 210 -> rectangle 320 (x) x 160 (y) into the plenum top
+    A_tr = math.pi / 4 * 0.270 ** 2                                          # transition exit: diffusing cone d210 -> d270 into the plenum top
     V_L = mg / (rho * pi / 4 * D_L ** 2)
     V_tr = mg / (rho * A_tr)
-    el = [('liner exit -> diffusing transition (round 210 -> rectangle 320 x 160, AR 1.48, 7 deg, K 0.25 on the inlet q)', 0.25 * (q(rho, V_L) - q(rho, V_tr)) + 0.05 * q(rho, V_L)),
+    el = [('liner exit -> diffusing conical transition (d210 -> d270, AR 1.65, half angle 9 deg, K 0.25 on the head drop)', 0.25 * (q(rho, V_L) - q(rho, V_tr)) + 0.05 * q(rho, V_L)),
           ('dump into the 360 deg hot plenum (K 0.95)', 0.95 * q(rho, V_tr)),
           ('plenum distribution round the nozzle ring (V ~15 m/s, K 1.0)', 1.0 * q(rho, 15.0))]
     tot = sum(e[1] for e in el)

@@ -299,7 +299,7 @@ def main():
         if kw:
             sens[lab_] = thrust(**kw)['net_N']
     out['axial_thrust'] = dict(compressor_back_seal_r_mm=round(r_sc, 1), seal_r_for_minus_500N_mm=round(r_trim, 1), design_770=th, peak_850=th850, idle_55pct=th_idle, sensitivity_net_N=sens,
-                               design='net FORWARD (-x) 300-800 N at all points: front tandem pair (2 x 7008-E, 25 deg) locates; rear 7008-C floats with '
+                               design='net FORWARD (-x) at every point (~200 N at 770 C, ~600 N at 850 C, ~180 N at idle) + 300 N spring preload: front tandem pair (2 x 7008-E, 25 deg) locates; rear 7008-C floats with '
                                       'a 300 N wave-spring preload; trim with the compressor back-face labyrinth radius (impeller back-face land) and the '
                                       'turbine back-face buffer orifice; measure with a load washer behind the front cartridge on the rig')
     print('\naxial thrust (back-face seal r %.1f mm): 770 C %s | 850 C %s | idle %s | sens %s' % (r_sc, th, th850, th_idle, sens))

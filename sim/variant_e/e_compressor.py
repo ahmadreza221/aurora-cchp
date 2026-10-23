@@ -2,7 +2,7 @@
 # requires-python = ">=3.9"
 # dependencies = []
 # ///
-"""GR180 version E - centrifugal compressor meanline: bought turbocharger-class impeller + our vaned diffuser + scroll.
+"""GR180 version E - centrifugal compressor meanline: bought turbocharger-class impeller + our vaned diffuser + axisymmetric collector.
 
 Design point from sim/variant_e/e_cycle.json (30 C, 50 m, 3.0 kg/s, PR_tt 4.0, 35,000 rpm).  Steps:
   1. inducer: tip diameter for minimum relative tip Mach at the given hub (quill socket + nose nut, D1h 76 mm);
@@ -10,7 +10,7 @@ Design point from sim/variant_e/e_cycle.json (30 C, 50 m, 3.0 kg/s, PR_tt 4.0, 3
   3. losses (Oh, Yoon & Chung 1997 'optimum set': incidence, skin friction, blade loading, tip clearance, mixing,
      disc friction, recirculation, leakage) -> impeller efficiency and parasitic work;
   4. vaneless gap + 2.5D wedge vaned diffuser (prime vane count), loss coefficient from the inlet Mach / diffusion;
-  5. scroll (round section, A/r for c ~ 60 m/s) + conical exit diffuser to DN250 -> stage efficiency (flange to flange).
+  5. axisymmetric collector: 90 deg bend + deswirl vanes + annulus into the cool casing (no scroll) -> stage efficiency.
 Then a comparison with turbocharger frames whose published volume flow / pressure ratio bracket the stage (the
 Accelleron TPS-F volume-flow chart, MAN/PBST TCR, MHI MET-SR/ER) - the wheel DIAMETERS of those frames are NOT
 published: our D2 is an ESTIMATE to be replaced by the supplier drawing (then re-run this script with its geometry).
@@ -157,14 +157,13 @@ def meanline(geo=GEO, eta_guess=0.82):
         q2 = 0.5 * rho2 * c2 ** 2; q3 = 0.5 * rho3 * c3 ** 2
         T4, P4s, rho4 = static_from_total(T02, P02, c4)
         q4 = 0.5 * rho4 * c4 ** 2
-        # scroll: tangential KE of c4 is partly lost (55 %) + friction, cone recovers 50 % of the scroll-exit head
-        A_scroll = M / (rho4 * geo['scroll_c'])
-        D_scroll = math.sqrt(4 * A_scroll / math.pi)
-        q_sc = 0.5 * rho4 * geo['scroll_c'] ** 2
-        A_pipe = math.pi / 4 * (geo['cone_D_out'] / 1e3) ** 2
-        c_pipe = M / (rho4 * A_pipe)
-        q_pipe = 0.5 * rho4 * c_pipe ** 2
-        dP_scroll = 0.55 * max(q4 - q_sc, 0) + 0.15 * q_sc + 0.5 * (q_sc - q_pipe)
+        # axisymmetric collector (no scroll): 90 deg bend radial -> axial (K 0.20), 23-vane deswirl cascade (K 0.15) and the
+        # residual head dumped in the cool casing (annulus r 261..305, ~13 m/s) -> K 0.45 on the vaned-diffuser exit head
+        A_ann = math.pi * (0.305 ** 2 - 0.261 ** 2)
+        c_ann = M / (rho4 * A_ann)
+        dP_scroll = 0.45 * q4
+        A_scroll, D_scroll = A_ann, 0.0
+        c_pipe = c_ann
         P0_out = P02 - K_vgap * q2 - K_vd * q3 - dP_scroll
         T0_out = T02
         eta_stage = (air.h(air.T_isentropic(T01, P0_out / P01)) - air.h(T01)) / (air.h(T0_out) - air.h(T01))
@@ -193,10 +192,11 @@ def meanline(geo=GEO, eta_guess=0.82):
         diffuser=dict(r3_mm=r3 * 1e3, r4_mm=r4 * 1e3, b3_mm=b3 * 1e3, Z_vanes=geo['Z_vd'], alpha3_deg=alpha3, M3=M3, c3_m_s=c3, throat_mm=throat * 1e3,
                       AR=AR_vd, c4_m_s=c4, K_vaneless=K_vgap, K_vaned=K_vd,
                       build='17 straight wedge vanes (2.5D milled into the diffuser plate, 6082-T6), prime count vs 9+9 blades; LE re-cut ring option for matching'),
-        scroll=dict(exit_area_mm2=A_scroll * 1e6, exit_D_round_mm=D_scroll * 1e3, c_exit_m_s=geo['scroll_c'], cone_out_D_mm=geo['cone_D_out'], c_pipe_m_s=c_pipe,
-                    build='round-section external scroll, cast AlSi7Mg T6 or welded 1.4541 half-shells; 7 deg cone to DN250 (EN 1092-1 PN10 flange)'),
+        collector=dict(type='axisymmetric 90 deg bend + 23 deswirl vanes (2.5D on the back-plate rim) + annulus r 261..305 into the cool casing (no scroll, no pipe)',
+                       annulus_area_mm2=A_scroll * 1e6, c_annulus_m_s=c_pipe, K_on_q4=0.45,
+                       note='a bought TC compressor casing (scroll) is the fallback if its inlet fits the annular plenum; then a DN250 pipe feeds the cool casing'),
         stage=dict(P0_out_bar=P0_out / 1e5, PR_tt=P0_out / P01, eta_tt_flange=eta_stage, T0_out_C=T0_out - 273.15,
-                   dp_vaneless_kPa=K_vgap * q2 / 1e3, dp_vaned_kPa=K_vd * q3 / 1e3, dp_scroll_cone_kPa=dP_scroll / 1e3),
+                   dp_vaneless_kPa=K_vgap * q2 / 1e3, dp_vaned_kPa=K_vd * q3 / 1e3, dp_collector_kPa=dP_scroll / 1e3),
         cycle_assumed_eta_c=CY['budget_inputs']['eta_c'])
     return out
 
@@ -219,7 +219,7 @@ def frames():
 
 def main():
     ml = meanline()
-    i, im, d, sc, st = ml['inducer'], ml['impeller'], ml['diffuser'], ml['scroll'], ml['stage']
+    i, im, d, sc, st = ml['inducer'], ml['impeller'], ml['diffuser'], ml['collector'], ml['stage']
     print('Version E compressor meanline (%.3f kg/s, PR_tt %.2f, %d rpm)' % (M, PR_TT, N))
     print('  inducer D1t %.1f / D1h %.0f mm, c1 %.0f m/s, U1t %.0f, W1t %.0f, M1t,rel %.3f, beta1t %.1f' % (
         i['D1t_mm'], i['D1h_mm'], i['c1_m_s'], i['U1t_m_s'], i['W1t_m_s'], i['M1t_rel'], i['beta1t_deg']))
@@ -230,9 +230,9 @@ def main():
     print('  impeller eta_tt %.3f, parasitic %.1f %%' % (im['eta_impeller_tt'], 100 * ml['work']['parasitic_frac']))
     print('  diffuser r3 %.0f r4 %.0f b3 %.1f, %d vanes, alpha3 %.1f, M3 %.2f, AR %.2f, c4 %.0f m/s' % (
         d['r3_mm'], d['r4_mm'], d['b3_mm'], d['Z_vanes'], d['alpha3_deg'], d['M3'], d['AR'], d['c4_m_s']))
-    print('  scroll exit D %.0f mm (round), DN250 pipe c %.0f m/s' % (sc['exit_D_round_mm'], sc['c_pipe_m_s']))
-    print('  STAGE PR_tt %.3f, eta_tt (flange) %.3f  [cycle assumes %.3f]; dp vaneless %.1f / vaned %.1f / scroll+cone %.1f kPa' % (
-        st['PR_tt'], st['eta_tt_flange'], ml['cycle_assumed_eta_c'], st['dp_vaneless_kPa'], st['dp_vaned_kPa'], st['dp_scroll_cone_kPa']))
+    print('  collector: bend + deswirl, annulus c %.1f m/s' % sc['c_annulus_m_s'])
+    print('  STAGE PR_tt %.3f, eta_tt (to the annulus exit) %.3f  [cycle assumes %.3f]; dp vaneless %.1f / vaned %.1f / bend+deswirl %.1f kPa' % (
+        st['PR_tt'], st['eta_tt_flange'], ml['cycle_assumed_eta_c'], st['dp_vaneless_kPa'], st['dp_vaned_kPa'], st['dp_collector_kPa']))
     alts = {}
     for lab, mod in (('beta2b -30', dict(beta2b=-30.0)), ('beta2b -45', dict(beta2b=-45.0)), ('clearance 0.7 mm', dict(eps=0.7)),
                      ('7+7 blades', dict(Z_main=7, Z_split=7)), ('D1h 90 mm', dict(D1h=90.0)), ('vaneless gap r3/r2 1.12', dict(r3_over_r2=1.12))):
@@ -241,7 +241,7 @@ def main():
         alts[lab] = dict(D2_mm=round(a['impeller']['D2_mm'], 1), eta_tt=round(a['stage']['eta_tt_flange'], 4), M1t_rel=round(a['inducer']['M1t_rel'], 3),
                          U2=round(a['impeller']['U2_m_s'], 1))
         print('  alt %-24s D2 %.1f  U2 %.0f  eta_tt %.3f  M1t %.3f' % (lab, a['impeller']['D2_mm'], a['impeller']['U2_m_s'], a['stage']['eta_tt_flange'], a['inducer']['M1t_rel']))
-    res = dict(title='GR180 version E compressor meanline (TC-class impeller + vaned diffuser + scroll)', date='2026-10-23',
+    res = dict(title='GR180 version E compressor meanline (TC-class impeller + vaned diffuser + bend/deswirl collector)', date='2026-10-23',
                script='sim/variant_e/e_compressor.py', geometry_inputs=GEO, meanline=ml, alternatives=alts, frames=frames(),
                buy_spec='Al 2618-T61 forged & 5-axis milled backswept splitter impeller, D2 ~%.0f mm, inducer ~%.0f mm, b2 ~%.0f mm, rated >= 38,500 rpm '
                         '(110 %%) with burst / spin data, Campbell (17 diffuser vanes, 9 scroll-tongue / strut orders), bore to our shaft H6 or bore-less '

@@ -4,8 +4,8 @@
  "script": "sim/variant_e/e_rotor.py",
  "model": "coupled core + generator beam FE with gyroscopics, crowned-hex pin at x -128, 4 SFD support stations",
  "static": {
-  "core_mass_kg": 26.56,
-  "gen_mass_kg": 25.04,
+  "core_mass_kg": 26.64,
+  "gen_mass_kg": 25.02,
   "core_front_N": 60,
   "core_rear_N": 201,
   "gen_front_N": 124,
@@ -14,294 +14,294 @@
  "criticals": {
   "SFD 3 N/um (base)": [
    {
-    "rpm": 3041,
+    "rpm": 3044,
     "x_max_mm": 300.0,
     "rotor": "eng"
    },
    {
-    "rpm": 4836,
+    "rpm": 4835,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 5827,
-    "x_max_mm": -116.0,
+    "rpm": 5824,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 14330,
+    "rpm": 14344,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 53923,
+    "rpm": 53737,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 82130,
-    "x_max_mm": -116.0,
+    "rpm": 82240,
+    "x_max_mm": -285.0,
     "rotor": "gen"
    },
    {
-    "rpm": 125281,
+    "rpm": 125501,
     "x_max_mm": -237.0,
     "rotor": "gen"
    },
    {
-    "rpm": 153213,
+    "rpm": 152852,
     "x_max_mm": 120.9,
     "rotor": "eng"
    }
   ],
   "SFD 1.5 N/um": [
    {
-    "rpm": 2208,
+    "rpm": 2210,
     "x_max_mm": 300.0,
     "rotor": "eng"
    },
    {
-    "rpm": 3446,
+    "rpm": 3445,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 4227,
-    "x_max_mm": -116.0,
+    "rpm": 4225,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 12926,
+    "rpm": 12942,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 53652,
+    "rpm": 53468,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 81924,
-    "x_max_mm": -116.0,
+    "rpm": 82034,
+    "x_max_mm": -285.0,
     "rotor": "gen"
    },
    {
-    "rpm": 125117,
+    "rpm": 125337,
     "x_max_mm": -237.0,
     "rotor": "gen"
    },
    {
-    "rpm": 153083,
+    "rpm": 152724,
     "x_max_mm": 120.9,
     "rotor": "eng"
    }
   ],
   "SFD 6 N/um": [
    {
-    "rpm": 4135,
+    "rpm": 4139,
     "x_max_mm": 300.0,
     "rotor": "eng"
    },
    {
     "rpm": 6751,
-    "x_max_mm": -662.5,
+    "x_max_mm": -654.6,
     "rotor": "gen"
    },
    {
-    "rpm": 7908,
-    "x_max_mm": -116.0,
+    "rpm": 7905,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 16869,
+    "rpm": 16880,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 54456,
+    "rpm": 54268,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 82539,
-    "x_max_mm": -116.0,
+    "rpm": 82649,
+    "x_max_mm": -285.0,
     "rotor": "gen"
    },
    {
-    "rpm": 125609,
+    "rpm": 125828,
     "x_max_mm": -237.0,
     "rotor": "gen"
    },
    {
-    "rpm": 153473,
+    "rpm": 153107,
     "x_max_mm": 120.9,
     "rotor": "eng"
    }
   ],
   "rigid 50 N/um (ref)": [
    {
-    "rpm": 10285,
-    "x_max_mm": -116.0,
+    "rpm": 10292,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 16898,
+    "rpm": 16910,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 17757,
+    "rpm": 17759,
     "x_max_mm": -622.9,
     "rotor": "gen"
    },
    {
-    "rpm": 38027,
+    "rpm": 38036,
     "x_max_mm": -301.0,
     "rotor": "gen"
    },
    {
-    "rpm": 61133,
+    "rpm": 60943,
     "x_max_mm": -197.0,
     "rotor": "gen"
    },
    {
-    "rpm": 88121,
-    "x_max_mm": -116.0,
+    "rpm": 88238,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 130562,
+    "rpm": 130771,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 157370,
+    "rpm": 156942,
     "x_max_mm": 120.9,
     "rotor": "eng"
    }
   ],
   "3 N/um, sleeve loose 0.2": [
    {
-    "rpm": 3037,
+    "rpm": 3040,
     "x_max_mm": 300.0,
     "rotor": "eng"
    },
    {
-    "rpm": 4830,
+    "rpm": 4829,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 5816,
-    "x_max_mm": -116.0,
+    "rpm": 5814,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 14321,
+    "rpm": 14334,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 52672,
+    "rpm": 52473,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 81404,
+    "rpm": 81513,
     "x_max_mm": -277.0,
     "rotor": "gen"
    },
    {
-    "rpm": 123235,
+    "rpm": 123310,
     "x_max_mm": -229.0,
     "rotor": "gen"
    },
    {
-    "rpm": 141206,
-    "x_max_mm": -116.0,
+    "rpm": 141109,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    }
   ],
   "3 N/um, turbine wheel 20 kg": [
    {
-    "rpm": 2703,
+    "rpm": 2706,
     "x_max_mm": 300.0,
     "rotor": "eng"
    },
    {
-    "rpm": 4800,
-    "x_max_mm": -670.4,
+    "rpm": 4799,
+    "x_max_mm": -654.6,
     "rotor": "gen"
    },
    {
-    "rpm": 5814,
-    "x_max_mm": -116.0,
+    "rpm": 5812,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 14346,
+    "rpm": 14359,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 54435,
+    "rpm": 54250,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 82306,
-    "x_max_mm": -116.0,
+    "rpm": 82414,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 125431,
+    "rpm": 125659,
     "x_max_mm": -237.0,
     "rotor": "gen"
    },
    {
-    "rpm": 154278,
+    "rpm": 153897,
     "x_max_mm": 113.3,
     "rotor": "eng"
    }
   ],
   "3 N/um, no quill pin": [
    {
-    "rpm": 2563,
+    "rpm": 2562,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 4544,
-    "x_max_mm": -116.0,
+    "rpm": 4549,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 5513,
+    "rpm": 5499,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 6497,
-    "x_max_mm": -116.0,
+    "rpm": 6522,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 18506,
-    "x_max_mm": -116.0,
+    "rpm": 18613,
+    "x_max_mm": -117.0,
     "rotor": "gen"
    },
    {
-    "rpm": 79280,
-    "x_max_mm": -269.0,
+    "rpm": 79513,
+    "x_max_mm": -277.0,
     "rotor": "gen"
    },
    {
-    "rpm": 103573,
+    "rpm": 102763,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 127613,
+    "rpm": 128035,
     "x_max_mm": -237.0,
     "rotor": "gen"
    }
@@ -309,76 +309,76 @@
  },
  "margins": {
   "SFD 3 N/um (base)": {
-   "highest_below_55pct": 14330,
-   "lowest_above_108pct": 53923,
-   "margin_above_run_pct": 54.1,
+   "highest_below_55pct": 14344,
+   "lowest_above_108pct": 53737,
+   "margin_above_run_pct": 53.5,
    "inside_operating_range": []
   },
   "SFD 1.5 N/um": {
-   "highest_below_55pct": 12926,
-   "lowest_above_108pct": 53652,
-   "margin_above_run_pct": 53.3,
+   "highest_below_55pct": 12942,
+   "lowest_above_108pct": 53468,
+   "margin_above_run_pct": 52.8,
    "inside_operating_range": []
   },
   "SFD 6 N/um": {
-   "highest_below_55pct": 16869,
-   "lowest_above_108pct": 54456,
-   "margin_above_run_pct": 55.6,
+   "highest_below_55pct": 16880,
+   "lowest_above_108pct": 54268,
+   "margin_above_run_pct": 55.1,
    "inside_operating_range": []
   }
  },
  "damped_35k": {
   "3 N/um": [
    {
-    "rpm": 4667,
+    "rpm": 4663,
     "zeta": 0.193,
     "x_max_mm": 300.0,
     "rotor": "eng"
    },
    {
-    "rpm": 4805,
+    "rpm": 4806,
     "zeta": 0.235,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
     "rpm": 8181,
-    "zeta": 0.141,
+    "zeta": 0.142,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 14793,
+    "rpm": 14807,
     "zeta": 0.258,
     "x_max_mm": -880.0,
     "rotor": "gen"
    },
    {
-    "rpm": 45751,
+    "rpm": 45656,
     "zeta": 0.033,
     "x_max_mm": -140.0,
     "rotor": "eng"
    },
    {
-    "rpm": 69426,
+    "rpm": 69483,
     "zeta": 0.018,
     "x_max_mm": -245.0,
     "rotor": "gen"
    },
    {
-    "rpm": 78415,
+    "rpm": 78455,
     "zeta": 0.02,
     "x_max_mm": -277.0,
     "rotor": "gen"
    },
    {
-    "rpm": 110747,
-    "zeta": 0.031,
+    "rpm": 110814,
+    "zeta": 0.03,
     "x_max_mm": -221.0,
     "rotor": "gen"
    },
    {
-    "rpm": 137808,
+    "rpm": 137817,
     "zeta": 0.006,
     "x_max_mm": -140.0,
     "rotor": "eng"
@@ -398,26 +398,26 @@
   "compressor_back_seal_r_mm": 35.0,
   "seal_r_for_minus_500N_mm": 30.0,
   "design_770": {
-   "F_compressor_N": -4254,
+   "F_compressor_N": -4208,
    "F_turbine_N": 4003,
-   "net_N": -251
+   "net_N": -205
   },
   "peak_850": {
-   "F_compressor_N": -4385,
+   "F_compressor_N": -4338,
    "F_turbine_N": 3736,
-   "net_N": -649
+   "net_N": -602
   },
   "idle_55pct": {
-   "F_compressor_N": -1641,
+   "F_compressor_N": -1625,
    "F_turbine_N": 1443,
-   "net_N": -198
+   "net_N": -182
   },
   "sensitivity_net_N": {
-   "seal radius -5 mm": -348,
-   "seal radius +5 mm": -138,
-   "turbine seal r 35": -365
+   "seal radius -5 mm": -302,
+   "seal radius +5 mm": -92,
+   "turbine seal r 35": -319
   },
-  "design": "net FORWARD (-x) 300-800 N at all points: front tandem pair (2 x 7008-E, 25 deg) locates; rear 7008-C floats with a 300 N wave-spring preload; trim with the compressor back-face labyrinth radius (impeller back-face land) and the turbine back-face buffer orifice; measure with a load washer behind the front cartridge on the rig"
+  "design": "net FORWARD (-x) at every point (~200 N at 770 C, ~600 N at 850 C, ~180 N at idle) + 300 N spring preload: front tandem pair (2 x 7008-E, 25 deg) locates; rear 7008-C floats with a 300 N wave-spring preload; trim with the compressor back-face labyrinth radius (impeller back-face land) and the turbine back-face buffer orifice; measure with a load washer behind the front cartridge on the rig"
  },
  "bearings": {
   "type": "FAG HCB7008-C/E-T-P4S (or SKF 7008 CE/HCP4A, GMN HY, NSK 7008 hybrid)",
@@ -431,11 +431,11 @@
   "cases": {
    "core_front_pair (per bearing, 60 % share)": {
     "Fr_N": 70,
-    "Fa_N": 331,
-    "P_N": 316,
-    "L10_h": 103194,
-    "L10m_aISO3_h": 309581,
-    "friction_W": 798,
+    "Fa_N": 303,
+    "P_N": 292,
+    "L10_h": 130771,
+    "L10m_aISO3_h": 392312,
+    "friction_W": 785,
     "n_dm": 1890000,
     "speed_pct_of_oil_limit": 81.9
    },
@@ -470,11 +470,11 @@
     "speed_pct_of_oil_limit": 77.8
    },
    "core_front_pair at 850 C": {
-    "Fa_N": 569,
-    "L10m_aISO3_h": 68073
+    "Fa_N": 541,
+    "L10m_aISO3_h": 78603
    }
   },
-  "friction_total_core_W": 2377,
+  "friction_total_core_W": 2351,
   "friction_total_gen_W": 1587,
   "plan": "replace all 5 bearings at 24,000 h (L10m aISO 3 >= 2x that) with vibration trending; same part number in all positions",
   "oil": "ISO VG 32 synthetic turbine oil (Shell Turbo T32 / Castrol Perfecto T / TotalEnergies Preslia), 2.5 barg jets, ~2.5 L/min per bearing + SFD feed, 10 um filter"

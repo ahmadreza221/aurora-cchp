@@ -143,51 +143,43 @@
  "casing_path": {
   "elements": [
    {
-    "item": "DN250 discharge pipe 1.2 m + 2 x 90 deg long-radius bends (K 2 x 0.20 + fL/D 0.07)",
-    "dp_Pa": 285
+    "item": "deswirl-annulus exit r 261..305 (V 13.4 m/s) dumped into the cool pressure casing (K 1.0) - bend + deswirl are in eta_c",
+    "dp_Pa": 256
    },
    {
-    "item": "flexible metal bellows DN250 (K 0.10)",
-    "dp_Pa": 61
-   },
-   {
-    "item": "dump into the cool pressure casing (K 1.0)",
-    "dp_Pa": 607
-   },
-   {
-    "item": "flow round the hot plenum in the cool casing (V ~12 m/s, K 1.5)",
-    "dp_Pa": 310
+    "item": "flow round the floating hot plenum (gap ~27 mm, V ~9 m/s, K 1.5)",
+    "dp_Pa": 174
    },
    {
     "item": "entry into the combustor annulus + annulus friction + 180 deg turn at the dome (V 26 m/s, K 1.6)",
     "dp_Pa": 1591
    }
   ],
-  "total_Pa": 2853,
-  "total_pct": 0.71,
+  "total_Pa": 2022,
+  "total_pct": 0.503,
   "cycle_budget_pct": 0.8,
-  "pipe_velocity_m_s": 20.6
+  "annulus_velocity_m_s": 13.4
  },
  "transition_plenum": {
   "elements": [
    {
-    "item": "liner exit -> diffusing transition (round 210 -> rectangle 320 x 160, AR 1.48, 7 deg, K 0.25 on the inlet q)",
-    "dp_Pa": 560
+    "item": "liner exit -> diffusing conical transition (d210 -> d270, AR 1.65, half angle 9 deg, K 0.25 on the head drop)",
+    "dp_Pa": 629
    },
    {
     "item": "dump into the 360 deg hot plenum (K 0.95)",
-    "dp_Pa": 1311
+    "dp_Pa": 1048
    },
    {
     "item": "plenum distribution round the nozzle ring (V ~15 m/s, K 1.0)",
     "dp_Pa": 141
    }
   ],
-  "total_Pa": 2012,
-  "total_pct": 0.526,
+  "total_Pa": 1818,
+  "total_pct": 0.475,
   "cycle_budget_pct": 1.0,
   "V_liner_m_s": 69.3,
-  "V_transition_m_s": 46.9,
+  "V_transition_m_s": 41.9,
   "note": "single-entry plenum: circumferential TIT / pressure non-uniformity to be checked by CFD (OpenFOAM, as D2 open item)"
  },
  "exhaust": {

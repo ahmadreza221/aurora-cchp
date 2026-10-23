@@ -1,0 +1,1261 @@
+{
+ "check": {
+  "parts": 57,
+  "checked_pairs": 200,
+  "tol_mm3": 1.0
+ },
+ "overlaps": [],
+ "n_contacts": 73,
+ "dimensions": {
+  "x": [
+   -2100.0,
+   2270.0
+  ],
+  "y": [
+   -950.0,
+   950.0
+  ],
+  "z": [
+   -950.0,
+   1300.0
+  ],
+  "L_W_H_mm": [
+   4370,
+   1900,
+   2250
+  ],
+  "floor_z": -950.0,
+  "axis_above_floor": 950.0,
+  "note": "H from the floor (AV-mount base) to the top of the UV scanner; the filter house / hood on the 1830 x 1830 interface adds ~0.6-0.9 m (plant scope)"
+ },
+ "mass_by_subsystem_kg": {
+  "BEARING": 47.0,
+  "COMBUSTOR": 104.4,
+  "COMPRESSOR": 142.6,
+  "EXHAUST": 139.2,
+  "FRAME": 858.9,
+  "GENERATOR": 245.1,
+  "INTAKE": 368.6,
+  "ROTOR": 27.0,
+  "TURBINE": 192.4
+ },
+ "mass_total_kg": 2125.2,
+ "mass_modules_kg": {
+  "core_engine": 513.5,
+  "generator_pod": 245.1,
+  "exhaust": 139.2,
+  "intake_plenum": 368.6,
+  "frame": 858.9
+ },
+ "cg_mm": [
+  -71,
+  0,
+  -245
+ ],
+ "make_buy": {
+  "make": 43,
+  "buy": 14
+ },
+ "parts": {
+  "BEARING/E-B110_Bearing_Housing": {
+   "mass_kg": 46.11,
+   "material": "steel",
+   "make_buy": "make (42CrMo4 forged bar d340 x 200, CNC turning + drilling)",
+   "bbox": [
+    [
+     45.0,
+     235.0
+    ],
+    [
+     -165.0,
+     165.0
+    ],
+    [
+     -165.0,
+     165.0
+    ]
+   ],
+   "step": "cad_out/variant_e/BEARING/E-B110_Bearing_Housing.step"
+  },
+  "BEARING/E-B120_SFD_Cartridge_Front": {
+   "mass_kg": 0.49,
+   "material": "17-4PH",
+   "make_buy": "make",
+   "bbox": [
+    [
+     45.0,
+     77.0
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "step": "cad_out/variant_e/BEARING/E-B120_SFD_Cartridge_Front.step"
+  },
+  "BEARING/E-B121_SFD_Cartridge_Rear": {
+   "mass_kg": 0.4,
+   "material": "17-4PH",
+   "make_buy": "make",
+   "bbox": [
+    [
+     190.0,
+     216.0
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "step": "cad_out/variant_e/BEARING/E-B121_SFD_Cartridge_Rear.step"
+  },
+  "BEARING/E-B122_Wave_Spring_Rear": {
+   "mass_kg": 0.02,
+   "material": "steel",
+   "make_buy": "buy",
+   "bbox": [
+    [
+     192.0,
+     197.5
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "step": "cad_out/variant_e/BEARING/E-B122_Wave_Spring_Rear.step"
+  },
+  "COMBUSTOR/E-K110_Combustor_Casing_DN300": {
+   "mass_kg": 62.76,
+   "material": "steel",
+   "make_buy": "make (EN 10216-2 P265GH pipe + EN 1092-1 flanges, welded; PED)",
+   "bbox": [
+    [
+     62.5,
+     507.5
+    ],
+    [
+     -222.5,
+     222.5
+    ],
+    [
+     440.0,
+     1180.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K110_Combustor_Casing_DN300.step"
+  },
+  "COMBUSTOR/E-K111_Top_Cover": {
+   "mass_kg": 29.38,
+   "material": "steel",
+   "make_buy": "make (EN 1092-1 blind flange, drilled)",
+   "bbox": [
+    [
+     62.5,
+     507.5
+    ],
+    [
+     -222.5,
+     222.5
+    ],
+    [
+     1180.0,
+     1205.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K111_Top_Cover.step"
+  },
+  "COMBUSTOR/E-K120_Liner_D210": {
+   "mass_kg": 5.28,
+   "material": "N75",
+   "make_buy": "make (2.4951 Nimonic 75 sheet, flat patterns laser-cut, rolled + TIG; dome turned)",
+   "bbox": [
+    [
+     180.0,
+     390.0
+    ],
+    [
+     -105.0,
+     105.0
+    ],
+    [
+     520.0,
+     1111.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K120_Liner_D210.step"
+  },
+  "COMBUSTOR/E-K121_Axial_Swirler": {
+   "mass_kg": 0.99,
+   "material": "alloyX",
+   "make_buy": "make (turned rings + laser-cut vanes, brazed)",
+   "bbox": [
+    [
+     230.0,
+     340.0
+    ],
+    [
+     -55.0,
+     55.0
+    ],
+    [
+     1095.0,
+     1111.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K121_Axial_Swirler.step"
+  },
+  "COMBUSTOR/E-K122_Liner_Hangers_x3": {
+   "mass_kg": 0.19,
+   "material": "alloyX",
+   "make_buy": "make",
+   "bbox": [
+    [
+     209.7,
+     360.3
+    ],
+    [
+     -46.0,
+     86.0
+    ],
+    [
+     1111.0,
+     1180.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K122_Liner_Hangers_x3.step"
+  },
+  "COMBUSTOR/E-K130_Transition_Cone": {
+   "mass_kg": 2.64,
+   "material": "alloyX",
+   "make_buy": "make (rolled cone + turned collar, TIG)",
+   "bbox": [
+    [
+     148.0,
+     422.0
+    ],
+    [
+     -137.0,
+     137.0
+    ],
+    [
+     320.0,
+     535.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K130_Transition_Cone.step"
+  },
+  "COMBUSTOR/E-K140_Gas_Lance": {
+   "mass_kg": 2.0,
+   "material": "stainless",
+   "make_buy": "make (1.4404 + 2.4665 tip)",
+   "bbox": [
+    [
+     255.0,
+     315.0
+    ],
+    [
+     -30.0,
+     80.0
+    ],
+    [
+     1090.0,
+     1260.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K140_Gas_Lance.step"
+  },
+  "COMBUSTOR/E-K150_Igniter": {
+   "mass_kg": 0.4,
+   "material": "stainless",
+   "make_buy": "buy (industrial gas-engine plug NGK / MOTORTECH + HV capacitive coil)",
+   "bbox": [
+    [
+     276.0,
+     294.0
+    ],
+    [
+     107.0,
+     257.0
+    ],
+    [
+     1051.0,
+     1069.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K150_Igniter.step"
+  },
+  "COMBUSTOR/E-K160_UV_Flame_Scanner": {
+   "mass_kg": 0.8,
+   "material": "Al",
+   "make_buy": "buy (DURAG D-LX 100 class / Siemens QRA)",
+   "bbox": [
+    [
+     380.0,
+     430.0
+    ],
+    [
+     -25.0,
+     25.0
+    ],
+    [
+     1205.0,
+     1300.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMBUSTOR/E-K160_UV_Flame_Scanner.step"
+  },
+  "COMPRESSOR/E-C110_Inlet_Shroud_Cover": {
+   "mass_kg": 49.5,
+   "material": "Al",
+   "make_buy": "make (6082-T6 forged disc d660 x 150, CNC turning; shroud finish-turned with the wheel drawing)",
+   "bbox": [
+    [
+     -150.0,
+     -7.4
+    ],
+    [
+     -330.0,
+     330.0
+    ],
+    [
+     -330.0,
+     330.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMPRESSOR/E-C110_Inlet_Shroud_Cover.step"
+  },
+  "COMPRESSOR/E-C130_Back_Plate_Diffuser_Deswirl": {
+   "mass_kg": 26.77,
+   "material": "Al",
+   "make_buy": "make (6082-T6 forged disc d620 x 120, CNC turning + 2.5D / 4-axis milling)",
+   "bbox": [
+    [
+     -7.4,
+     112.0
+    ],
+    [
+     -304.8,
+     304.8
+    ],
+    [
+     -303.2,
+     305.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMPRESSOR/E-C130_Back_Plate_Diffuser_Deswirl.step"
+  },
+  "COMPRESSOR/E-C150_Outer_Casing_Bend": {
+   "mass_kg": 66.33,
+   "material": "steel",
+   "make_buy": "make (P355NL1 forged ring d820 x 160, CNC turning + milling of the pads)",
+   "bbox": [
+    [
+     -40.0,
+     115.0
+    ],
+    [
+     -400.0,
+     400.0
+    ],
+    [
+     -400.0,
+     400.0
+    ]
+   ],
+   "step": "cad_out/variant_e/COMPRESSOR/E-C150_Outer_Casing_Bend.step"
+  },
+  "EXHAUST/E-X110_Diffuser_Cone": {
+   "mass_kg": 38.88,
+   "material": "1.4828",
+   "make_buy": "make (rolled 1.4828 sheet + turned collar / flange, TIG)",
+   "bbox": [
+    [
+     485.0,
+     1475.0
+    ],
+    [
+     -270.0,
+     270.0
+    ],
+    [
+     -270.0,
+     270.0
+    ]
+   ],
+   "step": "cad_out/variant_e/EXHAUST/E-X110_Diffuser_Cone.step"
+  },
+  "EXHAUST/E-X120_Elbow_DN450_Flange": {
+   "mass_kg": 87.2,
+   "material": "1.4828",
+   "make_buy": "make (5-segment mitred 1.4828 pipe or bought EN 10253 elbow + flanges)",
+   "bbox": [
+    [
+     1475.0,
+     2270.0
+    ],
+    [
+     -320.0,
+     320.0
+    ],
+    [
+     -280.9,
+     492.0
+    ]
+   ],
+   "step": "cad_out/variant_e/EXHAUST/E-X120_Elbow_DN450_Flange.step"
+  },
+  "EXHAUST/E-X121_Elbow_Turning_Vanes_x2": {
+   "mass_kg": 13.07,
+   "material": "1.4828",
+   "make_buy": "make (rolled strip)",
+   "bbox": [
+    [
+     1500.0,
+     2031.5
+    ],
+    [
+     -195.0,
+     195.0
+    ],
+    [
+     -81.5,
+     450.0
+    ]
+   ],
+   "step": "cad_out/variant_e/EXHAUST/E-X121_Elbow_Turning_Vanes_x2.step"
+  },
+  "FRAME/E-F110_Base_Frame_RHS": {
+   "mass_kg": 695.14,
+   "material": "steel",
+   "make_buy": "make (MAG on a table, hot-dip galvanised)",
+   "bbox": [
+    [
+     -2100.0,
+     2250.0
+    ],
+    [
+     -950.0,
+     950.0
+    ],
+    [
+     -850.0,
+     -650.0
+    ]
+   ],
+   "step": "cad_out/variant_e/FRAME/E-F110_Base_Frame_RHS.step"
+  },
+  "FRAME/E-F120_Fixed_Pedestals_x2": {
+   "mass_kg": 12.39,
+   "material": "steel",
+   "make_buy": "make (S355 plate box)",
+   "bbox": [
+    [
+     50.0,
+     95.0
+    ],
+    [
+     -400.0,
+     400.0
+    ],
+    [
+     -650.0,
+     -30.0
+    ]
+   ],
+   "step": "cad_out/variant_e/FRAME/E-F120_Fixed_Pedestals_x2.step"
+  },
+  "FRAME/E-F121_Sliding_Pedestals_x2": {
+   "mass_kg": 10.39,
+   "material": "steel",
+   "make_buy": "make (S355)",
+   "bbox": [
+    [
+     270.0,
+     300.0
+    ],
+    [
+     -420.0,
+     420.0
+    ],
+    [
+     -650.0,
+     -20.0
+    ]
+   ],
+   "step": "cad_out/variant_e/FRAME/E-F121_Sliding_Pedestals_x2.step"
+  },
+  "FRAME/E-F122_Exhaust_Saddles_x3": {
+   "mass_kg": 112.94,
+   "material": "steel",
+   "make_buy": "make (S355)",
+   "bbox": [
+    [
+     880.0,
+     1642.2
+    ],
+    [
+     -160.0,
+     160.0
+    ],
+    [
+     -650.0,
+     -126.0
+    ]
+   ],
+   "step": "cad_out/variant_e/FRAME/E-F122_Exhaust_Saddles_x3.step"
+  },
+  "FRAME/E-F130_AV_Mounts_x8": {
+   "mass_kg": 28.0,
+   "material": "rubber",
+   "make_buy": "buy (Trelleborg SE / Freudenberg (Vibracoustic) DE / Getzner AT)",
+   "bbox": [
+    [
+     -2060.0,
+     2210.0
+    ],
+    [
+     -610.0,
+     610.0
+    ],
+    [
+     -950.0,
+     -850.0
+    ]
+   ],
+   "step": "cad_out/variant_e/FRAME/E-F130_AV_Mounts_x8.step"
+  },
+  "GENERATOR/E-G110_Pod_Housing": {
+   "mass_kg": 18.64,
+   "material": "Al",
+   "make_buy": "make (6082-T6 thick tube or forged ring, CNC turning)",
+   "bbox": [
+    [
+     -800.0,
+     -435.0
+    ],
+    [
+     -160.0,
+     160.0
+    ],
+    [
+     -160.0,
+     185.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G110_Pod_Housing.step"
+  },
+  "GENERATOR/E-G111_Front_End_Bell": {
+   "mass_kg": 20.5,
+   "material": "Al",
+   "make_buy": "make (6082-T6 bar d330, CNC turning)",
+   "bbox": [
+    [
+     -900.0,
+     -800.0
+    ],
+    [
+     -160.0,
+     160.0
+    ],
+    [
+     -160.0,
+     160.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G111_Front_End_Bell.step"
+  },
+  "GENERATOR/E-G112_Glycol_Jacket": {
+   "mass_kg": 15.22,
+   "material": "Al",
+   "make_buy": "make (6082 tube, turned)",
+   "bbox": [
+    [
+     -790.0,
+     -445.0
+    ],
+    [
+     -140.0,
+     140.0
+    ],
+    [
+     -140.0,
+     140.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G112_Glycol_Jacket.step"
+  },
+  "GENERATOR/E-G113_Rear_End_Bell": {
+   "mass_kg": 13.3,
+   "material": "Al",
+   "make_buy": "make (6082-T6, CNC turning)",
+   "bbox": [
+    [
+     -435.0,
+     -370.0
+    ],
+    [
+     -160.0,
+     160.0
+    ],
+    [
+     -160.0,
+     160.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G113_Rear_End_Bell.step"
+  },
+  "GENERATOR/E-G120_Stator_Core": {
+   "mass_kg": 38.33,
+   "material": "lam",
+   "make_buy": "buy (lamination stack from a motor-lamination maker: Surahammar SE / Kienle+Spiess DE / Baosteel CN)",
+   "bbox": [
+    [
+     -710.0,
+     -520.0
+    ],
+    [
+     -120.0,
+     120.0
+    ],
+    [
+     -120.0,
+     120.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G120_Stator_Core.step"
+  },
+  "GENERATOR/E-G121_Winding_End_Turns": {
+   "mass_kg": 21.54,
+   "material": "winding",
+   "make_buy": "make (winding shop) - or with the active-parts kit (e+a CH)",
+   "bbox": [
+    [
+     -790.0,
+     -445.0
+    ],
+    [
+     -118.0,
+     118.0
+    ],
+    [
+     -118.0,
+     118.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G121_Winding_End_Turns.step"
+  },
+  "GENERATOR/E-G130_Generator_Shaft": {
+   "mass_kg": 14.25,
+   "material": "steel",
+   "make_buy": "make (42CrMo4 QT, turn + grind)",
+   "bbox": [
+    [
+     -880.0,
+     -385.0
+    ],
+    [
+     -40.0,
+     40.0
+    ],
+    [
+     -40.0,
+     40.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G130_Generator_Shaft.step"
+  },
+  "GENERATOR/E-G131_Magnets_Sleeve": {
+   "mass_kg": 9.41,
+   "material": "SmCo+CF",
+   "make_buy": "buy magnets (VAC DE / Arnold CH / Chinese 2:17) + sleeve winding (e+a CH or local CFRP shop)",
+   "bbox": [
+    [
+     -722.0,
+     -508.0
+    ],
+    [
+     -60.0,
+     60.0
+    ],
+    [
+     -60.0,
+     60.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G131_Magnets_Sleeve.step"
+  },
+  "GENERATOR/E-G135_KM7_Nut_Speed_Wheel": {
+   "mass_kg": 0.35,
+   "material": "steel",
+   "make_buy": "buy nut (SKF KMT 7 / FAG) + make wheel",
+   "bbox": [
+    [
+     -880.0,
+     -848.0
+    ],
+    [
+     -35.0,
+     35.0
+    ],
+    [
+     -35.0,
+     35.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G135_KM7_Nut_Speed_Wheel.step"
+  },
+  "GENERATOR/E-G140_Bearing_7008E_front": {
+   "mass_kg": 0.21,
+   "material": "bearing",
+   "make_buy": "buy",
+   "bbox": [
+    [
+     -837.5,
+     -822.5
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G140_Bearing_7008E_front.step"
+  },
+  "GENERATOR/E-G141_Bearing_7008C_rear": {
+   "mass_kg": 0.21,
+   "material": "bearing",
+   "make_buy": "buy",
+   "bbox": [
+    [
+     -407.5,
+     -392.5
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G141_Bearing_7008C_rear.step"
+  },
+  "GENERATOR/E-G142_SFD_Cartridge_Front": {
+   "mass_kg": 0.47,
+   "material": "17-4PH",
+   "make_buy": "make",
+   "bbox": [
+    [
+     -845.0,
+     -815.0
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G142_SFD_Cartridge_Front.step"
+  },
+  "GENERATOR/E-G143_SFD_Cartridge_Rear": {
+   "mass_kg": 0.42,
+   "material": "17-4PH",
+   "make_buy": "make",
+   "bbox": [
+    [
+     -415.0,
+     -388.0
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G143_SFD_Cartridge_Rear.step"
+  },
+  "GENERATOR/E-G150_Quill_AF24_Socket": {
+   "mass_kg": 2.3,
+   "material": "steel",
+   "make_buy": "make (34CrNiMo6 QT, turn + grind + broach; shot-peened waist)",
+   "bbox": [
+    [
+     -385.0,
+     -117.0
+    ],
+    [
+     -35.0,
+     35.0
+    ],
+    [
+     -35.0,
+     35.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G150_Quill_AF24_Socket.step"
+  },
+  "GENERATOR/E-G160_Quill_Guard_Tube": {
+   "mass_kg": 2.93,
+   "material": "stainless",
+   "make_buy": "make (1.4301 tube + turned flange)",
+   "bbox": [
+    [
+     -370.0,
+     -98.0
+    ],
+    [
+     -60.0,
+     60.0
+    ],
+    [
+     -60.0,
+     60.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G160_Quill_Guard_Tube.step"
+  },
+  "GENERATOR/E-G170_Terminal_Box": {
+   "mass_kg": 6.47,
+   "material": "Al",
+   "make_buy": "make (6082 block, milled)",
+   "bbox": [
+    [
+     -700.0,
+     -560.0
+    ],
+    [
+     -80.0,
+     80.0
+    ],
+    [
+     138.6,
+     260.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G170_Terminal_Box.step"
+  },
+  "GENERATOR/E-G180_Pod_Saddles_x2": {
+   "mass_kg": 80.58,
+   "material": "steel",
+   "make_buy": "make (S355 plate, welded)",
+   "bbox": [
+    [
+     -810.0,
+     -430.0
+    ],
+    [
+     -120.0,
+     120.0
+    ],
+    [
+     -647.0,
+     -110.0
+    ]
+   ],
+   "step": "cad_out/variant_e/GENERATOR/E-G180_Pod_Saddles_x2.step"
+  },
+  "INTAKE/E-I110_Intake_Plenum": {
+   "mass_kg": 318.25,
+   "material": "stainless",
+   "make_buy": "make (sheet metal, laser + brake + MAG, bolted panels)",
+   "bbox": [
+    [
+     -2060.0,
+     -150.0
+    ],
+    [
+     -950.0,
+     950.0
+    ],
+    [
+     -650.0,
+     650.0
+    ]
+   ],
+   "step": "cad_out/variant_e/INTAKE/E-I110_Intake_Plenum.step"
+  },
+  "INTAKE/E-I120_Filter_Interface_Frame": {
+   "mass_kg": 50.35,
+   "material": "stainless",
+   "make_buy": "make (flat bar + angle, welded)",
+   "bbox": [
+    [
+     -2060.0,
+     -150.0
+    ],
+    [
+     -950.0,
+     950.0
+    ],
+    [
+     650.0,
+     665.0
+    ]
+   ],
+   "step": "cad_out/variant_e/INTAKE/E-I120_Filter_Interface_Frame.step"
+  },
+  "ROTOR/E-R100_Compressor_Wheel_D270_env": {
+   "mass_kg": 5.6,
+   "material": "Al",
+   "make_buy": "buy (TC-class spare wheel, bored H6 to d40)",
+   "bbox": [
+    [
+     -94.0,
+     30.0
+    ],
+    [
+     -135.0,
+     135.0
+    ],
+    [
+     -135.0,
+     135.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R100_Compressor_Wheel_D270_env.step"
+  },
+  "ROTOR/E-R101_Core_Shaft": {
+   "mass_kg": 3.75,
+   "material": "steel",
+   "make_buy": "make (turn + grind) / weld by wheel supplier",
+   "bbox": [
+    [
+     -140.0,
+     248.0
+    ],
+    [
+     -25.0,
+     25.0
+    ],
+    [
+     -25.0,
+     25.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R101_Core_Shaft.step"
+  },
+  "ROTOR/E-R102_Spacer_Sleeve": {
+   "mass_kg": 1.5,
+   "material": "17-4PH",
+   "make_buy": "make (turn + grind faces)",
+   "bbox": [
+    [
+     75.0,
+     197.5
+    ],
+    [
+     -30.0,
+     30.0
+    ],
+    [
+     -30.0,
+     30.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R102_Spacer_Sleeve.step"
+  },
+  "ROTOR/E-R103_Slinger_Seal_Ring": {
+   "mass_kg": 0.3,
+   "material": "17-4PH",
+   "make_buy": "make",
+   "bbox": [
+    [
+     30.0,
+     45.0
+    ],
+    [
+     -35.0,
+     35.0
+    ],
+    [
+     -35.0,
+     35.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R103_Slinger_Seal_Ring.step"
+  },
+  "ROTOR/E-R104_Clamp_Nut_M33": {
+   "mass_kg": 0.24,
+   "material": "steel",
+   "make_buy": "make (34CrNiMo6)",
+   "bbox": [
+    [
+     -112.0,
+     -94.0
+    ],
+    [
+     -28.0,
+     28.0
+    ],
+    [
+     -28.0,
+     28.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R104_Clamp_Nut_M33.step"
+  },
+  "ROTOR/E-R110a_Bearing_7008E_front1": {
+   "mass_kg": 0.21,
+   "material": "bearing",
+   "make_buy": "buy",
+   "bbox": [
+    [
+     45.0,
+     60.0
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R110a_Bearing_7008E_front1.step"
+  },
+  "ROTOR/E-R110b_Bearing_7008E_front2": {
+   "mass_kg": 0.21,
+   "material": "bearing",
+   "make_buy": "buy",
+   "bbox": [
+    [
+     60.0,
+     75.0
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R110b_Bearing_7008E_front2.step"
+  },
+  "ROTOR/E-R111_Bearing_7008C_rear": {
+   "mass_kg": 0.21,
+   "material": "bearing",
+   "make_buy": "buy",
+   "bbox": [
+    [
+     197.5,
+     212.5
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-R111_Bearing_7008C_rear.step"
+  },
+  "ROTOR/E-T101_Turbine_Wheel_D288_env": {
+   "mass_kg": 15.0,
+   "material": "IN713LC",
+   "make_buy": "buy (TC-class cast wheel, friction-welded to E-R101 by the supplier)",
+   "bbox": [
+    [
+     248.0,
+     360.0
+    ],
+    [
+     -144.0,
+     144.0
+    ],
+    [
+     -144.0,
+     144.0
+    ]
+   ],
+   "step": "cad_out/variant_e/ROTOR/E-T101_Turbine_Wheel_D288_env.step"
+  },
+  "TURBINE/E-T110_Heat_Shield_Support": {
+   "mass_kg": 4.5,
+   "material": "IN625",
+   "make_buy": "make (sheet + TIG, turned rims)",
+   "bbox": [
+    [
+     235.0,
+     247.0
+    ],
+    [
+     -214.0,
+     214.0
+    ],
+    [
+     -214.0,
+     214.0
+    ]
+   ],
+   "step": "cad_out/variant_e/TURBINE/E-T110_Heat_Shield_Support.step"
+  },
+  "TURBINE/E-T120_Nozzle_Ring_19v": {
+   "mass_kg": 5.27,
+   "material": "alloyX",
+   "make_buy": "make (2.4665 forged ring, 3-axis pocket milling; cover plate bolted)",
+   "bbox": [
+    [
+     247.0,
+     283.0
+    ],
+    [
+     -214.0,
+     214.0
+    ],
+    [
+     -214.0,
+     214.0
+    ]
+   ],
+   "step": "cad_out/variant_e/TURBINE/E-T120_Nozzle_Ring_19v.step"
+  },
+  "TURBINE/E-T130_Shroud_Diffuser_Inlet": {
+   "mass_kg": 35.47,
+   "material": "IN625",
+   "make_buy": "make (2.4856 forged ring, CNC turning)",
+   "bbox": [
+    [
+     280.6,
+     495.0
+    ],
+    [
+     -214.0,
+     214.0
+    ],
+    [
+     -214.0,
+     214.0
+    ]
+   ],
+   "step": "cad_out/variant_e/TURBINE/E-T130_Shroud_Diffuser_Inlet.step"
+  },
+  "TURBINE/E-T140_Hot_Plenum": {
+   "mass_kg": 33.2,
+   "material": "alloyX",
+   "make_buy": "make (rolled + pressed sheet, TIG; inner rings turned)",
+   "bbox": [
+    [
+     140.0,
+     430.0
+    ],
+    [
+     -345.0,
+     345.0
+    ],
+    [
+     -345.0,
+     345.0
+    ]
+   ],
+   "step": "cad_out/variant_e/TURBINE/E-T140_Hot_Plenum.step"
+  },
+  "TURBINE/E-T150_Cool_Pressure_Casing": {
+   "mass_kg": 113.93,
+   "material": "steel",
+   "make_buy": "make (P265GH plate rolled + welded, flanges turned; PED cat. II)",
+   "bbox": [
+    [
+     62.5,
+     507.5
+    ],
+    [
+     -420.0,
+     420.0
+    ],
+    [
+     -400.0,
+     440.0
+    ]
+   ],
+   "step": "cad_out/variant_e/TURBINE/E-T150_Cool_Pressure_Casing.step"
+  }
+ },
+ "interfaces": {
+  "title": "GR180 version E external interfaces",
+  "frame": "ENG mm (x = engine axis downstream, x = 0 at the compressor tip, z up, axis 950 mm above the floor)",
+  "air_inlet": {
+   "where": "top of the intake plenum, 3 x 3 filter-cell interface 1830 x 1830 at z 665",
+   "centre": [
+    -1105.0,
+    0.0,
+    665.0
+   ],
+   "flow": "3.0 kg/s (2.6 m3/s at 30 C), up to 3.5 kg/s at 0 C",
+   "dp_budget": "<= 0.25 % incl. filters (mid-life)"
+  },
+  "exhaust": {
+   "where": "elbow outlet flange facing up",
+   "centre": [
+    1950.0,
+    0.0,
+    492.0
+   ],
+   "flange": "DN450 PN6 EN 1092-1 (verify: OD 640, PCD 585, 16 x M20)",
+   "flow": "3.03 kg/s at ~525 C (TIT 770) / ~600 C (TIT 850)",
+   "back_pressure": "CHP + stack <= 1.2 kPa (cycle basis)"
+  },
+  "gas": {
+   "where": "gas-lance head on the combustor cover, G3/4",
+   "position": [
+    285.0,
+    80.0,
+    1240.0
+   ],
+   "pressure": ">= 3.73 barg at the skid (booster below 3.7 barg)",
+   "flow": "204 m3/h at 770 C, 30 C"
+  },
+  "oil": {
+   "feed": "core: 2 gallery feeds through the top deswirl vane (x 80); generator: end-bell jets (top)",
+   "drain": "core: bottom deswirl vane (x 80) to the tank; generator: end-bell drains",
+   "spec": "ISO VG 32, 2.5 barg, ~25 L/min total, ~7 kW to the glycol / air cooler"
+  },
+  "glycol": {
+   "where": "pod housing G1/2 ports at x -780 / -455 (top)",
+   "flow": "30 L/min, inlet <= 45 C, ~4 kW (PMG) + converter + oil cooler on the same loop"
+  },
+  "power": {
+   "where": "terminal box on the pod top (x -630, z 260)",
+   "rating": "3-ph ~650-820 V(dc after the bridge), 2-pole 583 Hz, 335 kW shaft; diode bridge + 400 V AFE in the drive cabinet"
+  },
+  "supports": {
+   "fixed": "outer-casing trunnion pads x 50..95, y +/-(314..400), z 0 (pedestals E-F120)",
+   "sliding": "cool-casing pads x 270..300, y +/-(370..420) (E-F121); exhaust saddles (E-F122)",
+   "generator": "2 saddles on the plenum floor, shims / jack bolts; quill float +/-1 mm",
+   "av_mounts": "8 x under the rails at x -2000/-800/400/2150, y +/-550"
+  },
+  "removal": {
+   "generator": "unbolt the guard flange, slide the pod forward 150 mm on its saddles (quill socket leaves the hex), lift out through the plenum door / filter opening",
+   "combustor": "unbolt the DN300 cover: lift the cover + lance + liner (hangers) upward; casing stays",
+   "hot_section": "remove the exhaust cone (slip collar) -> unbolt the cool-casing front flange -> slide the cool casing rearward over the shroud -> hot plenum + shroud + nozzle ring come off the bearing-housing rear flange as a stack; turbine wheel stays on the rotor",
+   "core_rotor": "with the hot stack off: inlet cover off -> nut -> compressor wheel off the d40 seat -> rotor withdrawn rearward through the bearing housing"
+  }
+ }
+}

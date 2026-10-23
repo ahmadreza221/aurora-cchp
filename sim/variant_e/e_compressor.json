@@ -1,5 +1,5 @@
 {
- "title": "GR180 version E compressor meanline (TC-class impeller + vaned diffuser + scroll)",
+ "title": "GR180 version E compressor meanline (TC-class impeller + vaned diffuser + bend/deswirl collector)",
  "date": "2026-10-23",
  "script": "sim/variant_e/e_compressor.py",
  "geometry_inputs": {
@@ -29,10 +29,10 @@
   "Q1_m3_s": 2.618526468550286,
   "work": {
    "dh_is_kJ_kg": 148.94145858960698,
-   "dh_actual_kJ_kg": 176.1483944178157,
-   "dh_euler_kJ_kg": 171.1794718196685,
-   "parasitic_frac": 0.02902756122172063,
-   "work_factor_dh0_U2sq": 0.7195391505362246,
+   "dh_actual_kJ_kg": 175.18638678655782,
+   "dh_euler_kJ_kg": 170.2370151641404,
+   "parasitic_frac": 0.029073416363916565,
+   "work_factor_dh0_U2sq": 0.719571214371351,
    "slip_sigma": 0.871124702336979
   },
   "inducer": {
@@ -47,111 +47,110 @@
    "hub_tip": 0.43981481481481477
   },
   "impeller": {
-   "D2_mm": 269.98862260753975,
-   "U2_m_s": 494.77999277972646,
-   "b2_mm": 15.529129141116393,
-   "b2_D2": 0.05751771682501529,
+   "D2_mm": 269.24436346349296,
+   "U2_m_s": 493.4160666617988,
+   "b2_mm": 15.666870916973156,
+   "b2_D2": 0.05818829674069459,
    "beta2b_deg": -38.0,
    "Z": "9+9",
-   "Lz_mm": 89.09624546048812,
+   "Lz_mm": 88.85063994295268,
    "eps_mm": 0.45,
-   "cm2": 108.85159841153983,
-   "ct2": 345.9708846713143,
-   "c2": 362.6906719464936,
-   "W2": 184.37142168125797,
+   "cm2": 108.55153466559574,
+   "ct2": 345.0171704295668,
+   "c2": 361.69086741232604,
+   "W2": 183.86317761096373,
    "alpha2_deg": 72.53504452492366,
-   "M2_abs": 0.890995227932492,
-   "de_Haller_W2_W1t": 0.5192936407227443,
-   "T2_C": 138.70687725509572,
-   "P2_bar": 2.599965709622326,
-   "Df": 0.5689907081489254,
-   "eta_impeller_tt": 0.9301701783284153,
-   "phi": 0.07260289056212937,
+   "M2_abs": 0.8891546654528203,
+   "de_Haller_W2_W1t": 0.517862139510506,
+   "T2_C": 138.12142493160127,
+   "P2_bar": 2.5880077395131664,
+   "Df": 0.5703312640532051,
+   "eta_impeller_tt": 0.9302019694366097,
+   "phi": 0.07320663434482558,
    "Ns": 0.7822821928427478,
-   "Mu2": 1.4129824469252235,
-   "material": "Al 2618-T61 forged, 5-axis milled (TC standard); tip speed 495 m/s at T2 203 C is inside the TC range (<= 560 m/s Al at PR 4.5-5)"
+   "Mu2": 1.409087374990913,
+   "material": "Al 2618-T61 forged, 5-axis milled (TC standard); tip speed 493 m/s at T2 202 C is inside the TC range (<= 560 m/s Al at PR 4.5-5)"
   },
   "losses_kJ_kg": {
    "incidence": 0.03128258487510116,
-   "skin_friction": 2.327351240037717,
-   "blade_loading": 3.9628224317193976,
-   "clearance": 2.023891428962817,
-   "mixing": 0.18449486901509402,
-   "secondary_calibration": 3.4235894363933697,
-   "disc_friction": 0.8717646296599684,
-   "recirculation": 3.8476170511429095,
-   "leakage": 0.24960608328972156
+   "skin_friction": 2.3042801896829106,
+   "blade_loading": 3.959596542982781,
+   "clearance": 1.9988296643668022,
+   "mixing": 0.18347910225658198,
+   "secondary_calibration": 3.404740303282808,
+   "disc_friction": 0.8589027099043156,
+   "recirculation": 3.844484943983944,
+   "leakage": 0.24604940320145113
   },
   "diffuser": {
-   "r3_mm": 145.79385620807147,
-   "r4_mm": 236.1860470570758,
-   "b3_mm": 14.752672684060572,
+   "r3_mm": 145.3919562702862,
+   "r4_mm": 235.53496915786366,
+   "b3_mm": 14.883527371124497,
    "Z_vanes": 17,
-   "alpha3_deg": 73.64402049649331,
-   "M3": 0.792647360117428,
-   "c3_m_s": 327.1772036985956,
-   "throat_mm": 13.960382766829941,
-   "AR": 2.8623809432489966,
-   "c4_m_s": 123.44666450769668,
+   "alpha3_deg": 73.63978419198881,
+   "M3": 0.7910720936690714,
+   "c3_m_s": 326.2823776897025,
+   "throat_mm": 13.925406475394247,
+   "AR": 2.861806604256299,
+   "c4_m_s": 123.13374613811594,
    "K_vaneless": 0.05000000000000002,
    "K_vaned": 0.1,
    "build": "17 straight wedge vanes (2.5D milled into the diffuser plate, 6082-T6), prime count vs 9+9 blades; LE re-cut ring option for matching"
   },
-  "scroll": {
-   "exit_area_mm2": 16459.732912462612,
-   "exit_D_round_mm": 144.76595884366694,
-   "c_exit_m_s": 60.0,
-   "cone_out_D_mm": 254.0,
-   "c_pipe_m_s": 19.490219021569477,
-   "build": "round-section external scroll, cast AlSi7Mg T6 or welded 1.4541 half-shells; 7 deg cone to DN250 (EN 1092-1 PN10 flange)"
+  "collector": {
+   "type": "axisymmetric 90 deg bend + 23 deswirl vanes (2.5D on the back-plate rim) + annulus r 261..305 into the cool casing (no scroll, no pipe)",
+   "annulus_area_mm2": 78238.2234450002,
+   "c_annulus_m_s": 12.67955094396169,
+   "K_on_q4": 0.45,
+   "note": "a bought TC compressor casing (scroll) is the fallback if its inlet fits the annular plenum; then a DN250 pipe feeds the cool casing"
   },
   "stage": {
-   "P0_out_bar": 4.018802311136711,
-   "PR_tt": 4.000002300325183,
-   "eta_tt_flange": 0.8455457896223058,
-   "T0_out_C": 202.56189453166763,
-   "dp_vaneless_kPa": 7.186082523127712,
-   "dp_vaned_kPa": 12.57989531772549,
-   "dp_scroll_cone_kPa": 12.988605533071024
+   "P0_out_bar": 4.018802279274349,
+   "PR_tt": 4.000002268611874,
+   "eta_tt_flange": 0.8501889613197856,
+   "T0_out_C": 201.63265829580195,
+   "dp_vaneless_kPa": 7.1237759377440195,
+   "dp_vaned_kPa": 12.46749141234735,
+   "dp_collector_kPa": 10.31656465348154
   },
   "cycle_assumed_eta_c": 0.8
  },
  "alternatives": {
   "beta2b -30": {
-   "D2_mm": 262.8,
-   "eta_tt": 0.8379,
+   "D2_mm": 262.1,
+   "eta_tt": 0.8423,
    "M1t_rel": 1.036,
-   "U2": 481.6
+   "U2": 480.3
   },
   "beta2b -45": {
-   "D2_mm": 278.4,
-   "eta_tt": 0.8511,
+   "D2_mm": 277.6,
+   "eta_tt": 0.856,
    "M1t_rel": 1.036,
-   "U2": 510.3
+   "U2": 508.8
   },
   "clearance 0.7 mm": {
-   "D2_mm": 271.0,
-   "eta_tt": 0.8389,
+   "D2_mm": 270.2,
+   "eta_tt": 0.8436,
    "M1t_rel": 1.036,
-   "U2": 496.6
+   "U2": 495.2
   },
   "7+7 blades": {
-   "D2_mm": 275.0,
-   "eta_tt": 0.8479,
+   "D2_mm": 274.2,
+   "eta_tt": 0.8528,
    "M1t_rel": 1.036,
-   "U2": 504.0
+   "U2": 502.6
   },
   "D1h 90 mm": {
-   "D2_mm": 270.3,
-   "eta_tt": 0.8427,
+   "D2_mm": 269.5,
+   "eta_tt": 0.8473,
    "M1t_rel": 1.067,
-   "U2": 495.3
+   "U2": 494.0
   },
   "vaneless gap r3/r2 1.12": {
-   "D2_mm": 269.9,
-   "eta_tt": 0.8463,
+   "D2_mm": 269.2,
+   "eta_tt": 0.8506,
    "M1t_rel": 1.036,
-   "U2": 494.5
+   "U2": 493.3
   }
  },
  "frames": [
@@ -191,5 +190,5 @@
    "fit": "no US suppliers"
   }
  ],
- "buy_spec": "Al 2618-T61 forged & 5-axis milled backswept splitter impeller, D2 ~270 mm, inducer ~173 mm, b2 ~16 mm, rated >= 38,500 rpm (110 %) with burst / spin data, Campbell (17 diffuser vanes, 9 scroll-tongue / strut orders), bore to our shaft H6 or bore-less with our stub (drawing from the supplier, then re-run this script)"
+ "buy_spec": "Al 2618-T61 forged & 5-axis milled backswept splitter impeller, D2 ~269 mm, inducer ~173 mm, b2 ~16 mm, rated >= 38,500 rpm (110 %) with burst / spin data, Campbell (17 diffuser vanes, 9 scroll-tongue / strut orders), bore to our shaft H6 or bore-less with our stub (drawing from the supplier, then re-run this script)"
 }
