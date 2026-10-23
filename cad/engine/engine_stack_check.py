@@ -7,7 +7,8 @@
 # Variant B (GR180-STEAM, simple cycle): STACK_VARIANT=B -> core + E2-B (cad_out/variant_b/E2B, cad/variant_b/e2b_combustor_casing.py)
 #     + E3, no E4; output cad_out/variant_b/stack_checks_B.json.
 # Version C2 (compact recuperated turbo-generator): STACK_VARIANT=C2 -> core (kept) + E1 (fusion/E1, 29 blades / 21 vanes patterned)
-#     + E2-C2 + E3 kept + version-C exhaust + version-C frame (C-401 replaced by E2C2-103) + R-C2 + HX-C2 + frame extension;
+#     + E2-C2 + E3 kept + version-C exhaust + version-C feet C-402/C-403 (C-401 replaced by E2C2-103, rails C-410 by the single
+#     welded frame C2F-10; E3-402 / E3B-401 are replaced by their cut-down copies C-403 / C-402) + R-C2 + bought economiser HX-101;
 #     output cad_out/variant_c2/stack_checks_C2.json.
 import FreeCAD as App, Part, os, json, glob, math, sys
 V = App.Vector
@@ -54,7 +55,7 @@ if VARIANT == 'C2':
 for sub, d_, pre in SUBDIRS:
     for f in sorted(glob.glob(os.path.join(d_, '%s*.step' % pre))):
         bn = os.path.basename(f)[:-5]
-        if VARIANT == 'C2' and (bn[:6] in E3_REPLACED_C and sub == 'E3' or bn.startswith('C-401') or 'assembly' in bn): continue
+        if VARIANT == 'C2' and (bn[:6] in E3_REPLACED_C and sub == 'E3' or bn.startswith(('C-401', 'C-410', 'E3-402', 'E3B-401')) or 'assembly' in bn): continue
         SHAPES['%s:%s' % (sub, bn)] = (sub, load(f))
 if VARIANT == 'A':
     for g in ('core', 'headers_plenums', 'ducts', 'supports', 'ports', 'insulation'):
@@ -68,13 +69,16 @@ JOINT_TOUCH = {('E2:E2-102_C1_Outlet_Nozzle', 'E4:ducts'): 'C1 flange pair', ('E
                ('E3:E3-110_Collector_Body', 'E4:ducts'): 'H1 flange pair', ('E2:E2-150_Hot_Pressure_Casing', 'E3:E3-101_Interduct_NGV_module'): 'E2/E3 flange (1 mm gasket gap)',
                ('E2B:E2B-150_Rear_Pressure_Casing', 'E3:E3-101_Interduct_NGV_module'): 'E2-B/E3 flange (1 mm gasket gap)',
                ('E2C2:E2C2-150_Hot_Pressure_Casing', 'E3:E3-101_Interduct_NGV_module'): 'E2-C2/E3 flange (1 mm gasket gap)',
-               ('E2C2:E2C2-102_C1_Outlet_Nozzle', 'RC2:RC2-131_Riser_C1_DN100_with_bellows'): 'C1 flange pair',
-               ('E2C2:E2C2-151_C2_Inlet_Duct_RectFlange', 'RC2:RC2-132_Riser_C2_DN125_with_bellows'): 'C2 rect flange pair',
-               ('EXH:E3B-110_Collector_Body', 'RC2:RC2-120_Inlet_Flange_Bellows_DN200'): 'exhaust DN200 flange pair',
-               ('RC2:RC2-122_Outlet_Hood_Skirt', 'HX:HX-104_Coil_Box_TubeSheets'): 'hood / coil box',
-               ('FRC:C-410_Base_Rails_RHS60x40', 'FRC2:C2F-01_Rail_Extensions_RHS60x40_x4'): 'rail extensions',
-               ('RC2:RC2-121_Inlet_Plenum_PerfPlate_Lugs', 'FRC2:C2F-04_Top_Beams_RHS80x40_x2'): 'R-C2 lugs on the top beams',
-               ('E2C2:E2C2-103_Front_Foot_FixedPoint', 'FRC:C-410_Base_Rails_RHS60x40'): 'front foot on the rails'}
+               ('E2C2:E2C2-102_C1_Outlet_Ear_Boot_DN100', 'RC2:RC2-131_Riser_C1_DN100_pipe_hose'): 'C1 DN100 flange pair',
+               ('E2C2:E2C2-151_C2_Inlet_Duct_Boot_DN125', 'RC2:RC2-132_Riser_C2_DN125_pipe_hose'): 'C2 DN125 flange pair',
+               ('EXH:E3B-110_Collector_Body', 'RC2:RC2-120_Expansion_Joint_DN200_PN6'): 'exhaust DN200 flange pair',
+               ('RC2:RC2-101_Core_Block_PlateFin', 'HX:HX-101_Economiser_FinnedTube_Envelope'): 'core top collar / economiser inlet flange',
+               ('RC2:RC2-121_Inlet_Transition_PerfPlate_Legs', 'FRC2:C2F-10_Frame_Welded_RHS'): 'R-C2 legs on the top beams',
+               ('E2C2:E2C2-103_Front_Foot_FixedPoint', 'FRC2:C2F-10_Frame_Welded_RHS'): 'front foot on the rails',
+               ('FRC:C-402_Exhaust_Support', 'FRC2:C2F-10_Frame_Welded_RHS'): 'exhaust support on the rails',
+               ('FRC:C-403_Rear_Flexure', 'FRC2:C2F-10_Frame_Welded_RHS'): 'rear flexure on the rails'}
+# overlaps inherited from a subsystem's own (expected) joint, e.g. a version-C foot cut from an E3 foot that seats on E3
+EXPECTED_OVERLAP = {('E3:E3-302_PMG_Housing_Jacket', 'FRC:C-403_Rear_Flexure'): 'C-403 = E3-402 cut down; E3-302/E3-402 foot seat is expected in E3_checks.json'}
 def overlap(a, b):
     if not a.BoundBox.intersect(b.BoundBox): return 0.0
     try: return a.common(b).Volume
@@ -88,7 +92,10 @@ for i, a in enumerate(keys):
         A, B = SHAPES[a][1], SHAPES[b][1]
         res['pairs_checked'] += 1
         v = overlap(A, B)
-        if v > 1.0 or v < 0:
+        eo = EXPECTED_OVERLAP.get((a, b)) or EXPECTED_OVERLAP.get((b, a))
+        if (v > 1.0 or v < 0) and eo:
+            res.setdefault('expected_overlaps', []).append(dict(a=a, b=b, vol_mm3=round(v, 2), why=eo))
+        elif v > 1.0 or v < 0:
             res['interferences'].append(dict(a=a, b=b, vol_mm3=round(v, 2)))
             say('  INTERFERENCE %s / %s : %.1f mm3' % (a, b, v))
         jt = JOINT_TOUCH.get((a, b)) or JOINT_TOUCH.get((b, a))

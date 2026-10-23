@@ -487,11 +487,7 @@ for key, tag, txt in (('p2', 'PT-521', 'P2 tap M10x1, 300 mm sense line'), ):
     x_, a_ = G['x_p2'], G['a_p2']
     IF.append(itf('Sensor %s P2 tap' % tag, [x_, *list(P(0, RDO + 12.0, a_))[1:]], list(rdir(a_)), txt, 'B2 per docs/electrical/02_io_list'))
 for x_, a_, nm, txt in ((G['x_igniter'], G['a_igniter'], 'IGN-630 igniter plug', 'M14x1.25 boss, plug tip flush with the liner'),
-                        (G['x_uv'], G['a_uv'], 'BE-631 UV flame sensor', 'sight tube Ø12 + quartz window, Durag D-LX 100 UV'),
-                        (G['x_p3'], G['a_p3'], 'PT-522 P3 tap', 'M10x1 boss, 1/8" tube'),
-                        (G['x_t3'], G['a_t3'], 'TE-506 T3 plenum TC (new tag)', 'M8x1 compression boss, MI Ø3'),
-                        (G['x_twall'], G['a_twall'][0], 'TE-507A liner wall TC (new tag)', 'M6x0.75 boss, MI Ø1'),
-                        (G['x_twall'], G['a_twall'][1], 'TE-507B liner wall TC (new tag)', 'M6x0.75 boss, MI Ø1')):
+                        (G['x_uv'], G['a_uv'], 'BE-631 UV flame sensor', 'sight tube Ø12 + quartz window, Durag D-LX 100 UV')):   # P3 / T3 / wall TCs dropped (KEEP_CASE_BOSSES)
     IF.append(itf('Sensor ' + nm, [x_, *list(P(0, RCO + 12.0, a_))[1:]], list(rdir(a_)), txt, 'B2 / SR1 per docs/electrical/02_io_list'))
 IF.append(itf('Front foot (engine axial fixed point)', [0.5 * (fx0 + fx1), 0, zs], [0, 0, -1],
               'base %.0f x %.0f x 10, 4 x M12 in axial slots (y +-100)' % (fx1 - fx0 + 64, fw), 'version-C base rails (top ENG z -250); E3 rear foot is a flexure'))

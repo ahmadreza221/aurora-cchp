@@ -112,8 +112,9 @@ trans = lo.cut(li)
 rimt = box(X0 - RIM, X1 + RIM, Y0 - RIM, Y1 + RIM, zt1, Z0).cut(box(X0, X1, Y0, Y1, zt1 - 1, Z0 + 1))            # bolting rim to the core bottom collar
 perf = box(X0 + 3, X1 - 3, Y0 + 3, Y1 - 3, IN['perf_plate_z'], IN['perf_plate_z'] + 2).common(li)
 FRM = LAY['frame']; (ycb0, ycb1), (zb0, zb1) = FRM['y_cols'], FRM['z_top']
+LEGX = (X0 + 220.0, X1 - 40.0)                # support legs: west pair east of the C1 / C2 riser flanges, both pairs straddle the block CG
 legs = []
-for xl in (X0 + 40.0, X1 - 40.0):
+for xl in LEGX:
     for yc in (ycb0, ycb1):
         y_in, y_out = (Y1 + RIM, yc + 20) if yc > 0 else (yc - 20, Y0 - RIM)
         legs.append(box(xl - 30, xl + 30, min(y_in, y_out), max(y_in, y_out), zb1, zb1 + 10))                     # foot plate on the top beam
@@ -122,16 +123,16 @@ add('RC2-121', 'Inlet_Transition_PerfPlate_Legs', trans.fuse([ft, rimt, perf] + 
     spec='3 mm 347H round-to-rectangle transition, DN200 PN6 flange, bolting rim, perforated plate 2 mm phi 0.55 (holes not modelled), 4 support legs',
     sup='local TIG shop')
 
-# RC2-131 / RC2-132 risers: straight pipe with two flanges + standard braided metal hose (flanged) up to the header box nozzle
+# RC2-131 / RC2-132 risers: standard braided metal hose (flanged) on the E2-C2 flange (takes the engine movement), then a straight pipe
+# with two flanges up to the header box nozzle; the hose / pipe flange pair sits above the version-C exhaust insulation (z > 335)
 def riser(tag, name, dn, iface, z_top_face, mat, spec):
     x, y, z0_ = iface['ENG_mm']; ro = OD[dn] / 2; D_, K, nb, dh, b = FLD[dn]
-    L_hose = LAY['risers']['C1' if dn == 'DN100' else 'C2']['hose_L'] + 2 * b
-    z_split = z_top_face - L_hose
-    f0 = disk_flange(V(x, y, z0_), V(0, 0, 1), D_, OD[dn] - 4, K, nb, dh, b); f1 = disk_flange(V(x, y, z_split - b), V(0, 0, 1), D_, OD[dn] - 4, K, nb, dh, b)
-    pipe = tube(ro, 2.0, V(x, y, z0_ + b), V(x, y, z_split - b))
-    add(tag, name, Part.makeCompound([f0, pipe, f1, braided_hose(dn, z_split, z_top_face, x, y)]), mat, RHO[mat], 'cold' if dn == 'DN100' else 'hot', 'RC2',
+    z_split = z0_ + LAY['risers']['C1' if dn == 'DN100' else 'C2']['hose_L'] + 2 * b
+    f0 = disk_flange(V(x, y, z_split), V(0, 0, 1), D_, OD[dn] - 4, K, nb, dh, b); f1 = disk_flange(V(x, y, z_top_face - b), V(0, 0, 1), D_, OD[dn] - 4, K, nb, dh, b)
+    pipe = tube(ro, 2.0, V(x, y, z_split + b), V(x, y, z_top_face - b))
+    add(tag, name, Part.makeCompound([braided_hose(dn, z0_, z_split, x, y), f0, pipe, f1]), mat, RHO[mat], 'cold' if dn == 'DN100' else 'hot', 'RC2',
         mk='make pipe; buy hose', spec=spec, sup='hose: Witzenmann HYDRA (DE) / BOA (DE) / IWKA; pipe EN 10217-7')
-    return (V(x, y, z0_ + b), V(x, y, z_split - b), ro)
+    return (V(x, y, z_split + b), V(x, y, z_top_face - b), ro)
 c1i = [i for i in E2I['interfaces'] if i['name'].startswith('C1')][0]; c2i = [i for i in E2I['interfaces'] if i['name'].startswith('C2')][0]
 R1 = riser('RC2-131', 'Riser_C1_DN100_pipe_hose', 'DN100', c1i, ZF1, '1.4404',
            'DN100: 114.3x2 1.4404 pipe + DN100 PN16 flanges + braided hose DN100 L300 (1.4541 / 1.4301 braid, 250 C)')
@@ -166,7 +167,7 @@ INS = LAY['insulation']; ti = INS['recup_mm']; th = INS['headers_mm']
 jac = box(X0 - RIM - ti, X1 + RIM + ti, Y0 - RIM - ti, Y1 + RIM + ti, zt0 + 25.0, Z1).cut(box(X0 - RIM, X1 + RIM, Y0 - RIM, Y1 + RIM, zt0, Z1 + 1))
 XJ0, XJ1 = X0 - RIM - ti - 1, X1 + RIM + ti + 1
 jac = jac.cut(Part.makeCompound([box(XJ0, XJ1, Y1, Y1 + 400, ZHT - HH / 2 - th, ZHT + HH / 2 + th), box(XJ0, XJ1, Y0 - 400, Y0, ZHB - HH / 2 - th, ZHB + HH / 2 + th)]))
-for xl in (X0 + 40.0, X1 - 40.0): jac = jac.cut(box(xl - 10, xl + 10, -400, 400, zt0, zt1 + 1))
+for xl in LEGX: jac = jac.cut(box(xl - 10, xl + 10, -400, 400, zt0, zt1 + 1))
 for (x, y), dn in ((HN['nozzle_xy'], 'DN100'), (HS['nozzle_xy'], 'DN125')):                                     # notch for nozzle / hose flanges
     jac = jac.cut(cyl(FLD[dn][0] / 2 + 5, V(x, y, zt0 - 10), V(x, y, Z1 + 10)))
 CORE_ENV = box(X0 - RIM, X1 + RIM, Y0 - RIM, Y1 + RIM, zt1, Z1 + 20.0)                                          # core + collars + rims (no insulation inside)
@@ -204,7 +205,7 @@ def probe(p, n, segs):
     p, n = vec(p), vec(n).normalize(); s, d = [], 0.0
     for L_, r_ in segs: s.append(Part.makeCylinder(r_, L_, p + n * d, n)); d += L_
     return Part.makeCompound(s)
-SENS = [('TE-503', 'T2r combustor-inlet air (C2 riser, low)', R2[0] + V(0, -R2[2], 120.0), V(0, -1, 0)),
+SENS = [('TE-503', 'T2r combustor-inlet air (C2 riser pipe, above the hose)', R2[0] + V(0, -R2[2], 60.0), V(0, -1, 0)),
         ('TE-512', 'economiser-inlet gas (protection, dry running)', V(X1 + RIM, 0.0, Z1 + 10.0), V(1, 0, 0)),
         ('TE-770', 'hot water out 90 C', WNOZ['out'] + V(30.0, 0, OD['DN32'] / 2), V(0, 0, 1)),
         ('FS-770', 'hot water flow switch (protection)', WNOZ['out'] + V(30.0, 0, -OD['DN32'] / 2), V(0, 0, -1))]

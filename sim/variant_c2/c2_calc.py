@@ -293,13 +293,13 @@ LAY = dict(
     # ONE brazed plate-fin block (bought to our drawing), 20 mm bolting frames top and bottom, bolt-on header boxes over the cold windows
     core=dict(x=(X0, X0 + H_mm), y=(-W_mm / 2, W_mm / 2), z=(570.0, 570.0 + L_mm), frame=20.0, frame_rim=25.0, stack_axis='x', layer_width_axis='y',
               flow='+z (hot up, cold down)', window_len=best['Ld'] * 1e3, end_bar=best['end_bar'] * 1e3, n_modules=1),
-    headers=dict(north=dict(y=(W_mm / 2, 360.0), nozzle_xy=(-9.0, 290.0), DN=100), south=dict(y=(-W_mm / 2, -410.0), nozzle_xy=(55.0, -340.0), DN=125),
+    headers=dict(north=dict(y=(W_mm / 2, 380.0), nozzle_xy=(-14.0, 300.0), DN=100), south=dict(y=(-W_mm / 2, -425.0), nozzle_xy=(35.0, -345.0), DN=125),
                  height=110.0, wall=3.0, note='box header bolted (gasket) to the core side frame around the cold window, nozzle + flange on its BOTTOM'),
     # bought standard finned-tube exhaust economiser (envelope): rectangular inlet flange on the core top frame, DN200 outlet on top
     hx=dict(z=(570.0 + L_mm + 20.0, 570.0 + L_mm + 20.0 + 520.0), body_x=(X0 - 10.0, X0 + H_mm + 10.0), body_y=(-W_mm / 2 - 20.0, W_mm / 2 + 20.0),
             cone_h=80.0, water_DN=32, duty_kW=hx['Q_kW'], rows=hx['n_rows'], tubes_per_row=hx['n_tubes_per_row']),
     stack=dict(DN=200, D=320.0),
-    risers=dict(C1=dict(xy=(-9.0, 290.0), DN=100, hose_L=320.0), C2=dict(xy=(55.0, -340.0), DN=125, hose_L=300.0)),
+    risers=dict(C1=dict(xy=(-14.0, 300.0), DN=100, hose_L=300.0), C2=dict(xy=(35.0, -345.0), DN=125, hose_L=300.0)),   # hose at the bottom (engine side)
     insulation=dict(recup_mm=50.0, headers_mm=30.0, risers_C1_mm=20.0, risers_C2_mm=30.0),
     frame=dict(rails_y=(-110.0, 110.0), rails_x=(-230.0, 590.0), x_cols=(-200.0, 560.0), y_cols=(-185.0, 185.0), z_top=(380.0, 420.0), z_base=(-310.0, -250.0)),
 )
@@ -307,14 +307,14 @@ LAY['core']['z_hdr_top'] = LAY['core']['z'][1] - LAY['core']['end_bar'] - LAY['c
 LAY['core']['z_hdr_bot'] = LAY['core']['z'][0] + LAY['core']['end_bar'] + LAY['core']['window_len'] / 2
 R['layout'] = LAY
 # E2-C2 port changes (relative to sim/engine/e2_design.json)
-E2C2 = dict(C1=dict(side='north, boot up', rect_x=(-26.0, 7.5), rect_z=(-40.0, 115.0), boot_y=(230.0, 350.0), boot_x=(-69.0, 51.0), boot_z_top=130.0,
-                    nozzle_xy=(-9.0, 290.0), face_z=170.0, DN=100, PN=16, pipe_od=114.3, pipe_t=2.0, flange=(220.0, 180.0, 8, 18.0, 20.0), t_wall=2.5,
-                    y_rect=230.0, face_y=290.0, round_centre_xz=(-9.0, 170.0),
-                    why='ear north at mid-height, boot turns UP outside the exhaust insulation (|y| > 211 above z 200); round DN100 flange only'),
-            C2=dict(side='south, boot up', rect_x=(47.0, 95.0), rect_z=(-239.0, -40.0), boot_y=(290.0, 390.0), boot_x=(5.0, 105.0),
-                    nozzle_xy=(55.0, -340.0), face_z=2.0, DN=125, PN=16, pipe_od=139.7, pipe_t=2.0, flange=(250.0, 210.0, 8, 18.0, 22.0), t_wall=3.0,
-                    y_rect=-290.0, face_y=-340.0, round_axis_xz=(55.0, 2.0),
-                    why='south duct (x 47..95 clears the mid-flange nuts and the exhaust insulation x >= 116), boot turns UP at y -340; round DN125 flange only'))
+E2C2 = dict(C1=dict(side='north, boot up', rect_x=(-26.0, 7.5), rect_z=(-40.0, 115.0), boot_y=(240.0, 360.0), boot_x=(-74.0, 46.0), boot_z_top=130.0,
+                    nozzle_xy=(-14.0, 300.0), face_z=170.0, DN=100, PN=16, pipe_od=114.3, pipe_t=2.0, flange=(220.0, 180.0, 8, 18.0, 20.0), t_wall=2.5,
+                    y_rect=240.0, face_y=300.0, round_centre_xz=(-14.0, 170.0),
+                    why='ear north at mid-height, boot turns UP; DN100 flange (x <= 73 at |y| <= 232) clears the version-C exhaust insulation step (x >= 82 for z 165..200)'),
+            C2=dict(side='south, boot up', rect_x=(47.0, 95.0), rect_z=(-239.0, -40.0), boot_y=(270.0, 420.0), boot_x=(-40.0, 110.0),
+                    nozzle_xy=(35.0, -345.0), face_z=2.0, DN=125, PN=16, pipe_od=139.7, pipe_t=2.0, flange=(250.0, 210.0, 8, 18.0, 22.0), t_wall=3.0,
+                    y_rect=-270.0, face_y=-345.0, round_axis_xz=(35.0, 2.0),
+                    why='south duct (x 47..95 clears the mid-flange nuts and the exhaust insulation x >= 116), 150 x 150 boot turns UP at y -345; DN125 flange (x <= 100 at |y| <= 238) clears the insulation (x >= 116)'))
 E2C2['a_liner_pins'] = (30.0, 160.0, 300.0)                                       # variant A 255 deg is inside the south C2 duct
 R['construction_comparison_eps080'] = dict(note='E4 model (sim/engine/e4_recuperator_calc.run_comparison) at eps 0.80 / 0.75, hot <= 1000 Pa, cold <= 2400 Pa, W 0.30',
     plate_fin_OSF=dict(vol_L=50.0, core_kg=129.1), primary_surface_welded=dict(vol_L=36.1, core_kg=28.6, note='foil folding dies + automated edge welding'),

@@ -224,22 +224,22 @@
    "north": {
     "y": [
      150.0,
-     360.0
+     380.0
     ],
     "nozzle_xy": [
-     -9.0,
-     290.0
+     -14.0,
+     300.0
     ],
     "DN": 100
    },
    "south": {
     "y": [
      -150.0,
-     -410.0
+     -425.0
     ],
     "nozzle_xy": [
-     55.0,
-     -340.0
+     35.0,
+     -345.0
     ],
     "DN": 125
    },
@@ -273,16 +273,16 @@
   "risers": {
    "C1": {
     "xy": [
-     -9.0,
-     290.0
+     -14.0,
+     300.0
     ],
     "DN": 100,
-    "hose_L": 320.0
+    "hose_L": 300.0
    },
    "C2": {
     "xy": [
-     55.0,
-     -340.0
+     35.0,
+     -345.0
     ],
     "DN": 125,
     "hose_L": 300.0
@@ -356,17 +356,17 @@
     115.0
    ],
    "boot_y": [
-    230.0,
-    350.0
+    240.0,
+    360.0
    ],
    "boot_x": [
-    -69.0,
-    51.0
+    -74.0,
+    46.0
    ],
    "boot_z_top": 130.0,
    "nozzle_xy": [
-    -9.0,
-    290.0
+    -14.0,
+    300.0
    ],
    "face_z": 170.0,
    "DN": 100,
@@ -381,13 +381,13 @@
     20.0
    ],
    "t_wall": 2.5,
-   "y_rect": 230.0,
-   "face_y": 290.0,
+   "y_rect": 240.0,
+   "face_y": 300.0,
    "round_centre_xz": [
-    -9.0,
+    -14.0,
     170.0
    ],
-   "why": "ear north at mid-height, boot turns UP outside the exhaust insulation (|y| > 211 above z 200); round DN100 flange only"
+   "why": "ear north at mid-height, boot turns UP; DN100 flange (x <= 73 at |y| <= 232) clears the version-C exhaust insulation step (x >= 82 for z 165..200)"
   },
   "C2": {
    "side": "south, boot up",
@@ -400,16 +400,16 @@
     -40.0
    ],
    "boot_y": [
-    290.0,
-    390.0
+    270.0,
+    420.0
    ],
    "boot_x": [
-    5.0,
-    105.0
+    -40.0,
+    110.0
    ],
    "nozzle_xy": [
-    55.0,
-    -340.0
+    35.0,
+    -345.0
    ],
    "face_z": 2.0,
    "DN": 125,
@@ -424,13 +424,13 @@
     22.0
    ],
    "t_wall": 3.0,
-   "y_rect": -290.0,
-   "face_y": -340.0,
+   "y_rect": -270.0,
+   "face_y": -345.0,
    "round_axis_xz": [
-    55.0,
+    35.0,
     2.0
    ],
-   "why": "south duct (x 47..95 clears the mid-flange nuts and the exhaust insulation x >= 116), boot turns UP at y -340; round DN125 flange only"
+   "why": "south duct (x 47..95 clears the mid-flange nuts and the exhaust insulation x >= 116), 150 x 150 boot turns UP at y -345; DN125 flange (x <= 100 at |y| <= 238) clears the insulation (x >= 116)"
   },
   "a_liner_pins": [
    30.0,
