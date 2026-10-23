@@ -15,6 +15,7 @@ DOC_NAME = {'v12': 'GR180 v12 original turbojet', 'v13A': 'GR180 v13A turbojet (
             'D': 'GR180-D Single-shaft turbo-generator (concept)', 'RT': 'GR180-D Radial turbine stage (concept)',
             'D2': 'GR180-D2 Single-shaft + radial turbine (full assembly)'}[MODE]
 D2_SKIP = D_SKIP | {'GR180_Turbine', 'GR180_NGV', 'GR180_TurbineNut', 'D-180_Exhaust_Diffuser_DN150'}   # axial stage -> radial stage
+SHOW_AUX = False         # user (2026-10-23): auxiliaries skid (gas train, oil, glycol) hidden for now
 SHOW_FILTER_BOX = False  # user (2026-10-23): leave the V-cell filter box out for now, add it later
 FILTER_BOX = {'INT-150*', 'INT-151*', 'INT-152*', 'INT-153*', 'FR-160*'}
 D2_REPLACED = {'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
@@ -111,7 +112,7 @@ def run(_context):
                 steps.update({os.path.splitext(os.path.basename(f))[0]: f
                               for f in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'RT2', 'RT-*.step'))})
                 d2 = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2')
-                for sub in ('INTAKE', 'EXHAUST', 'FRAME', 'ROTOR', 'TURBINE', 'GENERATOR', 'AUX'):
+                for sub in ('INTAKE', 'EXHAUST', 'FRAME', 'ROTOR', 'TURBINE', 'GENERATOR') + (('AUX',) if SHOW_AUX else ()):
                     fs = [f for f in glob.glob(os.path.join(d2, sub, '*.step')) if '_assembly' not in f]
                     if not fs:
                         continue
