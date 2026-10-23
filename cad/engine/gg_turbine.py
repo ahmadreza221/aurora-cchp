@@ -600,6 +600,10 @@ def polygon_area_centroid(poly):
 # ======================================================================================== FreeCAD geometry
 NGV_BORE_R_DEFAULT = R_NGV_SHR      # cold NGV shroud bore radius; replaced by the FEA recommendation (E1_fea_results.json)
 TIP_STOCK, CAST_SHROUD_STOCK = 0.30, 0.30
+# NGV shroud bore: the bore between the vanes (x 96.24..109.35) cannot be turned (the vanes cut the bore), so the cast blank
+# carries the 0.3 mm bore stock only aft of the vanes, from x 109.8 (u 15.0, 0.44 aft of the vane fillet foot) via a 45 deg
+# ramp; the vane-region bore and the vanes are as cast = final (Fusion CAM finding, docs/engine/E1_fusion_drawings.md 3-3)
+CAST_SHROUD_STOCK_U0 = 15.0
 
 def ngv_bore_r():
     f = os.path.join(OUT, 'E1_fea_results.json')
@@ -783,12 +787,19 @@ def ngv_body(kind, RB):
         # counter-clockwise in (u, r): a clockwise profile revolves into an inside-out solid (booleans then drop the ring)
         if sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(pts, pts[1:] + pts[:1])) < 0: pts = pts[::-1]
         return Part.Face(Part.makePolygon([V(X_NGV + u, r, 0) for u, r in pts] + [V(X_NGV + pts[0][0], pts[0][1], 0)])).revolve(V(0, 0, 0), V(1, 0, 0), 360)
-    rb = RB - (CAST_SHROUD_STOCK if ck else 0.0)
+    rb = RB                                                            # vane-region bore: final (cast blank: as cast)
     u_web0 = 8.5 - (0.5 if ck else 0.0); r_web_b = 13.0 - (0.5 if ck else 0.0); u_in1 = 15.0 + (0.3 if ck else 0.0)
     u_f = 0.0 - (0.3 if ck else 0.0)                                   # front land face (machined datum)
     r_rib = 37.95 + (0.3 if ck else 0.0); u_r0, u_r1 = 14.5 - (0.3 if ck else 0.0), 16.0 + (0.3 if ck else 0.0)   # rib faces / OD machined
-    chl = (36.05 - rb) / math.tan(math.radians(26))
-    outer = rvp([(chl, rb), (u_f, 36.05 - (chl - u_f) * math.tan(math.radians(26)) if False else 36.05), (u_f, 36.35), (u_r0, 36.35), (u_r0, r_rib), (u_r1, r_rib), (u_r1, 36.35), (24.0, 36.35), (24.0, rb)])
+    t26 = math.tan(math.radians(26))
+    chl = (36.05 - rb) / t26                                           # 26 deg inlet chamfer from (u 0, r 36.05) down to the bore
+    r_front = 36.05 - u_f * t26                                        # cast: chamfer line extended to the cast front face
+    if ck:   # bore stock only aft of the vanes (CAST_SHROUD_STOCK_U0), 45 deg ramp from the as-cast vane-region bore
+        u0, rs = CAST_SHROUD_STOCK_U0, RB - CAST_SHROUD_STOCK
+        aft = [(24.0, rs), (u0 + CAST_SHROUD_STOCK, rs), (u0, rb)]
+    else:
+        aft = [(24.0, rb)]
+    outer = rvp([(chl, rb), (u_f, r_front), (u_f, 36.35), (u_r0, 36.35), (u_r0, r_rib), (u_r1, r_rib), (u_r1, 36.35), (24.0, 36.35)] + aft)
     inner = rvp([(0, 21.25), (0, 22.25), (u_in1, 22.25), (u_in1, 21.25)])
     web = rvp([(u_web0, r_web_b), (u_web0, 21.3), (10.0, 21.3), (10.0, r_web_b)])
     return outer.fuse([inner, web]), rb
