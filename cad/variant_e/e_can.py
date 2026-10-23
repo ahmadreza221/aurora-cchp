@@ -1,5 +1,5 @@
 # GR180 version E - COMBUSTOR: single vertical reverse-flow can on the cool casing (axis x = X_CAN, y = 0, z up).
-# Casing = DN300 pipe + 2 PN10 flanges + blind-flange cover; Nimonic 75 liner (holes from sim/variant_e/e_combustor.json),
+# Casing = DN300 pipe + 2 PN10 flanges + blind-flange cover; alloy 75 (VDM) liner (holes from sim/variant_e/e_combustor.json),
 # axial swirler, central gas lance, spark igniter, UV scanner, diffusing conical transition d210 -> d270 into the hot plenum.
 # Run: LANG=en_US.UTF-8 freecadcmd cad/variant_e/e_can.py  -> cad_out/variant_e/COMBUSTOR/*.step
 import sys, os, math
@@ -41,7 +41,7 @@ for z in (600.0, 800.0, 980.0, 1070.0):                     # film-cooling slot 
     ln = cut_all(ln, [Part.makeCylinder(2.0, 20.0, V(X0, 0, z) + V(math.cos(math.radians(7.5 * k)), math.sin(math.radians(7.5 * k)), 0) * 95.0,
                                          V(math.cos(math.radians(7.5 * k)), math.sin(math.radians(7.5 * k)), 0)) for k in range(48)])
 K.add('E-K120_Liner_D210', ln, 'N75', 'liner d210 x 1.5, L 588 + dome: primary 8 x d23.3, secondary 12 x d17.4, dilution 10 x d28, 4 film-cooling rows',
-      'make (2.4951 Nimonic 75 sheet, flat patterns laser-cut, rolled + TIG; dome turned)')
+      'make (2.4951 alloy 75 (VDM) sheet, flat patterns laser-cut, rolled + TIG; dome turned)')
 K.add('E-K121_Axial_Swirler', zcyl(X0, 0, 1095.0, 1111.0, 55.0, 25.0), 'alloyX', 'axial swirler hub 50 / tip 110, 12 flat vanes 45 deg (envelope)', 'make (turned rings + laser-cut vanes, brazed)')
 hang = fuse_all([zcyl(X0 + 80.0 * math.cos(math.radians(a)), 80.0 * math.sin(math.radians(a)), 1111.0, 1180.0, 6.0) for a in (90.0, 210.0, 330.0)])
 K.add('E-K122_Liner_Hangers_x3', hang, 'alloyX', '3 liner hanger rods d12 from the dome to the cover (liner hangs, grows downward into the transition collar)', 'make')

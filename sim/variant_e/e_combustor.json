@@ -26,7 +26,7 @@
    "L_sz_mm": 105.0,
    "L_dz_mm": 315.0,
    "volume_L": 20.366002695426555,
-   "material": "2.4951 Nimonic 75 sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional"
+   "material": "2.4951 alloy 75 (VDM) sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional"
   },
   "air_split": {
    "swirler": 0.12,
@@ -71,7 +71,7 @@
    "slot_h_mm": 2.0,
    "per_ring_kg_s": 0.1487,
    "slot_velocity_m_s": 39.6,
-   "build": "4 machined slot rings (turned 2.4951 Nimonic 75, 48 x d4.0 metering holes each) welded between the rolled liner sections"
+   "build": "4 machined slot rings (turned 2.4951 alloy 75 (VDM), 48 x d4.0 metering holes each) welded between the rolled liner sections"
   },
   "swirler": {
    "type": "axial, 12 flat 1.5 mm vanes at 45 deg slotted into turned hub 50 / tip 110 rings",
@@ -125,7 +125,7 @@
    "L_sz_mm": 105.0,
    "L_dz_mm": 315.0,
    "volume_L": 20.366002695426555,
-   "material": "2.4951 Nimonic 75 sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional"
+   "material": "2.4951 alloy 75 (VDM) sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional"
   },
   "air_split": {
    "swirler": 0.12,
@@ -170,7 +170,7 @@
    "slot_h_mm": 2.0,
    "per_ring_kg_s": 0.1465,
    "slot_velocity_m_s": 38.5,
-   "build": "4 machined slot rings (turned 2.4951 Nimonic 75, 48 x d4.0 metering holes each) welded between the rolled liner sections"
+   "build": "4 machined slot rings (turned 2.4951 alloy 75 (VDM), 48 x d4.0 metering holes each) welded between the rolled liner sections"
   },
   "swirler": {
    "type": "axial, 12 flat 1.5 mm vanes at 45 deg slotted into turned hub 50 / tip 110 rings",

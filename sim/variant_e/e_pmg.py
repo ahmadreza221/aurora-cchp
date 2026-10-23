@@ -27,7 +27,7 @@ P_RATED = 335.0e3                                                   # shaft, con
 P_DES = CY['design_point']['P_shaft_to_PMG_kW'] * 1e3
 G = dict(rotor_OD=120.0, sleeve_t=6.0, magnet_ID=80.0, gap=2.5, stack=190.0, slots=24, stator_OD=240.0,
          endturn_axial=85.0, turns_per_phase=None, parallel_paths=2, fill=0.38, V_dc0_max=850.0)
-SPEC = dict(Br20=1.10, alpha=-0.00035, T_mag=150.0, mu_r=1.05)    # Sm2Co17 (VAC VACOMAX 240 HR / Arnold Recoma 30 / Chinese 2:17 grade)
+SPEC = dict(Br20=1.10, alpha=-0.00035, T_mag=150.0, mu_r=1.05)    # Sm2Co17 (VAC VACOMAX 240 HR DE / Shin-Etsu R30 JP / Chinese 2:17 grade)
 
 
 def size(g=G, P=P_RATED):

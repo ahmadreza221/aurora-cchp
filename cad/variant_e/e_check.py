@@ -99,7 +99,7 @@ I = dict(
 json.dump(I, open(os.path.join(OUT, 'e_interfaces.json'), 'w'), indent=1)
 summ = dict(check={k: res[k] for k in ('parts', 'checked_pairs', 'tol_mm3')}, overlaps=res['overlaps'], n_contacts=len(res['contacts']), dimensions=dims,
             mass_by_subsystem_kg=res['mass_by_subsystem_kg'], mass_total_kg=res['mass_total_kg'], mass_modules_kg=res['mass_modules_kg'], cg_mm=cg,
-            make_buy=res['make_buy'], parts={n: dict(mass_kg=meta[n]['mass_kg'], material=meta[n]['material'], make_buy=meta[n]['make_buy'], bbox=meta[n]['bbox'],
-                                                     step=meta[n]['step']) for n in names}, interfaces=I)
+            make_buy=res['make_buy'], parts={n: dict(mass_kg=meta[n]['mass_kg'], mass_source=meta[n]['mass_source'], material=meta[n]['material'], make_buy=meta[n]['make_buy'],
+                                                     desc=meta[n]['desc'], note=meta[n]['note'], bbox=meta[n]['bbox'], step=meta[n]['step']) for n in names}, interfaces=I)
 json.dump(summ, open(os.path.join(ROOT, 'sim', 'variant_e', 'e_cad_summary.json'), 'w'), indent=1)
 print('-> cad_out/variant_e/e_check.json, e_interfaces.json, sim/variant_e/e_cad_summary.json')

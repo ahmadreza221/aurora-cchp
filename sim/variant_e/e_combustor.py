@@ -83,7 +83,7 @@ def design(r, label):
     # film cooling: 4 slot rings, slot height 2.0 mm
     m_film = m3 * SPLIT['film']
     film = dict(rings=4, slot_h_mm=2.0, per_ring_kg_s=round(m_film / 4, 4), slot_velocity_m_s=round(m_film / 4 / (rho3 * math.pi * D_L * 0.002), 1),
-                build='4 machined slot rings (turned 2.4951 Nimonic 75, 48 x d4.0 metering holes each) welded between the rolled liner sections')
+                build='4 machined slot rings (turned 2.4951 alloy 75 (VDM), 48 x d4.0 metering holes each) welded between the rolled liner sections')
     # swirler: axial, 12 flat vanes 45 deg, hub 50 / tip 110 mm
     m_sw = m3 * SPLIT['swirler']
     A_sw = math.pi / 4 * (0.110 ** 2 - 0.050 ** 2) * (1 - 12 * 0.0015 / (math.pi * 0.08)) * math.cos(math.radians(45))
@@ -112,7 +112,7 @@ def design(r, label):
                casing=dict(pipe=CASING_PIPE['name'], D_ref_mm=D_ref * 1e3, A_ref_m2=A_ref, U_ref_m_s=U_ref, q_ref_Pa=q_ref, dP_liner_kPa=dP_L / 1e3,
                            PLF=PLF_actual, annulus_velocity_m_s=U_an),
                liner=dict(D_mm=D_L * 1e3, L_mm=L_L * 1e3, L_pz_mm=L_pz * 1e3, L_sz_mm=L_sz * 1e3, L_dz_mm=L_dz * 1e3, volume_L=V_L * 1e3,
-                          material='2.4951 Nimonic 75 sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional'),
+                          material='2.4951 alloy 75 (VDM) sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional'),
                air_split=SPLIT, phi_overall=phi_all, phi_primary=phi_pz, phi_secondary=phi_sz, T_primary_C=T_pz - 273.15, T_secondary_C=T_sz - 273.15,
                holes=holes, film=film,
                swirler=dict(type='axial, 12 flat 1.5 mm vanes at 45 deg slotted into turned hub 50 / tip 110 rings', velocity_m_s=V_sw, swirl_number=SN),

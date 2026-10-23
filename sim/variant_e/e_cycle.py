@@ -467,7 +467,7 @@ def main():
             compressor='bought TC-class Al 2618 (forged, 5-axis milled) backswept splitter impeller D2 ~276 mm (TPS52/57-F, TCR16/18, MET18-22 class - ESTIMATE, '
                        'verify with supplier drawing), our 17-vane 2.5D diffuser + axisymmetric bend / 23 deswirl vanes straight into the cool casing (no scroll, '
                        'no pipe); the TC maker\'s scroll casing + DN250 pipe is the fallback',
-            combustor='single vertical reverse-flow can (Kawasaki M1A-style) on the cool casing, DN300 casing, liner d210 x 588 Nimonic 75, axial swirler + '
+            combustor='single vertical reverse-flow can (Kawasaki M1A-style) on the cool casing, DN300 casing, liner d210 x 588 alloy 75 (VDM), axial swirler + '
                       'central gas lance (partially premixed diffusion flame), conical transition d210 -> d270 into the floating hot plenum',
             turbine='bought TC-class cast IN713LC radial/mixed-flow wheel D4 ~285-290 mm friction-welded to our shaft by the supplier; '
                     '2.5D nozzle ring (alloy X / 2.4665) in a floating hot plenum inside the cool pressure casing',

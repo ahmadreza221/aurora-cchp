@@ -59,8 +59,11 @@
  "parts": {
   "BEARING/E-B110_Bearing_Housing": {
    "mass_kg": 46.11,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (42CrMo4 forged bar d340 x 200, CNC turning + drilling)",
+   "desc": "bearing housing: front flange to the back plate (12 x M12), bores 84.24 H6 for the SFD cartridges ground in one setting, rear flange for the heat shield / nozzle stack (12 x M10), seal bore d50.8 (piston rings), oil-jet drillings, drain d16 at the bottom",
+   "note": "",
    "bbox": [
     [
      45.0,
@@ -79,8 +82,11 @@
   },
   "BEARING/E-B120_SFD_Cartridge_Front": {
    "mass_kg": 0.49,
+   "mass_source": "CAD volume",
    "material": "17-4PH",
    "make_buy": "make",
+   "desc": "front SFD cartridge for the tandem pair: OD 84 (0.12 mm film), 2 O-ring grooves (FKM 84x3), jet holes, anti-rotation pin",
+   "note": "",
    "bbox": [
     [
      45.0,
@@ -99,8 +105,11 @@
   },
   "BEARING/E-B121_SFD_Cartridge_Rear": {
    "mass_kg": 0.4,
+   "mass_source": "CAD volume",
    "material": "17-4PH",
    "make_buy": "make",
+   "desc": "rear SFD cartridge (floating bearing), same OD/O-rings as the front",
+   "note": "",
    "bbox": [
     [
      190.0,
@@ -119,8 +128,11 @@
   },
   "BEARING/E-B122_Wave_Spring_Rear": {
    "mass_kg": 0.02,
+   "mass_source": "override (bought / envelope)",
    "material": "steel",
    "make_buy": "buy",
+   "desc": "wave spring 300 N preload on the rear bearing outer ring (envelope)",
+   "note": "crest-to-crest wave spring, Lesjofors (SE) / Scherdel (DE)",
    "bbox": [
     [
      192.0,
@@ -139,8 +151,11 @@
   },
   "COMBUSTOR/E-K110_Combustor_Casing_DN300": {
    "mass_kg": 62.76,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (EN 10216-2 P265GH pipe + EN 1092-1 flanges, welded; PED)",
+   "desc": "can casing DN300 (323.9 x 7.1) z 460..1160 + 2 weld-neck flanges PN10 (OD 445, 12 x M20), igniter boss M18x1.5",
+   "note": "",
    "bbox": [
     [
      62.5,
@@ -159,8 +174,11 @@
   },
   "COMBUSTOR/E-K111_Top_Cover": {
    "mass_kg": 29.38,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (EN 1092-1 blind flange, drilled)",
+   "desc": "blind-flange top cover DN300 PN10 with the gas-lance bore d32, UV sight port, 3 liner hanger seats; lift off with the liner + injector for inspection (no engine strip)",
+   "note": "",
    "bbox": [
     [
      62.5,
@@ -179,8 +197,11 @@
   },
   "COMBUSTOR/E-K120_Liner_D210": {
    "mass_kg": 5.28,
+   "mass_source": "CAD volume",
    "material": "N75",
-   "make_buy": "make (2.4951 Nimonic 75 sheet, flat patterns laser-cut, rolled + TIG; dome turned)",
+   "make_buy": "make (2.4951 alloy 75 (VDM) sheet, flat patterns laser-cut, rolled + TIG; dome turned)",
+   "desc": "liner d210 x 1.5, L 588 + dome: primary 8 x d23.3, secondary 12 x d17.4, dilution 10 x d28, 4 film-cooling rows",
+   "note": "",
    "bbox": [
     [
      180.0,
@@ -199,8 +220,11 @@
   },
   "COMBUSTOR/E-K121_Axial_Swirler": {
    "mass_kg": 0.99,
+   "mass_source": "CAD volume",
    "material": "alloyX",
    "make_buy": "make (turned rings + laser-cut vanes, brazed)",
+   "desc": "axial swirler hub 50 / tip 110, 12 flat vanes 45 deg (envelope)",
+   "note": "",
    "bbox": [
     [
      230.0,
@@ -219,8 +243,11 @@
   },
   "COMBUSTOR/E-K122_Liner_Hangers_x3": {
    "mass_kg": 0.19,
+   "mass_source": "CAD volume",
    "material": "alloyX",
    "make_buy": "make",
+   "desc": "3 liner hanger rods d12 from the dome to the cover (liner hangs, grows downward into the transition collar)",
+   "note": "",
    "bbox": [
     [
      209.7,
@@ -239,8 +266,11 @@
   },
   "COMBUSTOR/E-K130_Transition_Cone": {
    "mass_kg": 2.64,
+   "mass_source": "CAD volume",
    "material": "alloyX",
    "make_buy": "make (rolled cone + turned collar, TIG)",
+   "desc": "diffusing conical transition d210 -> d270 (2 mm alloy X), collar slides over the liner, piston-ring seal in the hot-plenum inlet",
+   "note": "",
    "bbox": [
     [
      148.0,
@@ -259,8 +289,11 @@
   },
   "COMBUSTOR/E-K140_Gas_Lance": {
    "mass_kg": 2.0,
+   "mass_source": "CAD volume",
    "material": "stainless",
    "make_buy": "make (1.4404 + 2.4665 tip)",
+   "desc": "central gas lance d30: 8 radial jets d4.5 into the swirler exit, flanged head with G3/4 gas inlet",
+   "note": "",
    "bbox": [
     [
      255.0,
@@ -279,8 +312,11 @@
   },
   "COMBUSTOR/E-K150_Igniter": {
    "mass_kg": 0.4,
+   "mass_source": "override (bought / envelope)",
    "material": "stainless",
    "make_buy": "buy (industrial gas-engine plug NGK / MOTORTECH + HV capacitive coil)",
+   "desc": "spark igniter M18x1.5 in a cooled sleeve, primary zone",
+   "note": "",
    "bbox": [
     [
      276.0,
@@ -299,8 +335,11 @@
   },
   "COMBUSTOR/E-K160_UV_Flame_Scanner": {
    "mass_kg": 0.8,
+   "mass_source": "override (bought / envelope)",
    "material": "Al",
    "make_buy": "buy (DURAG D-LX 100 class / Siemens QRA)",
+   "desc": "UV flame scanner on the cover sight port (envelope)",
+   "note": "",
    "bbox": [
     [
      380.0,
@@ -319,8 +358,11 @@
   },
   "COMPRESSOR/E-C110_Inlet_Shroud_Cover": {
    "mass_kg": 49.5,
+   "mass_source": "CAD volume",
    "material": "Al",
    "make_buy": "make (6082-T6 forged disc d660 x 150, CNC turning; shroud finish-turned with the wheel drawing)",
+   "desc": "inlet cover: elliptic bellmouth (r 305 -> 92), shroud contour (0.45 mm tip gap), diffuser front wall x -7.4, front flange to the plenum rear wall (16 x M12)",
+   "note": "",
    "bbox": [
     [
      -150.0,
@@ -339,8 +381,11 @@
   },
   "COMPRESSOR/E-C130_Back_Plate_Diffuser_Deswirl": {
    "mass_kg": 26.77,
+   "mass_source": "CAD volume",
    "material": "Al",
    "make_buy": "make (6082-T6 forged disc d620 x 120, CNC turning + 2.5D / 4-axis milling)",
+   "desc": "back plate: wheel back-face wall (2 mm gap), 17 straight wedge diffuser vanes (r 146 -> 236, 2.5D), inner wall of the bend, 23 deswirl vanes in the annulus r 261..305 (4th-axis 2.5D), back-face labyrinth bore r 36",
+   "note": "",
    "bbox": [
     [
      -7.4,
@@ -359,8 +404,11 @@
   },
   "COMPRESSOR/E-C150_Outer_Casing_Bend": {
    "mass_kg": 66.33,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (P355NL1 forged ring d820 x 160, CNC turning + milling of the pads)",
+   "desc": "outer casing: outer wall of the 90 deg bend (R60) + annulus r 305, rear flange to the cool casing (16 x M20), front spigot on the inlet cover; 2 trunnion pads = FIXED engine support",
+   "note": "",
    "bbox": [
     [
      -40.0,
@@ -379,8 +427,11 @@
   },
   "EXHAUST/E-X110_Diffuser_Cone": {
    "mass_kg": 38.88,
+   "mass_source": "CAD volume",
    "material": "1.4828",
    "make_buy": "make (rolled 1.4828 sheet + turned collar / flange, TIG)",
+   "desc": "10 deg conical diffuser d262 -> d428 (3 mm 1.4828), slip collar d282 with piston ring over the shroud tail, end flange; outside 100 mm ceramic blanket + 1.4301 cladding (not modelled)",
+   "note": "",
    "bbox": [
     [
      485.0,
@@ -399,8 +450,11 @@
   },
   "EXHAUST/E-X120_Elbow_DN450_Flange": {
    "mass_kg": 87.2,
+   "mass_source": "CAD volume",
    "material": "1.4828",
    "make_buy": "make (5-segment mitred 1.4828 pipe or bought EN 10253 elbow + flanges)",
+   "desc": "90 deg elbow DN450 (457 x 6.3), R 450, inlet flange to the cone, outlet flange DN450 PN6 EN 1092-1 (verify: OD 640, PCD 585, 16 x M20) facing up",
+   "note": "",
    "bbox": [
     [
      1475.0,
@@ -419,8 +473,11 @@
   },
   "EXHAUST/E-X121_Elbow_Turning_Vanes_x2": {
    "mass_kg": 13.07,
+   "mass_source": "CAD volume",
    "material": "1.4828",
    "make_buy": "make (rolled strip)",
+   "desc": "2 turning vanes in the elbow (3 mm, at R 370 / 530), welded to the elbow sides",
+   "note": "",
    "bbox": [
     [
      1500.0,
@@ -439,8 +496,11 @@
   },
   "FRAME/E-F110_Base_Frame_RHS": {
    "mass_kg": 695.14,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (MAG on a table, hot-dip galvanised)",
+   "desc": "welded base frame RHS 200 x 100 x 6.3 (S355J2H, EN 10219): 2 rails x -2100..2250 at y +/-550, 5 outriggers under the plenum, 6 cross members; lifting at the 4 rail ends (lugs not modelled)",
+   "note": "",
    "bbox": [
     [
      -2100.0,
@@ -459,8 +519,11 @@
   },
   "FRAME/E-F120_Fixed_Pedestals_x2": {
    "mass_kg": 12.39,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (S355 plate box)",
+   "desc": "2 FIXED pedestals under the outer-casing trunnion pads (x 50..95): 2 x M20 + 2 dowels each",
+   "note": "",
    "bbox": [
     [
      50.0,
@@ -479,8 +542,11 @@
   },
   "FRAME/E-F121_Sliding_Pedestals_x2": {
    "mass_kg": 10.39,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (S355)",
+   "desc": "2 SLIDING pedestals under the cool-casing pads: PTFE / bronze slide plate, M20 shoulder bolts in x-slots (thermal growth ~2 mm)",
+   "note": "",
    "bbox": [
     [
      270.0,
@@ -499,8 +565,11 @@
   },
   "FRAME/E-F122_Exhaust_Saddles_x3": {
    "mass_kg": 112.94,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (S355)",
+   "desc": "3 saddles under the diffuser cone (2) and the elbow (1): slide plates, insulated pads",
+   "note": "",
    "bbox": [
     [
      880.0,
@@ -519,8 +588,11 @@
   },
   "FRAME/E-F130_AV_Mounts_x8": {
    "mass_kg": 28.0,
+   "mass_source": "override (bought / envelope)",
    "material": "rubber",
    "make_buy": "buy (Trelleborg SE / Freudenberg (Vibracoustic) DE / Getzner AT)",
+   "desc": "8 rubber-metal AV mounts (~800 kg rated each, f_n ~10 Hz), M16",
+   "note": "",
    "bbox": [
     [
      -2060.0,
@@ -539,8 +611,11 @@
   },
   "GENERATOR/E-G110_Pod_Housing": {
    "mass_kg": 18.64,
+   "mass_source": "CAD volume",
    "material": "Al",
    "make_buy": "make (6082-T6 thick tube or forged ring, CNC turning)",
+   "desc": "pod housing tube OD 320 / bore 280 H7 with 2 glycol ports G1/2",
+   "note": "",
    "bbox": [
     [
      -800.0,
@@ -559,8 +634,11 @@
   },
   "GENERATOR/E-G111_Front_End_Bell": {
    "mass_kg": 20.5,
+   "mass_source": "CAD volume",
    "material": "Al",
    "make_buy": "make (6082-T6 bar d330, CNC turning)",
+   "desc": "front end bell: SFD bore 84.24 (locating bearing), oil jet + drain, Hall speed pickup, spigot into the housing",
+   "note": "",
    "bbox": [
     [
      -900.0,
@@ -579,8 +657,11 @@
   },
   "GENERATOR/E-G112_Glycol_Jacket": {
    "mass_kg": 15.22,
+   "mass_source": "CAD volume",
    "material": "Al",
    "make_buy": "make (6082 tube, turned)",
+   "desc": "glycol jacket sleeve (helical groove 12 x 6, 4 O-rings), stator shrunk in",
+   "note": "",
    "bbox": [
     [
      -790.0,
@@ -599,8 +680,11 @@
   },
   "GENERATOR/E-G113_Rear_End_Bell": {
    "mass_kg": 13.3,
+   "mass_source": "CAD volume",
    "material": "Al",
    "make_buy": "make (6082-T6, CNC turning)",
+   "desc": "rear end bell: SFD bore (floating bearing + wave spring), labyrinth to the rotor, guard-tube flange face",
+   "note": "",
    "bbox": [
     [
      -435.0,
@@ -619,8 +703,11 @@
   },
   "GENERATOR/E-G120_Stator_Core": {
    "mass_kg": 38.33,
+   "mass_source": "CAD volume",
    "material": "lam",
    "make_buy": "buy (lamination stack from a motor-lamination maker: Surahammar SE / Kienle+Spiess DE / Baosteel CN)",
+   "desc": "stator core 24 slots, bore 125, OD 240, stack 190 (0.20 mm NO20 laminations, bonded)",
+   "note": "",
    "bbox": [
     [
      -710.0,
@@ -639,8 +726,11 @@
   },
   "GENERATOR/E-G121_Winding_End_Turns": {
    "mass_kg": 21.54,
+   "mass_source": "CAD volume",
    "material": "winding",
    "make_buy": "make (winding shop) - or with the active-parts kit (e+a CH)",
+   "desc": "Litz winding 3-ph, 2 parallel paths, end turns (envelopes), VPI class H, 3 x PT100",
+   "note": "",
    "bbox": [
     [
      -790.0,
@@ -659,8 +749,11 @@
   },
   "GENERATOR/E-G130_Generator_Shaft": {
    "mass_kg": 14.25,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (42CrMo4 QT, turn + grind)",
+   "desc": "generator shaft, integral d80 magnet body, d40 journals, quill flange face (6 x M8 + 2 dowels)",
+   "note": "",
    "bbox": [
     [
      -880.0,
@@ -679,8 +772,11 @@
   },
   "GENERATOR/E-G131_Magnets_Sleeve": {
    "mass_kg": 9.41,
+   "mass_source": "CAD volume",
    "material": "SmCo+CF",
-   "make_buy": "buy magnets (VAC DE / Arnold CH / Chinese 2:17) + sleeve winding (e+a CH or local CFRP shop)",
+   "make_buy": "buy magnets (VAC DE / Shin-Etsu JP / Chinese 2:17) + sleeve winding (e+a CH or local CFRP shop)",
+   "desc": "Sm2Co17 segments 80/108 x 190 + T700 carbon sleeve 6 mm (OD 120) + 1.4404 end rings (envelope)",
+   "note": "",
    "bbox": [
     [
      -722.0,
@@ -699,8 +795,11 @@
   },
   "GENERATOR/E-G135_KM7_Nut_Speed_Wheel": {
    "mass_kg": 0.35,
+   "mass_source": "override (bought / envelope)",
    "material": "steel",
    "make_buy": "buy nut (SKF KMT 7 / FAG) + make wheel",
+   "desc": "precision locknut KM7 + 2-tooth speed / phase wheel",
+   "note": "",
    "bbox": [
     [
      -880.0,
@@ -719,8 +818,11 @@
   },
   "GENERATOR/E-G140_Bearing_7008E_front": {
    "mass_kg": 0.21,
+   "mass_source": "override (bought / envelope)",
    "material": "bearing",
    "make_buy": "buy",
+   "desc": "hybrid 7008-E locating",
+   "note": "FAG HCB7008-C/E-T-P4S (or SKF 7008 CE/HCP4A, GMN HY, NSK 7008 hybrid)",
    "bbox": [
     [
      -837.5,
@@ -739,8 +841,11 @@
   },
   "GENERATOR/E-G141_Bearing_7008C_rear": {
    "mass_kg": 0.21,
+   "mass_source": "override (bought / envelope)",
    "material": "bearing",
    "make_buy": "buy",
+   "desc": "hybrid 7008-C floating + wave spring",
+   "note": "FAG HCB7008-C/E-T-P4S (or SKF 7008 CE/HCP4A, GMN HY, NSK 7008 hybrid)",
    "bbox": [
     [
      -407.5,
@@ -759,8 +864,11 @@
   },
   "GENERATOR/E-G142_SFD_Cartridge_Front": {
    "mass_kg": 0.47,
+   "mass_source": "CAD volume",
    "material": "17-4PH",
    "make_buy": "make",
+   "desc": "front SFD cartridge (same OD as the core cartridges)",
+   "note": "",
    "bbox": [
     [
      -845.0,
@@ -779,8 +887,11 @@
   },
   "GENERATOR/E-G143_SFD_Cartridge_Rear": {
    "mass_kg": 0.42,
+   "mass_source": "CAD volume",
    "material": "17-4PH",
    "make_buy": "make",
+   "desc": "rear SFD cartridge",
+   "note": "",
    "bbox": [
     [
      -415.0,
@@ -799,8 +910,11 @@
   },
   "GENERATOR/E-G150_Quill_AF24_Socket": {
    "mass_kg": 2.3,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (34CrNiMo6 QT, turn + grind + broach; shot-peened waist)",
+   "desc": "quill d30 x 208 with flange (6 x M8 12.9 + 2 dowels to the shaft) and AF24 socket (rotary-broached, nitrided), float +/-1 mm",
+   "note": "",
    "bbox": [
     [
      -385.0,
@@ -819,8 +933,11 @@
   },
   "GENERATOR/E-G160_Quill_Guard_Tube": {
    "mass_kg": 2.93,
+   "mass_source": "CAD volume",
    "material": "stainless",
    "make_buy": "make (1.4301 tube + turned flange)",
+   "desc": "stationary quill guard d76 (continues the impeller hub line), flanged to the rear end bell",
+   "note": "",
    "bbox": [
     [
      -370.0,
@@ -839,8 +956,11 @@
   },
   "GENERATOR/E-G170_Terminal_Box": {
    "mass_kg": 6.47,
+   "mass_source": "CAD volume",
    "material": "Al",
    "make_buy": "make (6082 block, milled)",
+   "desc": "terminal box: 3 power studs M12 on PEEK, PT100 / PTC, M50 EMC glands for 3 x 240 mm2 (or 2 x 120 per phase)",
+   "note": "",
    "bbox": [
     [
      -700.0,
@@ -859,8 +979,11 @@
   },
   "GENERATOR/E-G180_Pod_Saddles_x2": {
    "mass_kg": 80.58,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (S355 plate, welded)",
+   "desc": "2 saddle feet on the plenum floor (shims + jack bolts for alignment to the core shaft; slide-out rails for removal)",
+   "note": "",
    "bbox": [
     [
      -810.0,
@@ -879,8 +1002,11 @@
   },
   "INTAKE/E-I110_Intake_Plenum": {
    "mass_kg": 318.25,
+   "mass_source": "CAD volume",
    "material": "stainless",
    "make_buy": "make (sheet metal, laser + brake + MAG, bolted panels)",
+   "desc": "clean-air plenum 1910 x 1900 x 1300 (3 mm 1.4301, stiffened), rear wall with the bellmouth opening d644, top opening 1830 x 1830; V ~0.7 m/s inside; generator pod on its feet inside; access door (not modelled)",
+   "note": "",
    "bbox": [
     [
      -2060.0,
@@ -899,8 +1025,11 @@
   },
   "INTAKE/E-I120_Filter_Interface_Frame": {
    "mass_kg": 50.35,
+   "mass_source": "CAD volume",
    "material": "stainless",
    "make_buy": "make (flat bar + angle, welded)",
+   "desc": "filter-bank interface: 3 x 3 holding-frame grid 610 pitch for 592 x 592 cells (G4 panel + F7 V-cell), knife-edge seal face; filter house / weather hood bolts on top (plant scope)",
+   "note": "",
    "bbox": [
     [
      -2060.0,
@@ -919,8 +1048,11 @@
   },
   "ROTOR/E-R100_Compressor_Wheel_D270_env": {
    "mass_kg": 5.6,
+   "mass_source": "override (bought / envelope)",
    "material": "Al",
    "make_buy": "buy (TC-class spare wheel, bored H6 to d40)",
+   "desc": "compressor impeller D2 270, inducer 173/76, b2 15.5, 9+9 backswept -38 deg (ENVELOPE, blades filled)",
+   "note": "Al 2618-T61; Accelleron TPS52/57-F, MAN/PBST TCR16/18, MHI MET18-22 class (diameter ESTIMATE)",
    "bbox": [
     [
      -94.0,
@@ -939,8 +1071,11 @@
   },
   "ROTOR/E-R101_Core_Shaft": {
    "mass_kg": 3.75,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (turn + grind) / weld by wheel supplier",
+   "desc": "core shaft: crowned AF24 drive hex, M33x2 clamp thread, d40 seat + journals, d50 seal runner (3 piston-ring grooves), d50/30 heat dam; 42CrMo4 QT, journals ground, hex gas-nitrided; turbine wheel friction-welded at x 248 by the supplier",
+   "note": "",
    "bbox": [
     [
      -140.0,
@@ -959,8 +1094,11 @@
   },
   "ROTOR/E-R102_Spacer_Sleeve": {
    "mass_kg": 1.5,
+   "mass_source": "CAD volume",
    "material": "17-4PH",
    "make_buy": "make (turn + grind faces)",
+   "desc": "clamped spacer sleeve d60/40 x 122.5 between the bearings (stiffens the stack)",
+   "note": "",
    "bbox": [
     [
      75.0,
@@ -979,8 +1117,11 @@
   },
   "ROTOR/E-R103_Slinger_Seal_Ring": {
    "mass_kg": 0.3,
+   "mass_source": "CAD volume",
    "material": "17-4PH",
    "make_buy": "make",
+   "desc": "oil slinger + back-face labyrinth ring d70/40 x 15 (r_seal 35, thrust trim)",
+   "note": "",
    "bbox": [
     [
      30.0,
@@ -999,8 +1140,11 @@
   },
   "ROTOR/E-R104_Clamp_Nut_M33": {
    "mass_kg": 0.24,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (34CrNiMo6)",
+   "desc": "clamp nut M33x2, OD 56 x 18, 60 kN preload (hydraulic stretch or heat)",
+   "note": "",
    "bbox": [
     [
      -112.0,
@@ -1019,8 +1163,11 @@
   },
   "ROTOR/E-R110a_Bearing_7008E_front1": {
    "mass_kg": 0.21,
+   "mass_source": "override (bought / envelope)",
    "material": "bearing",
    "make_buy": "buy",
+   "desc": "hybrid ceramic angular-contact spindle bearing 40x68x15, front tandem pair #1 (envelope)",
+   "note": "FAG HCB7008-C/E-T-P4S (or SKF 7008 CE/HCP4A, GMN HY, NSK 7008 hybrid)",
    "bbox": [
     [
      45.0,
@@ -1039,8 +1186,11 @@
   },
   "ROTOR/E-R110b_Bearing_7008E_front2": {
    "mass_kg": 0.21,
+   "mass_source": "override (bought / envelope)",
    "material": "bearing",
    "make_buy": "buy",
+   "desc": "hybrid ceramic angular-contact spindle bearing 40x68x15, front tandem pair #2 (envelope)",
+   "note": "FAG HCB7008-C/E-T-P4S (or SKF 7008 CE/HCP4A, GMN HY, NSK 7008 hybrid)",
    "bbox": [
     [
      60.0,
@@ -1059,8 +1209,11 @@
   },
   "ROTOR/E-R111_Bearing_7008C_rear": {
    "mass_kg": 0.21,
+   "mass_source": "override (bought / envelope)",
    "material": "bearing",
    "make_buy": "buy",
+   "desc": "hybrid ceramic angular-contact spindle bearing 40x68x15, rear floating (envelope)",
+   "note": "FAG HCB7008-C/E-T-P4S (or SKF 7008 CE/HCP4A, GMN HY, NSK 7008 hybrid)",
    "bbox": [
     [
      197.5,
@@ -1079,8 +1232,11 @@
   },
   "ROTOR/E-T101_Turbine_Wheel_D288_env": {
    "mass_kg": 15.0,
+   "mass_source": "override (bought / envelope)",
    "material": "IN713LC",
    "make_buy": "buy (TC-class cast wheel, friction-welded to E-R101 by the supplier)",
+   "desc": "radial/mixed-flow turbine wheel D4 288, b4 30, exducer 232/75, 12 blades, nose cone (ENVELOPE, blades filled)",
+   "note": "cast IN713LC / K418 (MAR-M247 option); TPS57/61-F, TCR18/20 class (ESTIMATE)",
    "bbox": [
     [
      248.0,
@@ -1099,8 +1255,11 @@
   },
   "TURBINE/E-T110_Heat_Shield_Support": {
    "mass_kg": 4.5,
+   "mass_source": "override (bought / envelope)",
    "material": "IN625",
    "make_buy": "make (sheet + TIG, turned rims)",
+   "desc": "turbine-end heat shield + nozzle support: 2 x 1.5 mm IN625 discs with ceramic paper, bolted to the bearing-housing rear flange; bore r 27 round the seal runner",
+   "note": "",
    "bbox": [
     [
      235.0,
@@ -1119,8 +1278,11 @@
   },
   "TURBINE/E-T120_Nozzle_Ring_19v": {
    "mass_kg": 5.27,
+   "mass_source": "CAD volume",
    "material": "alloyX",
    "make_buy": "make (2.4665 forged ring, 3-axis pocket milling; cover plate bolted)",
+   "desc": "19-vane radial nozzle ring: straight 2.5D vanes (r 206 -> 158, alpha3 75 deg, throat ~12 mm, b 30) between two side plates",
+   "note": "",
    "bbox": [
     [
      247.0,
@@ -1139,8 +1301,11 @@
   },
   "TURBINE/E-T130_Shroud_Diffuser_Inlet": {
    "mass_kg": 35.47,
+   "mass_source": "CAD volume",
    "material": "IN625",
    "make_buy": "make (2.4856 forged ring, CNC turning)",
+   "desc": "turbine shroud (0.55 mm tip gap, shimmed) + diffuser inlet ring to x 495 (5 deg); piston-ring seal in the cool-casing rear wall; flange to the nozzle front plate",
+   "note": "",
    "bbox": [
     [
      280.6,
@@ -1159,8 +1324,11 @@
   },
   "TURBINE/E-T140_Hot_Plenum": {
    "mass_kg": 33.2,
+   "mass_source": "CAD volume",
    "material": "alloyX",
    "make_buy": "make (rolled + pressed sheet, TIG; inner rings turned)",
+   "desc": "floating 360 deg hot plenum (3 mm alloy X): round top inlet d280 for the transition (piston ring), inner slot feeding the nozzle ring; radially free inside the cool casing",
+   "note": "",
    "bbox": [
     [
      140.0,
@@ -1179,8 +1347,11 @@
   },
   "TURBINE/E-T150_Cool_Pressure_Casing": {
    "mass_kg": 113.93,
+   "mass_source": "CAD volume",
    "material": "steel",
    "make_buy": "make (P265GH plate rolled + welded, flanges turned; PED cat. II)",
+   "desc": "cool pressure casing OD 760 x 8 (compressor air ~212 C, 4 bar round the hot parts): front flange to the outer casing, rear wall with the shroud seal bore, DN300 PN10 combustor stub, 2 SLIDING support pads",
+   "note": "",
    "bbox": [
     [
      62.5,

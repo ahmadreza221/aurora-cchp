@@ -26,7 +26,7 @@ gs = rev([(-880.0, 0.0), (-880.0, 15.0), (-860.0, 15.0), (-860.0, 17.5), (-837.5
           (-490.0, 40.0), (-490.0, 30.0), (-407.5, 30.0), (-407.5, 20.0), (-392.5, 20.0), (-392.5, 28.0), (-385.0, 28.0), (-385.0, 0.0)])
 G.add('E-G130_Generator_Shaft', gs, 'steel', 'generator shaft, integral d80 magnet body, d40 journals, quill flange face (6 x M8 + 2 dowels)', 'make (42CrMo4 QT, turn + grind)')
 G.add('E-G131_Magnets_Sleeve', cyl(-722.0, -508.0, 60.0, 40.0), 'SmCo+CF', 'Sm2Co17 segments 80/108 x 190 + T700 carbon sleeve 6 mm (OD 120) + 1.4404 end rings (envelope)',
-      'buy magnets (VAC DE / Arnold CH / Chinese 2:17) + sleeve winding (e+a CH or local CFRP shop)')
+      'buy magnets (VAC DE / Shin-Etsu JP / Chinese 2:17) + sleeve winding (e+a CH or local CFRP shop)')
 G.add('E-G135_KM7_Nut_Speed_Wheel', fuse_all([cyl(-860.0, -848.0, 29.0, 17.5), cyl(-880.0, -870.0, 35.0, 15.0)]), 'steel', 'precision locknut KM7 + 2-tooth speed / phase wheel', 'buy nut (SKF KMT 7 / FAG) + make wheel', mass=0.35)
 G.add('E-G140_Bearing_7008E_front', cyl(-837.5, -822.5, 34.0, 20.0), 'bearing', 'hybrid 7008-E locating', 'buy', mass=0.21, note=L.BRG['model'])
 G.add('E-G141_Bearing_7008C_rear', cyl(-407.5, -392.5, 34.0, 20.0), 'bearing', 'hybrid 7008-C floating + wave spring', 'buy', mass=0.21, note=L.BRG['model'])

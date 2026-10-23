@@ -87,7 +87,7 @@ B.add('E-B120_SFD_Cartridge_Front', rev(pts), '17-4PH', 'front SFD cartridge for
 pts = [(190.0, 30.5), (190.0, 42.0), (216.0, 42.0), (216.0, 34.0), (192.0, 34.0), (192.0, 30.5)]
 B.add('E-B121_SFD_Cartridge_Rear', rev(pts), '17-4PH', 'rear SFD cartridge (floating bearing), same OD/O-rings as the front', 'make')
 B.add('E-B122_Wave_Spring_Rear', cyl(192.0, 197.5, 34.0, 30.6), 'steel', 'wave spring 300 N preload on the rear bearing outer ring (envelope)', 'buy', mass=0.02,
-      note='Smalley / Rotor Clip-type crest-to-crest wave spring - EU: Barnes Group? NO (US); use SPIROL? NO (US) -> Lesjöfors (SE) or Scherdel (DE)')
+      note='crest-to-crest wave spring, Lesjofors (SE) / Scherdel (DE)')
 B.save()
 
 # ================================================================== TURBINE HOT SECTION + COOL CASING
