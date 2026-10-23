@@ -127,7 +127,7 @@ def sec_new(app, design):
 def sec_core(app, design):
     root = design.rootComponent
     core = group(root, 'Core GR180 v13A')
-    has_e2 = VARIANT in ('B', 'C') or bool(glob.glob(os.path.join(ENGINE_DIR, 'E2', 'E2-*.step')))
+    has_e2 = VARIANT in ('B', 'C', 'C2') or bool(glob.glob(os.path.join(ENGINE_DIR, 'E2', 'E2-*.step')))
     legacy = None if has_e2 else group(root, 'E2 stand-in: v13A combustor (to be replaced)')
     n = 0
     for f in sorted(glob.glob(os.path.join(V13A_DIR, '*.step'))):
@@ -176,6 +176,8 @@ def sec_e2(app, design):
 def sec_e2b(app, design):
     """Variant B combustor (simple cycle, no recuperator ports)."""
     files = sorted(glob.glob(os.path.join(VB_DIR, 'E2B', 'E2B-*.step')))
+    if VARIANT == 'C2':
+        print('E2-B not used in C2'); return
     if not files:
         print('E2-B not built yet'); return
     root = design.rootComponent
@@ -198,7 +200,7 @@ def sec_e3(app, design):
     pmg = group(root, 'E3 PMG active parts')
     sens = group(root, 'E3 sensors')
     files = sorted(glob.glob(os.path.join(ENGINE_DIR, 'E3', 'E3-*.step')))
-    if VARIANT == 'C':                          # compact exhaust + low frame replace the collector, feet and exit sensors
+    if VARIANT in ('C', 'C2'):                  # compact exhaust + low frame replace the collector, feet and exit sensors
         files = [f for f in files if not os.path.basename(f).startswith(C_SKIP)]
     for f in files:
         name = os.path.splitext(os.path.basename(f))[0]
@@ -221,8 +223,38 @@ def sec_exh_c(app, design):
             continue
         import_part(app, ins if 'Insulation' in name else g, f, name); n += 1
     for f in sorted(glob.glob(os.path.join(VC_DIR, 'FRAME', 'C-*.step'))):
+        if VARIANT == 'C2' and os.path.basename(f).startswith('C-401'):
+            continue
         import_part(app, fr, f, os.path.splitext(os.path.basename(f))[0]); n += 1
     print('C exhaust + frame parts', n)
+
+
+VC2_DIR = os.path.join(ROOT, 'cad_out', 'variant_c2')   # version C2 outputs (E2C2/, RC2/, HXC2/, FRAME/)
+
+
+def sec_c2(app, design):
+    """Version C2 add-ons: recuperated combustor E2-C2, compact recuperator R-C2, hot-water HX, frame extension."""
+    root = design.rootComponent
+    n = 0
+    for sub, label in (('E2C2', 'E2-C2 combustor (recuperated)'), ('RC2', 'R-C2 compact recuperator'),
+                       ('HXC2', 'HX-C2 hot-water heat exchanger'), ('FRAME', 'C2 frame extension')):
+        files = [f for f in sorted(glob.glob(os.path.join(VC2_DIR, sub, '*.step')))
+                 if '_assembly' not in f and not os.path.basename(f).startswith('E3B-')]
+        if not files:
+            continue
+        g = group(root, label)
+        ins = group(root, label.split(' ')[0] + ' insulation')
+        sens = group(root, label.split(' ')[0] + ' sensors')
+        for f in files:
+            name = os.path.splitext(os.path.basename(f))[0]
+            parts = name.split('_')[0].split('-')
+            num = int(parts[-1]) if parts[-1].isdigit() else 0
+            tgt = ins if 'Insulation' in name else (sens if num >= 500 else g)
+            import_part(app, tgt, f, name); n += 1
+    for g in [root.occurrences.item(i) for i in range(root.occurrences.count)]:
+        if g.childOccurrences.count == 0:
+            g.deleteMe()
+    print('C2 parts', n)
 
 
 def sec_e4(app, design):
@@ -260,7 +292,7 @@ def sec_colour(app, design):
 XRAY = [
     (('IntakeOuter', 'Casing', 'CC_Outer', 'Collector', 'WestCover', 'Hot_Pressure_Casing', 'Collector_Drum', 'C2_Inlet',
       'C1_Outlet', 'Insulation', 'HeatShield', 'Heat_Shield', 'Support_Cone', 'PMG_Housing', 'B1_Bearing_Housing',
-      'B2_Housing', 'End_Cover', 'Interduct', 'Shroud', 'Bulkhead', 'Front_Casing', 'E3B-110', 'West_Cover', 'Rear_Unit'), 'shell (glass)', (170, 200, 225), 0.18),
+      'B2_Housing', 'End_Cover', 'Interduct', 'Shroud', 'Bulkhead', 'Front_Casing', 'E3B-110', 'West_Cover', 'Rear_Unit', 'Header', 'Plenum', 'Hood', 'Riser', 'Coil_Box', 'Stack_Cone', 'Inlet_Flange'), 'shell (glass)', (170, 200, 225), 0.18),
     (('TE-', 'PT-', 'SE-', 'VE-', 'RPM', 'EGT', 'Igniter', 'IGN', 'UV', 'BE-'), 'sensors', (40, 180, 100), 1.0),   # before 'Liner' (liner-wall TCs)
     (('Compressor',), 'compressor', (205, 210, 220), 1.0),
     (('Diffuser',), 'diffuser', (120, 150, 190), 1.0),
@@ -276,7 +308,9 @@ XRAY = [
     (('Supply', 'Gas', 'Injector', 'Manifold', 'Fitting'), 'gas system', (250, 190, 0), 1.0),
     (('Starter',), 'starter', (60, 60, 70), 1.0),
     (('Terminal',), 'terminal box', (40, 120, 220), 1.0),
-    (('Foot', 'Feet', 'E3B-4', 'Support', 'Rails', 'Flexure'), 'feet + frame', (90, 95, 100), 1.0),
+    (('Foot', 'Feet', 'E3B-4', 'Support', 'Rails', 'Flexure', 'C2F-', 'Beams', 'Columns'), 'feet + frame', (90, 95, 100), 1.0),
+    (('Core_Module',), 'recuperator core', (170, 120, 60), 1.0),
+    (('Coil', 'Fins', 'Water_Headers'), 'hot-water coil', (60, 160, 200), 1.0),
     (('Fan',), 'fan', (120, 200, 240), 1.0),
     (('Fasteners', 'Studs'), 'fasteners', (70, 70, 75), 1.0),
 ]
