@@ -15,7 +15,9 @@ Outputs (cad_out/engine/E4/):
 Layout (see docs/engine/E4_recuperator.md): core north of the engine, plates in the y-z plane stacked along ROOF x, hot gas
 flows UP (+z) through the core, cold air enters/leaves through crossflow windows on the SOUTH face (headers face the engine
 flanges C1/C2), hot gas enters a bottom plenum from H1 (elbow down) and leaves through the top hood to the east flange.
-If cad_out/engine/E2|E3/*interfaces*.json define C1, C2, H1 the ducts are re-routed to those flanges automatically.
+The engine-side flanges C1, C2 (cad_out/engine/E2/E2_interfaces.json) and H1 (cad_out/engine/E3/E3_interfaces.json) are read from
+their ENG_mm positions and converted with the ENG -> ROOF transform below (docs/06 sec.1: X = 1.880 + x/1000).  C1 is a round DN100
+flange (straight spool), C2 a rectangular E2 flange (E4 carries the rect-to-round transition), H1 a DN250 flange at ENG (300, 250, 0).
 """
 import os, sys, json, math, glob
 
@@ -87,15 +89,17 @@ Z_HD0, Z_HD1 = Z_CT + 25.0, Z_CT + 320.0      # hood box (skirt Z_CT..Z_HD0)
 Z_EXO = Z_CT + 165.0              # exhaust outlet axis on hood east wall
 R_PERF = (Z_CB - 57.0)            # perforated plate level
 
-# interface flanges (ROOF mm).  ENG -> ROOF: X = 1680 + x, Y = 7850 + y, Z = 600 + z
-def eng2roof(x, y, z): return (1680.0 + x, 7850.0 + y, 600.0 + z)
-FL = {  # name: (point, direction, DN, PN, required-by-E4 position)
-    'C1': [eng2roof(15, 190, Z_HT - 600), (0, 1, 0), 'DN100', 'PN16'],
-    'C2': [eng2roof(60, 190, Z_HB - 600), (0, 1, 0), 'DN125', 'PN16'],
-    'H1': [eng2roof(450, 190, 0), (0, 1, 0), 'DN250', 'PN6'],
-    'EXH': [(2700.0, 8250.0, 800.0), (1, 0, 0), 'DN250', 'PN6']}
-SOURCE = {k: 'E4 proposal (E2/E3 not yet published)' for k in FL}
-SOURCE['EXH'] = 'docs/06 sec.3 (fixed package interface)'
+# interface flanges (ROOF mm).  ENG -> ROOF: X = 1880 + x, Y = 7850 + y, Z = 600 + z  (docs/06 sec.1, 2026-10-23)
+ENG0 = (1880.0, 7850.0, 600.0)
+def eng2roof(x, y, z): return (ENG0[0] + x, ENG0[1] + y, ENG0[2] + z)
+FL = {  # name: (point, direction, DN, PN) - defaults = the E2/E3 published positions (2026-10-23)
+    'C1': [eng2roof(-11, 190, Z_HT - 600), (0, 1, 0), 'DN100', 'PN16'],
+    'C2': [eng2roof(73.5, 170, Z_HB - 600 + 12.0), (0, 1, 0), 'DN125', 'PN16'],
+    'H1': [eng2roof(300, 250, 0), (0, 1, 0), 'DN250', 'PN6'],
+    'EXH': [(2900.0, 8250.0, 800.0), (1, 0, 0), 'DN250', 'PN6']}
+SOURCE = {k: 'E4 default (E2/E3 JSON not found)' for k in FL}
+SOURCE['EXH'] = 'docs/06 sec.3 (package east face x 2.90 after the EP-1 enlargement)'
+PARTNER = {}                        # tag -> full partner-interface dict (C2: rectangular flange data)
 
 def _scan_partner_jsons():
     """Use E2/E3 flange data if published: any dict containing a name with C1/C2/H1 and a ROOF position."""
@@ -107,24 +111,32 @@ def _scan_partner_jsons():
             if isinstance(o, dict):
                 nm = ' '.join(str(o.get(k, '')) for k in ('name', 'id', 'tag', 'interface')) + ' ' + name
                 pos = None
-                for k in ('roof_m', 'pos_roof_m', 'position_roof_m', 'roof', 'ROOF', 'position_roof', 'pos_roof', 'position'):
+                for k in ('ENG_mm', 'eng_mm'):              # preferred: engine frame, converted with this script's transform
                     v = o.get(k)
                     if isinstance(v, (list, tuple)) and len(v) == 3 and all(isinstance(a, (int, float)) for a in v):
+                        pos = list(eng2roof(*v)); break
+                for k in ('roof_m', 'ROOF_m', 'pos_roof_m', 'position_roof_m', 'roof', 'ROOF', 'position_roof', 'pos_roof', 'position'):
+                    v = o.get(k)
+                    if pos is None and isinstance(v, (list, tuple)) and len(v) == 3 and all(isinstance(a, (int, float)) for a in v):
                         pos = [a * 1000.0 if abs(a) < 50 else a for a in v]; break
                 for tag in ('C1', 'C2', 'H1'):
                     if pos and (' %s' % tag in ' ' + nm or nm.startswith(tag)) and tag not in found:
                         d = o.get('direction') or o.get('dir') or o.get('normal') or [0, 1, 0]
-                        found[tag] = (tuple(pos), tuple(d), os.path.relpath(f, ROOT))
+                        found[tag] = (tuple(pos), tuple(d), os.path.relpath(f, ROOT), o)
                 for k, v in o.items(): walk(v, str(k))
             elif isinstance(o, list):
                 for v in o: walk(v, name)
         walk(js)
     return found
 
-for tag, (pos, d, src) in _scan_partner_jsons().items():
+for tag, (pos, d, src, o) in _scan_partner_jsons().items():
     FL[tag][0], FL[tag][1] = pos, d
-    SOURCE[tag] = src
+    SOURCE[tag] = src; PARTNER[tag] = o
     print('using %s flange from %s: %s' % (tag, src, pos))
+C2_RECT = PARTNER.get('C2', {}).get('rect_inner_mm')            # E2 rectangular C2 flange (inside x, z)
+_ra = PARTNER.get('C2', {}).get('round_axis_ENG_mm')
+X_C2_ROUND = eng2roof(_ra[0], 0, 0)[0] if _ra else FL['C2'][0][0]   # bellows / header-nozzle axis of the C2 spool
+X_PL1 = max(X_PL1, FL['H1'][0][0] + 173.0)                     # plenum east end follows the H1 entry
 
 # EN 1092-1 flange data: D, K, n bolts, hole, thickness ; pipe OD, wall (EN 10217-7 welded 1.4550/1.4912)
 FLD = {('DN100', 'PN16'): (220, 180, 8, 18, 20), ('DN125', 'PN16'): (250, 210, 8, 18, 22), ('DN250', 'PN6'): (375, 335, 12, 18, 22),
@@ -270,7 +282,7 @@ def half_pipe(zc, label, nozzle_x, dn):
     return Y_S - ro
 
 y_hdr_top = half_pipe(Z_HT, 'E4-HDR-CI cold-inlet header R55 x %.1f (165 C)' % T_HDR, FL['C1'][0][0], 'DN100')
-y_hdr_bot = half_pipe(Z_HB, 'E4-HDR-CO cold-outlet header R55 x %.1f (566 C)' % T_HDR, FL['C2'][0][0], 'DN125')
+y_hdr_bot = half_pipe(Z_HB, 'E4-HDR-CO cold-outlet header R55 x %.1f (566 C)' % T_HDR, X_C2_ROUND, 'DN125')
 
 # --- hot-inlet plenum, U-skirt, perforated plate, turning vanes ---------------------------------------------
 pl_out = box(X0 - WALL, X_PL1, Y_S - WALL, Y_N + WALL, Z_PL0, Z_PLT)
@@ -305,10 +317,29 @@ KEEP.append(sk2_o)
 def cold_spool(tag, z_hdr, y_surf, label):
     p, d, dn, pn = FL[tag]
     ro, t = PIPE[dn][0] / 2, PIPE[dn][1]
-    nozzle = V(p[0], y_surf + 8, z_hdr)                     # stub end inside the header wall
+    rect = tag == 'C2' and C2_RECT
+    nozzle = V(X_C2_ROUND if rect else p[0], y_surf + 8, z_hdr)   # stub end inside the header wall
     p0 = vec(p)
     straight = abs(p0.x - nozzle.x) < 1 and abs(p0.z - nozzle.z) < 1 and tuple(d) == (0, 1, 0)
     b = FLD[(dn, pn)][4]
+    if rect:                                                # E2 rectangular flange -> rect-to-round transition -> bellows -> stub
+        wi, hi = C2_RECT; rim = 0.5 * (PARTNER['C2']['rect_flange_mm'][0] - wi); tfl, tw = 15.0, 3.0
+        xa0, xa1, za0, za1 = p0.x - wi / 2, p0.x + wi / 2, p0.z - hi / 2, p0.z + hi / 2
+        fl = box(xa0 - rim, xa1 + rim, p0.y, p0.y + tfl, za0 - rim, za1 + rim).cut(box(xa0, xa1, p0.y - 1, p0.y + tfl + 1, za0, za1))
+        for bx_, bz_ in PARTNER['C2'].get('rect_bolts_xz_mm', []):
+            X_, _, Z_ = eng2roof(bx_, 0, bz_)
+            fl = fl.cut(Part.makeCylinder(5.5, tfl + 2, V(X_, p0.y - 1, Z_), V(0, 1, 0)))
+        y_t0, y_t1 = p0.y + tfl, p0.y + tfl + 40.0
+        def rw(y, x0, x1, z0, z1): return Part.makePolygon([V(x0, y, z0), V(x1, y, z0), V(x1, y, z1), V(x0, y, z1), V(x0, y, z0)])
+        def cw(y, r): return Part.Wire(Part.makeCircle(r, V(nozzle.x, y, z_hdr), V(0, 1, 0)))
+        lo = Part.makeLoft([rw(y_t0, xa0 - tw, xa1 + tw, za0 - tw, za1 + tw), cw(y_t1, ro)], True, True)
+        li = Part.makeLoft([rw(y_t0 - 0.01, xa0, xa1, za0, za1), cw(y_t1 + 0.01, ro - t)], True, True)
+        bb = nozzle - V(0, 30, 0); a_ = V(nozzle.x, y_t1, z_hdr)
+        parts = [fl, lo.cut(li), bellows(a_, bb, ro), tube(ro, t, bb, nozzle)]
+        keep = [box(xa0 - rim, xa1 + rim, p0.y, p0.y + tfl, za0 - rim, za1 + rim), lo, cyl(ro + 12, a_, nozzle)]
+        add('ducts', label, Part.makeCompound(parts), '347H'); KEEP.extend(keep)
+        INFO[tag] = dict(spool_length_mm=nozzle.y - p0.y, straight=True, rect_flange_mm=PARTNER['C2']['rect_flange_mm'], bellows_y=(a_.y, bb.y))
+        return
     fl = disk_flange(p0, V(*d), dn, pn)
     parts = [fl]
     if straight:
@@ -327,36 +358,35 @@ def cold_spool(tag, z_hdr, y_surf, label):
     INFO[tag] = dict(spool_length_mm=L_spool, straight=straight)
 
 cold_spool('C1', Z_HT, y_hdr_top, 'E4-SP-C1 cold-inlet spool DN100: flange PN16 + 2-ply bellows 321 + stub')
-cold_spool('C2', Z_HB, y_hdr_bot, 'E4-SP-C2 cold-outlet spool DN125: flange PN16 + 2-ply bellows IN625 + stub')
+cold_spool('C2', Z_HB, y_hdr_bot, 'E4-SP-C2 cold-outlet spool DN125: rectangular flange to E2 + rect-to-round transition + 2-ply bellows IN625 + stub')
 
 # --- H1 hot spool: flange, collar, bellows, elbow down, stub into plenum ----------------------------------------
 ro, t = PIPE['DN250'][0] / 2, 3.0
 pH = vec(FL['H1'][0]); bH = FLD[('DN250', 'PN6')][4]
-R_E = 190.0
+R_E = 150.0                                 # 3-piece mitre elbow R/D 0.55 (E3 H1 face at ROOF y 8.100 leaves no room for R190)
 z_el_end = pH.z - R_E
 y_el_start = H1y - R_E
-parts = [disk_flange(pH, V(0, 1, 0), 'DN250', 'PN6'),
-         tube(ro, t, pH + V(0, bH, 0), pH + V(0, bH + 30, 0))]               # collar with TE-505 boss
-if y_el_start - (pH.y + bH + 30) < 60:
+parts = [disk_flange(pH, V(0, 1, 0), 'DN250', 'PN6')]                         # no collar: TOT = E3 TE-505A/B on the E3 transition
+if y_el_start - (pH.y + bH) < 60:
     raise SystemExit('H1 flange too close to the plenum axis for the bellows spool - adjust layout')
-parts.append(bellows(pH + V(0, bH + 30, 0), V(pH.x, y_el_start, pH.z), ro))
+parts.append(bellows(pH + V(0, bH, 0), V(pH.x, y_el_start, pH.z), ro))
 e, endp, eo = elbow(V(pH.x, y_el_start, pH.z), V(0, 1, 0), V(0, 0, -1), R_E, ro, t)
 parts.append(e)
 parts.append(tube(ro, t, endp, V(endp.x, endp.y, Z_PLT - 1)))
-add('ducts', 'E4-SP-H1 hot-inlet spool DN250: flange PN6, collar, 2-ply IN625 bellows, 3-piece elbow R190, stub (321H)', Part.makeCompound(parts), '321H')
+add('ducts', 'E4-SP-H1 hot-inlet spool DN250: flange PN6, 2-ply IN625 bellows, 3-piece mitre elbow R150, stub (321H)', Part.makeCompound(parts), '321H')
 KEEP += [cyl(FLD[('DN250', 'PN6')][0] / 2, pH, pH + V(0, bH, 0)), cyl(ro, pH + V(0, bH, 0), V(pH.x, y_el_start, pH.z)), eo,
          cyl(ro, endp, V(endp.x, endp.y, Z_PLT))]
 ci = V(pH.x, y_el_start, z_el_end)          # tight bend (R < r_ins): insulation = sphere sweep along the elbow arc
 _ap = [ci + V(0, R_E * math.sin(a), R_E * math.cos(a)) for a in [math.radians(22.5 * k) for k in range(5)]]
 _pc = [cyl(ro + T_INS_HOT, _ap[k], _ap[k + 1]) for k in range(4)] + [Part.makeSphere(ro + T_INS_HOT, q) for q in _ap[1:4]]
 o_ins = _pc[0].fuse(_pc[1:])
-INSUL += [cyl(ro + T_INS_HOT, pH + V(0, bH + 30, 0), V(pH.x, y_el_start, pH.z)), o_ins,
+INSUL += [cyl(ro + T_INS_HOT, pH + V(0, bH, 0), V(pH.x, y_el_start, pH.z)), o_ins,
           cyl(ro + T_INS_HOT, endp, V(endp.x, endp.y, Z_PLT))]
-INFO['H1_route'] = dict(elbow_R=R_E, bellows_y=(pH.y + bH + 30, y_el_start), entry=(endp.x, endp.y, Z_PLT))
+INFO['H1_route'] = dict(elbow_R=R_E, bellows_y=(pH.y + bH, y_el_start), entry=(endp.x, endp.y, Z_PLT))
 
-# --- exhaust duct: hood -> east, offset down/south -> bellows -> flange at (2700, 8250, 800) --------------------
+# --- exhaust duct: hood -> east, offset down/south -> bellows -> package flange EXH (2900, 8250, 800) -------------
 pE = vec(FL['EXH'][0]); bE = FLD[('DN250', 'PN6')][4]
-P0 = V(X1 + WALL, YC, Z_EXO); P1 = V(2320.0, YC, Z_EXO); P2 = V(2470.0, pE.y, pE.z); P3 = pE - V(bE, 0, 0)
+P0 = V(X1 + WALL, YC, Z_EXO); P1 = V(pE.x - 380.0, YC, Z_EXO); P2 = V(pE.x - 230.0, pE.y, pE.z); P3 = pE - V(bE, 0, 0)
 m, k_, ins_e, segs = route([P0, P1, P2, P3], ro, t, 200.0, ins=0.0)
 last_a, last_b = segs[-1]
 bel_a = last_a + V(8, 0, 0)
@@ -395,10 +425,9 @@ def port(lbl, p, n, d=30.0, h=80.0, kind='TC'):
     add('ports', lbl, b, '347H'); KEEP.append(k)
     ports.append(dict(tag=lbl.split()[0], label=lbl, roof_m=[round(c / 1000, 4) for c in p], dir=list(n), kind=kind))
 ro_t = R_HDR + T_HDR
-port('TE-502 T2 cold-in TC boss M14x1.5 (top header)', (X1 - 70, Y_S - ro_t, Z_HT), (0, -1, 0))
-port('TE-503 T2r cold-out TC boss M14x1.5 (bottom header)', (X1 - 70, Y_S - ro_t, Z_HB), (0, -1, 0))
-port('TE-505 TOT hot-in TC boss M14x1.5 (H1 collar, top)', (pH.x, pH.y + bH + 15, pH.z + ro), (0, 0, 1))
-port('TE-512 hot-out TC boss M14x1.5 (exhaust duct, top)', (2080.0, YC, Z_EXO + ro), (0, 0, 1), 30, 45)
+port('TE-502 T2 cold-in TC boss M14x1.5 (top header)', (X0 + 200, Y_S - ro_t, Z_HT), (0, -1, 0))        # west of the C1/C2 spools
+port('TE-503 T2r cold-out TC boss M14x1.5 (bottom header)', (X0 + 200, Y_S - ro_t, Z_HB), (0, -1, 0))
+port('TE-512 hot-out TC boss M14x1.5 (exhaust duct, top)', (X1 + 150.0, YC, Z_EXO + ro), (0, 0, 1), 30, 45)
 port('PT-E4-1 cold-in pressure tap 1/4 (top header)', (X0 + 70, Y_S - ro_t, Z_HT), (0, -1, 0), 20, 80, 'P')
 port('PT-E4-2 cold-out pressure tap 1/4 (bottom header)', (X0 + 70, Y_S - ro_t, Z_HB), (0, -1, 0), 20, 80, 'P')
 port('PT-E4-3 hot-in pressure tap 1/4 (plenum south wall)', (2200.0, Y_S - WALL, 260.0), (0, -1, 0), 20, 80, 'P')
@@ -515,7 +544,7 @@ doc.saveAs(os.path.join(OUT, 'E4_recuperator.FCStd'))
 # ------------------------------------------------------------------------------------------------------------------
 # 6. checks: engine envelope, clearances between unconnected items, envelope box
 # ------------------------------------------------------------------------------------------------------------------
-ENG_CYL = Part.makeCylinder(150.0, 1400.0, V(1300.0, 7850.0, 600.0), V(1, 0, 0))
+ENG_CYL = Part.makeCylinder(150.0, 1600.0, V(1300.0, 7850.0, 600.0), V(1, 0, 0))
 def gap(a, b):
     """min distance (mm) between shapes; negative = overlap volume (mm3) if the shapes intersect."""
     try:
@@ -562,7 +591,7 @@ bb = App.BoundBox()
 for lbl, shp in allmetal + [('ins', ins_shape)]: bb.add(shp.BoundBox)
 checks['assembly_bbox_roof_m'] = dict(x=(round(bb.XMin / 1e3, 3), round(bb.XMax / 1e3, 3)), y=(round(bb.YMin / 1e3, 3), round(bb.YMax / 1e3, 3)),
                                       z=(round(bb.ZMin / 1e3, 3), round(bb.ZMax / 1e3, 3)))
-env = dict(x=(1.30, 2.70), y=(8.04, 8.60), z=(0.10, 1.20))
+env = dict(x=(1.30, 2.90), y=(8.00, 8.60), z=(0.10, 1.20))   # EP-1 1.6 x 1.0 m (docs/06 sec.1, 2026-10-23)
 checks['inside_proposed_envelope'] = all(env[a][0] - 1e-3 <= checks['assembly_bbox_roof_m'][a][0] and checks['assembly_bbox_roof_m'][a][1] <= env[a][1] + 1e-3
                                          for a in 'xyz')
 print('CHECKS', json.dumps(checks, indent=1))
@@ -573,28 +602,31 @@ print('CHECKS', json.dumps(checks, indent=1))
 m_tot = sum(m[3] for m in masses)
 dp = CALC.get('dp', {}); dsg = CALC.get('design', {}); gr = CALC.get('growth', {})
 def r_m(p): return [round(c / 1000.0, 4) for c in p]
-def eng_mm(p): return [round(p[0] - 1680.0, 1), round(p[1] - 7850.0, 1), round(p[2] - 600.0, 1)]
+def eng_mm(p): return [round(p[0] - ENG0[0], 1), round(p[1] - ENG0[1], 1), round(p[2] - ENG0[2], 1)]
 ifc = dict(
     subsystem='E4 recuperator', frame='ROOF (m): x east, y north, z up; ENG (mm) given for engine-side flanges',
     script='cad/engine/recuperator.py', calc='sim/engine/e4_recuperator_calc.py', doc='docs/engine/E4_recuperator.md',
-    envelope_proposed_roof_m=dict(x=[1.30, 2.70], y=[8.04, 8.60], z=[0.10, 1.20],
-                                  note='allocated y 8.10-8.50 extended to 8.04-8.60: headers + 65-70 mm insulation (skin <= 60 C); y < 8.10 only the C1/C2/H1 spools'),
+    envelope_proposed_roof_m=dict(x=[1.30, 2.90], y=[8.00, 8.60], z=[0.10, 1.20],
+                                  note='EP-1 enlarged to x 1.30-2.90 / y 7.60-8.60 (docs/06 sec.1, 2026-10-23); y < 8.10 only the C1/C2/H1 spools'),
     assembly_bbox_roof_m=checks['assembly_bbox_roof_m'],
     interfaces=[
         dict(name='C1 cold inlet (from E2 compressor collector)', roof_m=r_m(FL['C1'][0]), eng_mm=eng_mm(FL['C1'][0]), direction_E4_side=[0, -1, 0],
              engine_flange_faces=[0, 1, 0], size='DN100', flange='EN 1092-1 PN16 type 11, D220 K180 8xM16, gasket spiral-wound 321/graphite',
              fluid='air 0.395 kg/s, 165 C, 3.09 bar abs', design='3.5 barg / 250 C', movement_mm=gr.get('bellows', {}).get('C1'),
-             source=SOURCE['C1'], status='REQUEST to E2: flange face at ENG y 190 mm, z %.1f mm (= top header axis)' % (Z_HT - 600)),
+             source=SOURCE['C1'], status='COINCIDENT with E2 E2-102 (straight spool %s, top header axis ENG z %.1f)' % (INFO['C1']['straight'], Z_HT - 600)),
         dict(name='C2 cold outlet (to E2 combustor plenum)', roof_m=r_m(FL['C2'][0]), eng_mm=eng_mm(FL['C2'][0]), direction_E4_side=[0, -1, 0],
-             engine_flange_faces=[0, 1, 0], size='DN125', flange='EN 1092-1 PN16 type 11, D250 K210 8xM16, spiral-wound 321/mica',
+             engine_flange_faces=[0, 1, 0], size='DN125 spool, rectangular joint %s' % INFO['C2'].get('rect_flange_mm'),
+             flange='rectangular plate flange 15 mm, 10 x M10 (E2 pattern), Thermiculite 815 sheet gasket',
              fluid='air 0.395 kg/s, %.0f C, 3.04 bar abs' % dsg.get('Tc_out_net_C', 568), design='3.5 barg / 620 C',
              movement_mm=gr.get('bellows', {}).get('C2'), source=SOURCE['C2'],
-             status='REQUEST to E2: flange face at ENG y 190 mm, z %.1f mm (= bottom header axis)' % (Z_HB - 600)),
+             status='COINCIDENT with E2 E2-151 rectangular flange %s; E4 transition to the DN125 bellows on x %.0f (ENG %.1f), bottom header z %.1f' %
+                    (INFO['C2'].get('rect_flange_mm'), X_C2_ROUND, X_C2_ROUND - ENG0[0], Z_HB - 600)),
         dict(name='H1 hot inlet (from E3 FPT exhaust collector)', roof_m=r_m(FL['H1'][0]), eng_mm=eng_mm(FL['H1'][0]), direction_E4_side=[0, -1, 0],
              engine_flange_faces=[0, 1, 0], size='DN250', flange='EN 1092-1 PN6, D375 K335 12xM16, spiral-wound 321/mica',
              fluid='exhaust 0.397 kg/s, 610 C (trip limit 660), 1.063 bar abs', design='0.3 barg / 680 C',
              movement_mm=gr.get('bellows', {}).get('H1'), source=SOURCE['H1'],
-             status='assumed ENG x 450 (E3 JSON absent); E4 needs >= 165 mm from flange face to elbow, elbow axis at ROOF y 8.365'),
+             status='COINCIDENT with E3 E3-110 H1 (ENG 300, 250, 0); bellows y %.0f..%.0f, mitre elbow R%.0f into the plenum at ROOF y %.0f' %
+                    (INFO['H1_route']['bellows_y'][0], INFO['H1_route']['bellows_y'][1], R_E, YC)),
         dict(name='EXH package exhaust flange (to HVAC hot duct -> D-101)', roof_m=r_m(FL['EXH'][0]), direction=[1, 0, 0], size='DN250',
              flange='EN 1092-1 PN6 (docs/06)', fluid='exhaust 0.397 kg/s, %.0f C design (real cp), 262 C in the constant-cp cycle model; '
                                                      'transient max 450 C' % dsg.get('Th_out_net_C', 218),
@@ -620,6 +652,7 @@ ifc = dict(
 json.dump(ifc, open(os.path.join(OUT, 'E4_interfaces.json'), 'w'), indent=1, ensure_ascii=False)
 
 BOM_HDR = 'tag,description,qty,make_or_buy,material_or_spec,size_or_rating,supplier_candidates,mass_kg,model_file,notes'
+def MF(fn): return 'cad_out/engine/E4/' + fn if fn else ''
 def csv(*f): return ','.join('"%s"' % str(x).replace('"', "'") if (',' in str(x) or '"' in str(x)) else str(x) for x in f)
 mass_of = {l.split()[0]: m for g, l, mat, m in masses}
 mf = lambda t: round(mass_of.get(t, 0.0), 2)
@@ -627,13 +660,13 @@ fins = dsg.get('fin_cold', {}); finh = dsg.get('fin_hot', {})
 bom = [BOM_HDR,
  csv('E4-CORE-A', 'Recuperator core module A, brazed plate-fin, %d cold + %d hot layers, counterflow + crossflow cold windows' % (NC // 2, NH - NC // 2), 1,
      'make: fin forming + stacking + vacuum braze BNi-2 1040 C + He leak test', '347H (1.4912/UNS S34709) sheets, 347 fins', '%.0fx%.0fx%.0f mm' % (H / 2, W, L),
-     'IR: MAPNA turbine-blade vacuum-furnace shop (PARTO) - confirm; CN: stainless PFHE brazers (Hangzhou/Wuxi) to our drawing', round(mc / 2, 1), 'E4_core.step',
+     'IR: MAPNA turbine-blade vacuum-furnace shop (PARTO) - confirm; CN: stainless PFHE brazers (Hangzhou/Wuxi) to our drawing', round(mc / 2, 1), MF('E4_core.step'),
      'eps_net 0.905 with module B; 3.5 barg design, 5.3 barg hydro'),
- csv('E4-CORE-B', 'Recuperator core module B (identical to A)', 1, 'make: as A', 'as A', 'as A', 'as A', round(mc / 2, 1), 'E4_core.step', 'interchangeable'),
+ csv('E4-CORE-B', 'Recuperator core module B (identical to A)', 1, 'make: as A', 'as A', 'as A', 'as A', round(mc / 2, 1), MF('E4_core.step'), 'interchangeable'),
  csv('E4-FIN-C', 'Cold offset-strip fin stock p %.1f / t %.2f / h %.1f / strip %.1f mm' % (fins.get('p', 1.2e-3) * 1e3, fins.get('t', 1e-4) * 1e3, fins.get('b', 2e-3) * 1e3, fins.get('l', 3e-3) * 1e3),
-     '%.1f m2' % (NC * W * L * 1e-6 * 1.05), 'make: OSF fin-forming die (5-axis/wire-EDM tool) or buy formed fin', '347 foil 0.10 mm (EN 1.4550)', '', 'foil: Outokumpu (FI), Aperam (FR/BE), TISCO (CN)', 0, 'E4_core_detail_sample.step', 'mass %.1f kg included in E4-CORE-A/B' % dsg.get('mass_core', {}).get('fins_cold', 9.8)),
+     '%.1f m2' % (NC * W * L * 1e-6 * 1.05), 'make: OSF fin-forming die (5-axis/wire-EDM tool) or buy formed fin', '347 foil 0.10 mm (EN 1.4550)', '', 'foil: Outokumpu (FI), Aperam (FR/BE), TISCO (CN)', 0, MF('E4_core_detail_sample.step'), 'mass %.1f kg included in E4-CORE-A/B' % dsg.get('mass_core', {}).get('fins_cold', 9.8)),
  csv('E4-FIN-H', 'Hot offset-strip fin stock p %.1f / t %.2f / h %.1f / strip %.1f mm' % (finh.get('p', 1.6e-3) * 1e3, finh.get('t', 1.2e-4) * 1e3, finh.get('b', 3.8e-3) * 1e3, finh.get('l', 3.2e-3) * 1e3),
-     '%.1f m2' % (NH * W * L * 1e-6 * 1.05), 'make: OSF fin-forming die', '347 foil 0.12 mm', '', 'as E4-FIN-C', 0, 'E4_core_detail_sample.step', 'mass %.1f kg included in E4-CORE-A/B; 0.12 mm = oxidation allowance' % dsg.get('mass_core', {}).get('fins_hot', 29.0)),
+     '%.1f m2' % (NH * W * L * 1e-6 * 1.05), 'make: OSF fin-forming die', '347 foil 0.12 mm', '', 'as E4-FIN-C', 0, MF('E4_core_detail_sample.step'), 'mass %.1f kg included in E4-CORE-A/B; 0.12 mm = oxidation allowance' % dsg.get('mass_core', {}).get('fins_hot', 29.0)),
  csv('E4-FIN-D', 'Cold distributor fin (plain, 45 deg cut) p 2.0 / t 0.15 mm', '%.1f m2' % (NC * W * 2 * LW * 1e-6 * 1.1), 'make: fin-forming die', '347 foil 0.15 mm', '', 'as E4-FIN-C', 0, '', 'mass %.1f kg included in E4-CORE-A/B' % dsg.get('mass_core', {}).get('dist_fins_cold', 8.4)),
  csv('E4-PS', 'Parting sheets %.2f mm, cap sheets 2.0 mm, side/end bars 5 mm' % TP, 'set', 'make: laser cut, flattened, degreased', '347H', '', 'Outokumpu, Aperam, Acerinox (ES)', 0, '', 'mass %.1f kg included in E4-CORE-A/B' % (dsg.get('mass_core', {}).get('parting_sheets', 60) + dsg.get('mass_core', {}).get('side_bars', 16) + dsg.get('mass_core', {}).get('end_bars_cold', 10) + dsg.get('mass_core', {}).get('cap_sheets', 4))),
  csv('E4-BRZ', 'Braze filler BNi-2 amorphous foil 38 um (AWS A5.8 BNi-2 / ISO 17672 Ni 620)', '%.1f m2' % ((NC + NH) * 2 * W * L * 1e-6), 'buy', 'BNi-2', '38 um', 'Vacuumschmelze VITROBRAZE (DE), AT&M/Antai (CN)', 0, '', 'mass %.1f kg included in E4-CORE-A/B; stop-off on bars' % dsg.get('mass_core', {}).get('braze_BNi2', 4.8)),
@@ -660,31 +693,31 @@ for g, l, mat, m in masses:
     if g == 'insulation':
         bom.append(csv(t, l.split(' ', 1)[1], 1, 'buy + fit (removable boxes on flanges/bellows)', 'microporous silica, 0.5 mm 1.4301 cladding' if t == 'E4-INS' else '1.4301 0.5 mm',
                        '%.0f/%.0f/%.0f mm (610/core/215 C)' % (T_INS_HOT, T_INS_CORE, T_INS_HOOD), 'Promat MICROTHERM/PROMALIGHT (BE/DE), Luyang (CN); cladding local IR',
-                       round(m, 1), 'E4_insulation.step', 'skin <= 60 C at 40 C enclosure air'))
+                       round(m, 1), MF('E4_insulation.step'), 'skin <= 60 C at 40 C enclosure air'))
         continue
     if g == 'ports':
         sup = 'TC: Rössel (DE), TC Mess- und Regeltechnik (DE), local IR; bosses machined' if t.startswith('TE') else 'local machining; DN15/DN50 fittings EN stock'
         bom.append(csv(t, l.split(' ', 1)[1], 1, 'make boss; buy instrument (per docs/electrical)' if t.startswith(('TE', 'PT')) else 'make',
-                       '347H/316L', '', sup, round(m, 2), 'E4_ports.step', ''))
+                       '347H/316L', '', sup, round(m, 2), MF('E4_ports.step'), ''))
         continue
     if g == 'supports':
         if 'strut' in l:
             bom.append(csv(t, l.split(' ', 1)[1], 1, 'make (rod + clevis lug); buy clevis pins', 'A4-70 rod M16, 347H lug on hood', 'L ~90 mm',
-                           'local machining; clevis: Würth (DE)', round(m, 1), 'E4_supports.step', 'E5 provides the frame member at y 8.600'))
+                           'local machining; clevis: Würth (DE)', round(m, 1), MF('E4_supports.step'), 'E5 provides the frame member at y 8.600'))
         else:
             bom.append(csv(t, l.split(' ', 1)[1], 1, 'make (welded SHS, plates); buy pad + slide plate', '347H SHS 50x4 + lug; S355 galv base 150x150x12; '
                            'calcium-silicate pad 25 mm; graphite-bronze slide plate (sliding legs)', 'static ~%.0f N' % (m_tot * 9.81 / 4),
-                           'pads: Skamol (DK), Promat (DE); slide plates: KS Gleitlager (DE)', round(m, 1), 'E4_supports.step', ''))
+                           'pads: Skamol (DK), Promat (DE); slide plates: KS Gleitlager (DE)', round(m, 1), MF('E4_supports.step'), ''))
         continue
     mk, mt, sz = desc.get(t, ('make', mat, ''))
     sup = bellows_sup if t.startswith('E4-SP') else 'IR sheet-metal + TIG shop (precision fabrication), material Outokumpu/Aperam/Acerinox'
-    bom.append(csv(t, l.split(' ', 1)[1], 1, mk, mt, sz, sup, round(m, 1), files.get(g, ''), ''))
+    bom.append(csv(t, l.split(' ', 1)[1], 1, mk, mt, sz, sup, round(m, 1), MF(files.get(g, '')), ''))
 bom += [
- csv('E4-BLT', 'Bolting kits for 4 flanged joints (C1 8xM16, C2 8xM16, H1 12xM16, EXH 12xM16) + 2 borescope blinds 4xM16', 6, 'buy',
+ csv('E4-BLT', 'Bolting kits for 4 flanged joints (C1 8xM16, C2 10xM10 rectangular, H1 12xM16, EXH 12xM16) + 2 borescope blinds 4xM16', 6, 'buy',
      'studs 1.7709 (21CrMoV5-7) + nuts 1.7258 on H1/C2 (hot), A4-70 on C1/EXH/blinds; nickel anti-seize', 'EN 1092-1 / EN 1515',
-     'Würth (DE), Bossard (CH), IR fastener stockists', 3.5, 'E4_ducts.step', 'mating flanges on the engine side belong to E2/E3, on EXH to HVAC'),
- csv('E4-GSK', 'Gaskets spiral-wound 321 + mica (H1, C2) / graphite (C1, EXH)', 4, 'buy', 'EN 1514-2', 'DN100/125/250', 'Klinger (AT), Kempchen (DE), Donit (SI)', 1.2, '', 'spares: 2 sets'),
- csv('E4-TC', 'Thermocouples type K class 1 MI 3 mm Inconel 600 sheath (TE-502, TE-503, TE-505, TE-512)', 4, 'buy (electrical scope)', 'IEC 60584-1', '0-900 C', 'see docs/electrical/02_io_list', 0, 'E4_ports.step', 'counted in the electrical BOM (mass 0 here)'),
+     'Würth (DE), Bossard (CH), IR fastener stockists', 3.5, MF('E4_ducts.step'), 'mating flanges on the engine side belong to E2/E3, on EXH to HVAC'),
+ csv('E4-GSK', 'Gaskets: spiral-wound 321 + mica (H1), Thermiculite 815 rectangular sheet (C2), graphite (C1, EXH)', 4, 'buy', 'EN 1514-2', 'DN100/rect/250', 'Klinger (AT), Kempchen (DE), Donit (SI)', 1.2, '', 'spares: 2 sets'),
+ csv('E4-TC', 'Thermocouples type K class 1 MI 3 mm Inconel 600 sheath (TE-502, TE-503, TE-512; TOT TE-505A/B are on E3)', 3, 'buy (electrical scope)', 'IEC 60584-1', '0-900 C', 'see docs/electrical/02_io_list', 0, MF('E4_ports.step'), 'counted in the electrical BOM (mass 0 here)'),
  csv('E4-PDT', 'Differential pressure transmitters cold side (PT-E4-1/2) and hot side (PT-E4-3/4)', 2, 'buy (electrical scope, NEW I/O)', '4-20 mA, 0-10 kPa / 0-5 kPa', '', 'Endress+Hauser (CH/DE), WIKA (DE), Keller (CH)', 1.6, '', 'add to docs/electrical I/O list: fouling + leak monitoring'),
 ]
 os.makedirs(os.path.join(ROOT, 'docs', 'bom'), exist_ok=True)

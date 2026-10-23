@@ -10,6 +10,7 @@
  "r_ch_o": 53.5,
  "A_ch": 1477.19,
  "n_ch": 13,
+ "x_diff_back": 2.0,
  "r_tunnel": 10.5,
  "x_tunnel_tube": [
   16.53,
@@ -34,34 +35,42 @@
  "r_front_ring_o": 60.0,
  "r_lip_i": 51.5,
  "x_ring_lip": -20.33,
+ "r_ring_bore": 53.55,
  "r_drum_i": 118.0,
  "t_drum": 2.5,
  "x_mid_A": [
-  14.0,
+  10.0,
   20.0
  ],
  "r_flange_o": 138.0,
  "pcd_mid": 256.0,
  "n_mid_bolts": 16,
  "d_mid_bolt": 8,
+ "mid_bolt_a0_deg": 11.25,
  "oring_x": -8.0,
+ "retainer_r": 29.0,
+ "retainer_d": 6.0,
+ "retainer_a_deg": [
+  30.0,
+  150.0,
+  270.0
+ ],
+ "retainer_gap": 0.3,
  "x_bh": 21.0,
  "t_bh": 6.0,
  "t_gasket": 1.0,
  "t_bh_ins": 4.0,
  "r_bh_bore": 21.35,
- "r_bh_hub_o": 24.5,
+ "r_bh_hub_o": 24.0,
  "x_bh_hub_end": 35.0,
+ "x_manifold": 17.0,
+ "r_manifold": 37.5,
+ "d_manifold": 8.0,
+ "t_manifold": 0.8,
  "gas_entry_deg": 180.0,
- "r_gas_boss": [
-  138.5,
-  158.0
- ],
- "rib_x": [
-  14.0,
-  21.0
- ],
- "rib_w": 10.0,
+ "x_gas_boss": 0.0,
+ "d_feed": 10.0,
+ "t_feed": 1.0,
  "r_case_i": 85.0,
  "t_case": 3.0,
  "x_case_shell_end": 100.0,
@@ -69,22 +78,31 @@
  "r_rear_bore": 38.1,
  "x_rear_ring": [
   100.0,
-  116.0
+  115.0
  ],
  "x_e3_flange": [
   106.0,
-  116.0
+  115.0
  ],
  "r_e3_flange_o": 88.0,
  "pcd_e3": 160.0,
  "n_e3_bolts": 16,
+ "d_e3_bolt": 8,
+ "e3_bolt_a0_deg": 11.25,
  "e3_spigot_d": 120.0,
  "e3_spigot_depth": 3.0,
+ "e3_groove_ri": 55.5,
+ "x_e3_face": 115.0,
+ "t_e3_gasket": 1.0,
  "seal_groove_x": [
   112.5,
   114.5
  ],
  "r_seal_groove": 40.0,
+ "gasket_e3_r": [
+  64.5,
+  72.5
+ ],
  "x_dome": 42.9,
  "t_dome": 1.2,
  "t_liner": 1.0,
@@ -99,6 +117,13 @@
  "n_inj": 7,
  "r_inj": 37.5,
  "inj_a0_deg": 0.0,
+ "x_liner_pins": 50.0,
+ "n_liner_pins": 3,
+ "a_liner_pins": [
+  30.0,
+  170.0,
+  255.0
+ ],
  "r_baffle": 68.0,
  "t_baffle": 0.8,
  "x_baffle": [
@@ -111,9 +136,80 @@
   17.5,
   92.0
  ],
- "x_manifold": 17.5,
- "r_manifold": 37.5,
- "d_manifold": 7.0,
+ "x_igniter": 52.0,
+ "a_igniter": 225.0,
+ "x_uv": 52.0,
+ "a_uv": 135.0,
+ "x_p3": 65.0,
+ "a_p3": 90.0,
+ "x_t3": 85.0,
+ "a_t3": 90.0,
+ "x_p2": -20.0,
+ "a_p2": 120.0,
+ "x_bleed": -8.0,
+ "a_bleed": 150.0,
+ "x_twall": 60.0,
+ "a_twall": [
+  45.0,
+  200.0
+ ],
+ "x_foot": [
+  -8.0,
+  0.0
+ ],
+ "z_skid": -400.0,
+ "foot_w": 260.0,
+ "C1": {
+  "rect_x": [
+   -26.0,
+   7.5
+  ],
+  "rect_z": [
+   40.0,
+   197.5
+  ],
+  "y_rect": 140.0,
+  "y_trans": 168.0,
+  "round_centre_xz": [
+   -11.0,
+   143.5
+  ],
+  "DN": 100,
+  "PN": 16,
+  "pipe_od": 114.3,
+  "pipe_t": 2.0,
+  "flange": [
+   220.0,
+   180.0,
+   8,
+   18.0,
+   20.0
+  ],
+  "face_y": 190.0,
+  "t_wall": 2.5
+ },
+ "C2": {
+  "rect_x": [
+   47.0,
+   100.0
+  ],
+  "rect_z": [
+   -239.0,
+   -40.0
+  ],
+  "y_rect": 155.0,
+  "face_y": 170.0,
+  "t_wall": 3.0,
+  "rect_flange_t": 15.0,
+  "rect_flange_rim": 30.0,
+  "n_bolts": 10,
+  "d_bolt": 10,
+  "round_axis_xz_E4": [
+   50.0,
+   -151.5
+  ],
+  "DN_E4": 125
+ },
  "x_bh_back": 27.0,
  "x_hot_flange": [
   28.0,
@@ -122,56 +218,6 @@
  "x_dome_hot": 44.1,
  "r_lo_o": 55.0,
  "r_li_i": 20.1,
- "C1": {
-  "box": {
-   "x": [
-    -26.0,
-    12.0
-   ],
-   "z": [
-    -150.0,
-    -30.0
-   ]
-  },
-  "round_centre_xz": [
-   -7.0,
-   -90.0
-  ],
-  "DN": 100,
-  "pipe_od": 114.3,
-  "pipe_t": 3.05,
-  "face_y": 185.0,
-  "y_box": [
-   60.0,
-   145.0
-  ],
-  "y_round": 168.0
- },
- "C2": {
-  "box": {
-   "x": [
-    36.0,
-    100.0
-   ],
-   "z": [
-    15.0,
-    130.0
-   ]
-  },
-  "round_centre_xz": [
-   68.0,
-   72.0
-  ],
-  "DN": 125,
-  "pipe_od": 139.7,
-  "pipe_t": 3.4,
-  "face_y": 185.0,
-  "y_box": [
-   30.0,
-   145.0
-  ],
-  "y_round": 168.0
- },
  "holes": {
   "outer_film": {
    "n": 224,
@@ -185,14 +231,14 @@
   },
   "secondary": {
    "n": 21,
-   "d": 5.800000000000001,
+   "d": 5.7,
    "x": [
     62.1
    ]
   },
   "dilution": {
    "n": 42,
-   "d": 8.4,
+   "d": 8.3,
    "x": [
     72.1,
     79.1
@@ -200,7 +246,7 @@
   },
   "inner_film": {
    "n": 64,
-   "d": 0.9,
+   "d": 0.9500000000000001,
    "x": [
     45.6,
     57.1,
@@ -228,7 +274,7 @@
   "n_vanes": 10,
   "vane_angle": 45.0,
   "r_vane_exit": 9.0,
-  "slot_h": 2.33,
+  "slot_h": 2.3,
   "n_gas": 4,
   "d_gas": 0.75
  },

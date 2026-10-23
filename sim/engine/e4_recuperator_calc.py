@@ -570,15 +570,16 @@ def system_dp(core, r, dist):
     R_hdr_ci, R_hdr_co = 0.062, 0.075                      # header half-pipe radii (CAD)
     A_ci, A_co = math.pi * R_hdr_ci ** 2 / 2, math.pi * R_hdr_co ** 2 / 2
     qh1 = (M_C / 2 / A_ci) ** 2 / (2 * rc1); qh2 = (M_C / 2 / A_co) ** 2 / (2 * rc2)
-    Lc1, Lc2 = 1.30, 0.95                                    # duct lengths (CAD routes)
-    add('cold', 'C1 duct DN100 (L %.2f m, 4 mitred bends R/D 0.9, bellows with liner)' % Lc1, 0.02 * Lc1 / 0.110 + 4 * 0.30 + 0.10, q1)
+    Lc1, Lc2 = 0.14, 0.16                                    # straight spools to the E2 flanges (cad/engine/recuperator.py, 2026-10-23)
+    add('cold', 'C1 spool DN100 (L %.2f m, straight, bellows with liner)' % Lc1, 0.02 * Lc1 / 0.110 + 0.10, q1)
     add('cold', 'entry into cold-inlet header (tee split, sudden expansion)', 1.0, q1)
     add('cold', 'cold-inlet header along stack (friction + turning into windows)', 0.6, qh1)
     add('cold', 'core: inlet distributors (window, 90 deg turn, plain fin)', 0, 0, dist['inlet']['dp'])
     add('cold', 'core: counterflow OSF friction + acceleration', 0, 0, r['dpc_core'])
     add('cold', 'core: outlet distributors', 0, 0, dist['outlet']['dp'])
     add('cold', 'cold-outlet header -> DN125 nozzle (merge, contraction)', 0.6, qh2, 0.5 * q2)
-    add('cold', 'C2 duct DN125 (L %.2f m, 3 mitred bends R/D 0.7, bellows with liner)' % Lc2, 0.02 * Lc2 / 0.136 + 3 * 0.40 + 0.10, q2)
+    add('cold', 'C2 spool DN125 (L %.2f m, round-to-rectangular transition to the E2 flange, bellows with liner)' % Lc2,
+        0.02 * Lc2 / 0.136 + 0.10 + 0.15, q2)
     # ---------- hot ----------
     rh1 = PH_IN / (EXH.R * TH_IN); rh2 = PH_OUT / (EXH.R * r['Th_out'])
     qd1 = (M_H / pipe_A('DN250')) ** 2 / (2 * rh1); qd2 = (M_H / pipe_A('DN250')) ** 2 / (2 * rh2)
@@ -840,16 +841,23 @@ def growth_insulation(core, r, tot):
     dz_core = al(Tm_core) * H * (Tm_core - 20) * 1e3                   # top of the core (stack height)
     dy_core = al(590) * W * (590 - 20) * 1e3
     dz_plenum = al(600) * 0.15 * (600 - 20) * 1e3
-    print('  Fixed point: hot-end cradle beam (x 2.13, core bottom).  Free growth: core length +%.1f mm (x, east), stack +%.1f mm (z),'
+    print('  Fixed point: hot-end cradle beam (x 2.24, core bottom).  Free growth: core length +%.1f mm (x, east), stack +%.1f mm (z),'
           ' width %.1f mm (y); plenum +%.1f mm (z at H1 height)' % (dx_core, dz_core, dy_core, dz_plenum))
     # engine flange movements (E3 published H1; E2 requested C1/C2), radial casing growth + axial from the engine feet
     eng = {'C1': (0.5, 0.0, -1.8), 'C2': (1.0, 0.0, 1.9), 'H1': (2.5, 3.1, 0.0)}
+    _e2r = os.path.join(ROOT, 'sim', 'engine', 'e2_results.json')
+    if os.path.exists(_e2r):                                       # E2 published flange growth (sim/engine/e2_combustor_calc.py)
+        _g = json.load(open(_e2r))['thermal_growth_mm']; _gv = lambda pre: [v for k, v in _g.items() if k.startswith(pre)][0]
+        _z1 = json.load(open(os.path.join(ROOT, 'sim', 'engine', 'e2_design.json')))['C1']['round_centre_xz'][1]
+        _z2 = sum(json.load(open(os.path.join(ROOT, 'sim', 'engine', 'e2_design.json')))['C2']['rect_z']) / 2
+        eng['C1'] = (_gv('C1 flange centre: dx'), _gv('C1 flange centre: dy'), _z1 * 17.0e-6 * (165 - 20))
+        eng['C2'] = (_gv('C2 flange centre: dx'), _gv('C2 flange centre: dy'), _z2 * 18.5e-6 * (580 - 20))
     e4 = {'C1': (al(300) * 0.34 * 280 * 1e3, -1.0, 0.3), 'C2': (0.6, -2.0, al(570) * 0.50 * 550 * 1e3),
           'H1': (-al(600) * 0.22 * 580 * 1e3, -al(600) * 0.125 * 580 * 1e3, dz_plenum), 'EXH': (dx_core + 0.6, 0.0, al(215) * 0.35 * 195 * 1e3)}
-    duct = {'C1': (al(165) * 0.77 * 145 * 1e3, 0, 0), 'C2': (al(566) * 0.40 * 546 * 1e3, 0, 0), 'H1': (0, 0, 0)}
+    duct = {'C1': (0, al(165) * 0.14 * 145 * 1e3, 0), 'C2': (0, al(566) * 0.16 * 546 * 1e3, 0), 'H1': (0, 0, 0)}
     bel = {}
     print('  %-5s %-26s %-26s %-26s %-34s' % ('joint', 'engine flange move mm', 'E4 nozzle move mm', 'own duct growth mm', 'bellows axial / lateral (x1.5 + 3 mm)'))
-    axis = {'C1': 0, 'C2': 0, 'H1': 1}                                 # bellows axis: C1/C2 in the east-running leg (x), H1 along y
+    axis = {'C1': 1, 'C2': 1, 'H1': 1}                                 # bellows axis: all three spools run north (y)
     for k in ('C1', 'C2', 'H1'):
         de = [e4[k][i] - eng[k][i] + duct[k][i] for i in range(3)]
         ax = abs(de[axis[k]]); lat = math.sqrt(sum(de[i] ** 2 for i in range(3) if i != axis[k]))

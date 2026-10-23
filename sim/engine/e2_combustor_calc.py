@@ -81,40 +81,67 @@ R['design_point'] = dict(ma=MA, mf=MF, T2_C=T2 - 273.15, T2r_C=T2R - 273.15, TIT
 G = dict(
     # core references (build_gr180.py v13A, read-only)
     x_io_lip=-17.33, x_io_step=-11.33, x_io_end=-4.85, r_io_lip_o=53.0, r_io_lip_i=51.0, r_core=53.5,
-    x_ch_exit=7.6, r_ch_i=45.5, r_ch_o=53.5, A_ch=13 * 113.63, n_ch=13,
+    x_ch_exit=7.6, r_ch_i=45.5, r_ch_o=53.5, A_ch=13 * 113.63, n_ch=13, x_diff_back=2.0,   # diffuser back-plate face (r <= 38), asm_parts
     r_tunnel=10.5, x_tunnel_tube=(16.53, 92.96), r_tunnel_bore=8.5,
     x_ngv=94.8, r_ngv_o=36.35, r_ngv_rib=37.95, x_ngv_rib=(109.3, 110.8), x_ngv_end=118.8, r_ngv_in_i=21.25, r_ngv_in_o=22.25,
     x_ngv_inner_end=109.8, x_turb_exit=118.3, x_nut_end=126.8,
-    # E2 collector (cold, 1.4404).  Front ring bore r53.55 over the intake-outer OD r53.5 (x -11.33..-4.85), O-ring at x -7.5,
-    # stop lip r51.5 at x -20.33..-17.33 against the intake-outer lip face (takes the 1.8 kN forward pressure load of the core),
-    # 6x M4 radial screws at x -10.4 into the intake-outer wall rim (as the original can casing).
-    x_drum_front=-42.0, t_front_wall=4.0, r_front_ring_o=60.0, r_lip_i=51.5, x_ring_lip=-20.33, r_ring_bore=53.55,
-    r_drum_i=118.0, t_drum=2.5, x_mid_A=(14.0, 20.0), r_flange_o=138.0, pcd_mid=256.0, n_mid_bolts=16, d_mid_bolt=8,
-    oring_x=-7.5, x_ring_screws=-10.4,
-    # bulkhead 6 mm 1.4948 (x 21..27).  Gas manifold = annular channel machined into the COLD face (r 33..42, 3 deep),
-    # closed by a 1.5 mm cover ring (x 19.5..21); the 8 injector stems cross the channel and pick the gas up through
-    # radial holes (sealed by a crush washer under the nut on the cold side and a gasket under the collar on the hot side).
-    x_bh=21.0, t_bh=6.0, t_gasket=1.0, t_bh_ins=4.0, r_bh_bore=21.35, r_bh_hub_o=24.5, x_bh_hub_end=35.0,
-    man_channel_r=(33.0, 42.0), man_channel_depth=3.0, t_man_cover=1.5, man_cover_r=(29.0, 46.0),
-    gas_entry_deg=180.0, x_gas_boss=0.0, fairing_c=(21.0, 46.0), fairing_R=8.0,
-    # hot casing (1.4948): shell r85/88 x 28..100, rear ring x 100..106 (r 60..88) + E2/E3 neck x 106..121 (r 60..75)
-    # E2/E3 flange per cad_out/engine/E3/E3_interfaces.json: E3 face x 122 = E2 face 121 + 1.0 gasket; OD 150, PCD 135,
-    # 12 x M6 studs, E3 male spigot OD 120 h7 (x 119..122) in the E2 bore (2 mm engagement after the gasket).
-    r_case_i=85.0, t_case=3.0, x_case_shell_end=100.0, t_rear_plate=6.0, r_rear_bore=60.0,
-    x_rear_ring=(100.0, 106.0), x_e3_neck=(106.0, 121.0), r_e3_flange_o=75.0, pcd_e3=135.0, n_e3_bolts=12, d_e3_bolt=6,
-    e3_spigot_d=120.0, e3_spigot_depth=2.0, x_e3_face=121.0, t_e3_gasket=1.0,
+    # E2 collector (cold, 1.4404).  Front ring bore r53.55 over the intake-outer OD r53.5 (x -11.33..-4.85), O-ring at x -8,
+    # stop lip r51.5 at x -20.33..-17.33 against the intake-outer lip face (takes the 1.8 kN forward pressure load of the core).
+    # Drum flange 10 thick (x 10..20) with 16 blind M8 tapped holes from the rear face: no bolt ends on the drum side, so the
+    # C1 ear can sit right against the flange; nuts only on the hot side (x 34..41.5), reachable with an open spanner.
+    x_drum_front=-30.0, t_front_wall=4.0, r_front_ring_o=60.0, r_lip_i=51.5, x_ring_lip=-20.33, r_ring_bore=53.55,
+    r_drum_i=118.0, t_drum=2.5, x_mid_A=(10.0, 20.0), r_flange_o=138.0, pcd_mid=256.0, n_mid_bolts=16, d_mid_bolt=8,
+    mid_bolt_a0_deg=11.25, oring_x=-8.0,
+    # core rearward stop: 3 IN625 fingers on the bulkhead cold face reach the diffuser back plate (x 2.0, r <= 38) with 0.3 mm play
+    retainer_r=29.0, retainer_d=6.0, retainer_a_deg=(30.0, 150.0, 270.0), retainer_gap=0.3,
+    # bulkhead 6 mm 1.4948 (x 21..27), clamped between the drum flange and the hot-casing flange (1 mm gasket each side)
+    x_bh=21.0, t_bh=6.0, t_gasket=1.0, t_bh_ins=4.0, r_bh_bore=21.35, r_bh_hub_o=24.0, x_bh_hub_end=35.0,   # hub OD 48 clears the swirler heads (r 24.5)
+    # gas manifold: torus tube 8 x 0.8 (316L) at x 17.0 / r 37.5 against the bulkhead cold face; the 7 injector stems are
+    # welded to it, pass the bulkhead and carry the SLM injector heads (union nuts x 27..33 pull the manifold onto the bulkhead).
+    # Feed tube 10 x 1 from the torus (south) straight to a drum-shell boss at x 0 (DIN 2353 L10 fitting).
+    x_manifold=17.0, r_manifold=37.5, d_manifold=8.0, t_manifold=0.8, gas_entry_deg=180.0, x_gas_boss=0.0, d_feed=10.0, t_feed=1.0,
+    # hot casing (1.4948): flange x 28..34, shell r85/88 x 34..100, rear ring x 100..115 (solid r 38.1..88).
+    # E2/E3 flange (cad_out/engine/E3/E3_interfaces.json, adopted by E3): E2 face x 115.0 + 1.0 mm gasket = E3 face 116.0;
+    # OD 176, PCD 160, 16 x M8 blind tapped in the E2 ring (studs, nuts on E3), phase 11.25 deg; annular spigot groove
+    # r 55.5..60.0 (OD 120 H7) x 112..115 for the E3 male spigot OD 120 h7 x 3 (x 113..116); piston-ring groove x 112.5..114.5
+    # r 38.1..40 in the bore: the ring seals on the GG NGV shroud OD 72.7 (casing air 2.9 bar / gas path 1.25 bar).
+    r_case_i=85.0, t_case=3.0, x_case_shell_end=100.0, t_rear_plate=5.0, r_rear_bore=38.1,
+    x_rear_ring=(100.0, 115.0), x_e3_flange=(106.0, 115.0), r_e3_flange_o=88.0, pcd_e3=160.0, n_e3_bolts=16, d_e3_bolt=8,
+    e3_bolt_a0_deg=11.25, e3_spigot_d=120.0, e3_spigot_depth=3.0, e3_groove_ri=55.5, x_e3_face=115.0, t_e3_gasket=1.0,
+    seal_groove_x=(112.5, 114.5), r_seal_groove=40.0, gasket_e3_r=(64.5, 72.5),
     # combustor (liner located axially by 3 radial pins at x 50 through the casing; slip joints at the hub bore and the NGV)
-    x_dome=42.9, t_dome=1.2, t_liner=1.0, r_li_o=21.1, r_lo_i=54.0, x_li_front=24.0, x_li_end=98.0,
+    x_dome=42.9, t_dome=1.2, t_liner=1.0, r_li_o=21.1, r_lo_i=54.0, x_li_front=28.0, x_li_end=98.0,
     x_lo_cyl_end=82.0, x_lo_cone_end=92.0, r_lo_sleeve_i=36.5, x_lo_end=106.5,
     n_inj=7, r_inj=37.5,          # 7 (was 8): EO8 x rotor blade 2F at 113.8k (sim/engine/e1_blade_modal.py); 7 -> no crossing 100-125k
-    inj_a0_deg=22.5, x_liner_pins=50.0, n_liner_pins=3,
-    r_baffle=68.0, t_baffle=0.8, x_baffle=(54.0, 99.0),
-    # tunnel heat shield (IN625 0.5 polished, dead-air gap r10.5..17.1 to the aluminium tunnel, dimple spacers)
-    r_shield_i=17.1, t_shield=0.5, x_shield=(21.0, 92.0),
-    # ports (azimuth deg from +y towards +z: 0 north, 90 top, 180 south, 270 bottom)
-    x_igniter=52.0, a_igniter=225.0, x_uv=52.0, a_uv=135.0, x_p3=65.0, a_p3=90.0, x_t3=85.0, a_t3=90.0, x_p2=-20.0, a_p2=90.0,
+    inj_a0_deg=0.0, x_liner_pins=50.0, n_liner_pins=3, a_liner_pins=(30.0, 170.0, 255.0),
+    r_baffle=68.0, t_baffle=0.8, x_baffle=(54.0, 96.0),
+    # tunnel heat shield (IN625 0.3 polished, dead-air gap r10.5..17.3 to the aluminium tunnel, dimple spacers)
+    r_shield_i=17.3, t_shield=0.3, x_shield=(17.5, 92.0),
+    # ports (azimuth deg from +y towards +z: 0 north, 90 top, 180 south, 270 bottom).  North (+y) is reserved for C1/C2.
+    x_igniter=52.0, a_igniter=225.0, x_uv=52.0, a_uv=135.0, x_p3=65.0, a_p3=90.0, x_t3=85.0, a_t3=90.0,
+    x_p2=-20.0, a_p2=120.0, x_bleed=-8.0, a_bleed=150.0, x_twall=60.0, a_twall=(45.0, 200.0),
+    # front support foot (engine axial fixed point, E3 feet are axially compliant): plate x -8..0 under the drum, base at z -400
+    x_foot=(-8.0, 0.0), z_skid=-400.0, foot_w=260.0,
 )
-G['x_bh_back'] = G['x_bh'] + G['t_bh']                                   # 24.0
+# C1 / C2 ports face north (+y) to the E4 cold headers.  Their z must equal the E4 header axes, which follow from the E4 core
+# (cad/engine/recuperator.py: core bottom ROOF Z 375 mm, header axis = core end -/+ (end bar + window/2); ROOF Z = 600 + z).
+E4_CALC = os.path.join(os.path.dirname(SIM), 'cad_out', 'engine', 'E4', 'E4_calc_results.json')
+_e4 = json.load(open(E4_CALC)) if os.path.exists(E4_CALC) else {}
+_e4d = _e4.get('design', {})
+_EB, _LW, _LT = 1e3 * _e4d.get('end_bar', 0.031), 1e3 * _e4d.get('Ld', 0.085), 1e3 * _e4d.get('Ltot', 0.442)
+Z_C1 = 375.0 + _LT - _EB - _LW / 2 - 600.0          # E4 cold-inlet (top) header axis, ENG z  (+143.5 for the 2026-10-21 core)
+Z_C2 = 375.0 + _EB + _LW / 2 - 600.0                # E4 cold-outlet (bottom) header axis, ENG z (-151.5)
+DP_E4_COLD = _e4.get('dp', {}).get('cold_pct_P2', 2.5) / 100.0   # E4 cold-side loss C1 -> C2 (cycle allowance 2.5 %)
+# C1: rectangular ear on the north-top of the drum (x -26..7.5 inside, up against the drum flange) -> transition y 140..168 ->
+#     DN100 stub -> EN 1092-1 type 11 DN100 PN16 weld-neck flange y 170..190 (face y 190), axis (x -11, z Z_C1).
+# C2: rectangular duct on the north-bottom of the hot casing (x 47..100 inside: clear of the mid-flange nuts at x <= 41.5 and of
+#     the E3 drum cover at x >= 145) -> rectangular flange y 155..170 (face y 170); a round DN125 flange cannot fit there
+#     (its OD would hit the E3 drum cover r 235 or the E3 H1 flange).  E4 carries the rectangular-to-round transition.
+G['C1'] = dict(rect_x=(-26.0, 7.5), rect_z=(40.0, round(Z_C1 + 54.0, 1)), y_rect=140.0, y_trans=168.0, round_centre_xz=(-11.0, round(Z_C1, 1)),
+               DN=100, PN=16, pipe_od=114.3, pipe_t=2.0, flange=(220.0, 180.0, 8, 18.0, 20.0), face_y=190.0, t_wall=2.5)
+G['C2'] = dict(rect_x=(47.0, 100.0), rect_z=(round(Z_C2 - 87.5, 1), -40.0), y_rect=155.0, face_y=170.0, t_wall=3.0, rect_flange_t=15.0,
+               rect_flange_rim=30.0, n_bolts=10, d_bolt=10, round_axis_xz_E4=(50.0, round(Z_C2, 1)), DN_E4=125)
+G['x_bh_back'] = G['x_bh'] + G['t_bh']                                   # 27.0
 G['x_hot_flange'] = (G['x_bh_back'] + G['t_gasket'], G['x_bh_back'] + G['t_gasket'] + 6.0)   # 28..34
 G['x_dome_hot'] = G['x_dome'] + G['t_dome']
 G['r_lo_o'] = G['r_lo_i'] + G['t_liner']; G['r_li_i'] = G['r_li_o'] - G['t_liner']
@@ -139,10 +166,10 @@ K_turn = dP_turn / q_ch
 # drum: circumferential collection to C1 (two halves), then box exit and rect->DN100 transition (diffuser)
 A_drum_half = (G['x_mid_A'][0] - G['x_drum_front'] - G['t_front_wall']) * (G['r_drum_i'] - G['r_front_ring_o'] - 2.5) * 1e-6
 V_drum = MA / rho2 / (2 * A_drum_half); q_drum = 0.5 * rho2 * V_drum ** 2
-C1_BOX = dict(x=(-26.0, 12.0), z=(-150.0, -30.0))          # rectangular collector exit (mm), +y direction
+C1_BOX = dict(x=G['C1']['rect_x'], z=G['C1']['rect_z'])     # rectangular collector exit (mm), +y direction
 A_box = (C1_BOX['x'][1] - C1_BOX['x'][0]) * (C1_BOX['z'][1] - C1_BOX['z'][0]) * 1e-6
 V_box = MA / rho2 / A_box; q_box = 0.5 * rho2 * V_box ** 2
-DN100_ID = 114.3 - 2 * 3.05; A_dn100 = math.pi / 4 * (DN100_ID * 1e-3) ** 2
+DN100_ID = G['C1']['pipe_od'] - 2 * G['C1']['pipe_t']; A_dn100 = math.pi / 4 * (DN100_ID * 1e-3) ** 2
 V_c1 = MA / rho2 / A_dn100; q_c1 = 0.5 * rho2 * V_c1 ** 2
 dP_drum = 0.4 * q_box + 0.5 * q_drum             # ASSUMPTION collector (scroll-less plenum): acceleration/mixing into the C1 box
 dP_c1_diff = (1 - 0.55) * (q_box - q_c1)         # rect->round transition AR %.1f, diffuser eff. 0.55
@@ -155,12 +182,12 @@ R['collector'] = dict(V_channels=V_ch, q_channels_kPa=q_ch / 1e3, turn_gap_mm=ga
                       dP_C1_transition_kPa=dP_c1_diff / 1e3, dP_total_kPa=dP_coll / 1e3, dp_total_pct=dp_coll * 100,
                       dP_upper_bound_pure_dump_kPa=dP_coll_dump / 1e3, P_C1_bar=(P2 - dP_coll) / 1e5)
 
-# hot side: recuperator returns at C2 (E4 budget 2.5 %), dump of the C2 port jet, perforated baffle
-P_C2 = (P2 - dP_coll) * (1 - 0.025)
+# hot side: recuperator returns at C2 (E4 calc cold-side loss, else the 2.5 % budget), dump of the C2 port jet, perforated baffle
+P_C2 = (P2 - dP_coll) * (1 - DP_E4_COLD)
 rhoR = rho(P_C2, T2R)
-C2_BOX = dict(x=(36.0, 100.0), z=(15.0, 130.0))
+C2_BOX = dict(x=G['C2']['rect_x'], z=G['C2']['rect_z'])
 A_c2box = (C2_BOX['x'][1] - C2_BOX['x'][0]) * (C2_BOX['z'][1] - C2_BOX['z'][0]) * 1e-6
-DN125_ID = 139.7 - 2 * 3.4; A_dn125 = math.pi / 4 * (DN125_ID * 1e-3) ** 2
+DN125_ID = 139.7 - 2 * 2.0; A_dn125 = math.pi / 4 * (DN125_ID * 1e-3) ** 2
 m_hot_guess = 0.94 * MA
 V_c2 = m_hot_guess / rhoR / A_dn125; V_c2box = m_hot_guess / rhoR / A_c2box
 dP_c2 = 0.2 * (0.5 * rhoR * V_c2box ** 2 - 0.5 * rhoR * V_c2 ** 2) + 0.5 * rhoR * V_c2box ** 2   # contraction + dump of the port jet
@@ -435,28 +462,30 @@ BETA = beta_of(SPLIT)
 def _eps_cf(NTU, Cr):
     if abs(1 - Cr) < 1e-6: return NTU / (1 + NTU)
     e = math.exp(-NTU * (1 - Cr)); return (1 - e) / (1 - Cr * e)
-def cycle_e2(beta=0.0, dp_coll=0.0, dp_comb=0.045, Q_loss_W=0.0, UA=None):
+def cycle_e2(beta=0.0, dp_coll=0.0, dp_comb=0.045, Q_loss_W=0.0, UA=None, bleed=0.0, dp_rec_c=0.025):
     """sim/concept_study.cycle (arch 'fpt', target efficiencies) + recuperator bypass beta (cold air straight to the combustor),
-    extra collector loss, combustor loss and extra heat loss.  UA=None -> fixed eps 0.90 (base)."""
+    extra collector loss, combustor loss, extra heat loss and a compressor-delivery bleed (fraction of ma: E3 B1 buffer air,
+    bypasses both turbines and the recuperator cold side, rejoins the exhaust at the FPT exit).  UA=None -> fixed eps 0.90."""
     e = ls.EFF['target']; CPA, CPG, EXA, EXG = cs.CP_A, cs.CP_G, cs.EX_A, cs.EX_G
-    Ta, Pa = 288.15, P_AMB; T1, P1 = Ta, Pa * 0.99; PR = DP['PR']; ma = MA
+    Ta, Pa = 288.15, P_AMB; T1, P1 = Ta, Pa * 0.99; PR = DP['PR']; ma = MA; mc = ma * (1 - bleed)   # air through the combustor
     T2_ = T1 * (1 + (PR ** EXA - 1) / e['eta_c']); w_c = CPA * (T2_ - T1)
-    P2_ = P1 * PR; P3 = P2_ * (1 - dp_coll) * (1 - 0.025) * (1 - dp_comb)
+    P2_ = P1 * PR; P3 = P2_ * (1 - dp_coll) * (1 - dp_rec_c) * (1 - dp_comb)
     P_exit = Pa * (1 + 0.035 + 0.015 + 0.005); Th = 900.0; eps = 0.90
     for _ in range(80):
         f = 0.01 if _ == 0 else f
-        mg = ma * (1 + f); Cc = (1 - beta) * ma * CPA; Ch = mg * CPG
+        mg = mc * (1 + f); Cc = (mc - beta * ma) * CPA; Ch = mg * CPG + bleed * ma * CPA
         if UA is not None:
             Cmin, Cmax = min(Cc, Ch), max(Cc, Ch); eps = _eps_cf(UA / Cmin, Cmin / Cmax) * Cmin / Cc
         T2r_ = T2_ + eps * (Th - T2_)
-        Tmix = (1 - beta) * T2r_ + beta * T2_
-        f = (CPG * (TIT - Tmix) / (0.97 * LHV) * 1.02) + Q_loss_W / (ma * 0.97 * LHV)
-        w_t = w_c / (0.985 * (1 + f)); T4 = TIT - w_t / CPG
+        Tmix = ((mc - beta * ma) * T2r_ + beta * ma * T2_) / mc
+        f = (CPG * (TIT - Tmix) / (0.97 * LHV) * 1.02) + Q_loss_W / (mc * 0.97 * LHV)
+        w_t = w_c * ma / (0.985 * mc * (1 + f)); T4 = TIT - w_t / CPG
         P4 = P3 * ((TIT - w_t / (CPG * e['eta_t'])) / TIT) ** (1 / EXG) * (1 - 0.015)
-        w_pt = e['eta_pt'] * CPG * T4 * (1 - (P_exit / P4) ** EXG); Th = T4 - w_pt / CPG
-    P_sh = ma * (1 + f) * w_pt * 0.985; P_el = P_sh * 0.95 * 0.96 - 450.0
-    Q_rec = Cc * (T2r_ - T2_); T_stack = Th - Q_rec / (ma * (1 + f) * CPG)
-    return dict(P_el=P_el, eta=P_el / (ma * f * LHV), mf=ma * f, T2r=T2r_, eps=eps, P3=P3, T_stack=T_stack, Q_fuel=ma * f * LHV)
+        w_pt = e['eta_pt'] * CPG * T4 * (1 - (P_exit / P4) ** EXG); T5 = T4 - w_pt / CPG
+        Th = (mg * CPG * T5 + bleed * ma * CPA * T2_) / Ch                      # buffer air mixes into the FPT exhaust
+    P_sh = mg * w_pt * 0.985; P_el = P_sh * 0.95 * 0.96 - 450.0
+    Q_rec = Cc * (T2r_ - T2_); T_stack = Th - Q_rec / Ch
+    return dict(P_el=P_el, eta=P_el / (mc * f * LHV), mf=mc * f, T2r=T2r_, eps=eps, P3=P3, T_stack=T_stack, Q_fuel=mc * f * LHV)
 base = cycle_e2()
 Cc0 = MA * cs.CP_A; Ch0 = MA * (1 + base['mf'] / MA) * cs.CP_G
 Cmin0, Cmax0 = min(Cc0, Ch0), max(Cc0, Ch0)
@@ -467,15 +496,21 @@ for _ in range(80):
     else: hi = mid
 UA0 = 0.5 * (lo + hi) * Cmin0
 dp_hot_side = 1 - (P_comb * (1 - 0.006)) / (P_C2 / (1 - 0.0) )   # C2 port + baffle + liner + NGV entry 0.6 %
+# E3 B1 seal buffer air, taken from the E2 drum (bleed port E2-104), cad_out/engine/E3/E3_calc_results.json seals.buffer_total_gs
+_e3c = os.path.join(os.path.dirname(SIM), 'cad_out', 'engine', 'E3', 'E3_calc_results.json')
+BUFFER_GS = json.load(open(_e3c)).get('seals', {}).get('buffer_total_gs', 1.6) if os.path.exists(_e3c) else 1.6
+BLEED = BUFFER_GS * 1e-3 / MA
 case = {}
 case['base (cycle model, 4.5 % combustor)'] = cycle_e2(UA=UA0)
 case['E2 pressure losses only'] = cycle_e2(dp_coll=dp_coll, dp_comb=dp_hot_side, UA=UA0)
 case['E2 bypass only (beta)'] = cycle_e2(beta=BETA, UA=UA0)
 case['E2 collector loss only'] = cycle_e2(dp_coll=dp_coll, UA=UA0)
-case['E2 complete (losses + beta + heat loss)'] = cycle_e2(beta=BETA, dp_coll=dp_coll, dp_comb=dp_hot_side, Q_loss_W=0.0, UA=UA0)
+case['E3 buffer-air bleed only'] = cycle_e2(bleed=BLEED, UA=UA0)
+case['E2 complete (losses + beta + heat loss)'] = cycle_e2(beta=BETA, dp_coll=dp_coll, dp_comb=dp_hot_side, Q_loss_W=0.0, UA=UA0,
+                                                           bleed=BLEED, dp_rec_c=DP_E4_COLD)
 R['cycle'] = {k: dict(P_el_kW=v['P_el'] / 1e3, eta_el_pct=v['eta'] * 100, mf_g_s=v['mf'] * 1e3, T_rec_out_C=v['T2r'] - 273.15,
                       eps=v['eps'], P3_bar=v['P3'] / 1e5, T_stack_C=v['T_stack'] - 273.15) for k, v in case.items()}
-R['cycle_UA_W_K'] = UA0; R['beta_recuperator_bypass'] = BETA; R['dp_hot_side_total_pct'] = dp_hot_side * 100
+R['cycle_UA_W_K'] = UA0; R['beta_recuperator_bypass'] = BETA; R['bleed_E3_buffer'] = dict(g_s=BUFFER_GS, frac=BLEED); R['dp_E4_cold_used'] = DP_E4_COLD; R['dp_hot_side_total_pct'] = dp_hot_side * 100
 
 # ----------------------------------------------------------------- 8. tunnel / bearing thermal (options a, b, c)
 TUN_PROF = [(0, 12.99), (2.0, 12.99), (2.0, 20.0), (7.03, 20.0), (16.53, 10.5), (92.96, 10.5), (95.3, 13.0), (99.3, 13.0), (99.3, 19.0),
@@ -620,8 +655,17 @@ def flange(G_mm, N_mm, n_b, d_b, lever_mm, t_mm, f_fl, S_bolt):
     return dict(W_kN=W / 1e3, Wm1_kN=Wm1 / 1e3, Wm2_kN=Wm2 / 1e3, bolt_area_req_mm2=A_req * 1e6, bolt_area_avail_mm2=n_b * A_root * 1e6,
                 sigma_ring_MPa=sig, f_allow_MPa=f_fl, ok=(n_b * A_root >= A_req) and sig <= 1.5 * f_fl)
 FL_MID = flange(2 * 120.75, 4.5, G['n_mid_bolts'], 8, 7.0, 6.0, f_aust(120.0, 380.0), 150.0)    # ~450 C, 1.4980 bolts S ~150 MPa
-FL_E3 = flange(137.0, 8.0, G['n_e3_bolts'], 8, 10.0, 10.0, f_hot, 110.0)                    # ~620 C, 1.4980 S ~110 MPa
-# nozzle reinforcement (area replacement, EN 13445-3 9.5 simplified): C2 port 67 x 110 on the D170 shell, box walls 3 mm
+FL_E3 = flange(sum(G['gasket_e3_r']), G['gasket_e3_r'][1] - G['gasket_e3_r'][0], G['n_e3_bolts'], G['d_e3_bolt'], 0.5 * G['pcd_e3'] - 0.5 * sum(G['gasket_e3_r']),
+               G['x_rear_ring'][1] - G['x_rear_ring'][0] - G['e3_spigot_depth'], f_hot, 110.0)   # ~620 C, 1.4980 (A286) studs S ~110 MPa;
+               # ring section = solid rear ring 15 mm minus the 3 mm spigot groove
+# C2 rectangular flange (E2/E4): mica/graphite sheet gasket 8 wide around the duct, 10 x M10 1.4980 studs (ASME VIII App.2 style)
+_cw, _ch = C2_BOX['x'][1] - C2_BOX['x'][0] + 8.0, C2_BOX['z'][1] - C2_BOX['z'][0] + 8.0       # gasket centre-line rectangle
+_bg = min(8.0 / 2, 6.35); _perim = 2 * (_cw + _ch)
+_Wm1 = PS * _cw * _ch + 2 * _bg * _perim * 2.0 * PS; _Wm2 = _bg * _perim * 20.0          # N (MPa x mm2)
+_Wc2 = max(_Wm1, _Wm2); _Ab = G['C2']['n_bolts'] * 52.3
+FL_C2 = dict(gasket_rect_mm=(_cw, _ch), W_kN=_Wc2 / 1e3, Wm1_kN=_Wm1 / 1e3, Wm2_kN=_Wm2 / 1e3, bolt_area_req_mm2=_Wc2 / 110.0, bolt_area_avail_mm2=_Ab,
+             max_bolt_pitch_mm=2 * (_cw + _ch) / G['C2']['n_bolts'], ok=_Ab >= _Wc2 / 110.0)
+# nozzle reinforcement (area replacement, EN 13445-3 9.5 simplified): C2 port opening (axial width) on the D170 shell, duct walls 3 mm
 d_open = C2_BOX['x'][1] - C2_BOX['x'][0]
 A_req_n = d_open * e_hot_req
 L_eff = math.sqrt((2 * G['r_case_i'] + G['t_case']) * G['t_case'])
@@ -630,7 +674,7 @@ P_test = max(1.25 * PS * f_cold / f_hot, 1.43 * PS)
 R['casing_mech'] = dict(PS_MPa=PS, f_cold_1_4404=f_cold, f_hot_time_indep=f_hot_ti, f_hot_creep=f_hot_creep, f_hot_design=min(f_hot, S_asme_304H),
                         S_ASME_304H=S_asme_304H, e_hot_req_mm=e_hot_req, e_hot_chosen=G['t_case'], e_drum_req_mm=e_drum_req, e_drum_chosen=G['t_drum'],
                         t_front_wall_req=t_front_req, t_front_wall=G['t_front_wall'], t_rear_plate_req=t_rear_req, t_rear_plate=G['t_rear_plate'],
-                        t_bulkhead_req_accident=t_bh_req, t_bulkhead=G['t_bh'], flange_mid=FL_MID, flange_E2E3=FL_E3,
+                        t_bulkhead_req_accident=t_bh_req, t_bulkhead=G['t_bh'], flange_mid=FL_MID, flange_E2E3=FL_E3, flange_C2_rect=FL_C2,
                         nozzle_C2_A_req_mm2=A_req_n, nozzle_C2_A_avail_mm2=A_avail_n, test_pressure_barg=P_test * 10,
                         PED='PS x V = %.1f bar.L < 25 (gas group 2) -> PED Art. 4(3) sound engineering practice' % (PS * 10 * 3.4))
 
@@ -664,7 +708,8 @@ R['insulation'] = dict(table=INS, chosen_hot_mm=T_HOT_INS, chosen_drum_mm=T_DRUM
                        Q_loss_hot_casing_W=Q_hot, Q_loss_drum_W=Q_drum, Q_bulkhead_leak_W=Q_bh, Q_inner_liner_front_leak_W=Q_li_front,
                        material='microporous (Promat MICROTHERM / Etex, BE) encapsulated, 0.5 mm 1.4301 cladding; AES blanket Morgan Superwool (UK) at joints')
 Q_regen = (Q_bh + Q_li_front) * 0.9         # heat moved from hot to cold air before the recuperator: ~90 % of it is lost to the combustor
-case['E2 complete (losses + beta + heat loss)'] = cycle_e2(beta=BETA, dp_coll=dp_coll, dp_comb=dp_hot_side, Q_loss_W=Q_hot + Q_regen, UA=UA0)
+case['E2 complete (losses + beta + heat loss)'] = cycle_e2(beta=BETA, dp_coll=dp_coll, dp_comb=dp_hot_side, Q_loss_W=Q_hot + Q_regen, UA=UA0,
+                                                           bleed=BLEED, dp_rec_c=DP_E4_COLD)
 c0, c1 = case['base (cycle model, 4.5 % combustor)'], case['E2 complete (losses + beta + heat loss)']
 R['cycle'] = {k: dict(P_el_kW=v['P_el'] / 1e3, eta_el_pct=v['eta'] * 100, mf_g_s=v['mf'] * 1e3, T_rec_out_C=v['T2r'] - 273.15,
                       eps=v['eps'], P3_bar=v['P3'] / 1e5, T_stack_C=v['T_stack'] - 273.15) for k, v in case.items()}
@@ -685,10 +730,11 @@ GR['liner axial, pin x50 -> inner liner end x98'] = (98 - 50) * A16 * (max(p['Tw
 GR['liner radial outer r55'] = 55 * A16 * (max(p['Tw'] for p in prof_out) - 293)
 GR['casing radial r88'] = 88 * A18 * (Tc_b - 293)
 GR['rear ring bore r38 (1.4948) vs NGV rib r37.95 (IN713LC, ~720 C)'] = 38.1 * A18 * (Tc_b - 293) - 37.95 * 15.5e-6 * (720 + 273 - 293)
-GR['C2 flange centre: dx'] = (65 - x_fix) * A17 * 0 + (65 - 28) * A18 * (Tc_b - 293) + GR['collector axial (fixed leg -> mid flange)']
-GR['C2 flange centre: dy (nozzle 1.4948 ~560 C, length 185)'] = 185 * A18 * (T2R - 293)
-GR['C1 flange centre: dy (nozzle 1.4404 165 C, length 185)'] = 185 * A17 * (T2 - 293)
-GR['C1 flange centre: dx'] = (-7 - x_fix) * A17 * (T2 - 293)
+_xc2 = 0.5 * sum(G['C2']['rect_x']); _xc1 = G['C1']['round_centre_xz'][0]
+GR['C2 flange centre: dx'] = (_xc2 - 28) * A18 * (Tc_b - 293) + GR['collector axial (fixed leg -> mid flange)']
+GR['C2 flange centre: dy (duct 1.4948 ~560 C, length %.0f)' % G['C2']['face_y']] = G['C2']['face_y'] * A18 * (T2R - 293)
+GR['C1 flange centre: dy (nozzle 1.4404 165 C, length %.0f)' % G['C1']['face_y']] = G['C1']['face_y'] * A17 * (T2 - 293)
+GR['C1 flange centre: dx'] = (_xc1 - x_fix) * A17 * (T2 - 293)
 R['thermal_growth_mm'] = GR
 
 # ----------------------------------------------------------------- 13. gas manifold & supply
@@ -696,9 +742,12 @@ rho_ng_man = rho(P_man, 330.0, R_NG)
 Q_ng = MF / rho_ng_man
 def v_in(d_mm): return Q_ng / (math.pi / 4 * (d_mm * 1e-3) ** 2)
 GAS = dict(P_manifold_barg=(P_man - P_AMB) / 1e5, supply_min_barg=3.5, regulator_margin_bar=3.5 - (P_man - P_AMB) / 1e5,
-           Nm3_h=MF / 0.717 * 3600, DN15_ID_mm=16.1, V_DN15=v_in(16.1), feed_tube='radial drilled rib Ø5 (bulkhead cold face, south)', V_feed=v_in(5.0),
-           ring='Ø7x0.8 (ID 5.4) torus r37.5 on the bulkhead', V_ring_half=v_in(5.4) / 2, stem='Ø6x0.8 (ID 4.4) x8', V_stem=v_in(4.4) / 8,
-           maldistribution_pct=100 * 0.5 * rho_ng_man * (v_in(5.4) / 2) ** 2 / (INJ['dP_gas_bar'] * 1e5) / 2,
+           Nm3_h=MF / 0.717 * 3600, DN15_ID_mm=16.1, V_DN15=v_in(16.1),
+           feed_tube='Ø%.0fx%.0f 316L, drum boss x %.0f south -> torus (DIN 2353 L%.0f)' % (G['d_feed'], G['t_feed'], G['x_gas_boss'], G['d_feed']),
+           V_feed=v_in(G['d_feed'] - 2 * G['t_feed']),
+           ring='Ø%.0fx%.1f torus r%.1f at x %.1f on the bulkhead cold face' % (G['d_manifold'], G['t_manifold'], G['r_manifold'], G['x_manifold']),
+           V_ring_half=v_in(G['d_manifold'] - 2 * G['t_manifold']) / 2, stem='Ø6x0.8 (ID 4.4) x%d' % G['n_inj'], V_stem=v_in(4.4) / G['n_inj'],
+           maldistribution_pct=100 * 0.5 * rho_ng_man * (v_in(G['d_manifold'] - 2 * G['t_manifold']) / 2) ** 2 / (INJ['dP_gas_bar'] * 1e5) / 2,
            gas_side_stiffness_dPgas_over_P=INJ['dP_gas_bar'] * 1e5 / P_comb)
 R['gas'] = GAS
 
@@ -716,8 +765,6 @@ LO['exciter'] = 'capacitive-discharge industrial exciter >= 0.5 J/spark, 10-20 s
 R['ignition'] = LO
 
 # ----------------------------------------------------------------- 15. outputs
-G['C1'] = dict(box=C1_BOX, round_centre_xz=(-7.0, -90.0), DN=100, pipe_od=114.3, pipe_t=3.05, face_y=185.0, y_box=(60.0, 145.0), y_round=168.0)
-G['C2'] = dict(box=C2_BOX, round_centre_xz=(68.0, 72.0), DN=125, pipe_od=139.7, pipe_t=3.4, face_y=185.0, y_box=(30.0, 145.0), y_round=168.0)
 G['holes'] = {k: dict(n=HOLES[k]['n'], d=HOLES[k]['d_mm'], x=STATIONS.get(k)) for k in ('outer_film', 'secondary', 'dilution', 'inner_film', 'dome_cool')}
 G['injector'] = dict(x_union=G['x_bh_back'], x_backplate=(G['x_bh_back'] + G['t_bh_ins'] + 2.0, G['x_bh_back'] + G['t_bh_ins'] + 5.0), n=INJ['n'], r=G['r_inj'], cup_id=INJ['cup_id'], cup_len=INJ['cup_len'], cb_d=INJ['centre_body_d'], n_vanes=INJ['n_vanes'],
                      vane_angle=INJ['vane_angle_deg'], r_vane_exit=INJ['r_vane_exit'], slot_h=max(INJ['slot_h_mm'], 2.0),
@@ -736,7 +783,7 @@ if __name__ == '__main__':
     P('\n-- pressure budget --')
     P('13 channels exit %.0f m/s, q %.1f kPa | collector: wakes %.1f + faired turn/diffuser/dump %.1f + drum %.1f + C1 transition %.1f = %.1f kPa (%.2f %%); pure dump would be %.1f kPa'
       % (c['V_channels'], c['q_channels_kPa'], c['dP_mix_wakes_kPa'], c['dP_turn_kPa'] - c['dP_mix_wakes_kPa'], c['dP_drum_kPa'], c['dP_C1_transition_kPa'], c['dP_total_kPa'], c['dp_total_pct'], c['dP_upper_bound_pure_dump_kPa']))
-    P('C1 %.3f bar (DN100 %.1f m/s) -> recuperator -2.5 %% -> C2 %.3f bar (DN125 %.1f m/s, port %.1f m/s, -%.2f kPa) -> baffle -%.2f kPa -> plenum %.3f -> liner %.1f %% -> combustor %.3f bar'
+    P(('C1 %.3f bar (DN100 %.1f m/s) -> recuperator -' + '%.2f' % (DP_E4_COLD * 100) + ' %% (E4) -> C2 %.3f bar (DN125 %.1f m/s, port %.1f m/s, -%.2f kPa) -> baffle -%.2f kPa -> plenum %.3f -> liner %.1f %% -> combustor %.3f bar')
       % (p['P_C1'], c['V_C1_DN100'], p['P_C2'], p['V_C2_DN125'], p['V_C2_port'], p['dP_C2_port_kPa'], p['dP_baffle_kPa'], p['P_hot_plenum'], p['dP_liner_hot_pct'], p['P_combustor']))
     P('cold inner annulus %.3f bar -> inner liner dp %.1f %% ; bulkhead dp %.3f bar' % (p['P_cold_inner_annulus'], p['dP_liner_cold_side_pct'], p['dP_bulkhead_bar']))
     P('\n-- air split (fraction of compressor air) and holes --')

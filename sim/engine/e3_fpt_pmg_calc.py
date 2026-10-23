@@ -16,7 +16,7 @@ Outputs:  cad_out/engine/E3/E3_calc_results.json   geometry + results (read by t
 Second pass: the CAD script writes cad_out/engine/E3/E3_massprops.json (measured mass / inertia of rotor parts);
 re-running this script then uses the CAD values for J and the rotordynamic model.
 
-Frames: ENG (mm, x downstream = east, y north, z up; x = 0 tunnel front face), ROOF = (1.680 + x/1000, 7.850 + y/1000,
+Frames: ENG (mm, x downstream = east, y north, z up; x = 0 tunnel front face), ROOF = (1.880 + x/1000, 7.850 + y/1000,
 0.600 + z/1000) m.   Units inside: SI unless a name ends in _mm.
 Inputs: sim/gg_turbine_design.json (GG turbine exit), sim/life_study.point() (cycle back-pressure, required shaft power).
 Loss model style = sim/gg_turbine_meanline.py (Soderberg + aspect ratio + Reynolds, TE blockage, tip clearance).
@@ -100,7 +100,7 @@ ETA_PT_CYCLE, ETA_MECH_CYCLE = 0.78, 0.985
 # ---------------------------------------------------------------------------------------------------------------
 X = dict(
     id0=119.3,            # interduct inlet = stationary hub lip (1.0 mm behind E1 rotor TE at 118.3)
-    flangeE2=116.0,       # E2/E3 flange mating face = E2 rear-ring face (sim/engine/e2_design.json: x_e3_flange 106-116, OD 176, PCD 160, 16 x M8, spigot d120 x 3)
+    flangeE2=116.0,       # E3 flange face = E2 rear-ring face x 115.0 + 1.0 mm gasket (sim/engine/e2_design.json: x_e3_face 115, OD 176, PCD 160, 16 x M8, spigot d120 x 3)
     tc_in=133.0,          # FPT-inlet thermocouples TE-510A/B + P45 static tap PT-524
     drum0=145.0,          # collector drum west wall (bolted to the interduct mid-flange)
     ngv_le=189.3,         # interduct exit = FPT NGV leading edge (interduct length 70.0)

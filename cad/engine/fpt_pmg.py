@@ -8,7 +8,8 @@
 #     E3_assembly.FCStd, E3_interfaces.json, E3_massprops.json (rotor mass properties -> re-run the calc for J/rotordynamics),
 #     E3_section.png (z = 0 section with the GG turbine/nut/NGV/shaft), E3_checks.json (interference report),
 #     docs/bom/engine_E3_bom.csv (BOM with CAD masses).
-# ROOF placement: X = 1.680 + x/1000, Y = 7.850 + y/1000, Z = 0.600 + z/1000 (m).
+# ROOF placement: X = 1.880 + x/1000, Y = 7.850 + y/1000, Z = 0.600 + z/1000 (m)  (docs/06 sec.1; engine moved 0.200 m east 2026-10-23
+# so that the E4 core clears the H1 spool).
 import FreeCAD as App, Part, os, json, math, sys, csv
 App.ParamGet('User parameter:BaseApp/Preferences/Document').SetBool('CreateBackupFiles', False)
 V = App.Vector
@@ -22,7 +23,7 @@ FAST = os.environ.get('E3_FAST', '0') == '1'
 CR = json.load(open(os.path.join(OUT, 'E3_calc_results.json')))
 G_ = CR['geometry']; X = G_['X']; GEO = G_['GEO']; L = G_['layout']; PM = G_['pmg']; PS = G_['pmg_slot']
 B1, B2 = G_['BRG1'], G_['BRG2']; ROT = G_['ROT_FPT']; ZN, ZR = G_['Z_ngv'], G_['Z_rot']
-ROOF0 = (1680.0, 7850.0, 600.0)                    # ENG origin in ROOF (mm)
+ROOF0 = (1880.0, 7850.0, 600.0)                    # ENG origin in ROOF (mm)
 def roof(p): return [round((ROOF0[0] + p[0]) / 1000, 4), round((ROOF0[1] + p[1]) / 1000, 4), round((ROOF0[2] + p[2]) / 1000, 4)]
 log = []
 def say(*a):
@@ -528,18 +529,19 @@ IF.append(itf('IF-E2E3 flange (E3 front) - reconciled with E2', [X['flangeE2'], 
               'E3 ring IN718 %.0f thick (x %.0f-%.0f); male spigot OD 120 h7 x 3 (x %.0f-%.0f) into the E2 recess (e3_spigot_d 120 / depth 3); '
               'gasket mean dia 137 x 8 wide (E2 flange calc: W 34.4 kN, bolt area req 313 mm2 / avail 525 mm2), KLINGER Milam PSS 1 mm or Thermiculite 815; '
               'gas path ID 70.7 (r 35.35) at x 119.3' % (fr_x0, FR['OD'], FR['PCD'], FR['n'], FR['hole'], FR['phase'], FR['t'], fr_x0, fr_x0 + FR['t'], fr_x0 - 3, fr_x0),
-              'E2 pressure-casing rear flange per sim/engine/e2_design.json (x_e3_flange 106-116, r_e3_flange_o 88, pcd_e3 160, n_e3_bolts 16, e3_spigot_d 120 x 3, '
-              'seal_groove_x 112.5-114.5 r 40); cad_out/engine/E2/E2_interfaces.json still to be published by E2 - bolt angular phase and gasket type to confirm',
-              status='ADOPTED from E2 (2026-10-21). Superseded E3 proposal: face x 122, OD 150, PCD 135, 12 x M6 (bolt root area 12 x 17.9 = 215 mm2 < 313 mm2 required)',
+              'E2 rear ring (cad/engine/combustor_casing.py, cad_out/engine/E2/E2_interfaces.json "IF-E2E3 rear flange"): E2 face x 115.0 + 1.0 mm gasket E3-605 '
+              '= E3 face x 116.0; 16 x M8 blind tapped in the E2 ring at PCD 160, phase 11.25 deg (= E3 holes); annular groove r 55.5-60.0 x 112-115 for the '
+              'E3 spigot; piston ring E2-171 in the E2 bore groove x 112.5-114.5 r 40',
+              status='COINCIDENT with E2 (E2 published 2026-10-23). Superseded E3 proposal: face x 122, OD 150, PCD 135, 12 x M6',
               slip_joint='E3 slip bore ID 73.2 (x %.1f-119.3, radial clearance 0.25) over the GG NGV shroud OD 72.7 (x 110.8-118.8); the split piston ring is in the '
                          'E2 rear ring (E2 seal groove x 112.5-114.5, r 40) - no ring on the E3 side; separates casing air 2.9 bar from the 1.25 bar gas path' % fr_x0,
               hub_lip='stationary hub cone lip r 17.8-19.0 at x 119.3; 1.0 mm axial gap to the E1 rotor hub TE (x 118.3, r 19.0); clears GG nut (x 118.8-126.8) and shaft end (127.8)'))
 IF.append(itf('H1 exhaust outlet to recuperator hot inlet', [XH1, Y_FL, 0], [0, 1, 0],
               'DN250 PN6 EN 1092-1 type 01 plate flange (OD 375, PCD 335, 12 x M16, holes 18), face y = %.0f; pipe 273 x 6.3; '
               'gas 0.397 kg/s, 611 C, static %.0f Pa (%.3f bar abs), V %.1f m/s' % (Y_FL, st['p5'], st['p5'] / 1e5, st['V5']),
-              'E4 recuperator hot-side inlet H1. E4 (2026-10-21) assumed ENG x 450 / face y 190: E3 fixes x = %.0f, face y = 250 (= E3/E4 envelope '
-              'boundary ROOF 8.100); E4 spool 8.100 -> elbow 8.365 = 265 mm (>= 165 required); flange OD clears E4 C1 (x 15, z 137.5) by 72 mm and C2 (x 60, z -167.5) by 35 mm. '
-              'DN250 bellows on the E4 side (611 C, E3 growth ~+1.8 mm x / +1.5 mm y)' % XH1))
+              'E4 recuperator hot-side inlet spool E4-SP-H1 (cad/engine/recuperator.py reads this ENG position): flange, IN625 bellows, 3-piece mitre elbow R150 '
+              'down into the E4 inlet plenum. E4 core moved relative to the engine (ROOF X = 1.880 + x) so the spool passes east of the core; '
+              'TOT is measured here by TE-505A/B (E4 has no TE-505 boss). DN250 bellows on the E4 side (611 C, E3 growth ~+1.8 mm x / +1.5 mm y)'))
 IF.append(itf('Oil supply B1 (jets + SFD)', [266.0, 0, RJ_O + 10], [0, 0, 1], 'boss M10x1 / 6 mm tube; %.2f L/min at %.1f barg, <= 75 C (TE-708)' % (th_['oil_B1_lpm'], th_['oil_supply_barg']),
               'E5 closed-loop oil system (PT-701); route through cone window', heat_W=round(th_['Q_B1_oil_W'])))
 IF.append(itf('Oil supply B2 (jets + SFD)', [L['b2'], 0, 46.0], [0, 0, 1], 'boss M10x1 / 6 mm tube; %.2f L/min at %.1f barg' % (th_['oil_B2_lpm'], th_['oil_supply_barg']),
@@ -548,7 +550,7 @@ IF.append(itf('Oil scavenge B1 sump', [266.0, 0, -(RJ_O + 10)], [0, 0, -1], 'bos
 IF.append(itf('Oil scavenge B2 sump', [L['b2'], 0, -46.0], [0, 0, -1], 'boss M16x1.5 / 12 mm tube, gravity drain', 'E5 oil tank'))
 IF.append(itf('Buffer air to B1 seal annulus', [266.0, (RJ_O + 10) * 0.707, (RJ_O + 10) * 0.707], [0, 0.707, 0.707],
               'boss M8x1 / 4 mm tube; %.1f g/s from compressor delivery (P2 ~3.0 bar) through a %.1f mm orifice + 40 um filter' % (CR['seals']['buffer_total_gs'], CR['seals']['buffer_orifice_mm']),
-              'E2 compressor-delivery bleed port (to be added by E2)'))
+              'E2 compressor-delivery bleed port on the E2 drum (x -8, azimuth 150 deg, DIN 2353 L6 fitting E2-509; E2_interfaces.json)'))
 IF.append(itf('Glycol inlet (PMG jacket)', [392.0, 0, -(RJ_O + 10)], [0, 0, -1], 'G1/2 boss; %.0f L/min 30 %% PG, design 40 C (max 55 C), dp %.0f kPa, heat %.0f W' % (8.0, pmr['dp_glycol'] / 1e3, pmr['Q_glycol']),
               'E5 glycol loop M-751 / DC-1 / HX-4 (TE-GLY)'))
 IF.append(itf('Glycol outlet (PMG jacket)', [298.0, 0, RJ_O + 10], [0, 0, 1], 'G1/2 boss (vent at the high point)', 'E5 glycol loop (TE-754)'))
@@ -561,7 +563,7 @@ for t, s_ in SENS.items():
     IF.append(itf('Sensor %s %s' % (t, s_['name']), s_['pos'], s_['dir'], s_['desc'], 'B2 / B1 / B3 per docs/electrical/02_io_list'))
 IF.append(itf('Foot front (flexure, axially compliant)', [XF1, 0, Z_SKID], [0, 0, -1], 'base 48 x 260 x 10, 4 x slotted M12 (y +-100)', 'E5 skid rail (top assumed ENG z -400 = ROOF Z 0.200)'))
 IF.append(itf('Foot rear (flexure)', [XF2, 0, Z_SKID], [0, 0, -1], 'base 50 x 220 x 10, 4 x M12 (y +-90)', 'E5 skid rail; axial fixed point of the engine = E2 casing (E2/E5 to confirm)'))
-info = dict(subsystem='E3 interduct + FPT + FPT/PMG rotor + bearings + PMG + exhaust collector', frame='ENG mm; ROOF = (1.680 + x/1000, 7.850 + y/1000, 0.600 + z/1000) m',
+info = dict(subsystem='E3 interduct + FPT + FPT/PMG rotor + bearings + PMG + exhaust collector', frame='ENG mm; ROOF = (1.880 + x/1000, 7.850 + y/1000, 0.600 + z/1000) m',
             source='cad/engine/fpt_pmg.py + sim/engine/e3_fpt_pmg_calc.py', envelope_ENG_mm=[[round(bb.XMin, 1), round(bb.YMin, 1), round(bb.ZMin, 1)], [round(bb.XMax, 1), round(bb.YMax, 1), round(bb.ZMax, 1)]],
             envelope_ROOF_m=[roof([bb.XMin, bb.YMin, bb.ZMin]), roof([bb.XMax, bb.YMax, bb.ZMax])],
             rotor=dict(N_design_rpm=60000, N_gov_max_rpm=65000, N_trip_rpm=71500, N_overspeed_design_rpm=72000, N_spin_test_rpm=78000,
@@ -614,7 +616,7 @@ try:
             if lps: ax.add_patch(patch(lps, COL[PARTS[t]['group']], 0.75 if PARTS[t]['group'] != 'hot' else 0.6))
         ax.set_xlim(*xl); ax.set_ylim(*yl); ax.set_aspect('equal'); ax.grid(alpha=0.25)
         ax.axhline(0, c='k', lw=0.5, ls='-.')
-        ax.set_xlabel('ENG x [mm] (east, downstream)  -  ROOF X = 1.680 + x/1000'); ax.set_ylabel('ENG y [mm] (north)')
+        ax.set_xlabel('ENG x [mm] (east, downstream)  -  ROOF X = 1.880 + x/1000'); ax.set_ylabel('ENG y [mm] (north)')
     A = axs[0]
     lab = [(150, 60, 'E3-101 interduct + NGV (SLM IN718)'), (209, 72, 'E3-103 FPT blisk (19)'), (236, 140, 'E3-102 shroud / diffuser W wall'),
            (262, 150, 'E3-110 collector drum'), (300, 270, 'H1: DN250 PN6 -> E4 recuperator (x 300, face y=+250, ROOF 8.100)'), (248, -40, 'B1 71905 hybrid (SFD)'),
