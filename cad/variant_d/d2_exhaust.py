@@ -28,6 +28,7 @@ L_STUB = 40.0
 FL = C['flange']                               # PN6 DN200: D 320, K 280, 8 x 18, b 20
 Z_FL1 = ZC_EL + L_STUB; Z_FL0 = Z_FL1 - FL['b']
 JK = 50.0                                      # insulation thickness
+Y_LUG = 205.0                                  # lug tip (frame rails at y +/-190, outside the jacket r 159.6)
 
 parts = {}
 # ---------------------------------------------------------------- EX-111 inlet V-band flange ring (follows the wheel)
@@ -79,8 +80,8 @@ parts['EX-112_Flange_DN200_PN6'] = (fl, '1.4541', 'EN 1092-1 type 01 plate flang
 lugs = []
 for sgn in (1, -1):
     y0 = R_EO + 0.1
-    lug = Part.makeBox(24, 165 - y0, 12, V(X_E0 + 8, y0 if sgn > 0 else -165, -6))
-    slot = Part.makeBox(14, 13, 20, V(X_E0 + 13, 146 if sgn > 0 else -159, -10))
+    lug = Part.makeBox(24, Y_LUG - y0, 12, V(X_E0 + 8, y0 if sgn > 0 else -Y_LUG, -6))
+    slot = Part.makeBox(14, 13, 20, V(X_E0 + 13, 183.5 if sgn > 0 else -196.5, -10))
     lugs.append(lug.cut(slot))
 parts['EX-113_Support_Lugs'] = (Part.makeCompound(lugs), '1.4828',
     '2 x 12 mm 1.4828 plates at the centre-line (y +/-), TIG to the spool, slot 14 (x) x 13 for an M12 shoulder bolt: x-sliding, sit on FR-131 pads')
@@ -111,7 +112,7 @@ meta = dict(subsystem='EXHAUST', frame='ENG mm', calc='sim/variant_d/d2_intake_e
                 inlet=dict(x=X6, ID=2 * R_IN, joint='V-band OD 100 on the RT-121 shroud end (turbine side to add a V-band flange)'),
                 outlet=dict(centre=[round(XC_EL, 1), 0.0, round(Z_FL1, 1)], dir='+z', std='EN 1092-1 PN6 DN200 (D320 K280 8 x M16)',
                             downstream='DN200 bellows (axial + lateral) and its own duct support - plant side'),
-                lugs=dict(x=[X_E0 + 8, X_E0 + 32], y=[R_EO, 165], z=[-6, 6], slot_centre_x=X_E0 + 20, slide='x'),
+                lugs=dict(x=[X_E0 + 8, X_E0 + 32], y=[R_EO, Y_LUG], slot_centre_y=190.0, z=[-6, 6], slot_centre_x=X_E0 + 20, slide='x'),
                 drain=dict(x=X_E0 + 12, dir='-z', size='G1/2'), thermocouple=dict(x=X_C0 + 50, angle_deg=45, size='M14x1.5'),
                 p_taps=[dict(x=X_C0 + 10, angle_deg=135), dict(x=X_E0 + 20, angle_deg=135)],
                 stations=dict(cone=[X_C0, X_C1], expansion=[X_C1, X_E0], spool=[X_E0, X_EL], elbow_in=X_EL, elbow_R=R_B)))
