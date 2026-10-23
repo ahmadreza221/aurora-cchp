@@ -62,21 +62,21 @@ GEN = dict(stack=(-241.0, -161.0), stator_od=88.0, stator_id=39.0, slots=12,
            front_shield=(-272.0, -258.0), front_cover=(-282.0, -272.0), rear_shield=(-146.0, -123.0))
 # generator through-shaft d10 with integral collar + quill + quill socket hub; bearings, seal spacers and the magnet carrier
 # slide on from the FRONT and are clamped by the front KM0 locknut against the collar
-GSHAFT = [  # (x0, x1, radius)
-    ('M10x0.75 thread (front locknut KM0)', -277.0, -269.0, 5.0),
+GSHAFT = [  # (x0, x1, radius) - generator-pod detail rev (d2g, 2026-10-23): collar 8 long with 3 teeth, quill waist 54 mm
+    ('M10x0.75 thread (precision locknut) + AF5 turning socket in the end face', -281.0, -269.0, 5.0),
     ('d10 through-shaft (front IR, seal spacer, magnet carrier, seal spacer, rear IR)', -269.0, -133.0, 5.0),
-    ('d14 collar (IR shoulder, 2 labyrinth teeth to d15.2)', -133.0, -129.0, 7.0),
-    ('fillet d14 -> d6', -129.0, -126.0, 4.5),
-    ('quill waist d6', -126.0, -68.0, 3.0),
+    ('d14 collar (IR shoulder, 3 labyrinth teeth to d15.2)', -133.0, -125.0, 7.0),
+    ('fillet d14 -> d6', -125.0, -122.0, 4.5),
+    ('quill waist d6', -122.0, -68.0, 3.0),
     ('transition d6 -> d12', -68.0, -60.0, 4.5),
-    ('socket hub OD12, internal AF6 x 12 (nitrided)', -60.0, -45.5, 6.0),
+    ('socket hub OD12, internal AF6 x 12 (rotary broached, plasma nitrided)', -60.0, -45.5, 6.0),
 ]
 GCLAMP = [  # clamped parts on the generator through-shaft (x0, x1, ri, ro)
-    ('KM0 locknut', -273.0, -269.0, 5.0, 9.0),
-    ('front seal spacer d14 (3 teeth)', -263.0, -257.0, 5.0, 7.0),
-    ('rear seal spacer d14 (3 teeth)', -145.0, -139.0, 5.0, 7.0),
+    ('precision locknut M10x0.75 (OD 18)', -275.0, -269.0, 5.0, 9.0),
+    ('seal spacer front d14 (3 teeth)', -263.0, -257.0, 5.0, 7.0),
+    ('seal spacer rear d14 (3 teeth)', -145.0, -139.0, 5.0, 7.0),
 ]
-QUILL = dict(waist_d=6.0, waist=(-126.0, -68.0), hex_AF=6.0, hex=(-56.0, -44.5), socket=(-57.5, -45.5), float_mm=0.5)
-QUILL_GUARD = dict(x0=-108.0, x1=-64.0, ri=8.5, ro=10.0, flange_r=16.0)
+QUILL = dict(waist_d=6.0, waist=(-122.0, -68.0), hex_AF=6.0, hex=(-56.0, -44.5), socket=(-57.5, -45.5), float_mm=0.5)
+QUILL_GUARD = dict(x0=-116.0, x1=-64.0, ri=8.5, ro=10.0, flange_r=10.0)   # plain tube 20 x 1.5 pressed 8 mm into the housing rear face
 TBOX = dict(x=(-232.0, -168.0), y=(-26.0, 26.0), z=(55.0, 85.0))
 GLYCOL_PORTS = (-250.0, -152.0)

@@ -7,6 +7,7 @@ import FreeCAD as App, Part, os, sys, json, glob, math, itertools
 HERE = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() else os.path.join(os.getcwd(), 'cad', 'variant_d')
 sys.path.insert(0, HERE)
 import d2r_layout as L
+import d2g_layout as GL
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 D2 = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2')
 CORE = os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts')
@@ -23,7 +24,7 @@ POD_PARTS = ['D-101_Generator_Housing_Jacket', 'D-102_Generator_Front_Cap']     
 PARTNER = ('INTAKE', 'EXHAUST', 'FRAME')                                            # intake/exhaust/frame agent parts (d2_*.py), if built
 
 shapes = {}
-for grp in ('ROTOR', 'TURBINE', 'GENERATOR'):
+for grp in ('ROTOR', 'TURBINE', 'GENERATOR', 'POD'):      # POD = G-200 housing + G-202 front cover (d2g rev pod shell)
     for f in sorted(glob.glob(os.path.join(D2, grp, '*.step'))):
         shapes['D2R/' + os.path.basename(f)[:-5]] = Part.read(f)
 for f in sorted(glob.glob(os.path.join(CORE, '*.step'))):
@@ -37,10 +38,15 @@ for f in sorted(glob.glob(os.path.join(CORE, '*.step'))):
         sh = Part.makeCompound(keep)
         print('SupplyLines: dropped %d v13A bearing lube lines' % res_drop)
     shapes['v13A/' + n] = sh
-for n in POD_PARTS:
-    f = os.path.join(POD, n + '.step')
-    if os.path.exists(f):
-        shapes['pod/' + n] = Part.read(f)
+if not glob.glob(os.path.join(D2, 'POD', 'G-2*.step')):  # concept pod shell only if the d2g housing is not built
+    for n in POD_PARTS:
+        f = os.path.join(POD, n + '.step')
+        if os.path.exists(f):
+            shapes['pod/' + n] = Part.read(f)
+AUX_REPORT = os.environ.get('D2R_CHECK_AUX') == '1'      # AUX parts: report-only (paused agent; ports moved in the d2g rev)
+if AUX_REPORT:
+    for f in sorted(glob.glob(os.path.join(D2, 'AUX', '*.step'))):
+        shapes['AUX/' + os.path.basename(f)[:-5]] = Part.read(f)
 for grp in PARTNER:
     for f in sorted(glob.glob(os.path.join(D2, grp, '*.step'))):
         shapes['D2/' + os.path.basename(f)[:-5]] = Part.read(f)
@@ -51,6 +57,10 @@ names = sorted(shapes)
 for a, b in itertools.combinations(names, 2):
     if not (a.startswith('D2R') or b.startswith('D2R')):
         continue                                            # core-vs-core and pod-vs-core are not ours
+    if AUX_REPORT and not (a.startswith('AUX') or b.startswith('AUX')):
+        continue
+    if AUX_REPORT and not ('GENERATOR' in a or 'GENERATOR' in b or '/G-2' in a or '/G-2' in b or '/G-1' in a or '/G-1' in b):
+        continue
     A, B = shapes[a], shapes[b]
     ba, bb = A.BoundBox, B.BoundBox
     if not ba.intersect(bb):
@@ -71,12 +81,18 @@ for a, b in itertools.combinations(names, 2):
         if d < TOUCH_MM:
             res['contacts'].append(dict(a=a, b=b, gap_mm=round(d, 3)))
 print('checked pairs %d, overlaps %d, contact faces %d' % (res['checked_pairs'], len(res['overlaps']), len(res['contacts'])))
-json.dump(res, open(os.path.join(D2, 'd2r_check.json'), 'w'), indent=1)
+json.dump(res, open(os.path.join(D2, 'd2r_check_aux.json' if AUX_REPORT else 'd2r_check.json'), 'w'), indent=1)
+if AUX_REPORT:
+    sys.exit(0)
 
 # ------------------------------------------------------------------ interfaces (ENG mm; ROOF = 1.880 + x/1000, 7.850 + y/1000, 0.600 + z/1000)
 def roof(x, y=0.0, z=0.0):
     return [round(1.880 + x / 1000, 4), round(7.850 + y / 1000, 4), round(0.600 + z / 1000, 4)]
 
+try:
+    GJ = json.load(open(os.path.join(D2, 'GENERATOR', 'd2r_generator_parts.json')))
+except Exception:
+    GJ = {}
 I = dict(
     title='GR180 D2R rotor / turbine / generator interfaces', frame='ENG mm (x engine axis downstream, z up); ROOF m via X = 1.880 + x/1000 (engine-frame EP-1 2026-10-23)',
     exhaust_start=dict(x=L.EXHAUST_START['x'], ID_mm=L.EXHAUST_START['ID'], flange_OD_mm=L.EXHAUST_START['flange_OD'],
@@ -89,14 +105,19 @@ I = dict(
                                 note='turbine housing carries the hot end on the FRAME slide pedestals; the 0.3 mm casing sheet must not carry it'),
     turbine_housing_envelope=dict(x=[L.HOUSING['x0'], L.HOUSING['x1']], OD=2 * L.HOUSING['shell_ro'], pads_y=L.HOUSING['mount_pad']['y_out']),
     tit_probe=dict(x=138.0, z_top=L.HOUSING['shell_ro'] + 7.0, thread='M8x1 boss, K-type 3 mm sheathed, tip in the plenum at r ~68'),
-    generator_pod=dict(bore_r=L.POD['bore_r'], internals_x=[-281.0, -123.0], rear_plate_contact_x=-123.0,
-                       terminal_box=dict(x=list(L.TBOX['x']), y=list(L.TBOX['y']), z=list(L.TBOX['z']), cable='3 x 10 mm2 + PE, M32 gland, rear face'),
-                       glycol_ports=dict(x=list(L.GLYCOL_PORTS), size='G1/4, top (z +55), 1.5-2 L/min 50/50 glycol, 35-40 C in'),
-                       quill_guard=dict(x=[L.QUILL_GUARD['x0'], L.QUILL_GUARD['x1']], OD=2 * L.QUILL_GUARD['ro'])),
+    generator_pod=dict(rev='d2g 2026-10-23 (buildable detail)', housing='G-200 x -260..-108 OD 110, front flange OD 128 at x -260..-252; G-202 front cover x -286..-258',
+                       mass_kg=GJ.get('pod_mass_kg'), x_cg=GJ.get('pod_x_cg'), cradle='FR-170 at x -220..-190 on OD 110 (no bosses there); re-set the FR-171 jack for the new mass',
+                       rear_face=dict(x=-108.0, strut_roots='3 x M6 Helicoil 2D at r 51.2, 90/210/330 deg', fairing='3 x M4 Helicoil at r 45.25, 30/150/270 deg',
+                                      quill_guard='tube 20 x 1.5 pressed in a d20 H8 counterbore, x -116..-64'),
+                       intake_lip_seal='x -130..-128 on OD 110 (no bosses at x > -131)',
+                       terminal_box=dict(x=list(GL.TBOX['x']), y=list(GL.TBOX['y']), z=[GL.TBOX['z_gasket'][0], GL.TBOX['z_lid'][1]],
+                                         power_gland='M25x1.5 on the front face (x -210), y 0, z 76', signal_gland='M16x1.5 on the +y side, x -180, z 76'),
+                       ports=GJ.get('ports'), moved_ports=GL.MOVED_PORTS,
+                       quill=dict(socket_x=list(L.QUILL['socket']), withdraw_travel_mm=13, waist='d6 x 54')),
     oil=dict(core_front_jet='drilled in tunnel flange (top), feed from the outside through a diffuser vane passage (v13A supply-line route)',
              core_rear_feed='tube d4x0.5 along the tunnel top (r 14.5) in the compressor-air annulus',
              core_scavenge='front: tunnel flange bottom port; rear: tube d6x0.5 along the tunnel bottom; both to the scavenge pump',
-             generator='jets from the top of each end shield, drains to the pod bottom (x -266 / -136, z -45), G1/8 scavenge ports',
+             generator='jets M8x1 at the top (G-202 x -276, G-200 x -136) into the SFD land, drains G1/8 at the bottom (x -277 / -141), 0.3 L/min per bearing',
              spec='ISO VG 32 synthetic turbine oil, 2.5 barg, ~0.3 L/min per bearing (4 bearings ~1.2 L/min), 10 um filter'),
     buffer_air=dict(core_front='compressor back-face air through the 3-tooth front labyrinth into the bearing chamber (vented)',
                     core_rear='compressor-delivery air from the inner combustor annulus through 6 x d2 holes in T-116 to the rear cavity; '

@@ -4,156 +4,156 @@
  "script": "sim/variant_d/d2r_rotor.py",
  "model": "coupled engine + generator beam FE, gyroscopics, crowned-hex pin at x -50.2",
  "mass_engine_kg": 0.795,
- "mass_generator_kg": 0.673,
+ "mass_generator_kg": 0.682,
  "criticals": {
   "base 1 N/um": [
    {
-    "rpm": 8457,
+    "rpm": 8480,
     "x_max_mm": 145.3,
     "rotor": "eng",
-    "eng_share": 0.84
+    "eng_share": 0.85
    },
    {
-    "rpm": 16572,
-    "x_max_mm": -226.4,
+    "rpm": 16478,
+    "x_max_mm": -234.2,
     "rotor": "gen",
     "eng_share": 0.06
    },
    {
-    "rpm": 19890,
+    "rpm": 20007,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.69
    },
    {
-    "rpm": 36290,
-    "x_max_mm": -110.5,
+    "rpm": 35583,
+    "x_max_mm": -110.4,
     "rotor": "gen",
-    "eng_share": 0.02
+    "eng_share": 0.03
    },
    {
-    "rpm": 70197,
+    "rpm": 70630,
     "x_max_mm": -56.0,
     "rotor": "eng",
-    "eng_share": 0.61
+    "eng_share": 0.62
    },
    {
-    "rpm": 136544,
-    "x_max_mm": -75.7,
+    "rpm": 138090,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.4
+   },
+   {
+    "rpm": 199068,
+    "x_max_mm": -91.1,
     "rotor": "gen",
-    "eng_share": 0.36
+    "eng_share": 0.14
    },
    {
-    "rpm": 196054,
-    "x_max_mm": -91.2,
-    "rotor": "gen",
-    "eng_share": 0.16
-   },
-   {
-    "rpm": 294443,
+    "rpm": 286346,
     "x_max_mm": -79.6,
     "rotor": "gen",
-    "eng_share": 0.06
+    "eng_share": 0.08
    }
   ],
   "base 2 N/um": [
    {
-    "rpm": 11355,
+    "rpm": 11375,
     "x_max_mm": 145.3,
     "rotor": "eng",
     "eng_share": 0.86
    },
    {
-    "rpm": 23048,
+    "rpm": 22922,
     "x_max_mm": -206.9,
     "rotor": "gen",
     "eng_share": 0.04
    },
    {
-    "rpm": 26907,
+    "rpm": 27071,
     "x_max_mm": -45.5,
     "rotor": "gen",
-    "eng_share": 0.67
+    "eng_share": 0.68
    },
    {
-    "rpm": 48586,
-    "x_max_mm": -110.5,
+    "rpm": 47322,
+    "x_max_mm": -106.6,
     "rotor": "gen",
     "eng_share": 0.02
    },
    {
-    "rpm": 72931,
+    "rpm": 73339,
     "x_max_mm": -56.0,
     "rotor": "eng",
-    "eng_share": 0.61
+    "eng_share": 0.62
    },
    {
-    "rpm": 138455,
-    "x_max_mm": -75.7,
+    "rpm": 140034,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.4
+   },
+   {
+    "rpm": 200204,
+    "x_max_mm": -91.1,
     "rotor": "gen",
-    "eng_share": 0.36
+    "eng_share": 0.14
    },
    {
-    "rpm": 196911,
-    "x_max_mm": -91.2,
-    "rotor": "gen",
-    "eng_share": 0.16
-   },
-   {
-    "rpm": 297204,
+    "rpm": 288415,
     "x_max_mm": -79.6,
     "rotor": "gen",
-    "eng_share": 0.06
+    "eng_share": 0.08
    }
   ],
   "stiff 10 N/um (ref)": [
    {
-    "rpm": 19743,
+    "rpm": 19746,
     "x_max_mm": 145.3,
     "rotor": "eng",
     "eng_share": 0.96
    },
    {
-    "rpm": 46717,
+    "rpm": 46582,
     "x_max_mm": -199.0,
     "rotor": "gen",
-    "eng_share": 0.14
+    "eng_share": 0.08
    },
    {
-    "rpm": 48056,
+    "rpm": 48424,
     "x_max_mm": -56.0,
     "rotor": "eng",
-    "eng_share": 0.56
+    "eng_share": 0.57
    },
    {
-    "rpm": 92458,
+    "rpm": 92454,
     "x_max_mm": -56.0,
     "rotor": "eng",
-    "eng_share": 0.55
+    "eng_share": 0.53
    },
    {
-    "rpm": 103518,
-    "x_max_mm": -106.7,
+    "rpm": 100941,
+    "x_max_mm": -110.4,
     "rotor": "gen",
-    "eng_share": 0.14
+    "eng_share": 0.21
    },
    {
-    "rpm": 151525,
+    "rpm": 153377,
+    "x_max_mm": -75.7,
+    "rotor": "gen",
+    "eng_share": 0.37
+   },
+   {
+    "rpm": 208104,
+    "x_max_mm": -87.3,
+    "rotor": "gen",
+    "eng_share": 0.15
+   },
+   {
+    "rpm": 305596,
     "x_max_mm": -79.6,
     "rotor": "gen",
-    "eng_share": 0.32
-   },
-   {
-    "rpm": 203043,
-    "x_max_mm": -91.2,
-    "rotor": "gen",
-    "eng_share": 0.18
-   },
-   {
-    "rpm": 319278,
-    "x_max_mm": -277.0,
-    "rotor": "gen",
-    "eng_share": 0.05
+    "eng_share": 0.06
    }
   ],
   "1 N/um, quill end free": [
@@ -164,7 +164,7 @@
     "eng_share": 1.0
    },
    {
-    "rpm": 16034,
+    "rpm": 15995,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.0
@@ -176,13 +176,13 @@
     "eng_share": 1.0
    },
    {
-    "rpm": 21157,
+    "rpm": 21833,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.0
    },
    {
-    "rpm": 40222,
+    "rpm": 40657,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.0
@@ -200,426 +200,426 @@
     "eng_share": 1.0
    },
    {
-    "rpm": 197633,
-    "x_max_mm": -91.2,
+    "rpm": 200807,
+    "x_max_mm": -91.1,
     "rotor": "gen",
     "eng_share": 0.0
    }
   ],
   "2 N/um, stacks loose (fac 0.3)": [
    {
-    "rpm": 11048,
+    "rpm": 11063,
     "x_max_mm": 145.3,
     "rotor": "eng",
     "eng_share": 0.88
    },
    {
-    "rpm": 22713,
+    "rpm": 22596,
     "x_max_mm": -203.0,
     "rotor": "gen",
     "eng_share": 0.04
    },
    {
-    "rpm": 26597,
+    "rpm": 26771,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.66
    },
    {
-    "rpm": 48246,
-    "x_max_mm": -110.5,
+    "rpm": 47009,
+    "x_max_mm": -106.6,
     "rotor": "gen",
     "eng_share": 0.04
    },
    {
-    "rpm": 61954,
+    "rpm": 62219,
     "x_max_mm": -56.0,
     "rotor": "eng",
     "eng_share": 0.67
    },
    {
-    "rpm": 129166,
-    "x_max_mm": -75.7,
-    "rotor": "gen",
-    "eng_share": 0.34
+    "rpm": 130444,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.37
    },
    {
-    "rpm": 181757,
-    "x_max_mm": -91.2,
+    "rpm": 179157,
+    "x_max_mm": -91.1,
     "rotor": "gen",
-    "eng_share": 0.16
+    "eng_share": 0.15
    },
    {
-    "rpm": 259405,
-    "x_max_mm": -83.5,
+    "rpm": 258071,
+    "x_max_mm": -83.4,
     "rotor": "gen",
-    "eng_share": 0.09
+    "eng_share": 0.1
    }
   ],
   "2 N/um, stacks solid (fac 1)": [
    {
-    "rpm": 11453,
+    "rpm": 11475,
     "x_max_mm": 145.3,
     "rotor": "eng",
-    "eng_share": 0.85
+    "eng_share": 0.86
    },
    {
-    "rpm": 23178,
-    "x_max_mm": -206.9,
+    "rpm": 23048,
+    "x_max_mm": -210.8,
     "rotor": "gen",
     "eng_share": 0.04
    },
    {
-    "rpm": 27004,
+    "rpm": 27166,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.68
    },
    {
-    "rpm": 48683,
-    "x_max_mm": -110.5,
+    "rpm": 47415,
+    "x_max_mm": -110.4,
     "rotor": "gen",
     "eng_share": 0.02
    },
    {
-    "rpm": 77954,
+    "rpm": 78447,
     "x_max_mm": -56.0,
     "rotor": "eng",
-    "eng_share": 0.59
+    "eng_share": 0.6
    },
    {
-    "rpm": 143458,
-    "x_max_mm": -75.7,
-    "rotor": "gen",
-    "eng_share": 0.37
+    "rpm": 145122,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.42
    },
    {
-    "rpm": 202474,
+    "rpm": 208835,
     "x_max_mm": -87.3,
     "rotor": "gen",
-    "eng_share": 0.16
+    "eng_share": 0.14
    },
    {
-    "rpm": 323386,
-    "x_max_mm": -277.0,
-    "rotor": "gen",
-    "eng_share": 0.05
-   }
-  ],
-  "2 N/um, wheel 0.55 kg": [
-   {
-    "rpm": 10370,
-    "x_max_mm": 145.3,
-    "rotor": "eng",
-    "eng_share": 0.86
-   },
-   {
-    "rpm": 23046,
-    "x_max_mm": -203.0,
-    "rotor": "gen",
-    "eng_share": 0.04
-   },
-   {
-    "rpm": 26887,
-    "x_max_mm": -45.5,
-    "rotor": "gen",
-    "eng_share": 0.67
-   },
-   {
-    "rpm": 48589,
-    "x_max_mm": -110.5,
-    "rotor": "gen",
-    "eng_share": 0.02
-   },
-   {
-    "rpm": 73352,
-    "x_max_mm": -56.0,
-    "rotor": "eng",
-    "eng_share": 0.61
-   },
-   {
-    "rpm": 139721,
-    "x_max_mm": -75.7,
-    "rotor": "gen",
-    "eng_share": 0.36
-   },
-   {
-    "rpm": 197184,
-    "x_max_mm": -91.2,
-    "rotor": "gen",
-    "eng_share": 0.16
-   },
-   {
-    "rpm": 297263,
+    "rpm": 309688,
     "x_max_mm": -79.6,
     "rotor": "gen",
     "eng_share": 0.06
    }
   ],
-  "2 N/um, PMG Inconel sleeve": [
+  "2 N/um, wheel 0.55 kg": [
    {
-    "rpm": 11355,
+    "rpm": 10387,
     "x_max_mm": 145.3,
     "rotor": "eng",
-    "eng_share": 0.86
+    "eng_share": 0.87
    },
    {
-    "rpm": 20760,
-    "x_max_mm": -226.4,
-    "rotor": "gen",
-    "eng_share": 0.02
-   },
-   {
-    "rpm": 26876,
-    "x_max_mm": -45.5,
-    "rotor": "gen",
-    "eng_share": 0.67
-   },
-   {
-    "rpm": 45911,
-    "x_max_mm": -110.5,
-    "rotor": "gen",
-    "eng_share": 0.02
-   },
-   {
-    "rpm": 72888,
-    "x_max_mm": -56.0,
-    "rotor": "eng",
-    "eng_share": 0.61
-   },
-   {
-    "rpm": 139030,
-    "x_max_mm": -75.7,
-    "rotor": "gen",
-    "eng_share": 0.38
-   },
-   {
-    "rpm": 206192,
-    "x_max_mm": -87.3,
-    "rotor": "gen",
-    "eng_share": 0.15
-   },
-   {
-    "rpm": 367160,
-    "x_max_mm": 100.8,
-    "rotor": "eng",
-    "eng_share": 0.92
-   }
-  ],
-  "2 N/um, compressor hub clamped": [
-   {
-    "rpm": 11356,
-    "x_max_mm": 145.3,
-    "rotor": "eng",
-    "eng_share": 0.86
-   },
-   {
-    "rpm": 23059,
+    "rpm": 22920,
     "x_max_mm": -206.9,
     "rotor": "gen",
     "eng_share": 0.04
    },
    {
-    "rpm": 27062,
+    "rpm": 27053,
+    "x_max_mm": -45.5,
+    "rotor": "gen",
+    "eng_share": 0.67
+   },
+   {
+    "rpm": 47326,
+    "x_max_mm": -106.6,
+    "rotor": "gen",
+    "eng_share": 0.02
+   },
+   {
+    "rpm": 73770,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.62
+   },
+   {
+    "rpm": 141338,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.4
+   },
+   {
+    "rpm": 200415,
+    "x_max_mm": -91.1,
+    "rotor": "gen",
+    "eng_share": 0.14
+   },
+   {
+    "rpm": 288499,
+    "x_max_mm": -79.6,
+    "rotor": "gen",
+    "eng_share": 0.08
+   }
+  ],
+  "2 N/um, PMG Inconel sleeve": [
+   {
+    "rpm": 11375,
+    "x_max_mm": 145.3,
+    "rotor": "eng",
+    "eng_share": 0.86
+   },
+   {
+    "rpm": 20668,
+    "x_max_mm": -234.2,
+    "rotor": "gen",
+    "eng_share": 0.02
+   },
+   {
+    "rpm": 27037,
+    "x_max_mm": -45.5,
+    "rotor": "gen",
+    "eng_share": 0.67
+   },
+   {
+    "rpm": 44887,
+    "x_max_mm": -110.4,
+    "rotor": "gen",
+    "eng_share": 0.02
+   },
+   {
+    "rpm": 73316,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.62
+   },
+   {
+    "rpm": 140690,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.42
+   },
+   {
+    "rpm": 216639,
+    "x_max_mm": -87.3,
+    "rotor": "gen",
+    "eng_share": 0.13
+   },
+   {
+    "rpm": 366909,
+    "x_max_mm": 100.8,
+    "rotor": "eng",
+    "eng_share": 0.9
+   }
+  ],
+  "2 N/um, compressor hub clamped": [
+   {
+    "rpm": 11377,
+    "x_max_mm": 145.3,
+    "rotor": "eng",
+    "eng_share": 0.86
+   },
+   {
+    "rpm": 22933,
+    "x_max_mm": -206.9,
+    "rotor": "gen",
+    "eng_share": 0.04
+   },
+   {
+    "rpm": 27214,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.7
    },
    {
-    "rpm": 48712,
-    "x_max_mm": -110.5,
+    "rpm": 47453,
+    "x_max_mm": -110.4,
     "rotor": "gen",
-    "eng_share": 0.01
+    "eng_share": 0.02
    },
    {
-    "rpm": 76788,
+    "rpm": 77104,
     "x_max_mm": -56.0,
     "rotor": "eng",
-    "eng_share": 0.67
+    "eng_share": 0.68
    },
    {
-    "rpm": 161091,
-    "x_max_mm": -83.5,
-    "rotor": "gen",
-    "eng_share": 0.12
-   },
-   {
-    "rpm": 215957,
-    "x_max_mm": -45.5,
-    "rotor": "gen",
-    "eng_share": 0.34
-   },
-   {
-    "rpm": 298165,
+    "rpm": 165459,
     "x_max_mm": -79.6,
     "rotor": "gen",
-    "eng_share": 0.09
+    "eng_share": 0.15
+   },
+   {
+    "rpm": 215629,
+    "x_max_mm": -45.5,
+    "rotor": "gen",
+    "eng_share": 0.32
+   },
+   {
+    "rpm": 290238,
+    "x_max_mm": -79.6,
+    "rotor": "gen",
+    "eng_share": 0.12
    }
   ],
   "1 N/um, stacks loose, wheel 0.55": [
    {
-    "rpm": 7603,
+    "rpm": 7621,
     "x_max_mm": 145.3,
     "rotor": "eng",
     "eng_share": 0.86
    },
    {
-    "rpm": 16435,
-    "x_max_mm": -214.7,
+    "rpm": 16344,
+    "x_max_mm": -218.6,
     "rotor": "gen",
     "eng_share": 0.06
    },
    {
-    "rpm": 19781,
+    "rpm": 19902,
     "x_max_mm": -45.5,
     "rotor": "gen",
     "eng_share": 0.68
    },
    {
-    "rpm": 36073,
-    "x_max_mm": -110.5,
+    "rpm": 35351,
+    "x_max_mm": -110.4,
     "rotor": "gen",
     "eng_share": 0.03
    },
    {
-    "rpm": 59011,
+    "rpm": 59335,
     "x_max_mm": -56.0,
     "rotor": "eng",
-    "eng_share": 0.65
+    "eng_share": 0.66
    },
    {
-    "rpm": 128165,
-    "x_max_mm": -75.7,
-    "rotor": "gen",
-    "eng_share": 0.34
+    "rpm": 129425,
+    "x_max_mm": -56.0,
+    "rotor": "eng",
+    "eng_share": 0.37
    },
    {
-    "rpm": 180301,
-    "x_max_mm": -91.2,
+    "rpm": 177241,
+    "x_max_mm": -95.0,
     "rotor": "gen",
-    "eng_share": 0.16
+    "eng_share": 0.15
    },
    {
-    "rpm": 256863,
-    "x_max_mm": -83.5,
+    "rpm": 256471,
+    "x_max_mm": -83.4,
     "rotor": "gen",
-    "eng_share": 0.09
+    "eng_share": 0.1
    }
   ]
  },
  "margins": {
   "base 1 N/um": {
-   "highest_below_run": 70197,
-   "lowest_above_run": 136544,
-   "margin_above_pct": 18.7,
-   "margin_below_pct": 39.0,
+   "highest_below_run": 70630,
+   "lowest_above_run": 138090,
+   "margin_above_pct": 20.1,
+   "margin_below_pct": 38.6,
    "in_85_95k": []
   },
   "base 2 N/um": {
-   "highest_below_run": 72931,
-   "lowest_above_run": 138455,
-   "margin_above_pct": 20.4,
-   "margin_below_pct": 36.6,
+   "highest_below_run": 73339,
+   "lowest_above_run": 140034,
+   "margin_above_pct": 21.8,
+   "margin_below_pct": 36.2,
    "in_85_95k": []
   }
  },
  "damped_115k_c300": {
   "1 N/um": [
    {
-    "rpm": 10324,
+    "rpm": 10334,
     "zeta": 0.131,
     "x_max_mm": 145.3,
     "rotor": "eng"
    },
    {
-    "rpm": 16140,
-    "zeta": 0.25,
-    "x_max_mm": -234.2,
+    "rpm": 16056,
+    "zeta": 0.249,
+    "x_max_mm": -245.0,
     "rotor": "gen"
    },
    {
-    "rpm": 21088,
-    "zeta": 0.262,
+    "rpm": 21231,
+    "zeta": 0.263,
     "x_max_mm": -45.5,
     "rotor": "gen"
    },
    {
-    "rpm": 37074,
-    "zeta": 0.43,
-    "x_max_mm": -114.4,
+    "rpm": 36470,
+    "zeta": 0.409,
+    "x_max_mm": -110.4,
     "rotor": "gen"
    },
    {
-    "rpm": 81281,
+    "rpm": 81743,
     "zeta": 0.051,
     "x_max_mm": -56.0,
     "rotor": "eng"
    },
    {
-    "rpm": 131379,
-    "zeta": 0.051,
+    "rpm": 132403,
+    "zeta": 0.052,
     "x_max_mm": -56.0,
     "rotor": "eng"
    },
    {
-    "rpm": 185221,
-    "zeta": 0.022,
+    "rpm": 188841,
+    "zeta": 0.03,
     "x_max_mm": -87.3,
     "rotor": "gen"
    },
    {
-    "rpm": 245865,
-    "zeta": 0.014,
+    "rpm": 243815,
+    "zeta": 0.02,
     "x_max_mm": -56.0,
     "rotor": "eng"
    }
   ],
   "2 N/um": [
    {
-    "rpm": 13646,
+    "rpm": 13658,
     "zeta": 0.085,
     "x_max_mm": 145.3,
     "rotor": "eng"
    },
    {
-    "rpm": 22812,
-    "zeta": 0.171,
+    "rpm": 22688,
+    "zeta": 0.17,
     "x_max_mm": -206.9,
     "rotor": "gen"
    },
    {
-    "rpm": 28152,
-    "zeta": 0.18,
+    "rpm": 28318,
+    "zeta": 0.181,
     "x_max_mm": -45.5,
     "rotor": "gen"
    },
    {
-    "rpm": 49750,
-    "zeta": 0.319,
-    "x_max_mm": -110.5,
+    "rpm": 48532,
+    "zeta": 0.307,
+    "x_max_mm": -110.4,
     "rotor": "gen"
    },
    {
-    "rpm": 82897,
-    "zeta": 0.053,
+    "rpm": 83353,
+    "zeta": 0.052,
     "x_max_mm": -56.0,
     "rotor": "eng"
    },
    {
-    "rpm": 133018,
-    "zeta": 0.05,
+    "rpm": 134061,
+    "zeta": 0.051,
     "x_max_mm": -56.0,
     "rotor": "eng"
    },
    {
-    "rpm": 185906,
-    "zeta": 0.022,
+    "rpm": 189779,
+    "zeta": 0.029,
     "x_max_mm": -87.3,
     "rotor": "gen"
    },
    {
-    "rpm": 246188,
-    "zeta": 0.013,
+    "rpm": 244400,
+    "zeta": 0.019,
     "x_max_mm": -56.0,
     "rotor": "eng"
    }
@@ -748,12 +748,12 @@
  },
  "quill": {
   "waist_d_mm": 6.0,
-  "free_length_mm": 58.0,
+  "free_length_mm": 54.0,
   "torque_rated_Nm": 2.12,
   "tau_rated_MPa": 49.9,
   "tau_fault_x4_MPa": 199.7,
-  "first_bending_pinned_rpm": 214758,
-  "axial_stiffness_N_um": 99.9,
+  "first_bending_pinned_rpm": 247752,
+  "axial_stiffness_N_um": 107.3,
   "hex": "crowned external AF6 x 11.5 on the engine-shaft nose (nitrided) in the internal AF6 socket of the quill hub (nitrided 17-4PH), float +/-0.5 mm",
   "hex_contact_p_MPa_rated": 34.1,
   "hex_contact_p_MPa_fault": 136.4

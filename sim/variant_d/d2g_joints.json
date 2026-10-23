@@ -1,0 +1,275 @@
+{
+ "title": "GR180 D2 generator pod: joints, fits, seals, balance (d2g rev)",
+ "date": "2026-10-23",
+ "script": "sim/variant_d/d2g_joints.py",
+ "screws": [
+  {
+   "joint": "front cover G-202 -> housing G-200",
+   "screw": "ISO 4762 M5x12",
+   "qty": 6,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M5x1.5D (7.5) in 6082-T6",
+   "engagement_mm": 8.0,
+   "preload_kN": 4.26,
+   "torque_Nm": 4.2,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "terminal box G-240 -> housing",
+   "screw": "ISO 7380-1 M4x12",
+   "qty": 4,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M4x1D (4) blind 5.7",
+   "engagement_mm": 5.2,
+   "preload_kN": 2.11,
+   "torque_Nm": 1.7,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "lid G-241 -> box",
+   "screw": "ISO 7380-1 M3x8",
+   "qty": 4,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M3x1.5D in the box columns",
+   "engagement_mm": 4.0,
+   "preload_kN": 1.06,
+   "torque_Nm": 0.6,
+   "lock": "none (gasket)"
+  },
+  {
+   "joint": "PEEK block G-242 -> box floor",
+   "screw": "ISO 7380-1 M4x12",
+   "qty": 2,
+   "cls": "A2-70",
+   "internal_thread": "tapped direct in the 4 mm Al floor",
+   "engagement_mm": 3.5,
+   "preload_kN": 0.99,
+   "torque_Nm": 0.8,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "phase studs M6 (nuts on lugs)",
+   "screw": "ISO 4032 M6 brass nut on M6 brass stud",
+   "qty": 3,
+   "cls": "CuZn39Pb3",
+   "internal_thread": "stud pressed in PEEK",
+   "engagement_mm": 6.0,
+   "preload_kN": 1.51,
+   "torque_Nm": 1.8,
+   "lock": "spring washer"
+  },
+  {
+   "joint": "strut roots INT-115 -> housing rear face",
+   "screw": "M6 rod-end thread (intake part)",
+   "qty": 3,
+   "cls": "1.4301",
+   "internal_thread": "HELICOIL plus M6x2D (12)",
+   "engagement_mm": 12.0,
+   "preload_kN": 4.52,
+   "torque_Nm": 5.3,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "tail fairing INT-120 -> rear face",
+   "screw": "ISO 7380-1 M4x8 (intake part)",
+   "qty": 3,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M4x1.5D (6)",
+   "engagement_mm": 6.0,
+   "preload_kN": 2.11,
+   "torque_Nm": 1.7,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "accelerometers VE-011 / VE-012 (AUX)",
+   "screw": "M6 stud",
+   "qty": 2,
+   "cls": "steel",
+   "internal_thread": "HELICOIL plus M6x1D (6) blind 8",
+   "engagement_mm": 6.0,
+   "preload_kN": 2.71,
+   "torque_Nm": 3.2,
+   "lock": "none"
+  },
+  {
+   "joint": "jack-hole plugs G-259",
+   "screw": "ISO 4026 M5x6",
+   "qty": 2,
+   "cls": "A4",
+   "internal_thread": "thread in G-200 (no insert)",
+   "engagement_mm": 6.0,
+   "preload_kN": 1.28,
+   "torque_Nm": 1.3,
+   "lock": "Loctite 542"
+  },
+  {
+   "joint": "cover jack-off (tool only)",
+   "screw": "2 x ISO 4017 M5x20 (workshop)",
+   "qty": 2,
+   "cls": "8.8",
+   "internal_thread": "M5 tapped in G-202 flange (HELICOIL)",
+   "engagement_mm": 4.0,
+   "preload_kN": 2.73,
+   "torque_Nm": 2.7,
+   "lock": "-"
+  }
+ ],
+ "rotor_stack": {
+  "locknut": "M10x0.75, OD 18 (G-225)",
+  "preload_kN": 6.0,
+  "nut_torque_Nm": 9.8,
+  "shaft_stress_MPa": 96.0,
+  "clamp_friction_torque_Nm": 10.8,
+  "carrier_interference_torque_Nm": 60,
+  "T_rated_Nm": 2.33,
+  "T_fault_x4_Nm": 9.3,
+  "note": "torque path: magnets -> carrier (interference fit, 60 N.m) -> shaft; the quill (fuse ~8.5 N.m) breaks first"
+ },
+ "fits": [
+  {
+   "joint": "bearing IR on the generator shaft",
+   "hole": "d10 bearing bore P4 (0/-4)",
+   "shaft": "10 js4 (+/-1.25)",
+   "result": "-1.3 .. +5.3 (light press, warm IR to 60 C)"
+  },
+  {
+   "joint": "bearing OR in the cartridge (front and rear)",
+   "hole": "22 H5 (0/+9)",
+   "shaft": "OR P4 (0/-5)",
+   "result": "0 .. 14 clearance (rear floats; front held by the spring preload on the lip + shim)"
+  },
+  {
+   "joint": "SFD land",
+   "hole": "28 H6 (0/+13) in G-200 / G-202",
+   "shaft": "27.800 (0/-9) cartridge",
+   "result": "radial film 0.100 .. 0.111"
+  },
+  {
+   "joint": "magnet carrier on the shaft",
+   "hole": "10 (-4/-10) carrier bore",
+   "shaft": "10 js4",
+   "result": "2.8 .. 11.3 interference: heat carrier assembly to 150 C (SmCo, CF-epoxy Tg 180 OK); 60 N.m slip torque"
+  },
+  {
+   "joint": "seal spacers on the shaft",
+   "hole": "10 F6 (+13/+22)",
+   "shaft": "10 js4",
+   "result": "12 .. 23 clearance (slide by hand; clamped by the locknut)"
+  },
+  {
+   "joint": "stator core in the jacket (shrink)",
+   "hole": "88 H6 (0/+22)",
+   "shaft": "88.120 +/-0.010 (ground core OD)",
+   "result": "0.098 .. 0.130 interference; heat jacket to 130 C"
+  },
+  {
+   "joint": "jacket in the housing",
+   "hole": "98 H7 (0/+35) / 96 H7 (0/+35)",
+   "shaft": "98 p6 (+37/+59) / 96 p6 (+37/+59)",
+   "result": "2 .. 59 interference (press with a hand press, O-rings greased)"
+  },
+  {
+   "joint": "front cover spigot",
+   "hole": "98 H7",
+   "shaft": "98 g6 (-12/-34)",
+   "result": "12 .. 69 clearance + 2 dowels 4 m6 / H7 (location +/-0.01)"
+  },
+  {
+   "joint": "cover / housing dowels",
+   "hole": "4 H7 (0/+12)",
+   "shaft": "4 m6 (+4/+12)",
+   "result": "press in G-200, slip (H7 + 0.005) in G-202"
+  },
+  {
+   "joint": "anti-rotation pins d2",
+   "hole": "2 H7 in G-200 / G-202, slot 2.2 in the cartridge lip",
+   "shaft": "2 m6",
+   "result": "cartridge free radially +/-0.1, no rotation"
+  },
+  {
+   "joint": "quill guard tube",
+   "hole": "20 H8 (0/+33)",
+   "shaft": "tube 20 (+/-0.08)",
+   "result": "Loctite 638 (gap-filling retainer)"
+  },
+  {
+   "joint": "quill socket on the engine hex",
+   "hole": "socket AF 6.010 .. 6.020 (rotary broached, nitrided)",
+   "shaft": "crowned hex AF 5.995 .. 6.000",
+   "result": "0.010 .. 0.025 on flats, float +/-0.5 axial, no adjustment"
+  }
+ ],
+ "orings": [
+  {
+   "seal": "SFD cartridge (x4, FKM 75)",
+   "oring": "ISO 3601-1 23.6 x 1.80",
+   "groove": "radial: groove d 24.90, width 2.4",
+   "squeeze_pct": 13.9,
+   "stretch_pct": 5.5
+  },
+  {
+   "seal": "jacket front (EPDM 70, glycol)",
+   "oring": "ISO 3601-1 92.5 x 2.65",
+   "groove": "radial: groove d 93.90, width 3.6",
+   "squeeze_pct": 22.6,
+   "stretch_pct": 1.5
+  },
+  {
+   "seal": "jacket rear (EPDM 70, glycol)",
+   "oring": "ISO 3601-1 90.0 x 2.65",
+   "groove": "radial: groove d 91.90, width 3.6",
+   "squeeze_pct": 22.6,
+   "stretch_pct": 2.1
+  },
+  {
+   "seal": "front cover face seal (FKM 75)",
+   "oring": "ISO 3601-1 103.0 x 1.80",
+   "groove": "axial face: groove depth 1.30, width 2.6, ID 102.6",
+   "squeeze_pct": 27.8,
+   "stretch_pct": 0.0
+  }
+ ],
+ "stator_shrink": {
+  "interference_20C_mm": [
+   0.098,
+   0.13
+  ],
+  "loss_at_100C_mm": 0.085,
+  "p_min_100C_MPa": 5.1,
+  "torque_capacity_min_Nm": 992.0,
+  "assembly_jacket_temp_C": 107,
+  "choice": "shrink fit only (no key, no adhesive): simplest robust; stator torque 2.3 N.m rated / ~15 N.m short-circuit peak"
+ },
+ "magnet_retention": {
+  "sleeve": "T700/T800 carbon 3 mm",
+  "interference_mm": 0.08,
+  "hoop_115k_MPa": 417,
+  "hoop_138k_MPa": 600,
+  "SF": 2.67,
+  "assembly": "grind magnet OD 30.08, press the sleeve (ID 30.00) over a 1:200 conical mandrel with assembly grease, grind OD 36.00"
+ },
+ "balance": {
+  "rotor_mass_kg": 0.68,
+  "n_rpm": 115000,
+  "planes": "G-223 front end ring (x -243.5) and rear end ring (x -158.5), radial d2 drillings max 1.5 deep",
+  "G1_total_gmm": 0.056,
+  "G2_5_total_gmm": 0.141,
+  "G1_per_plane_gmm": 0.028,
+  "method": "complete rotor incl. bearings, locknut and quill on a soft-bearing machine (supports on the bearing ORs), 2 planes, then check run-out of the socket hub <= 5 um TIR; target G1, accept <= G2.5",
+  "socket_clearance_effect_gmm": 0.0001
+ },
+ "hex_coupling": {
+  "AF": 6,
+  "engagement_mm": 11.5,
+  "contact_p_rated_MPa": 37.4,
+  "contact_p_fault_MPa": 149.8,
+  "lead_in": "30 deg chamfers on the socket mouth and the hex tip",
+  "axial_float_mm": 0.5,
+  "disengage_travel_mm": 13,
+  "alignment": "rotor turned by an AF5 key through the M16 front plug until the flats line up"
+ },
+ "wave_spring": {
+  "F_N": 60,
+  "note": "60 N > max quill-hex slip force with nitrided/DLC flats (mu 0.1 -> ~35 N), keeps both generator bearings loaded"
+ }
+}
