@@ -9,30 +9,46 @@ if not os.path.exists(os.path.join(ROOT, 'cad_out', 'v13A')):
     ROOT = os.environ.get('GR180_ROOT', os.getcwd())
 OUT = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2')
 CALC = os.path.join(ROOT, 'sim', 'variant_d', 'd2_intake_exhaust_calc.json')
-RHO = {'1.4301': 7.90e-6, '1.4828': 7.90e-6, '1.4541': 7.90e-6, 'S355': 7.85e-6, 'mesh': 1.6e-6, 'blanket': 0.30e-6,
+RHO = {'alu': 2.67e-6, 'vcell': 0.058e-6, '1.4301': 7.90e-6, '1.4828': 7.90e-6, '1.4541': 7.90e-6, 'S355': 7.85e-6, 'mesh': 1.6e-6, 'blanket': 0.30e-6,
        'cartridge': 0.12e-6, 'rubber': 1.2e-6}           # kg/mm3 (mesh / blanket / cartridge = effective envelope density)
 
-# D2 reference set (as Fusion MODE D2): v13A core minus the parts replaced by the generator pod / radial stage,
-# concept pod parts D-*, and the D2R radial turbine stage (cad_out/variant_d/D2/TURBINE, or GR180_D2_TURBINE_DIR to
-# check against a specific turbine build, e.g. the commit-20686b0 one with the bolted exhaust flange x 176).
-CORE_SKIP = {'Starter', 'NoseCone', 'Exhaust', 'Turbine', 'NGV', 'TurbineNut'}
-D_SKIP = {'D-180_Exhaust_Diffuser_DN150'}
-SUPERSEDED = {'D-160_Inlet_Screen': 'replaced by the INT-110 plenum + INT-140 port guard',
+# D2 reference set: the v13A core minus the parts the D2R rotor / turbine replace (same list as cad/variant_d/d2r_check.py),
+# the pod shell D-101 / D-102 (d_concept), and the D2R parts in cad_out/variant_d/D2/{ROTOR,TURBINE,GENERATOR}.
+# GR180_D2_TURBINE_DIR checks against a specific turbine build.  Without D2R parts the concept D-* / RT2 set is used.
+CORE_REPLACED = {'Shaft', 'NoseCone', 'Turbine', 'TurbineNut', 'NGV', 'Exhaust', 'FrontBearing_608_hybrid_8x22x7',
+                 'RearBearing_608_hybrid_8x22x7', 'FrontBearing_Oring', 'WaveSpring_22x16_free3_0_inst2_8', 'ShaftTunnel',
+                 'Starter', 'RPM_Magnet', 'Balance_Slug', 'EGT_Probe', 'Compressor'}
+CORE_SKIP_CONCEPT = {'Starter', 'NoseCone', 'Exhaust', 'Turbine', 'NGV', 'TurbineNut'}
+POD_SHELL = ('D-101_Generator_Housing_Jacket', 'D-102_Generator_Front_Cap')
+SUPERSEDED = {'D-160_Inlet_Screen': 'replaced by the INT-110 plenum + INT-140 guard',
               'D-150_Pod_Struts_x3': 'replaced by INT-115 struts (same axes, trimmed at x -18, end blocks with radial M6)',
-              'RT-180_Exhaust_Diffuser_DN150': 'replaced by the compact coaxial EX-1xx exhaust'}
+              'D-170_Terminal_Box': 'replaced by G-240 (D2R generator)',
+              'RT-180_Exhaust_Diffuser_DN150': 'replaced by the compact coaxial EX-1xx diffuser'}
 TURBINE_DIR = os.environ.get('GR180_D2_TURBINE_DIR') or os.path.join(ROOT, 'cad_out', 'variant_d', 'D2', 'TURBINE')
 
 
+def _steps(pattern):
+    return {os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(pattern)}
+
+
 def d2_reference_files(include_superseded=False):
-    f = {os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts', '*.step'))}
-    f = {k: v for k, v in f.items() if k not in CORE_SKIP}
-    f.update({os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'D-*.step'))})
-    t = glob.glob(os.path.join(TURBINE_DIR, 'T-*.step'))
-    if t:                                         # detailed D2R turbine replaces the RT2 concept stage
-        f.update({os.path.splitext(os.path.basename(p))[0]: p for p in t})
-    else:
-        f.update({os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(ROOT, 'cad_out', 'variant_d', 'RT2', 'RT-*.step'))})
-    return {k: v for k, v in f.items() if k not in D_SKIP and (include_superseded or k not in SUPERSEDED)}
+    d2 = os.path.join(ROOT, 'cad_out', 'variant_d', 'D2')
+    d2r = _steps(os.path.join(d2, 'ROTOR', '*.step'))
+    d2r.update(_steps(os.path.join(TURBINE_DIR, 'T-*.step')))
+    d2r.update(_steps(os.path.join(d2, 'GENERATOR', 'G-*.step')))
+    core = _steps(os.path.join(ROOT, 'cad_out', 'v13A', 'asm_parts', '*.step'))
+    concept = _steps(os.path.join(ROOT, 'cad_out', 'variant_d', 'D-*.step'))
+    if d2r:
+        f = {k: v for k, v in core.items() if k not in CORE_REPLACED}
+        f.update({k: v for k, v in concept.items() if k in POD_SHELL})
+        f.update(d2r)
+        if include_superseded:
+            f.update({k: v for k, v in concept.items() if k in SUPERSEDED})
+        return f
+    f = {k: v for k, v in core.items() if k not in CORE_SKIP_CONCEPT}
+    f.update({k: v for k, v in concept.items() if k != 'D-180_Exhaust_Diffuser_DN150'})
+    f.update(_steps(os.path.join(ROOT, 'cad_out', 'variant_d', 'RT2', 'RT-*.step')))
+    return {k: v for k, v in f.items() if include_superseded or k not in SUPERSEDED}
 
 
 def struts(r_extra=0.0):

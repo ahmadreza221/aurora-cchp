@@ -14,16 +14,21 @@ for sub in ('INTAKE', 'EXHAUST', 'FRAME'):
     for p in sorted(glob.glob(os.path.join(OUT, sub, '*.step'))):
         new[os.path.splitext(os.path.basename(p))[0]] = Part.read(p)
 CONTACT = {('INT-120_Pod_Tail_Fairing', 'D-101_Generator_Housing_Jacket'), ('INT-112_Rear_Ring_2halves_Foot', 'Casing'),
-           ('INT-115_Pod_Struts_x3', 'D-101_Generator_Housing_Jacket'), ('INT-110_Plenum_Can_SidePort', 'D-101_Generator_Housing_Jacket'),
-           ('EX-111_Inlet_Flange_6xM6', 'T-121_Exducer_Shroud_Exhaust_Flange'), ('FR-131_Slide_Pedestals_x4', 'T-120_Turbine_Housing_Plenum')}
-NEW_CONTACT = {('INT-110_Plenum_Can_SidePort', 'INT-112_Rear_Ring_2halves_Foot'), ('INT-111_Dish_Skirt', 'INT-112_Rear_Ring_2halves_Foot'),
-               ('INT-110_Plenum_Can_SidePort', 'INT-140_Port_FOD_Guard'), ('INT-111_Dish_Skirt', 'INT-115_Pod_Struts_x3'),
-               ('INT-120_Pod_Tail_Fairing', 'INT-115_Pod_Struts_x3'), ('INT-112_Rear_Ring_2halves_Foot', 'FR-120_Front_Pedestal_Fixed'),
-               ('EX-110_Diffuser_Stub_Weldment', 'EX-111_Inlet_Flange_6xM6'), ('EX-110_Diffuser_Stub_Weldment', 'EX-112_Flange_DN125_PN6'),
-               ('EX-110_Diffuser_Stub_Weldment', 'EX-113_Support_Lugs'), ('EX-120_Insulation_Jacket_env', 'EX-110_Diffuser_Stub_Weldment'),
-               ('EX-113_Support_Lugs', 'FR-131_Slide_Pedestals_x4'),
+           ('INT-115_Pod_Struts_x3', 'D-101_Generator_Housing_Jacket'), ('INT-110_Plenum_Can_TopCollar', 'D-101_Generator_Housing_Jacket'),
+           ('EX-111_Inlet_Flange_6xM6', 'T-121_Exducer_Shroud_Exhaust_Flange'), ('FR-131_Slide_Pedestals_x4', 'T-120_Turbine_Housing_Plenum'),
+           ('FR-170_Pod_Cradle', 'D-101_Generator_Housing_Jacket')}
+NEW_CONTACT = {('INT-110_Plenum_Can_TopCollar', 'INT-112_Rear_Ring_2halves_Foot'), ('INT-111_Dish_Skirt', 'INT-112_Rear_Ring_2halves_Foot'),
+               ('INT-110_Plenum_Can_TopCollar', 'INT-150_Filter_Box'), ('INT-140_FOD_Guard_Panel', 'INT-150_Filter_Box'),
+               ('INT-150_Filter_Box', 'INT-151_Lid_Grille'), ('INT-150_Filter_Box', 'INT-152_V-Cell_F7_592x592x292_env'),
+               ('INT-151_Lid_Grille', 'INT-152_V-Cell_F7_592x592x292_env'), ('INT-150_Filter_Box', 'INT-153_Toggle_Latches_x4_env'),
+               ('INT-111_Dish_Skirt', 'INT-115_Pod_Struts_x3'), ('INT-120_Pod_Tail_Fairing', 'INT-115_Pod_Struts_x3'),
+               ('INT-112_Rear_Ring_2halves_Foot', 'FR-120_Front_Pedestal_Fixed'), ('INT-150_Filter_Box', 'FR-160_Filter_Box_Posts_x4'),
+               ('EX-110_Diffuser_Weldment', 'EX-111_Inlet_Flange_6xM6'), ('EX-110_Diffuser_Weldment', 'EX-112_End_Ring_Flange'),
+               ('EX-110_Diffuser_Weldment', 'EX-113_Support_Lugs'), ('EX-120_Insulation_Jacket_env', 'EX-110_Diffuser_Weldment'),
+               ('EX-113_Support_Lugs', 'FR-131_Slide_Pedestals_x4'), ('FR-170_Pod_Cradle', 'FR-171_Pod_Weight_Relief_Pedestal'),
                ('FR-110_Base_Frame_RHS', 'FR-120_Front_Pedestal_Fixed'), ('FR-110_Base_Frame_RHS', 'FR-131_Slide_Pedestals_x4'),
-               ('FR-110_Base_Frame_RHS', 'FR-140_AV_Mounts_x4_env'), ('FR-110_Base_Frame_RHS', 'FR-150_Lifting_Lugs_x4')}
+               ('FR-110_Base_Frame_RHS', 'FR-140_AV_Mounts_x4_env'), ('FR-110_Base_Frame_RHS', 'FR-150_Lifting_Lugs_x4'),
+               ('FR-110_Base_Frame_RHS', 'FR-160_Filter_Box_Posts_x4'), ('FR-110_Base_Frame_RHS', 'FR-171_Pod_Weight_Relief_Pedestal')}
 
 res = interference(new, ref, CONTACT)
 names = sorted(new)

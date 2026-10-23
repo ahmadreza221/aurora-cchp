@@ -1,5 +1,5 @@
 {
- "title": "GR180 D2 intake / exhaust / frame 1-D numbers (rev 2: compact side-port plenum, coaxial exhaust)",
+ "title": "GR180 D2 intake / exhaust / frame 1-D numbers (rev 3: top V-cell box, diffuser-only exhaust, pod cradle)",
  "date": "2026-10-23",
  "frame": "ENG mm",
  "intake": {
@@ -21,19 +21,41 @@
     -44.3,
     -8.4
    ],
-   "port": {
-    "dir": "+y",
-    "DN": 150,
-    "tube": "168.3 x 2",
-    "ID": 164.3,
-    "flange": "PN6 DN150 drilling (D265 K225 8 x M16), 8 mm",
-    "window": "stadium 112 (x) x 170 (z) on the can, centre x -71",
-    "window_mm2": 16348.03456165759,
-    "y_flange_face": 240.0,
-    "length_from_can_OD": 150.0
+   "top_opening": {
+    "dir": "+z",
+    "centre_x": -71.0,
+    "size_mm": [
+     112,
+     170
+    ],
+    "area_mm2": 18985.061929829746,
+    "collar": "straight to z 90 + 45 deg frustum to 188 x 246 at z 128, flange z 128..130"
+   },
+   "filter": {
+    "type": "F7 (ISO ePM1 50-65 %) V-cell with header, 4 V-banks",
+    "size": [
+     592,
+     592,
+     292
+    ],
+    "header_mm": 25,
+    "rated_m3_h": 3400,
+    "dp_rated_initial_Pa": 90,
+    "dp_rated_final_Pa": 450,
+    "orientation": "face up (+z), header up"
+   },
+   "box": {
+    "inner": [
+     600,
+     600
+    ],
+    "centre_x": -190.0,
+    "floor_z": 130.0,
+    "clean_chamber_mm": 70,
+    "lid_top_z": 527.0
    },
    "guard": {
-    "where": "disc in the DN150 spigot at y 200",
+    "where": "panel on the box floor over the 188 x 246 opening",
     "mesh": "8 mm opening / 1.0 mm wire 1.4301",
     "f": 0.7901234567901234
    },
@@ -46,22 +68,37 @@
    "rho": 1.1577,
    "Q_m3_s": 0.3412,
    "Q_m3_h": 1228,
-   "housing_OD": 180.0,
+   "filter_face_v_m_s": 0.97,
    "elements": [
     {
-     "name": "FOD guard disc in the DN150 spigot (8/1.0 mesh, f 0.79), K 0.34",
-     "v_m_s": 16.1,
-     "dp_Pa": 51.5
+     "name": "inlet grille, expanded metal (f 0.7, K 0.6)",
+     "v_m_s": 1.0,
+     "dp_Pa": 0.3
     },
     {
-     "name": "spigot round -> stadium window (contraction), K 0.05",
-     "v_m_s": 20.9,
-     "dp_Pa": 12.6
+     "name": "F7 V-cell, CLEAN (90 Pa at 3400 m3/h, linear)",
+     "v_m_s": 1.0,
+     "dp_Pa": 32.5
     },
     {
-     "name": "window dump into the plenum, K 1.0",
-     "v_m_s": 20.9,
-     "dp_Pa": 252.1
+     "name": "clean chamber -> collar mouth (K 0.5)",
+     "v_m_s": 5.6,
+     "dp_Pa": 9.1
+    },
+    {
+     "name": "FOD guard panel on the box floor (8/1.0 mesh, f 0.79), K 0.34",
+     "v_m_s": 7.4,
+     "dp_Pa": 10.8
+    },
+    {
+     "name": "45 deg tapered collar 188 x 246 -> 112 x 170 (contraction), K 0.1",
+     "v_m_s": 18.0,
+     "dp_Pa": 18.7
+    },
+    {
+     "name": "collar dump into the plenum, K 1.0",
+     "v_m_s": 18.0,
+     "dp_Pa": 187.0
     },
     {
      "name": "round-the-pod distribution (50 % of the flow, V_c,max 43 m/s, K 0.6, linear feed -> 1/3)",
@@ -84,9 +121,15 @@
      "dp_Pa": 59.6
     }
    ],
-   "total_dp_Pa": 531,
-   "total_pct_of_p_amb": 0.527,
-   "power_cost_kW_est": 0.18,
+   "housing_dp_Pa": 441,
+   "filter_clean_Pa": 33,
+   "filter_change_out_Pa": 163,
+   "total_clean_Pa": 473,
+   "total_dirty_Pa": 603,
+   "total_clean_pct": 0.47,
+   "total_dirty_pct": 0.599,
+   "power_cost_clean_kW_est": 0.16,
+   "power_cost_dirty_kW_est": 0.21,
    "eye_contraction_common_with_v13A_Pa": 204
   },
   "chilled_15C": {
@@ -94,22 +137,37 @@
    "rho": 1.218,
    "Q_m3_s": 0.3243,
    "Q_m3_h": 1168,
-   "housing_OD": 180.0,
+   "filter_face_v_m_s": 0.93,
    "elements": [
     {
-     "name": "FOD guard disc in the DN150 spigot (8/1.0 mesh, f 0.79), K 0.34",
-     "v_m_s": 15.3,
-     "dp_Pa": 48.9
+     "name": "inlet grille, expanded metal (f 0.7, K 0.6)",
+     "v_m_s": 0.9,
+     "dp_Pa": 0.3
     },
     {
-     "name": "spigot round -> stadium window (contraction), K 0.05",
-     "v_m_s": 19.8,
-     "dp_Pa": 12.0
+     "name": "F7 V-cell, CLEAN (90 Pa at 3400 m3/h, linear)",
+     "v_m_s": 0.9,
+     "dp_Pa": 30.9
     },
     {
-     "name": "window dump into the plenum, K 1.0",
-     "v_m_s": 19.8,
-     "dp_Pa": 239.7
+     "name": "clean chamber -> collar mouth (K 0.5)",
+     "v_m_s": 5.3,
+     "dp_Pa": 8.7
+    },
+    {
+     "name": "FOD guard panel on the box floor (8/1.0 mesh, f 0.79), K 0.34",
+     "v_m_s": 7.0,
+     "dp_Pa": 10.3
+    },
+    {
+     "name": "45 deg tapered collar 188 x 246 -> 112 x 170 (contraction), K 0.1",
+     "v_m_s": 17.1,
+     "dp_Pa": 17.8
+    },
+    {
+     "name": "collar dump into the plenum, K 1.0",
+     "v_m_s": 17.1,
+     "dp_Pa": 177.7
     },
     {
      "name": "round-the-pod distribution (50 % of the flow, V_c,max 41 m/s, K 0.6, linear feed -> 1/3)",
@@ -132,64 +190,32 @@
      "dp_Pa": 56.7
     }
    ],
-   "total_dp_Pa": 505,
-   "total_pct_of_p_amb": 0.501,
-   "power_cost_kW_est": 0.17,
+   "housing_dp_Pa": 419,
+   "filter_clean_Pa": 31,
+   "filter_change_out_Pa": 155,
+   "total_clean_Pa": 450,
+   "total_dirty_Pa": 573,
+   "total_clean_pct": 0.447,
+   "total_dirty_pct": 0.569,
+   "power_cost_clean_kW_est": 0.15,
+   "power_cost_dirty_kW_est": 0.2,
    "eye_contraction_common_with_v13A_Pa": 194
   },
-  "option_OD220_30C": {
-   "T_C": 30.0,
-   "rho": 1.1577,
-   "Q_m3_s": 0.3412,
-   "Q_m3_h": 1228,
-   "housing_OD": 220.0,
-   "elements": [
-    {
-     "name": "FOD guard disc in the DN150 spigot (8/1.0 mesh, f 0.79), K 0.34",
-     "v_m_s": 16.1,
-     "dp_Pa": 51.5
-    },
-    {
-     "name": "spigot round -> stadium window (contraction), K 0.05",
-     "v_m_s": 20.9,
-     "dp_Pa": 12.6
-    },
-    {
-     "name": "window dump into the plenum, K 1.0",
-     "v_m_s": 20.9,
-     "dp_Pa": 252.1
-    },
-    {
-     "name": "round-the-pod distribution (50 % of the flow, V_c,max 28 m/s, K 0.6, linear feed -> 1/3)",
-     "v_m_s": 27.7,
-     "dp_Pa": 44.3
-    },
-    {
-     "name": "turn into the radial gap (pod tail fairing R15 / dish rim lip), K 0.4",
-     "v_m_s": 11.7,
-     "dp_Pa": 31.9
-    },
-    {
-     "name": "3 pod struts d8 across the radial gap (Cd 1.2)",
-     "v_m_s": 16.9,
-     "dp_Pa": 14.6
-    },
-    {
-     "name": "turn radial -> axial round the v13A intake lip, K 0.3",
-     "v_m_s": 18.5,
-     "dp_Pa": 59.6
-    }
-   ],
-   "total_dp_Pa": 467,
-   "total_pct_of_p_amb": 0.463,
-   "power_cost_kW_est": 0.16,
-   "eye_contraction_common_with_v13A_Pa": 204
+  "rev2_side_DN150_port_housing_Pa": 531,
+  "rev1_axisymmetric_housing_Pa": 101,
+  "orientation": {
+   "choice": "TOP (+z), cell face up, header up",
+   "why": [
+    "no extra floor area: the 592 x 592 box sits over the pod / plenum inside the package width",
+    "a side (+y) box cannot hang below the axis (592 mm square vs 239 mm axis height) - it would stand on the floor and add ~0.6 x 0.45 m of footprint",
+    "gravity seats the header on the gasket (dirty-side pressure also pushes it down)",
+    "change = open 4 toggle latches, lift the lid, lift the cell straight out (no tools)",
+    "box kept forward over the cool generator pod (rear wall x 111.5, turbine housing from x 118)"
+   ]
   },
-  "rev1_axisymmetric_coaxial_cartridge_housing_Pa": 101,
   "notes": [
-   "user filter dp is NOT included (his filter); budget for the whole inlet ~1000 Pa",
-   "single side port -> circumferential distortion at the eye (not in the 1-D number); check with a 4-probe rake",
-   "largest item = window dump: the window is limited to 112 mm by the housing length (front wall x -130 behind the pod glycol port x -152 / terminal box, rear ring at the core front); a longer housing would let the port open as a full DN150 circle",
+   "single top opening -> circumferential distortion at the eye (not in the 1-D number); check with a 4-probe rake",
+   "largest item = collar dump into the plenum (opening limited to 112 mm by the plenum length)",
    "power cost: ~1.35 % shaft power per 1 % inlet loss (est), on 25.5 kW generator shaft"
   ]
  },
@@ -211,7 +237,41 @@
   "q6_Pa": 18048,
   "P0_6_bar": 1.1809,
   "Q_m3_s": 0.975,
-  "best_DN125": {
+  "choice": {
+   "name": "L80_18deg_none",
+   "L_diffuser": 80,
+   "two_theta": 18,
+   "DN": "none",
+   "D_in": 70.7,
+   "D_diff_exit": 96.0,
+   "D_stub": null,
+   "elements": [
+    {
+     "name": "hub dump at the exducer exit (annulus -> full bore)",
+     "dp_Pa": 479
+    },
+    {
+     "name": "conical diffuser 2theta 18, L 80, D 70.7 -> 96.0 (Gibson x1.4)",
+     "dp_Pa": 1360
+    }
+   ],
+   "dp0_internal_Pa": 1839,
+   "q_flange_Pa": 3714,
+   "v_flange_m_s": 134.5,
+   "dp0_incl_exit_Pa": 5553,
+   "pct_of_P0": 4.7,
+   "Cp_system": 0.692,
+   "cost_vs_ideal_kW": 4.09,
+   "gain_vs_no_diffuser_dump_kW": 9.19
+  },
+  "end": "diffuser exit, slim ring flange OD 128 (6 x M6 on PCD 116) - no stub, no PN flange",
+  "end_ring": {
+   "OD": 128.0,
+   "t": 6.0,
+   "bolts": "6 x M6 on PCD 116 (30 deg start)",
+   "note": "for a future pipe; or weld a V-band lip"
+  },
+  "rev2_DN125_stub": {
    "name": "L80_14deg_DN125",
    "L_diffuser": 80,
    "two_theta": 14,
@@ -246,7 +306,7 @@
    "cost_vs_ideal_kW": 2.61,
    "gain_vs_no_diffuser_dump_kW": 10.67
   },
-  "best_DN150": {
+  "rev2_DN150_stub": {
    "name": "L80_16deg_DN150",
    "L_diffuser": 80,
    "two_theta": 16,
@@ -281,192 +341,13 @@
    "cost_vs_ideal_kW": 2.8,
    "gain_vs_no_diffuser_dump_kW": 10.48
   },
-  "DN125_minus_DN150_kW": -0.19,
-  "rule": "DN150 only if DN125 costs > 1.5 kW more",
-  "choice": {
-   "name": "L80_14deg_DN125",
-   "L_diffuser": 80,
-   "two_theta": 14,
-   "DN": "DN125",
-   "D_in": 70.7,
-   "D_diff_exit": 90.3,
-   "D_stub": 135.7,
-   "elements": [
-    {
-     "name": "hub dump at the exducer exit (annulus -> full bore)",
-     "dp_Pa": 479
-    },
-    {
-     "name": "conical diffuser 2theta 14, L 80, D 70.7 -> 90.3 (Gibson x1.4)",
-     "dp_Pa": 660
-    },
-    {
-     "name": "45 deg step D 90.3 -> DN125 ID 135.7 (dump)",
-     "dp_Pa": 1470
-    },
-    {
-     "name": "straight stub L40 friction (f 0.02)",
-     "dp_Pa": 5
-    }
-   ],
-   "dp0_internal_Pa": 2614,
-   "q_flange_Pa": 932,
-   "v_flange_m_s": 67.4,
-   "dp0_incl_exit_Pa": 3546,
-   "pct_of_P0": 3.0,
-   "Cp_system": 0.804,
-   "cost_vs_ideal_kW": 2.61,
-   "gain_vs_no_diffuser_dump_kW": 10.67
-  },
-  "DN_choice": "DN125",
-  "flange": {
-   "tube": "139.7 x 2",
-   "ID": 135.7,
-   "OD": 139.7,
-   "fl": {
-    "D": 240,
-    "K": 200,
-    "n": 8,
-    "hole": 18,
-    "bolt": "M16",
-    "b": 12
-   }
-  },
-  "no_diffuser": {
-   "DN125": {
-    "name": "L0_0deg_DN125",
-    "L_diffuser": 0,
-    "two_theta": 0,
-    "DN": "DN125",
-    "D_in": 70.7,
-    "D_diff_exit": 70.7,
-    "D_stub": 135.7,
-    "elements": [
-     {
-      "name": "hub dump at the exducer exit (annulus -> full bore)",
-      "dp_Pa": 479
-     },
-     {
-      "name": "45 deg step D 70.7 -> DN125 ID 135.7 (dump)",
-      "dp_Pa": 6714
-     },
-     {
-      "name": "straight stub L40 friction (f 0.02)",
-      "dp_Pa": 5
-     }
-    ],
-    "dp0_internal_Pa": 7198,
-    "q_flange_Pa": 932,
-    "v_flange_m_s": 67.4,
-    "dp0_incl_exit_Pa": 8130,
-    "pct_of_P0": 6.88,
-    "Cp_system": 0.55,
-    "cost_vs_ideal_kW": 5.98,
-    "gain_vs_no_diffuser_dump_kW": 7.3
-   },
-   "DN150": {
-    "name": "L0_0deg_DN150",
-    "L_diffuser": 0,
-    "two_theta": 0,
-    "DN": "DN150",
-    "D_in": 70.7,
-    "D_diff_exit": 70.7,
-    "D_stub": 164.3,
-    "elements": [
-     {
-      "name": "hub dump at the exducer exit (annulus -> full bore)",
-      "dp_Pa": 479
-     },
-     {
-      "name": "45 deg step D 70.7 -> DN150 ID 164.3 (dump)",
-      "dp_Pa": 8398
-     },
-     {
-      "name": "straight stub L40 friction (f 0.02)",
-      "dp_Pa": 2
-     }
-    ],
-    "dp0_internal_Pa": 8879,
-    "q_flange_Pa": 434,
-    "v_flange_m_s": 46.0,
-    "dp0_incl_exit_Pa": 9312,
-    "pct_of_P0": 7.89,
-    "Cp_system": 0.484,
-    "cost_vs_ideal_kW": 6.85,
-    "gain_vs_no_diffuser_dump_kW": 6.43
-   }
-  },
-  "longer_diffuser_ref": {
-   "DN125": {
-    "name": "L80_14deg_DN125",
-    "L_diffuser": 80,
-    "two_theta": 14,
-    "DN": "DN125",
-    "D_in": 70.7,
-    "D_diff_exit": 90.3,
-    "D_stub": 135.7,
-    "elements": [
-     {
-      "name": "hub dump at the exducer exit (annulus -> full bore)",
-      "dp_Pa": 479
-     },
-     {
-      "name": "conical diffuser 2theta 14, L 80, D 70.7 -> 90.3 (Gibson x1.4)",
-      "dp_Pa": 660
-     },
-     {
-      "name": "45 deg step D 90.3 -> DN125 ID 135.7 (dump)",
-      "dp_Pa": 1470
-     },
-     {
-      "name": "straight stub L40 friction (f 0.02)",
-      "dp_Pa": 5
-     }
-    ],
-    "dp0_internal_Pa": 2614,
-    "q_flange_Pa": 932,
-    "v_flange_m_s": 67.4,
-    "dp0_incl_exit_Pa": 3546,
-    "pct_of_P0": 3.0,
-    "Cp_system": 0.804,
-    "cost_vs_ideal_kW": 2.61,
-    "gain_vs_no_diffuser_dump_kW": 10.67
-   },
-   "DN150": {
-    "name": "L80_16deg_DN150",
-    "L_diffuser": 80,
-    "two_theta": 16,
-    "DN": "DN150",
-    "D_in": 70.7,
-    "D_diff_exit": 93.2,
-    "D_stub": 164.3,
-    "elements": [
-     {
-      "name": "hub dump at the exducer exit (annulus -> full bore)",
-      "dp_Pa": 479
-     },
-     {
-      "name": "conical diffuser 2theta 16, L 80, D 70.7 -> 93.2 (Gibson x1.4)",
-      "dp_Pa": 963
-     },
-     {
-      "name": "45 deg step D 93.2 -> DN150 ID 164.3 (dump)",
-      "dp_Pa": 1928
-     },
-     {
-      "name": "straight stub L40 friction (f 0.02)",
-      "dp_Pa": 2
-     }
-    ],
-    "dp0_internal_Pa": 3372,
-    "q_flange_Pa": 434,
-    "v_flange_m_s": 46.0,
-    "dp0_incl_exit_Pa": 3806,
-    "pct_of_P0": 3.22,
-    "Cp_system": 0.789,
-    "cost_vs_ideal_kW": 2.8,
-    "gain_vs_no_diffuser_dump_kW": 10.48
-   }
+  "cost_of_dropping_the_stub_kW": 1.48,
+  "by_length": {
+   "L0": 9.66,
+   "L40": 5.21,
+   "L60": 4.55,
+   "L70": 4.3,
+   "L80": 4.09
   },
   "sweep": [
    {
@@ -520,6 +401,13 @@
    },
    {
     "name": "L0_25deg_DN125",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 8130,
+    "cost_vs_ideal_kW": 5.98,
+    "gain_vs_no_diffuser_dump_kW": 7.3
+   },
+   {
+    "name": "L0_30deg_DN125",
     "D_diff_exit": 70.7,
     "dp0_incl_exit_Pa": 8130,
     "cost_vs_ideal_kW": 5.98,
@@ -582,6 +470,13 @@
     "gain_vs_no_diffuser_dump_kW": 9.93
    },
    {
+    "name": "L40_30deg_DN125",
+    "D_diff_exit": 92.1,
+    "dp0_incl_exit_Pa": 5115,
+    "cost_vs_ideal_kW": 3.76,
+    "gain_vs_no_diffuser_dump_kW": 9.52
+   },
+   {
     "name": "L60_10deg_DN125",
     "D_diff_exit": 81.2,
     "dp0_incl_exit_Pa": 4578,
@@ -636,6 +531,13 @@
     "dp0_incl_exit_Pa": 4695,
     "cost_vs_ideal_kW": 3.45,
     "gain_vs_no_diffuser_dump_kW": 9.83
+   },
+   {
+    "name": "L60_30deg_DN125",
+    "D_diff_exit": 102.9,
+    "dp0_incl_exit_Pa": 5919,
+    "cost_vs_ideal_kW": 4.36,
+    "gain_vs_no_diffuser_dump_kW": 8.93
    },
    {
     "name": "L70_10deg_DN125",
@@ -694,6 +596,13 @@
     "gain_vs_no_diffuser_dump_kW": 9.66
    },
    {
+    "name": "L70_30deg_DN125",
+    "D_diff_exit": 108.2,
+    "dp0_incl_exit_Pa": 6433,
+    "cost_vs_ideal_kW": 4.73,
+    "gain_vs_no_diffuser_dump_kW": 8.55
+   },
+   {
     "name": "L80_10deg_DN125",
     "D_diff_exit": 84.7,
     "dp0_incl_exit_Pa": 3965,
@@ -750,6 +659,13 @@
     "gain_vs_no_diffuser_dump_kW": 9.46
    },
    {
+    "name": "L80_30deg_DN125",
+    "D_diff_exit": 113.6,
+    "dp0_incl_exit_Pa": 6967,
+    "cost_vs_ideal_kW": 5.13,
+    "gain_vs_no_diffuser_dump_kW": 8.15
+   },
+   {
     "name": "L0_10deg_DN150",
     "D_diff_exit": 70.7,
     "dp0_incl_exit_Pa": 9312,
@@ -800,6 +716,13 @@
    },
    {
     "name": "L0_25deg_DN150",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 9312,
+    "cost_vs_ideal_kW": 6.85,
+    "gain_vs_no_diffuser_dump_kW": 6.43
+   },
+   {
+    "name": "L0_30deg_DN150",
     "D_diff_exit": 70.7,
     "dp0_incl_exit_Pa": 9312,
     "cost_vs_ideal_kW": 6.85,
@@ -862,6 +785,13 @@
     "gain_vs_no_diffuser_dump_kW": 9.64
    },
    {
+    "name": "L40_30deg_DN150",
+    "D_diff_exit": 92.1,
+    "dp0_incl_exit_Pa": 5400,
+    "cost_vs_ideal_kW": 3.97,
+    "gain_vs_no_diffuser_dump_kW": 9.31
+   },
+   {
     "name": "L60_10deg_DN150",
     "D_diff_exit": 81.2,
     "dp0_incl_exit_Pa": 5232,
@@ -916,6 +846,13 @@
     "dp0_incl_exit_Pa": 4847,
     "cost_vs_ideal_kW": 3.57,
     "gain_vs_no_diffuser_dump_kW": 9.71
+   },
+   {
+    "name": "L60_30deg_DN150",
+    "D_diff_exit": 102.9,
+    "dp0_incl_exit_Pa": 5950,
+    "cost_vs_ideal_kW": 4.38,
+    "gain_vs_no_diffuser_dump_kW": 8.9
    },
    {
     "name": "L70_10deg_DN150",
@@ -974,6 +911,13 @@
     "gain_vs_no_diffuser_dump_kW": 9.62
    },
    {
+    "name": "L70_30deg_DN150",
+    "D_diff_exit": 108.2,
+    "dp0_incl_exit_Pa": 6365,
+    "cost_vs_ideal_kW": 4.68,
+    "gain_vs_no_diffuser_dump_kW": 8.6
+   },
+   {
     "name": "L80_10deg_DN150",
     "D_diff_exit": 84.7,
     "dp0_incl_exit_Pa": 4486,
@@ -1028,27 +972,366 @@
     "dp0_incl_exit_Pa": 5159,
     "cost_vs_ideal_kW": 3.8,
     "gain_vs_no_diffuser_dump_kW": 9.48
+   },
+   {
+    "name": "L80_30deg_DN150",
+    "D_diff_exit": 113.6,
+    "dp0_incl_exit_Pa": 6813,
+    "cost_vs_ideal_kW": 5.01,
+    "gain_vs_no_diffuser_dump_kW": 8.27
+   },
+   {
+    "name": "L0_10deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_12deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_14deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_16deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_18deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_20deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_22deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_25deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L0_30deg_none",
+    "D_diff_exit": 70.7,
+    "dp0_incl_exit_Pa": 13127,
+    "cost_vs_ideal_kW": 9.66,
+    "gain_vs_no_diffuser_dump_kW": 3.62
+   },
+   {
+    "name": "L40_10deg_none",
+    "D_diff_exit": 77.7,
+    "dp0_incl_exit_Pa": 9233,
+    "cost_vs_ideal_kW": 6.79,
+    "gain_vs_no_diffuser_dump_kW": 6.49
+   },
+   {
+    "name": "L40_12deg_none",
+    "D_diff_exit": 79.1,
+    "dp0_incl_exit_Pa": 8694,
+    "cost_vs_ideal_kW": 6.4,
+    "gain_vs_no_diffuser_dump_kW": 6.88
+   },
+   {
+    "name": "L40_14deg_none",
+    "D_diff_exit": 80.5,
+    "dp0_incl_exit_Pa": 8226,
+    "cost_vs_ideal_kW": 6.05,
+    "gain_vs_no_diffuser_dump_kW": 7.23
+   },
+   {
+    "name": "L40_16deg_none",
+    "D_diff_exit": 81.9,
+    "dp0_incl_exit_Pa": 7837,
+    "cost_vs_ideal_kW": 5.77,
+    "gain_vs_no_diffuser_dump_kW": 7.51
+   },
+   {
+    "name": "L40_18deg_none",
+    "D_diff_exit": 83.4,
+    "dp0_incl_exit_Pa": 7531,
+    "cost_vs_ideal_kW": 5.54,
+    "gain_vs_no_diffuser_dump_kW": 7.74
+   },
+   {
+    "name": "L40_20deg_none",
+    "D_diff_exit": 84.8,
+    "dp0_incl_exit_Pa": 7297,
+    "cost_vs_ideal_kW": 5.37,
+    "gain_vs_no_diffuser_dump_kW": 7.91
+   },
+   {
+    "name": "L40_22deg_none",
+    "D_diff_exit": 86.3,
+    "dp0_incl_exit_Pa": 7154,
+    "cost_vs_ideal_kW": 5.26,
+    "gain_vs_no_diffuser_dump_kW": 8.02
+   },
+   {
+    "name": "L40_25deg_none",
+    "D_diff_exit": 88.4,
+    "dp0_incl_exit_Pa": 7075,
+    "cost_vs_ideal_kW": 5.21,
+    "gain_vs_no_diffuser_dump_kW": 8.07
+   },
+   {
+    "name": "L40_30deg_none",
+    "D_diff_exit": 92.1,
+    "dp0_incl_exit_Pa": 7289,
+    "cost_vs_ideal_kW": 5.36,
+    "gain_vs_no_diffuser_dump_kW": 7.92
+   },
+   {
+    "name": "L60_10deg_none",
+    "D_diff_exit": 81.2,
+    "dp0_incl_exit_Pa": 7914,
+    "cost_vs_ideal_kW": 5.82,
+    "gain_vs_no_diffuser_dump_kW": 7.46
+   },
+   {
+    "name": "L60_12deg_none",
+    "D_diff_exit": 83.3,
+    "dp0_incl_exit_Pa": 7321,
+    "cost_vs_ideal_kW": 5.39,
+    "gain_vs_no_diffuser_dump_kW": 7.89
+   },
+   {
+    "name": "L60_14deg_none",
+    "D_diff_exit": 85.4,
+    "dp0_incl_exit_Pa": 6847,
+    "cost_vs_ideal_kW": 5.04,
+    "gain_vs_no_diffuser_dump_kW": 8.24
+   },
+   {
+    "name": "L60_16deg_none",
+    "D_diff_exit": 87.6,
+    "dp0_incl_exit_Pa": 6502,
+    "cost_vs_ideal_kW": 4.78,
+    "gain_vs_no_diffuser_dump_kW": 8.5
+   },
+   {
+    "name": "L60_18deg_none",
+    "D_diff_exit": 89.7,
+    "dp0_incl_exit_Pa": 6289,
+    "cost_vs_ideal_kW": 4.63,
+    "gain_vs_no_diffuser_dump_kW": 8.65
+   },
+   {
+    "name": "L60_20deg_none",
+    "D_diff_exit": 91.9,
+    "dp0_incl_exit_Pa": 6182,
+    "cost_vs_ideal_kW": 4.55,
+    "gain_vs_no_diffuser_dump_kW": 8.73
+   },
+   {
+    "name": "L60_22deg_none",
+    "D_diff_exit": 94.0,
+    "dp0_incl_exit_Pa": 6214,
+    "cost_vs_ideal_kW": 4.57,
+    "gain_vs_no_diffuser_dump_kW": 8.71
+   },
+   {
+    "name": "L60_25deg_none",
+    "D_diff_exit": 97.3,
+    "dp0_incl_exit_Pa": 6451,
+    "cost_vs_ideal_kW": 4.75,
+    "gain_vs_no_diffuser_dump_kW": 8.53
+   },
+   {
+    "name": "L60_30deg_none",
+    "D_diff_exit": 102.9,
+    "dp0_incl_exit_Pa": 7294,
+    "cost_vs_ideal_kW": 5.37,
+    "gain_vs_no_diffuser_dump_kW": 7.91
+   },
+   {
+    "name": "L70_10deg_none",
+    "D_diff_exit": 82.9,
+    "dp0_incl_exit_Pa": 7366,
+    "cost_vs_ideal_kW": 5.42,
+    "gain_vs_no_diffuser_dump_kW": 7.86
+   },
+   {
+    "name": "L70_12deg_none",
+    "D_diff_exit": 85.4,
+    "dp0_incl_exit_Pa": 6774,
+    "cost_vs_ideal_kW": 4.98,
+    "gain_vs_no_diffuser_dump_kW": 8.3
+   },
+   {
+    "name": "L70_14deg_none",
+    "D_diff_exit": 87.9,
+    "dp0_incl_exit_Pa": 6322,
+    "cost_vs_ideal_kW": 4.65,
+    "gain_vs_no_diffuser_dump_kW": 8.63
+   },
+   {
+    "name": "L70_16deg_none",
+    "D_diff_exit": 90.4,
+    "dp0_incl_exit_Pa": 6021,
+    "cost_vs_ideal_kW": 4.43,
+    "gain_vs_no_diffuser_dump_kW": 8.85
+   },
+   {
+    "name": "L70_18deg_none",
+    "D_diff_exit": 92.9,
+    "dp0_incl_exit_Pa": 5872,
+    "cost_vs_ideal_kW": 4.32,
+    "gain_vs_no_diffuser_dump_kW": 8.96
+   },
+   {
+    "name": "L70_20deg_none",
+    "D_diff_exit": 95.4,
+    "dp0_incl_exit_Pa": 5842,
+    "cost_vs_ideal_kW": 4.3,
+    "gain_vs_no_diffuser_dump_kW": 8.98
+   },
+   {
+    "name": "L70_22deg_none",
+    "D_diff_exit": 97.9,
+    "dp0_incl_exit_Pa": 5970,
+    "cost_vs_ideal_kW": 4.39,
+    "gain_vs_no_diffuser_dump_kW": 8.89
+   },
+   {
+    "name": "L70_25deg_none",
+    "D_diff_exit": 101.7,
+    "dp0_incl_exit_Pa": 6364,
+    "cost_vs_ideal_kW": 4.68,
+    "gain_vs_no_diffuser_dump_kW": 8.6
+   },
+   {
+    "name": "L70_30deg_none",
+    "D_diff_exit": 108.2,
+    "dp0_incl_exit_Pa": 7495,
+    "cost_vs_ideal_kW": 5.52,
+    "gain_vs_no_diffuser_dump_kW": 7.77
+   },
+   {
+    "name": "L80_10deg_none",
+    "D_diff_exit": 84.7,
+    "dp0_incl_exit_Pa": 6880,
+    "cost_vs_ideal_kW": 5.06,
+    "gain_vs_no_diffuser_dump_kW": 8.22
+   },
+   {
+    "name": "L80_12deg_none",
+    "D_diff_exit": 87.5,
+    "dp0_incl_exit_Pa": 6302,
+    "cost_vs_ideal_kW": 4.64,
+    "gain_vs_no_diffuser_dump_kW": 8.64
+   },
+   {
+    "name": "L80_14deg_none",
+    "D_diff_exit": 90.3,
+    "dp0_incl_exit_Pa": 5882,
+    "cost_vs_ideal_kW": 4.33,
+    "gain_vs_no_diffuser_dump_kW": 8.95
+   },
+   {
+    "name": "L80_16deg_none",
+    "D_diff_exit": 93.2,
+    "dp0_incl_exit_Pa": 5633,
+    "cost_vs_ideal_kW": 4.14,
+    "gain_vs_no_diffuser_dump_kW": 9.14
+   },
+   {
+    "name": "L80_18deg_none",
+    "D_diff_exit": 96.0,
+    "dp0_incl_exit_Pa": 5553,
+    "cost_vs_ideal_kW": 4.09,
+    "gain_vs_no_diffuser_dump_kW": 9.19
+   },
+   {
+    "name": "L80_20deg_none",
+    "D_diff_exit": 98.9,
+    "dp0_incl_exit_Pa": 5602,
+    "cost_vs_ideal_kW": 4.12,
+    "gain_vs_no_diffuser_dump_kW": 9.16
+   },
+   {
+    "name": "L80_22deg_none",
+    "D_diff_exit": 101.8,
+    "dp0_incl_exit_Pa": 5822,
+    "cost_vs_ideal_kW": 4.28,
+    "gain_vs_no_diffuser_dump_kW": 9.0
+   },
+   {
+    "name": "L80_25deg_none",
+    "D_diff_exit": 106.2,
+    "dp0_incl_exit_Pa": 6367,
+    "cost_vs_ideal_kW": 4.69,
+    "gain_vs_no_diffuser_dump_kW": 8.6
+   },
+   {
+    "name": "L80_30deg_none",
+    "D_diff_exit": 113.6,
+    "dp0_incl_exit_Pa": 7759,
+    "cost_vs_ideal_kW": 5.71,
+    "gain_vs_no_diffuser_dump_kW": 7.57
    }
   ],
-  "note": "cost_vs_ideal = turbine work lost vs a perfect exhaust (all q6 recovered); the flange dynamic head is counted as lost (free discharge / silencer). With a dump the optimum stub area is ~2 x the diffuser exit area, which is why DN125 beats DN150 here."
+  "note": "cost_vs_ideal = turbine work lost vs a perfect exhaust (all q6 recovered); the exit dynamic head is counted as lost (free discharge into the enclosure / a large duct). The rev-2 DN125 stub was NOT neutral: its sudden expansion (area ratio ~2) recovered about half of the diffuser-exit q (Borda), which is the kW difference listed. If a pipe of ~2x the diffuser exit area (DN125) is bolted on later, that recovery comes back."
  },
  "frame_supports": {
   "fixed_point": "intake rear ring foot at x -5 (core front)",
   "axial_growth_at_turbine_pads_mm": 0.93,
-  "axial_growth_at_exhaust_lugs_mm": 3.03,
+  "axial_growth_at_exhaust_lugs_mm": 1.6,
   "slot_free_each_side_mm": {
    "turbine_pedestal": 3.0,
    "exhaust_lug": 8.0
   },
+  "pod_support": {
+   "mass_kg": 4.84,
+   "x_cg": -197.7,
+   "weight_N": 47.4,
+   "concept": "weight-relief cradle: the 3 intake struts (INT-115) stay the ONLY locator of the pod (alignment to the core / quill set once on the bench, short stiff chain pod-struts-rear ring-core); the cradle only carries the weight through a soft elastomer pad on a PTFE slide plate, preloaded by a jack screw - free in x and y, soft in z -> no double constraint, frame / mount deflection does not reach the quill",
+   "cradle_x": [
+    -220.0,
+    -190.0
+   ],
+   "preload_N": 47.0,
+   "pad_stiffness_N_mm": 40.0,
+   "pad_deflection_mm": 1.19,
+   "load_change_per_0p1mm_frame_motion_N": 4.0,
+   "strut_moment_without_cradle_Nm": 4.25
+  },
   "mass_est_kg": {
    "engine_core": 11.0,
-   "generator_pod": 9.0,
+   "generator_pod": 4.8,
    "turbine_stage": 3.5,
-   "intake": 6.1,
-   "exhaust": 4.2,
-   "frame": 11.6
+   "intake": 4.3,
+   "filter_box_lid_latches": 9.3,
+   "v_cell": 5.5,
+   "exhaust": 1.3,
+   "frame_and_supports": 15.8
   },
-  "load_per_mount_N": 111,
+  "load_per_mount_N": 136,
   "f_n_Hz_est": 11.1
  }
 }
