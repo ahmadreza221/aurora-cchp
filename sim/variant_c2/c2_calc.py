@@ -299,7 +299,7 @@ LAY = dict(
     hx=dict(z=(570.0 + L_mm + 20.0, 570.0 + L_mm + 20.0 + 520.0), body_x=(X0 - 10.0, X0 + H_mm + 10.0), body_y=(-W_mm / 2 - 20.0, W_mm / 2 + 20.0),
             cone_h=80.0, water_DN=32, duty_kW=hx['Q_kW'], rows=hx['n_rows'], tubes_per_row=hx['n_tubes_per_row']),
     stack=dict(DN=200, D=320.0),
-    risers=dict(C1=dict(xy=(-9.0, 290.0), DN=100, hose_L=300.0), C2=dict(xy=(55.0, -340.0), DN=125, hose_L=300.0)),
+    risers=dict(C1=dict(xy=(-9.0, 290.0), DN=100, hose_L=320.0), C2=dict(xy=(55.0, -340.0), DN=125, hose_L=300.0)),
     insulation=dict(recup_mm=50.0, headers_mm=30.0, risers_C1_mm=20.0, risers_C2_mm=30.0),
     frame=dict(rails_y=(-110.0, 110.0), rails_x=(-230.0, 590.0), x_cols=(-200.0, 560.0), y_cols=(-185.0, 185.0), z_top=(380.0, 420.0), z_base=(-310.0, -250.0)),
 )
