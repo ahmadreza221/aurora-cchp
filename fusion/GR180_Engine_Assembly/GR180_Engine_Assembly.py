@@ -261,6 +261,7 @@ XRAY = [
     (('IntakeOuter', 'Casing', 'CC_Outer', 'Collector', 'WestCover', 'Hot_Pressure_Casing', 'Collector_Drum', 'C2_Inlet',
       'C1_Outlet', 'Insulation', 'HeatShield', 'Heat_Shield', 'Support_Cone', 'PMG_Housing', 'B1_Bearing_Housing',
       'B2_Housing', 'End_Cover', 'Interduct', 'Shroud', 'Bulkhead', 'Front_Casing', 'E3B-110', 'West_Cover', 'Rear_Unit'), 'shell (glass)', (170, 200, 225), 0.18),
+    (('TE-', 'PT-', 'SE-', 'VE-', 'RPM', 'EGT', 'Igniter', 'IGN', 'UV', 'BE-'), 'sensors', (40, 180, 100), 1.0),   # before 'Liner' (liner-wall TCs)
     (('Compressor',), 'compressor', (205, 210, 220), 1.0),
     (('Diffuser',), 'diffuser', (120, 150, 190), 1.0),
     (('Intake', 'NoseCone'), 'intake', (150, 155, 165), 1.0),
@@ -276,7 +277,6 @@ XRAY = [
     (('Starter',), 'starter', (60, 60, 70), 1.0),
     (('Terminal',), 'terminal box', (40, 120, 220), 1.0),
     (('Foot', 'Feet', 'E3B-4', 'Support', 'Rails', 'Flexure'), 'feet + frame', (90, 95, 100), 1.0),
-    (('TE-', 'PT-', 'SE-', 'VE-', 'RPM', 'EGT', 'Igniter', 'IGN', 'UV', 'BE-'), 'sensors', (40, 180, 100), 1.0),
     (('Fan',), 'fan', (120, 200, 240), 1.0),
     (('Fasteners', 'Studs'), 'fasteners', (70, 70, 75), 1.0),
 ]
