@@ -1,0 +1,207 @@
+{
+ "layout": {
+  "exhaust_flange": {
+   "x": 201.5,
+   "z": 390.0,
+   "DN": 200,
+   "D": 320.0,
+   "K": 280.0,
+   "n": 8,
+   "hole": 18.0,
+   "pipe_od": 219.1
+  },
+  "inlet": {
+   "z_flange": [
+    390.0,
+    410.0
+   ],
+   "z_bellows": [
+    410.0,
+    470.0
+   ],
+   "z_plenum": [
+    470.0,
+    560.0
+   ],
+   "perf_plate_z": 548.0,
+   "wall": 3.0
+  },
+  "core": {
+   "x": [
+    -80.0,
+    514.0000000000001
+   ],
+   "y": [
+    -150.0,
+    150.0
+   ],
+   "z": [
+    570.0,
+    881.7264337492021
+   ],
+   "stack_axis": "x",
+   "layer_width_axis": "y",
+   "flow": "+z (hot up, cold down)",
+   "window_len": 100.0,
+   "end_bar": 25.0,
+   "n_modules": 2,
+   "z_hdr_top": 806.7264337492021,
+   "z_hdr_bot": 645.0
+  },
+  "headers": {
+   "R": 45.0,
+   "t": 1.5,
+   "north": "cold inlet C1 (top window, z = core top - end bar - window/2)",
+   "south": "cold outlet C2 (bottom window)"
+  },
+  "hood": {
+   "z": [
+    881.7264337492021,
+    921.7264337492021
+   ]
+  },
+  "hx": {
+   "z": [
+    921.7264337492021,
+    1423.726433749202
+   ],
+   "tubes_per_row": 7,
+   "rows": 14,
+   "Pt": 38.0,
+   "Pl": 33.0,
+   "Do": 16.0,
+   "fin_D": 34.0,
+   "water_DN": 32
+  },
+  "stack": {
+   "DN": 200,
+   "D": 320.0,
+   "h": 150.0
+  },
+  "risers": {
+   "C1": {
+    "x": -11.0,
+    "y": 300.0,
+    "DN": 100
+   },
+   "C2": {
+    "x": 71.0,
+    "y": -300.0,
+    "DN": 125
+   }
+  },
+  "insulation": {
+   "recup_mm": 50.0,
+   "hx_mm": 30.0,
+   "risers_C1_mm": 20.0,
+   "risers_C2_mm": 60.0
+  },
+  "portal": {
+   "x_cols": [
+    -140.0,
+    544.0000000000001
+   ],
+   "y_cols": [
+    -215.0,
+    215.0
+   ],
+   "z_beam": [
+    500.0,
+    540.0
+   ],
+   "rails_y": [
+    -215.0,
+    215.0
+   ],
+   "rails_x": [
+    -170.0,
+    574.0000000000001
+   ]
+  }
+ },
+ "E2_C2": {
+  "C1": {
+   "side": "north",
+   "rect_x": [
+    -26.0,
+    7.5
+   ],
+   "rect_z": [
+    -40.0,
+    115.0
+   ],
+   "y_rect": 140.0,
+   "y_trans": 168.0,
+   "round_centre_xz": [
+    -11.0,
+    37.5
+   ],
+   "DN": 100,
+   "PN": 16,
+   "pipe_od": 114.3,
+   "pipe_t": 2.0,
+   "flange": [
+    220.0,
+    180.0,
+    8,
+    18.0,
+    20.0
+   ],
+   "face_y": 190.0,
+   "t_wall": 2.5,
+   "why": "lowered to mid-height: the version-C exhaust insulation fills x >= 22 above z 200 and x >= 116 below z 165"
+  },
+  "C2": {
+   "side": "south",
+   "rect_x": [
+    47.0,
+    95.0
+   ],
+   "rect_z": [
+    -239.0,
+    -40.0
+   ],
+   "y_rect": -155.0,
+   "face_y": -170.0,
+   "t_wall": 3.0,
+   "rect_flange_t": 15.0,
+   "rect_flange_rim": 15.0,
+   "n_bolts": 10,
+   "d_bolt": 10,
+   "round_axis_xz": [
+    71.0,
+    -139.5
+   ],
+   "DN": 125,
+   "why": "mirrored to the south (north side carries C1); narrowed to x 47..95 and rim 15 so the flange (x 32..110) clears the exhaust insulation (x >= 116)"
+  },
+  "C2_port_velocity": 30.86401442612605,
+  "C2_port_dump_kPa": 0.6177326505430045
+ },
+ "R_C2": {
+  "W": 0.3,
+  "H": 0.5940000000000001,
+  "nc": 75,
+  "nh": 76,
+  "fin_hot": "H-OSF 2.0/5.0",
+  "Lcf": 0.0617264337492021,
+  "Ld": 0.1,
+  "Ltot": 0.3117264337492021,
+  "end_bar": 0.025
+ },
+ "HX_C2": {
+  "Do": 0.016,
+  "t_tube": 0.001,
+  "fin_D": 0.034,
+  "fin_t": 0.0004,
+  "fin_pitch": 0.003,
+  "Pt": 0.038,
+  "Pl": 0.033,
+  "T_w_in": 70.0,
+  "T_w_out": 90.0,
+  "K_row": 0.45,
+  "n_tubes_per_row": 7,
+  "n_rows": 14,
+  "m3_h": 3.341290505732809
+ }
+}
