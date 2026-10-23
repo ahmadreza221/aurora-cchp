@@ -244,7 +244,7 @@ add('G-210_Stator_Core_12slot', core, 7.65, dict(
     description='Stator core 12 slots, ID 39 / OD 88 x 80, self-bonding laminations (no welding seams, no key)', qty=1,
     make_or_buy='buy as a bonded stack (laser cut 0.10 mm + backlack bonding) to our drawing', material_or_spec='NO10 / 10JNEX900 0.10 mm, backlack bonded',
     size_or_rating='88 h6 / 39 x 80', supplier_candidates='Kienle + Spiess (DE), Euro Group (IT); steel Cogent / Surahammar (SE), JFE (JP)',
-    notes='OD ground 88.10-88.13 after bonding for the shrink fit'))
+    notes='OD ground 88.110-88.130 after bonding (shrink fit 0.098-0.130 in 88 H6)'))
 ew = [cyl(a, b, S['endwind_r'][1], S['endwind_r'][0]) for (a, b) in S['endwind']]
 add('G-211_Stator_Winding_Litz', Part.makeCompound(cu).fuse(ew).removeSplitter(), 2.6, dict(
     description='Stator winding: 3-ph double layer, 12 coils x 5 turns, 5/6 pitch, Litz, slot liners Nomex 0.2, vacuum-potted end turns, '
@@ -515,6 +515,10 @@ bom_only('G-262', description='Hall target magnets in the locknut: 2 x Sm2Co5 d3
          material_or_spec='SmCo5', size_or_rating='d3 x 2', supplier_candidates='VAC (DE), Magnetfabrik Bonn (DE)', mass_kg=0.0003, notes='2 pulses/rev; balance-neutral pair')
 bom_only('G-263', description='Ring lugs DIN 46234 M6 for 6 mm2 (3 winding + 3 cable) + 8-pole spring terminal block for 3 x PT100 + PTC (Phoenix Contact PTFIX / WAGO 2002)',
          qty=1, make_or_buy='buy', material_or_spec='Sn-plated Cu / PA', size_or_rating='', supplier_candidates='Klauke (DE), Phoenix Contact (DE), WAGO (DE)', mass_kg=0.03, notes='')
+bom_only('G-265', description='Locknut locking set screws ISO 4026 M3 x 4 A4 with brass pads (2 per G-225)', qty=2, make_or_buy='buy',
+         material_or_spec='ISO 4026 A4 + brass pad', size_or_rating='M3, 0.6 N.m', supplier_candidates='Bossard (CH), Wuerth (DE)', mass_kg=0.0003, notes='')
+bom_only('G-266', description='Assembly greases: silicone grease for EPDM / FKM O-rings (Kluber Unisilkon L 250 L) and press paste for the carbon sleeve (Kluber Altemp Q NB 50)',
+         qty=1, make_or_buy='buy', material_or_spec='Kluber Lubrication', size_or_rating='', supplier_candidates='Kluber (DE)', mass_kg=0, notes='no mineral grease on EPDM')
 bom_only('G-264', description='Generator rotor balancing service: 2 planes (G-223 end rings), G1 target / G2.5 limit at 115k, on its own bearings', qty=1,
          make_or_buy='service', material_or_spec='ISO 21940-11', size_or_rating='U_per <= 0.056 g.mm total (G1)', supplier_candidates='Schenck RoTec (DE) machine or local turbo-balancing shop',
          mass_kg=0, notes='re-balance after any magnet / sleeve / shaft work')
