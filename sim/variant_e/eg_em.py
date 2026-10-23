@@ -38,7 +38,7 @@ L_STK = EM['stack'] / 1e3
 L_EFF = (EM['stack'] + EM['L_end_fringe']) / 1e3
 K3D = L_EFF / L_STK
 MU0 = F.MU0
-T_MAG_HOT, T_MAG_COLD, T_CU, T_SHIELD = 100.0, 20.0, 120.0, 90.0   # design temperatures (C); eg_thermal.py checks them
+T_MAG_HOT, T_MAG_COLD, T_CU, T_SHIELD = 100.0, 20.0, 90.0, 90.0    # design temperatures (C): copper mean 90 C from eg_thermal.json (slot 83, end windings 62-100 C); magnets controlled at 85 C, 100 C = hot bound
 CY = json.load(open(os.path.join(HERE, 'e_cycle.json')))
 RHO_FE = 7650.0
 SIG_CU20 = 5.8e7
@@ -525,21 +525,22 @@ def main():
                           '%.0f %% speed (hot magnets), then the load ramps in with speed; the speed controller sets V_dc, the fuel controller sets TIT / power' % (
                               math.sqrt(2) * E55, 100 * n_fsnl_hot))
     # alternative: 690 V-class AFE on a 400/525 V transformer, rewound stator N_ph = 12 (3 turns / coil), shorter stack
-    alt = {}
-    for Lst in (220.0, 230.0):
-        sc = 1.5 * (Lst + EM['L_end_fringe']) / (EM['stack'] + EM['L_end_fringe'])
-        E_a = E_ll * sc
-        Ls_a = 2.25 * (L2D * K3D * sc / 1.5 + ew['L_ew_H'])
-        R_a = 2.25 * R_ph * (Lst + ew['end_length_per_turn_mm']) / (EM['stack'] + ew['end_length_per_turn_mm'])
-        Vs = []
-        for name, Ps in OPS[1:3]:
-            V, b = vdc_for(Ps - (P_mech + P_fe + P_rot) / 1e3, E_a, Ls_a, R_a)
-            Vs.append(round(V))
-        alt['stack %.0f' % Lst] = dict(N_ph=12, E_ll_V=round(E_a), L_s_uH=round(Ls_a * 1e6, 1), V_dc_306_332=Vs, sqrt2_E=round(math.sqrt(2) * E_a),
-                                        window='690 V-class AFE on a 525 V winding: 870-1100 V', fsnl_speed_pct=round(100 * 1100 / (math.sqrt(2) * E_a), 1))
-    alt_note = ('690 V-class AFE + 400/525 V 350 kVA transformer: wider window (1100/870 = 1.26) -> export from ~10 % load at 100 % speed, but '
-                '+1.2 % loss (~4 kW), +~1.1 t, +cost, rewound stator (3 turns / coil); the 400 V AFE + part-load speed schedule is preferred '
-                'for 24/7 base load at 250-315 kW el')
+    def alt_machine(Lst):
+        sc_ = 1.5 * (Lst + EM['L_end_fringe']) / (EM['stack'] + EM['L_end_fringe'])
+        return (E_ll * sc_, 2.25 * (L2D * K3D * sc_ / 1.5 + ew['L_ew_H']),
+                2.25 * R_ph * (Lst + ew['end_length_per_turn_mm']) / (EM['stack'] + ew['end_length_per_turn_mm']))
+    Pem332 = OPS[2][1] - (P_mech + P_fe + P_rot) / 1e3
+    L_alt = brentq(lambda Lx: vdc_for(Pem332, *alt_machine(Lx))[0] - 880.0, 220.0, 300.0, xtol=1.0)
+    E_a, Ls_a, R_a = alt_machine(L_alt)
+    Vs = [round(vdc_for(Ps - (P_mech + P_fe + P_rot) / 1e3, E_a, Ls_a, R_a)[0]) for name, Ps in OPS[:3]]
+    Pmin = bridge(E_a, Ls_a, R_a, 1100.0)['P_dc_kW'] if math.sqrt(2) * E_a > 1100 else 0.0
+    alt = dict(stack_mm=round(L_alt), N_ph=12, turns_coil=3, E_ll_V=round(E_a), L_s_uH=round(Ls_a * 1e6, 1), V_dc_270_306_332=Vs, sqrt2_E=round(math.sqrt(2) * E_a),
+               window='690 V-class AFE (525-690 V) on a 525 V transformer winding: 870-1100 V', min_export_at_100pct_kW=round(Pmin, 1),
+               fsnl_speed_pct=round(min(100.0, 100 * 1100 / (math.sqrt(2) * E_a)), 1),
+               transformer='400 / 525 V Dyn11, 350 kVA, cast resin, ~1.2 % losses (~4 kW at 315 kW), ~1.1 t, e.g. SGB-SMIT (DE) / Tironi (IT) / TBEA (CN)')
+    alt_note = ('690 V-class AFE + 400/525 V 350 kVA transformer and a rewound stator (3 turns / coil): window 870-1100 V (ratio 1.26 vs 1.15) -> lower '
+                'minimum export at 100 % speed, but +1.2 % loss (~4 kW = -0.2 points net efficiency), +~1.1 t, +cost, one more failure point; '
+                'the standard 400 V AFE + the part-load speed schedule is preferred for 24/7 base load at 250-315 kW el')
     # stack-length trade (same cross-section, 1.5 mm screen)
     trade = []
     for Lst in (250.0, 260.0, 270.0, 280.0):
@@ -557,25 +558,24 @@ def main():
     # ---------------- 7 short circuit, demagnetisation
     Isc_pk = Psi / Ls
     T_sc = 1.5 * Psi ** 2 / Ls
-    # transient with R (dq, sudden 3-ph short at full speed): i_d, i_q from zero
-    dt = 1 / f / 400; idd = iqq = 0.0; Tmax = 0.0; Imax = 0.0
-    for k in range(40000):
-        did = (-R_ph * idd + w * Ls * iqq) / Ls
-        diq = (-R_ph * iqq - w * Ls * idd - w * Psi) / Ls
-        idd += did * dt; iqq += diq * dt
-        Tmax = max(Tmax, abs(1.5 * Psi * iqq)); Imax = max(Imax, math.hypot(idd, iqq) * 1.0)
+    # transient with R (rotor frame, sudden 3-ph short at full speed, L_d = L_q): closed form
+    #   d i/dt = -(R/L + j w) i - j w Psi / L ,  i = i_d + j i_q ,  i(0) = 0  ->  i = i_ss (1 - exp(-(R/L + j w) t)),  i_ss = -j w Psi / (R + j w L)
+    tt_ = np.linspace(0.0, 0.2, 400001)
+    i_ss = -1j * w * Psi / (R_ph + 1j * w * Ls)
+    i_t = i_ss * (1 - np.exp(-(R_ph / Ls + 1j * w) * tt_))
+    Imax = float(np.max(np.abs(i_t))); Tmax = float(np.max(np.abs(1.5 * Psi * i_t.imag)))
     mesh150, mod150 = mesh, mod
     Idem = -2.0 * Psi / Ls
     e = mod.reg['magnet']
     dem = {}
-    for Tm in (100.0, 120.0, 150.0):
-        Ad, _ = mod.solve(a0, iabc_dq(Idem, 0, a0), A0, Br=Br_at(Tm))
+    for Tm, idm in ((100.0, Idem), (120.0, Idem), (150.0, Idem), (150.0, 0.5 * Idem)):
+        Ad, _ = mod.solve(a0, iabc_dq(idm, 0, a0), A0, Br=Br_at(Tm))
         Bx, By = mod.B_of(Ad)
         Bpar = Bx[e] * math.cos(a0) + By[e] * math.sin(a0)
         HcJ = 1990e3 * (1 - 0.0019 * (Tm - 20)); Hk = 0.70 * HcJ
         Bk = Br_at(Tm) - MU0 * EM['mu_r'] * Hk
         frac = float(mod.area[e][Bpar < Bk].sum() / mod.area[e].sum())
-        dem['%d C' % Tm] = dict(B_parallel_min_T=round(float(Bpar.min()), 3), B_parallel_p01_T=round(float(np.percentile(Bpar, 1)), 3), HcJ_kA_m=round(HcJ / 1e3),
+        dem['%d C%s' % (Tm, '' if idm == Idem else ', steady-state short (i_d = -Psi/L_s)')] = dict(B_parallel_min_T=round(float(Bpar.min()), 3), B_parallel_p01_T=round(float(np.percentile(Bpar, 1)), 3), HcJ_kA_m=round(HcJ / 1e3),
                                 Hk_kA_m=round(Hk / 1e3), B_knee_T=round(Bk, 3), volume_below_knee_pct=round(100 * frac, 3))
     sc = dict(I_ss_rms=round(Isc_pk / math.sqrt(2)), I_ss_pu=round(Isc_pk / math.sqrt(2) / ops[-1]['I1_rms'], 2), I_peak_transient_A=round(Imax),
               T_peak_Nm=round(Tmax, 1), T_peak_over_rated=round(Tmax / (335e3 / w), 2), T_ideal_Nm=round(T_sc, 1),

@@ -1,0 +1,657 @@
+{
+ "title": "GR180 version E detailed generator rotor in the shaft system",
+ "date": "2026-10-24",
+ "script": "sim/variant_e/eg_rotor.py",
+ "model": "coupled core (e_rotor.core_rotor) + detailed generator rotor beam FE, gyroscopics, crowned-hex pin at x -128.5, SFD O-ring supports",
+ "generator_rotor": {
+  "mass_kg": 26.7,
+  "x_cg_mm": -568.2,
+  "Ip_kgm2": 0.0358,
+  "It_kgm2": 0.4981,
+  "Ip_over_It": 0.072,
+  "quill_kg": 1.93,
+  "bearing_span_mm": 385.0,
+  "shaft_length_mm": 457.5,
+  "segments": [
+   [
+    -812.0,
+    -800.0,
+    17.5,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -800.0,
+    -792.5,
+    19.0,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -792.5,
+    -777.5,
+    20.0,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -777.5,
+    -741.0,
+    25.0,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -741.0,
+    -444.0,
+    35.5,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -444.0,
+    -407.5,
+    25.0,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -407.5,
+    -392.5,
+    20.0,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -392.5,
+    -380.5,
+    17.5,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -380.5,
+    -378.5,
+    16.0,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -378.5,
+    -354.5,
+    15.9,
+    0.0,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -740.5,
+    -444.5,
+    37.0,
+    35.5,
+    125000000000.0,
+    8890.0,
+    0.5
+   ],
+   [
+    -728.5,
+    -456.5,
+    53.0,
+    37.0,
+    140000000000.0,
+    8400.0,
+    0.0
+   ],
+   [
+    -740.5,
+    -728.5,
+    53.0,
+    37.0,
+    193000000000.0,
+    7950.0,
+    0.3
+   ],
+   [
+    -456.5,
+    -444.5,
+    53.0,
+    37.0,
+    193000000000.0,
+    7950.0,
+    0.3
+   ],
+   [
+    -740.5,
+    -444.5,
+    60.0,
+    53.0,
+    12000000000.0,
+    1580.0,
+    1.0
+   ],
+   [
+    -378.5,
+    -344.5,
+    28.0,
+    15.9,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -344.5,
+    -165.0,
+    15.0,
+    9.5,
+    205000000000.0,
+    7850.0,
+    1.0
+   ],
+   [
+    -165.0,
+    -117.0,
+    28.0,
+    12.5,
+    205000000000.0,
+    7850.0,
+    1.0
+   ]
+  ]
+ },
+ "unbalanced_magnetic_pull": {
+  "B_gap_T": 0.5575,
+  "g_magnetic_mm": 25.2,
+  "k_N_um": 0.128,
+  "F_at_0p1mm_N": 12.8
+ },
+ "criticals": {
+  "SFD 3 N/um (base)": [
+   {
+    "rpm": 3027,
+    "x_max_mm": 300.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 4696,
+    "x_max_mm": -812.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 5755,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 14018,
+    "x_max_mm": -328.9,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 57168,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 89809,
+    "x_max_mm": -274.3,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 144283,
+    "x_max_mm": -227.4,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 158047,
+    "x_max_mm": -243.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 244408,
+    "x_max_mm": -211.8,
+    "rotor": "gen"
+   }
+  ],
+  "SFD 3 N/um + UMP": [
+   {
+    "rpm": 3024,
+    "x_max_mm": 300.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 4654,
+    "x_max_mm": -812.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 5748,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 14010,
+    "x_max_mm": -328.9,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 57168,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 89808,
+    "x_max_mm": -274.3,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 144283,
+    "x_max_mm": -227.4,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 158047,
+    "x_max_mm": -243.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 244408,
+    "x_max_mm": -211.8,
+    "rotor": "gen"
+   }
+  ],
+  "SFD 1.5 N/um": [
+   {
+    "rpm": 2190,
+    "x_max_mm": 300.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 3347,
+    "x_max_mm": -812.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 4151,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 12788,
+    "x_max_mm": -328.9,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 56890,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 89641,
+    "x_max_mm": -274.3,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 144107,
+    "x_max_mm": -227.4,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 157933,
+    "x_max_mm": -243.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 244348,
+    "x_max_mm": -211.8,
+    "rotor": "gen"
+   }
+  ],
+  "SFD 6 N/um": [
+   {
+    "rpm": 4132,
+    "x_max_mm": 300.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 6557,
+    "x_max_mm": -748.3,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 7864,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 16271,
+    "x_max_mm": -321.1,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 57714,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 90144,
+    "x_max_mm": -274.3,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 144636,
+    "x_max_mm": -227.4,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 158277,
+    "x_max_mm": -243.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 244527,
+    "x_max_mm": -211.8,
+    "rotor": "gen"
+   }
+  ],
+  "rigid 50 N/um (ref)": [
+   {
+    "rpm": 10341,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 17035,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 17478,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 35808,
+    "x_max_mm": -305.5,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 64463,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 94741,
+    "x_max_mm": -274.3,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 149824,
+    "x_max_mm": -227.4,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 161767,
+    "x_max_mm": -243.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 246290,
+    "x_max_mm": -211.8,
+    "rotor": "gen"
+   }
+  ],
+  "3 N/um, no quill pin": [
+   {
+    "rpm": 2562,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 4429,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 5499,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 6383,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 18759,
+    "x_max_mm": -117.0,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 88543,
+    "x_max_mm": -274.3,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 102763,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   },
+   {
+    "rpm": 152795,
+    "x_max_mm": -235.2,
+    "rotor": "gen"
+   },
+   {
+    "rpm": 170343,
+    "x_max_mm": -140.0,
+    "rotor": "eng"
+   }
+  ]
+ },
+ "margins": {
+  "SFD 3 N/um (base)": {
+   "highest_below_55pct": 14018,
+   "lowest_above_108pct": 57168,
+   "margin_above_run_pct": 63.3,
+   "inside_operating_range": []
+  },
+  "SFD 3 N/um + UMP": {
+   "highest_below_55pct": 14010,
+   "lowest_above_108pct": 57168,
+   "margin_above_run_pct": 63.3,
+   "inside_operating_range": []
+  },
+  "SFD 1.5 N/um": {
+   "highest_below_55pct": 12788,
+   "lowest_above_108pct": 56890,
+   "margin_above_run_pct": 62.5,
+   "inside_operating_range": []
+  },
+  "SFD 6 N/um": {
+   "highest_below_55pct": 16271,
+   "lowest_above_108pct": 57714,
+   "margin_above_run_pct": 64.9,
+   "inside_operating_range": []
+  }
+ },
+ "damped_35k": [
+  {
+   "rpm": 4572,
+   "zeta": 0.232,
+   "x_max_mm": -812.0,
+   "rotor": "gen"
+  },
+  {
+   "rpm": 4686,
+   "zeta": 0.192,
+   "x_max_mm": 300.0,
+   "rotor": "eng"
+  },
+  {
+   "rpm": 8230,
+   "zeta": 0.137,
+   "x_max_mm": -140.0,
+   "rotor": "eng"
+  },
+  {
+   "rpm": 14937,
+   "zeta": 0.223,
+   "x_max_mm": -328.9,
+   "rotor": "gen"
+  },
+  {
+   "rpm": 46609,
+   "zeta": 0.032,
+   "x_max_mm": -140.0,
+   "rotor": "eng"
+  },
+  {
+   "rpm": 72822,
+   "zeta": 0.013,
+   "x_max_mm": -235.2,
+   "rotor": "gen"
+  },
+  {
+   "rpm": 81579,
+   "zeta": 0.023,
+   "x_max_mm": -266.5,
+   "rotor": "gen"
+  },
+  {
+   "rpm": 119168,
+   "zeta": 0.021,
+   "x_max_mm": -211.8,
+   "rotor": "gen"
+  },
+  {
+   "rpm": 141227,
+   "zeta": 0.008,
+   "x_max_mm": -117.0,
+   "rotor": "gen"
+  }
+ ],
+ "free_free_generator_rotor_rpm": {
+  "without_quill": [
+   99593,
+   222177,
+   343160
+  ],
+  "with_quill": [
+   17163,
+   77830,
+   122987
+  ],
+  "note": "with the quill the first flexible mode is the quill / socket cantilever; in service the socket is pinned on the core hex (coupled model above)"
+ },
+ "rigid_rotor_check": {
+  "first_bending_free_free_rpm": 99593,
+  "ratio_to_run": 2.85,
+  "verdict": "rigid rotor (ISO 21940-11): n_run < 0.5 x first bending -> 2-plane low-speed balancing valid"
+ },
+ "torsion": {
+  "k_quill_Nm_rad": 29739,
+  "J_gen_kgm2": 0.0358,
+  "J_core_kgm2": 0.1394,
+  "f_mode_Hz": 162.6,
+  "mode_rpm_equiv": 9757,
+  "speed_at_1x_crossing_pct": 27.9,
+  "excitations": {
+   "ripple_6f_Hz": 3500,
+   "ripple_6f_pct": 7.79,
+   "separation_6f": 21.5,
+   "start_inverter": "6f of the start inverter crosses the mode at 1626 rpm (4.6 % speed, low torque, fast pass)"
+  },
+  "tau_rated_MPa": 20.5,
+  "tau_sc_transmitted_MPa": 26.1,
+  "sc_transmissibility": 0.084,
+  "tau_5x_rated_MPa": 102.7,
+  "allowable_MPa": "34CrNiMo6 QT Rp0.2 >= 800 -> tau_allow ~ 230 (static), fatigue tau_A ~ 160 (shot-peened)"
+ },
+ "quill_taper": {
+  "taper": "1:10 on diameter, d33 -> d30.6 x 24",
+  "pull_bolt": "ISO 4762 M12x1.25 x 45 12.9, 60 kN",
+  "preload_kN": 60.0,
+  "torque_capacity_Nm": 716,
+  "over_5x_rated": 1.57,
+  "contact_pressure_MPa": 125.3,
+  "hub_hoop_MPa": 246.8,
+  "tightening": "through the hollow quill (bore d19) with an AF10 x 300 hex bit + torque wrench; release: M14 jacking screw through the same bore"
+ },
+ "bearings": {
+  "type": "FAG HCB7008-E/C-T-P4S hybrid (or SKF 7008 CE/HCP4A, GMN HY S 7008, NSK 7008 hybrid, ZWZ / LYC hybrid)",
+  "preload": "300 N wave spring on the rear outer ring (floating) -> both bearings loaded; front locating (OR clamped)",
+  "static": {
+   "front_N": 114,
+   "rear_N": 147
+  },
+  "F_unbalance_G2p5_N": 244.6,
+  "F_ump_0p1mm_N": 12.8,
+  "cases": {
+   "front (locating, 7008-E)": {
+    "Fr_N": 243,
+    "Fa_N": 350.0,
+    "P_N": 404,
+    "L10_h": 49466,
+    "L10m_aISO3_h": 148399,
+    "friction_W": 804,
+    "ndm": 1890000
+   },
+   "rear (floating, 7008-C)": {
+    "Fr_N": 276,
+    "Fa_N": 300.0,
+    "P_N": 479,
+    "L10_h": 34767,
+    "L10m_aISO3_h": 104301,
+    "friction_W": 781,
+    "ndm": 1890000
+   }
+  },
+  "oil": "ISO VG 32 synthetic, jet 2.5 L/min per bearing at 2.5 barg (d1.2 nozzle aimed at the IR / cage gap, 15 deg), SFD feed from the same gallery, drain d12 at the hub bottom; oil in 55 C; replace both at 24,000 h with the core set",
+  "replace_h": 24000
+ },
+ "balancing": {
+  "standard": "ISO 21940-11 (rigid rotor)",
+  "target": "G1.0 (assembled rotor incl. bearings IR, nuts, speed wheel, quill)",
+  "acceptance": "G2.5 max after the spin test",
+  "planes_x_mm": {
+   "front": -734.5,
+   "rear": -450.5
+  },
+  "correction": "radial holes d4 (max 3 deep, 12 positions) in the 1.4404 end rings at r 50 (magnet OD side), or grub-screw weights M5 in the end-ring face",
+  "values": {
+   "G1.0": {
+    "U_total_gmm": 7.28,
+    "e_per_um": 0.273,
+    "U_front_gmm": 3.02,
+    "U_rear_gmm": 4.27
+   },
+   "G2.5": {
+    "U_total_gmm": 18.21,
+    "e_per_um": 0.682,
+    "U_front_gmm": 7.55,
+    "U_rear_gmm": 10.66
+   }
+  },
+  "procedure": "1) balance the shaft + screen (G2.5), 2) magnets + end rings + sleeve -> balance G1 on the bearing journals (soft-bearing machine, 2 planes, 600-1500 rpm), 3) quill fitted on the taper (marked angle) -> check G1, 4) hot spin test 120 %, 5) re-check G1 / G2.5 acceptance, record run-out of the socket <= 10 um TIR",
+  "machine": "Schenck (DE) HM / CIMAT (PL) / own soft-bearing machine; spin pit: Schenck RoTec (DE) service"
+ }
+}

@@ -71,3 +71,56 @@ def conductor_radii():
         out.append(r + WIND['ins_h'] / 2)
         r += WIND['ins_h']
     return out
+
+# ==================================================================== mechanical layout (ENG x, mm)
+# Re-entrant end-bell hubs: the bearings sit inside the end-winding envelope (short rotor, bearing span 385 mm).
+# Rear bearing kept at x -400 and the quill socket / core hex unchanged (e_layout.QUILL socket -165..-117, hex -140..-117).
+X_GR = -400.0                       # rear (floating) bearing centre, 7008-C + 300 N wave spring
+X_SR = -457.5                       # stator stack rear face  (= X_GR - 57.5)
+X_SF = X_SR - EM['stack']           # stator stack front face -727.5
+X_GF = X_SF - 57.5                  # front (locating) bearing centre, 7008-E: -785.0
+EW_OVER = 88.2                      # end-winding overhang from the stack faces (eg_em.json)
+BRG = dict(d=40.0, D=68.0, B=15.0, model='FAG HCB7008-E/C-T-P4S hybrid (or SKF 7008 CE/HCP4A, GMN HY S 7008, NSK 7008 hybrid, ZWZ / LYC hybrid)')
+
+# rotor (x0, x1, r) - generator shaft 42CrMo4 QT, one piece
+ROT = dict(
+    magnets=(X_SF - 1.0, X_SR + 1.0), endring_L=12.0, endring_mat='1.4404 (non-magnetic), balance planes (radial holes d4, <= 3 deep)',
+    sleeve=(X_SF - 13.0, X_SR + 13.0), screen=(X_SF - 13.0, X_SR + 13.0),
+    shaft=[('front_end_thread_M35x1.5', -812.0, -800.0, 17.5), ('speed_wheel_seat_d38', -800.0, -792.5, 19.0), ('front_journal_d40', -792.5, -777.5, 20.0),
+           ('front_seal_land_d50', -777.5, -741.0, 25.0), ('magnet_body_d71', -741.0, -444.0, 35.5), ('rear_seal_land_d50', -444.0, -407.5, 25.0),
+           ('rear_journal_d40', -407.5, -392.5, 20.0), ('rear_thread_M35x1.5', -392.5, -380.5, 17.5),
+           ('relief_d32', -380.5, -378.5, 16.0), ('quill_taper_1to10_d33_30.6', -378.5, -354.5, 16.5)],
+    taper=dict(x_large=-378.5, x_small=-354.5, d_large=33.0, d_small=30.6, ratio='1:10 on diameter', pull_bolt='ISO 4762 M12x1.25 x 45 12.9, 60 kN'),
+    nut=dict(name='precision lock nut M35x1.5, OD 52, B 12, 2 radial clamping screws (Spieth MSF 35x1.5 (DE) / SKF KMD 7 class)', OD=52.0, B=12.0,
+             x_front=(-812.0, -800.0), x_rear=(-392.5, -380.5)),
+    speed_wheel=dict(x=(-800.0, -792.5), OD=60.0, teeth='4 teeth + 1 phase notch, 1.4057 QT'),
+)
+QUILL_EG = dict(hub=(-378.5, -344.5), hub_OD=56.0, waist=(-344.5, -165.0), waist_d=30.0, bore_d=19.0, socket=(-165.0, -117.0), socket_OD=56.0,
+                hex_engage=(-140.0, -117.0), float_mm=1.0, mat='34CrNiMo6 QT, waist shot-peened, socket rotary-broached + plasma nitrided')
+
+# end bells (Al 6082-T6), hubs re-entrant
+EB = dict(front=dict(disk=(X_SF - 98.0 - 14.0, X_SF - 98.0), hub_nose=X_SF - 13.0 - 6.0, cap=(X_SF - 112.0 - 12.0, X_SF - 112.0)),
+          rear=dict(disk=(X_SR + 98.0, X_SR + 98.0 + 14.0), hub_nose=X_SR + 13.0 + 6.0),
+          hub_r=52.0, hub_bore_cart=42.12, spigot_front_r=145.0, spigot_rear_r=143.0, spigot_L=14.0, flange_r=165.0,
+          air_holes=dict(n=12, d=22.0, r=115.0), ir_port_r=58.0)
+# housing (Al 6082-T6 thick tube): bore 290 H7 front + jacket seat, shoulder to 286 H7 at the rear (jacket stop)
+HOUS = dict(x=(EB['front']['disk'][1], EB['rear']['disk'][0]), r_out=165.0, bore_front_r=145.0, bore_rear_r=143.0, x_shoulder=-422.5,
+            bolts=dict(n=16, size='M10', pcd=310.0, helicoil='M10 x 1.5D'), dowels=2)
+JACK = dict(x=(-762.5, -422.5), r_in=EM['stator_OD'] / 2, r_groove=137.0, r_out=145.0, channel=(-742.5, -442.5), groove_w=18.0, groove_d=8.0, land=5.0,
+            starts=2, oring_lands=((-762.5, -742.5), (-442.5, -422.5)), shrink_interference=(0.18, 0.24))
+GUARD = dict(x=(EB['rear']['disk'][1], -98.0), OD=76.0, ID=66.0, flange_r=60.0, flange_t=10.0, vents=4)
+TBOX = dict(x=(-820.0, -690.0), y=(-100.0, 100.0), z=(HOUS['r_out'], 300.0), window=(-815.0, -770.0, 30.0))
+SADDLE = dict(x=(-660.0, -405.0), w=80.0, z_floor=-647.0, cradle_r=HOUS['r_out'], base=(-1160.0, -190.0))
+BLOWER = dict(x=(-1150.0, -915.0), y=(-150.0, 150.0), z=(-150.0, 150.0), duct_d=80.0, outlet_z=100.0)
+HOOD = dict(x=(EB['front']['disk'][0] - 40.0, EB['front']['disk'][0]), r=138.0, r_in=66.0, screw_r=124.0)
+
+# values for cad/variant_e/e_layout.py when GEN_DETAILED = True (e_rotor.py format)
+E_GEN = dict(stack=(X_SF, X_SR), rotor_OD=EM['rotor_OD'], magnet=(EM['magnet_ID'], EM['magnet_OD']), endring=12.0, stator_ID=EM['bore'],
+             stator_OD=EM['stator_OD'], endturn=EW_OVER, body_r=35.5, step_r=25.0, journal_r=20.0, x_g=0.5 * (X_SF + X_SR),
+             jacket_r=(EM['stator_OD'] / 2, 145.0), housing_r=(145.0, HOUS['r_out']))
+E_GSHAFT = [(n, x0, x1, r) for (n, x0, x1, r) in ROT['shaft']]
+E_POD = dict(x=(HOOD['x'][0], EB['rear']['disk'][1]), OD=2 * HOUS['r_out'], end_bell_front=EB['front']['disk'], end_bell_rear=EB['rear']['disk'],
+             guard=dict(x=GUARD['x'], OD=GUARD['OD'], ID=GUARD['ID']), feet_x=SADDLE['x'])
+E_QUILL = dict(flange=(QUILL_EG['hub'][0], QUILL_EG['hub'][1], QUILL_EG['hub_OD'] / 2), waist=QUILL_EG['waist'], waist_d=QUILL_EG['waist_d'],
+               socket=QUILL_EG['socket'], socket_OD=QUILL_EG['socket_OD'], hex_engage=QUILL_EG['hex_engage'], float_mm=1.0,
+               bolts='taper 1:10 + central M12x1.25 12.9 pull bolt (through the hollow quill)')
