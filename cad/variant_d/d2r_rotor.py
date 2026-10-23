@@ -87,8 +87,8 @@ fc = (2.8, 11.0)
 parts['R-112_SFD_Cartridge_Front'] = (cartridge(fc[0], fc[1], [(2.8, 3.8)], [(3.9, 5.3), (8.5, 9.9)]), 7.85,
                                       '17-4PH H1025 / 100Cr6, bore 22 H5 for the OR (locating), land 27.80 g4, 2 O-ring grooves, anti-rotation pin')
 rc = (95.8, 107.3)
-parts['R-113_SFD_Cartridge_Rear'] = (cartridge(rc[0], rc[1], [(95.8, 96.8), (105.3, 107.3)], [(97.6, 99.0), (102.6, 104.0)]), 7.85,
-                                     '17-4PH H1025, OR sliding fit 22 H5/h5 (floating), land 27.80, 2 O-ring grooves')
+parts['R-113_SFD_Cartridge_Rear'] = (cartridge(rc[0], rc[1], [(105.3, 107.3)], [(97.6, 99.0), (102.6, 104.0)]), 7.85,
+                                     '17-4PH H1025, open at the front (bearing + spring go in from the front), OR sliding fit 22 H5/h5 (floating), land 27.80, 2 O-ring grooves')
 parts['R-114_Retaining_Ring_Front_OR'] = (cyl(9.8, 10.6, 11.0, 9.6), 7.85, 'internal retaining ring for bore 22 (spiral, Smalley-type flat wire, EU equiv.) holds the locating OR')
 orings = [cyl(a + 0.05, b - 0.05, RC + 0.10, 12.75) for (a, b) in [(3.9, 5.3), (8.5, 9.9), (97.6, 99.0), (102.6, 104.0)]]
 parts['R-116_SFD_O-rings_FKM_x4'] = (Part.makeCompound(orings), 1.9, 'FKM 75 Sh, 25.0 x 1.5 (sets support stiffness 1-2 N/um; measure)')

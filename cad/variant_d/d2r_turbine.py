@@ -1,7 +1,7 @@
 # GR180 version D2 - radial turbine stage for a BOUGHT turbocharger wheel (D4 78, 11 blades, exducer 70/21), part STEP.
 # Gas path: combustor exit annulus (r 22.25..35.35) -> 7-strut turbine-end support (replaces the v13A NGV) -> turning duct
-# between the housing front wall and the heat shield -> 360 deg plenum (shell r 81..84 = RT2 envelope) -> 17-vane radial nozzle ring
-# (r 56.6 -> 42.9, b 14) -> wheel -> exducer shroud + 4.3 deg cone -> exhaust (starts at x 199, ID 74.8, V-band OD 100).
+# between the housing front wall and the heat shield -> 360 deg plenum (shell r 70) -> 17-vane radial nozzle ring
+# (r 56.6 -> 42.9, b 14) -> wheel -> exducer shroud -> exhaust (starts at x 176, ID 70.7).
 # Numbers: sim/variant_d/d2r_turbine.py (meanline), cad/variant_d/d2r_layout.py (layout). ENG frame mm, x = engine axis.
 # Run: LANG=en_US.UTF-8 freecadcmd cad/variant_d/d2r_turbine.py  ->  cad_out/variant_d/D2/TURBINE/*.step + d2r_turbine_parts.json
 import FreeCAD as App, Part, os, sys, json, math
@@ -127,16 +127,22 @@ parts['T-116_Turbine_End_Support_7struts'] = spider
 
 # ---------------------------------------------------------------- T-120 turbine housing / plenum
 H = L.HOUSING
-hp = [(H['x0'], H['lip_ri']), (H['x0'], H['shell_ro']), (H['x1'], H['shell_ro']), (H['x1'], H['shell_ri']),
-      (H['rear_wall'][1], H['shell_ri']), (H['rear_wall'][1], H['rear_ri']),
+hp = [(H['x0'], H['lip_ri']), (H['x0'], H['shell_ro']), (H['x1'], H['shell_ro']), (H['x1'], H['rear_ri']),
       (H['rear_wall'][0], H['rear_ri']), (H['rear_wall'][0], H['shell_ri']), (H['front_wall'][1], H['shell_ri']),
       (H['front_wall'][1], H['lip_ri'])]
 housing = rev(hp)
-tit_boss = Part.makeCylinder(6.0, 9.0, V(H['tit_x'], 0, H['shell_ro'] - 2.0), V(0, 0, 1))
-housing = housing.fuse(tit_boss).removeSplitter()
-housing = housing.cut(Part.makeCylinder(2.0, 20, V(H['tit_x'], 0, H['shell_ri'] - 2), V(0, 0, 1)))       # TIT thermocouple bore
+pads = []
+for sgn in (1, -1):
+    y0 = H['shell_ro'] - 3.0 if sgn > 0 else -H['mount_pad']['y_out']
+    pads.append(Part.makeBox(H['mount_pad']['x'][1] - H['mount_pad']['x'][0], H['mount_pad']['y_out'] - H['shell_ro'] + 3.0,
+                             H['mount_pad']['z'][1] - H['mount_pad']['z'][0], V(H['mount_pad']['x'][0], y0, H['mount_pad']['z'][0])))
+tit_boss = Part.makeCylinder(6.0, 9.0, V(138.0, 0, H['shell_ro'] - 2.0), V(0, 0, 1))
+housing = housing.fuse(pads + [tit_boss]).removeSplitter()
+housing = housing.cut(Part.makeCylinder(2.0, 20, V(138.0, 0, H['shell_ri'] - 2), V(0, 0, 1)))       # TIT thermocouple bore
 housing = housing.cut(bolt_holes(4, L.FLANGE_BOLTS['pcd'], 5.6, H['front_wall'][0], H['front_wall'][1], 45.0))
 housing = housing.cut(bolt_holes(6, 50.0 * 2 - 6, 5.5, H['rear_wall'][0], H['rear_wall'][1], 0.0))
+for sgn in (1, -1):                                                                                   # M10 frame bolts in the pads
+    housing = housing.cut(Part.makeCylinder(5.25, 30, V(135.0, sgn * (H['mount_pad']['y_out'] - 6.0), -15), V(0, 0, 1)))
 parts['T-120_Turbine_Housing_Plenum'] = housing
 
 # ---------------------------------------------------------------- T-121 exducer shroud + exhaust flange
@@ -144,13 +150,12 @@ SH = L.SHROUD
 c = SH['clr']
 inner_line = [(shr(a)[0], shr(a)[1] + c) for a in [i / N_A * math.pi / 2 for i in range(0, N_A + 1)]]
 inner_line[0] = (SH['x0'], inner_line[0][1])
-inner_line += [(SH['x_cone0'], R6T + c), (SH['vband'][0] + 4.0, SH['r_end']), (SH['x_end'], SH['r_end'])]
-vb0, vb1, vbr = SH['vband']
-outer_line = [(SH['x_end'], vbr - 4.0), (vb1 - 3.0, vbr), (vb0 + 2.0, vbr), (vb0, vbr - 6.0), (vb0, SH['r_end'] + SH['t']),
-              (SH['x_cone0'], R6T + c + SH['t']), (SH['collar'][1], R6T + c + SH['t'] + 0.6), (SH['collar'][1], SH['collar'][2]),
-              (SH['collar'][0], SH['collar'][2]), (SH['collar'][0], 42.3), (SH['x0'], 42.3)]
+inner_line += [(SH['x_end'], R6T + c)]
+outer_line = [(SH['x_end'], SH['flange'][2]), (SH['flange'][0], SH['flange'][2]), (SH['flange'][0], R6T + c + SH['t']),
+              (158.0, R6T + c + SH['t'] + 0.6), (158.0, 50.0), (155.0, 50.0), (155.0, 42.3), (SH['x0'], 42.3)]
 shroud = rev(inner_line + outer_line)
-shroud = shroud.cut(bolt_holes(6, 94.0, 5.5, SH['collar'][0], SH['collar'][1], 0.0))
+shroud = shroud.cut(bolt_holes(6, SH['bolts']['pcd'], 6.6, SH['flange'][0], SH['flange'][1], 30.0))
+shroud = shroud.cut(bolt_holes(6, 94.0, 5.5, 155.0, 158.0, 0.0))
 parts['T-121_Exducer_Shroud_Exhaust_Flange'] = shroud
 
 # ---------------------------------------------------------------- export

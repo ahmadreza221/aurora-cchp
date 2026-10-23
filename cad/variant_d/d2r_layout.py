@@ -45,14 +45,12 @@ SPIDER = dict(x0=95.0, x1=118.0, r_in_wall=(21.25, 22.25), r_out_wall=(35.35, 36
               n_struts=7, strut_x=(105.0, 115.0), strut_t=2.5, web_x=(103.0, 105.0), seal_disc_x=(107.3, 112.0), seal_bore_r=7.85)
 NOZZLE = dict(Z=17, r_in=56.6, r_out=42.9, x0=135.0, x1=149.0, plate_front=(132.0, 135.0), plate_rear=(149.0, 152.0),
               plate_r=(40.0, 58.0), plate_rear_ri=42.6)
-# housing outer envelope kept = RT2 plenum (shell r 81..84, x 118..158) so the FRAME agent's sliding collar FR-130 (x 128..146) fits
-HOUSING = dict(x0=118.0, x1=158.0, shell_ri=81.0, shell_ro=84.0, front_wall=(118.0, 121.0), lip_ri=38.5,
-               rear_wall=(152.0, 155.0), rear_ri=44.0, tit_x=150.0)
-# exducer shroud: tip contour to the exit plane x 169, then a 4.3 deg half-angle cone (start of the exhaust diffuser) to the
-# EXHAUST agent's inlet station (x 199, bore 74.8, V-band OD 100: EX-111)
-SHROUD = dict(x0=149.0, x_exit=169.0, x_cone0=172.0, x_end=199.0, r_end=37.4, clr=0.35, t=3.0, vband=(191.0, 199.0, 50.0),
-              collar=(155.0, 158.0, 50.0))
-EXHAUST_START = dict(x=199.0, ID=74.8, flange_OD=100.0, joint='V-band (EX-111 ring on the exhaust side), Inconel clamp')
+# interface frozen with the intake/exhaust/frame agent (commit 20686b0 / 7bd203a): housing OD 146 with pads at y +/-79,
+# exhaust = bolted flange on the shroud at x 176 (bore 70.7, OD 104, 6 x M6 on PCD 94)
+HOUSING = dict(x0=118.0, x1=155.0, shell_ri=70.0, shell_ro=73.0, front_wall=(118.0, 121.0), lip_ri=38.5,
+               rear_wall=(152.0, 155.0), rear_ri=44.0, mount_pad=dict(x=(128.0, 142.0), y_out=85.0, z=(-10.0, 10.0)))
+SHROUD = dict(x0=149.0, x_exit=169.0, x_end=176.0, clr=0.35, t=3.0, flange=(172.0, 176.0, 52.0), bolts=dict(n=6, pcd=94.0, size='M6'))
+EXHAUST_START = dict(x=176.0, ID=2 * (35.0 + 0.35), flange_OD=104.0, bolts='6 x M6 on PCD 94')
 
 # ------------------------------------------------------------------ generator (G)
 POD = dict(bore_r=49.0, outer_r=55.0, rear_plate_x=(-123.0, -108.0), rear_plate_bore_r=9.0, shell_x0=-273.0)

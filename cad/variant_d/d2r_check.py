@@ -19,7 +19,8 @@ TOUCH_MM = 0.05
 REPLACED = {'Shaft', 'NoseCone', 'Turbine', 'TurbineNut', 'NGV', 'Exhaust', 'FrontBearing_608_hybrid_8x22x7',
             'RearBearing_608_hybrid_8x22x7', 'FrontBearing_Oring', 'WaveSpring_22x16_free3_0_inst2_8', 'ShaftTunnel',
             'Starter', 'RPM_Magnet', 'Balance_Slug', 'EGT_Probe', 'Compressor'}   # Compressor -> R-100 (bored d10)
-POD_PARTS = ['D-101_Generator_Housing_Jacket', 'D-102_Generator_Front_Cap', 'D-150_Pod_Struts_x3']
+POD_PARTS = ['D-101_Generator_Housing_Jacket', 'D-102_Generator_Front_Cap']      # D-150 struts superseded by INT-115 (intake agent)
+PARTNER = ('INTAKE', 'EXHAUST', 'FRAME')                                            # intake/exhaust/frame agent parts (d2_*.py), if built
 
 shapes = {}
 for grp in ('ROTOR', 'TURBINE', 'GENERATOR'):
@@ -40,7 +41,10 @@ for n in POD_PARTS:
     f = os.path.join(POD, n + '.step')
     if os.path.exists(f):
         shapes['pod/' + n] = Part.read(f)
-print('parts:', len(shapes), ' D2R:', sum(k.startswith('D2R') for k in shapes))
+for grp in PARTNER:
+    for f in sorted(glob.glob(os.path.join(D2, grp, '*.step'))):
+        shapes['D2/' + os.path.basename(f)[:-5]] = Part.read(f)
+print('parts:', len(shapes), ' D2R:', sum(k.startswith('D2R') for k in shapes), ' partner:', sum(k.startswith('D2/') for k in shapes))
 
 res = dict(tol_mm3=TOL_MM3, overlaps=[], contacts=[], checked_pairs=0)
 names = sorted(shapes)
@@ -75,17 +79,16 @@ def roof(x, y=0.0, z=0.0):
 
 I = dict(
     title='GR180 D2R rotor / turbine / generator interfaces', frame='ENG mm (x engine axis downstream, z up); ROOF m via X = 1.880 + x/1000 (engine-frame EP-1 2026-10-23)',
-    exhaust_start=dict(x=L.EXHAUST_START['x'], ID_mm=L.EXHAUST_START['ID'], vband_OD_mm=L.EXHAUST_START['flange_OD'],
-                       joint=L.EXHAUST_START['joint'], exducer_exit=dict(x=169.0, ID_mm=70.7),
-                       face='T-121 shroud rear face; the shroud already carries the first diffuser cone 70.7 -> 74.8 (4.3 deg half angle) from x 172',
-                       gas='~600 C, c ~270 m/s at x 199, no swirl at design', roof=roof(L.EXHAUST_START['x']),
-                       mating='EXHAUST agent EX-111 V-band inlet ring (x 199-207, ID 74.8, OD 100) - unchanged'),
+    exhaust_start=dict(x=L.EXHAUST_START['x'], ID_mm=L.EXHAUST_START['ID'], flange_OD_mm=L.EXHAUST_START['flange_OD'],
+                       bolts=L.EXHAUST_START['bolts'], face='exducer shroud T-121 rear face, gas leaves axially, c ~300 m/s, ~600 C, no swirl at design',
+                       roof=roof(L.EXHAUST_START['x']), mating='EXHAUST agent rev 2 (7bd203a): 14 deg L80 diffuser + DN125 stub bolted to this flange'),
     casing_rear_flange=dict(x=L.CASING_FACE_X, r=[39.0, 48.0], bolts='4 x M5 PCD 88 at 45/135/225/315 deg (longer bolts, M5x20 A286)',
                             stack='casing flange | T-116 support flange (x 116-118) | T-120 housing front wall (x 118-121)'),
-    turbine_housing_support=dict(x_collar=[128.0, 146.0], shell_OD=2 * L.HOUSING['shell_ro'],
-                                 note='plenum shell OD 168 kept from RT2 so the FRAME collar FR-130 (centre-line ears, sliding) clamps it at x 128-146; '
-                                      'the 0.3 mm casing sheet must not carry the hot end'),
-    tit_probe=dict(x=L.HOUSING['tit_x'], z_top=L.HOUSING['shell_ro'] + 7.0, thread='M8x1 boss, K-type 3 mm sheathed, tip in the plenum at r ~78'),
+    turbine_housing_mounts=dict(pads='2 pads y = +/-(73..85), x 128-142, z -10..10, one vertical M10 bolt each at x 135, y +/-79',
+                                roof_left=roof(135.0, 79.0, 0.0), roof_right=roof(135.0, -79.0, 0.0),
+                                note='turbine housing carries the hot end on the FRAME slide pedestals; the 0.3 mm casing sheet must not carry it'),
+    turbine_housing_envelope=dict(x=[L.HOUSING['x0'], L.HOUSING['x1']], OD=2 * L.HOUSING['shell_ro'], pads_y=L.HOUSING['mount_pad']['y_out']),
+    tit_probe=dict(x=138.0, z_top=L.HOUSING['shell_ro'] + 7.0, thread='M8x1 boss, K-type 3 mm sheathed, tip in the plenum at r ~68'),
     generator_pod=dict(bore_r=L.POD['bore_r'], internals_x=[-281.0, -123.0], rear_plate_contact_x=-123.0,
                        terminal_box=dict(x=list(L.TBOX['x']), y=list(L.TBOX['y']), z=list(L.TBOX['z']), cable='3 x 10 mm2 + PE, M32 gland, rear face'),
                        glycol_ports=dict(x=list(L.GLYCOL_PORTS), size='G1/4, top (z +55), 1.5-2 L/min 50/50 glycol, 35-40 C in'),
