@@ -404,7 +404,7 @@ class PMGModel:
         return self._tf(pts[:, 0], pts[:, 1])
 
     # -------------------------------------------------------------- time-harmonic eddy currents in the rotor frame
-    def eddy_harmonic(self, omega_r, I_amp, sequence=+1, mu_shaft=None, sigma_shaft=3.5e6, sigma_mag=0.0, sigma_shield=3.6e7):
+    def eddy_harmonic(self, omega_r, I_amp, sequence=+1, mu_shaft=None, sigma_shaft=3.5e6, sigma_mag=0.0, sigma_shield=3.6e7, sigma_sleeve=0.0):
         """complex A for a balanced 3-ph current set of amplitude I_amp (peak, phase total) at the rotor-frame angular
         frequency omega_r (rotating 2-pole field forward (+1) or backward (-1)); linear: iron nu from the last nonlinear
         solve (self.last_nu), shaft incremental mu_shaft.  Returns loss per region (W, stack length) and the solution."""
@@ -416,6 +416,7 @@ class PMGModel:
         sig[self.reg['shaft']] = sigma_shaft
         sig[self.reg['magnet']] = sigma_mag
         sig[self.reg['shield']] = sigma_shield
+        sig[self.reg['sleeve']] = sigma_sleeve
         Mloc = np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]]) / 12.0
         Me = (sig * self.area)[:, None, None] * Mloc[None]
         K = sp.csr_matrix((Ke.ravel(), (self.I, self.J)), shape=(self.N, self.N))
@@ -434,7 +435,7 @@ class PMGModel:
         # induced current density per element (centroid), J = -j w sigma A ; loss = sum |J|^2 / (2 sigma) * area * L
         Ae = A[self.T].mean(1)
         loss = {}
-        for name in ('shaft', 'magnet', 'shield'):
+        for name in ('shaft', 'magnet', 'shield', 'sleeve'):
             e = self.reg[name]
             if len(e) and sig[e[0]] > 0:
                 # element-wise exact integral of |A|^2 over P1: A^H Mloc A * area
