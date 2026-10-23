@@ -240,7 +240,10 @@ def sec_save(app, design):
     for d in app.documents:
         if d.name.startswith('GR180 E1') and d.dataFile:
             folder = d.dataFile.parentFolder; break
-    folder = folder or app.data.activeProject.rootFolder
+    if not folder:                              # activeProject can fail right after start-up; pick the project by name
+        projects = [app.data.dataProjects.item(i) for i in range(app.data.dataProjects.count)]
+        proj = next((p for p in projects if p.name == 'Default Project'), projects[0])
+        folder = proj.rootFolder
     doc.saveAs(DOC_NAME, folder, 'GR180-CCHP engine: core v13A + E1 + E2 + E3 + E4 (ENG frame, mm)', '')
     print('saved as', DOC_NAME, 'in', folder.name)
 
