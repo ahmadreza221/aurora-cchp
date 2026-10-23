@@ -1,0 +1,195 @@
+{
+ "title": "GR180 version E compressor meanline (TC-class impeller + vaned diffuser + scroll)",
+ "date": "2026-10-23",
+ "script": "sim/variant_e/e_compressor.py",
+ "geometry_inputs": {
+  "D1h": 76.0,
+  "beta2b": -38.0,
+  "Z_main": 9,
+  "Z_split": 9,
+  "t_b": 2.0,
+  "t_LE": 1.0,
+  "eps": 0.45,
+  "Lz_over_D2": 0.33,
+  "b2_over_D2": null,
+  "inc_opt": 0.0,
+  "r3_over_r2": 1.08,
+  "r4_over_r3": 1.62,
+  "Z_vd": 17,
+  "vd_div": 9.0,
+  "scroll_c": 60.0,
+  "cone_D_out": 254.0
+ },
+ "meanline": {
+  "N_rpm": 35000.0,
+  "m_kg_s": 3.0,
+  "T01_C": 30.399999999999977,
+  "P01_bar": 1.0047,
+  "PR_tt": 4.0,
+  "Q1_m3_s": 2.618526468550286,
+  "work": {
+   "dh_is_kJ_kg": 148.94145858960698,
+   "dh_actual_kJ_kg": 176.1483944178157,
+   "dh_euler_kJ_kg": 171.1794718196685,
+   "parasitic_frac": 0.02902756122172063,
+   "work_factor_dh0_U2sq": 0.7195391505362246,
+   "slip_sigma": 0.871124702336979
+  },
+  "inducer": {
+   "D1t_mm": 172.8,
+   "D1h_mm": 76.0,
+   "c1_m_s": 160.54229637875306,
+   "U1t_m_s": 316.6725394818511,
+   "W1t_m_s": 355.0427103722142,
+   "M1t_rel": 1.0357029327662102,
+   "beta1t_deg": 63.11652906088631,
+   "beta1rms_deg": 56.7235999841444,
+   "hub_tip": 0.43981481481481477
+  },
+  "impeller": {
+   "D2_mm": 269.98862260753975,
+   "U2_m_s": 494.77999277972646,
+   "b2_mm": 15.529129141116393,
+   "b2_D2": 0.05751771682501529,
+   "beta2b_deg": -38.0,
+   "Z": "9+9",
+   "Lz_mm": 89.09624546048812,
+   "eps_mm": 0.45,
+   "cm2": 108.85159841153983,
+   "ct2": 345.9708846713143,
+   "c2": 362.6906719464936,
+   "W2": 184.37142168125797,
+   "alpha2_deg": 72.53504452492366,
+   "M2_abs": 0.890995227932492,
+   "de_Haller_W2_W1t": 0.5192936407227443,
+   "T2_C": 138.70687725509572,
+   "P2_bar": 2.599965709622326,
+   "Df": 0.5689907081489254,
+   "eta_impeller_tt": 0.9301701783284153,
+   "phi": 0.07260289056212937,
+   "Ns": 0.7822821928427478,
+   "Mu2": 1.4129824469252235,
+   "material": "Al 2618-T61 forged, 5-axis milled (TC standard); tip speed 495 m/s at T2 203 C is inside the TC range (<= 560 m/s Al at PR 4.5-5)"
+  },
+  "losses_kJ_kg": {
+   "incidence": 0.03128258487510116,
+   "skin_friction": 2.327351240037717,
+   "blade_loading": 3.9628224317193976,
+   "clearance": 2.023891428962817,
+   "mixing": 0.18449486901509402,
+   "secondary_calibration": 3.4235894363933697,
+   "disc_friction": 0.8717646296599684,
+   "recirculation": 3.8476170511429095,
+   "leakage": 0.24960608328972156
+  },
+  "diffuser": {
+   "r3_mm": 145.79385620807147,
+   "r4_mm": 236.1860470570758,
+   "b3_mm": 14.752672684060572,
+   "Z_vanes": 17,
+   "alpha3_deg": 73.64402049649331,
+   "M3": 0.792647360117428,
+   "c3_m_s": 327.1772036985956,
+   "throat_mm": 13.960382766829941,
+   "AR": 2.8623809432489966,
+   "c4_m_s": 123.44666450769668,
+   "K_vaneless": 0.05000000000000002,
+   "K_vaned": 0.1,
+   "build": "17 straight wedge vanes (2.5D milled into the diffuser plate, 6082-T6), prime count vs 9+9 blades; LE re-cut ring option for matching"
+  },
+  "scroll": {
+   "exit_area_mm2": 16459.732912462612,
+   "exit_D_round_mm": 144.76595884366694,
+   "c_exit_m_s": 60.0,
+   "cone_out_D_mm": 254.0,
+   "c_pipe_m_s": 19.490219021569477,
+   "build": "round-section external scroll, cast AlSi7Mg T6 or welded 1.4541 half-shells; 7 deg cone to DN250 (EN 1092-1 PN10 flange)"
+  },
+  "stage": {
+   "P0_out_bar": 4.018802311136711,
+   "PR_tt": 4.000002300325183,
+   "eta_tt_flange": 0.8455457896223058,
+   "T0_out_C": 202.56189453166763,
+   "dp_vaneless_kPa": 7.186082523127712,
+   "dp_vaned_kPa": 12.57989531772549,
+   "dp_scroll_cone_kPa": 12.988605533071024
+  },
+  "cycle_assumed_eta_c": 0.8
+ },
+ "alternatives": {
+  "beta2b -30": {
+   "D2_mm": 262.8,
+   "eta_tt": 0.8379,
+   "M1t_rel": 1.036,
+   "U2": 481.6
+  },
+  "beta2b -45": {
+   "D2_mm": 278.4,
+   "eta_tt": 0.8511,
+   "M1t_rel": 1.036,
+   "U2": 510.3
+  },
+  "clearance 0.7 mm": {
+   "D2_mm": 271.0,
+   "eta_tt": 0.8389,
+   "M1t_rel": 1.036,
+   "U2": 496.6
+  },
+  "7+7 blades": {
+   "D2_mm": 275.0,
+   "eta_tt": 0.8479,
+   "M1t_rel": 1.036,
+   "U2": 504.0
+  },
+  "D1h 90 mm": {
+   "D2_mm": 270.3,
+   "eta_tt": 0.8427,
+   "M1t_rel": 1.067,
+   "U2": 495.3
+  },
+  "vaneless gap r3/r2 1.12": {
+   "D2_mm": 269.9,
+   "eta_tt": 0.8463,
+   "M1t_rel": 1.036,
+   "U2": 494.5
+  }
+ },
+ "frames": [
+  {
+   "maker": "Accelleron (CH)",
+   "series": "TPS-F (TPS52-F / TPS57-F)",
+   "published": "400-3300 kW engines, PR <= 5.2 (Al wheel), compressor peak eta > 84 %, splitter backswept wheels, mixed-flow turbine + nozzle ring, plain bearings on squeeze film; volume-flow chart puts ~2.6 m3/s between TPS52 and TPS57",
+   "source": "https://accelleron.com/content/dam/accelleronind/documents/TPS-F-Brochure.pdf",
+   "fit": "first choice (spare-part wheels: compressor + turbine shaft&wheel)"
+  },
+  {
+   "maker": "MAN Energy Solutions / PBS Turbo (DE/CZ)",
+   "series": "TCR14-TCR18",
+   "published": "TCR family 390-6700 kW engines, PR 4.7 (5.2-5.4 special), radial turbine, optional VTG nozzle",
+   "source": "MAN ES TCR brochure (via nauticexpo) / Riviera news",
+   "fit": "alternative; PBST (Velka Bites, CZ) also builds small gas turbines"
+  },
+  {
+   "maker": "MHI-MME (JP)",
+   "series": "MET-SRC / MET-ER (MET18SRC, MET16ER)",
+   "published": "radial turbocharger for 4-stroke engines; MET16ER ~1000 kW system",
+   "source": "https://www.mhi.com/news/1808302131.html",
+   "fit": "alternative (ask for MET18-22 class wheels)"
+  },
+  {
+   "maker": "Chinese makers (Hunan Tyen, Changzhou E&E Turbo-Power, ZJ/ Wuxi licensed lines)",
+   "series": "TPS/TCR-equivalent large radial TCs, spare wheels",
+   "published": "not verified (no datasheet found)",
+   "source": "-",
+   "fit": "cost option: wheels + friction welding to our shaft (as D2)"
+  },
+  {
+   "maker": "EXCLUDED",
+   "series": "Napier (UK) - owned by Wabtec (US) since 2013; Garrett / BorgWarner / Cummins Holset (US)",
+   "published": "-",
+   "source": "https://napier-turbochargers.com/news/the-sale-of-napier-turbochargers-to-wabtec-corporation",
+   "fit": "no US suppliers"
+  }
+ ],
+ "buy_spec": "Al 2618-T61 forged & 5-axis milled backswept splitter impeller, D2 ~270 mm, inducer ~173 mm, b2 ~16 mm, rated >= 38,500 rpm (110 %) with burst / spin data, Campbell (17 diffuser vanes, 9 scroll-tongue / strut orders), bore to our shaft H6 or bore-less with our stub (drawing from the supplier, then re-run this script)"
+}

@@ -53,12 +53,12 @@ B = dict(
     leak_lost=0.004,          # labyrinth leakage into the vented bearing chambers (lost)
     buffer=0.005, buffer_work=0.5,  # turbine back-face buffer/cooling air, rejoins at the rotor inlet, ~half the work
     eta_ts=0.810,             # turbine, nozzle-inlet total -> exducer static (exit KE counted as loss)
-    A6=0.03787,               # exducer annulus area m2 (D6t 232 / D6h 75, see e_turbine.py)
+    A6=0.03597,               # exducer annulus area m2 (D6t 232 / D6h 75 minus TE blockage, e_turbine.py)
     cp_diff=0.62, AR_diff=3.4, K_elbow=0.20,
     dp_down=1200.0,           # Pa: CHP heat exchanger / absorption-chiller generator + stack (plant scope)
-    mech_core=2.6e3,          # W: 3 core bearings (tandem pair + floating) at 35k, oil jet (e_rotor.py)
-    pmg_fixed=dict(iron=1.05e3, rotor_eddy=0.65e3, windage=0.95e3, bearings=1.70e3),   # W at 35k (e_pmg.py)
-    pmg_cu_rated=2.4e3, pmg_rated=330.0e3,                             # copper W at the rated shaft power
+    mech_core=2.43e3,         # W: 3 core bearings (tandem pair + floating) at 35k, oil jet (e_rotor.py)
+    pmg_fixed=dict(iron=1.60e3, rotor_eddy=1.10e3, windage=2.21e3, bearings=1.59e3),   # W at 35k (e_pmg.py, e_rotor.py)
+    pmg_cu_rated=1.26e3, pmg_rated=335.0e3,                            # copper W at the rated shaft power (e_pmg.py)
     conv_fixed=0.006, conv_prop=0.024,                                 # converter loss = 0.6 % of rating + 2.4 % of load
     aux=dict(oil_pumps=0.70e3, glycol_pump=0.40e3, radiator_fans=1.10e3, enclosure_fan=1.00e3, ecu_ignition_valves=0.40e3),
     booster_on=True,          # gas booster running (supply at the 3.5 barg minimum) - conservative rating
@@ -469,10 +469,11 @@ def main():
             combustor='single vertical reverse-flow can (Kawasaki M1A-style) inside the cool casing; diffusion/partially premixed gas swirl injector; Nimonic 75 liner',
             turbine='bought TC-class cast IN713LC radial/mixed-flow wheel D4 ~285-290 mm friction-welded to our shaft by the supplier; '
                     '2.5D nozzle ring (alloy X / 2.4665) in a floating hot plenum inside the cool pressure casing',
-            generator='2-pole SmCo PMG ~330 kW shaft at 35k rpm (583 Hz): own design with stator/rotor kit from a high-speed machine shop '
-                      '(e+a CH, or similar) or a bought HS machine (Safran GENeUS 300 FR - inquire 24/7 rating); 4Q regenerative AC/AC drive',
+            generator='2-pole SmCo PMG 335 kW shaft continuous at 35k rpm (583 Hz): own design, active parts from a high-speed machine shop '
+                      '(e+a CH, or similar) or a bought HS machine (Safran GENeUS 300 FR - inquire 24/7 rating); diode bridge + 400 V AFE supply unit, '
+                      'start inverter <= 500 Hz (e_pmg.py)',
             bearings='4 + 1 hybrid ceramic angular-contact spindle bearings 40x68x15 (7008 class) on O-ring SFDs, closed oil-jet, VG 32',
-            coupling='D2 idea scaled: quill with a crowned external spline/hex drive into the compressor-nose socket (slide-on, +/-1 mm float)'),
+            coupling='D2 idea scaled: bolted d30 quill with an AF24 socket sliding on the crowned AF24 hex of the core-shaft nose (+/-1 mm float, no adjustment)'),
     )
     json.dump(res, open(os.path.join(HERE, 'e_cycle.json'), 'w'), indent=1, default=lambda o: None)
     print('-> sim/variant_e/e_cycle.json')
