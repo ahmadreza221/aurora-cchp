@@ -1,0 +1,110 @@
+{
+ "title": "GR180 D2R rotor / turbine / generator interfaces",
+ "frame": "ENG mm (x engine axis downstream, z up); ROOF m via X = 1.880 + x/1000 (engine-frame EP-1 2026-10-23)",
+ "exhaust_start": {
+  "x": 176.0,
+  "ID_mm": 70.7,
+  "flange_OD_mm": 104.0,
+  "bolts": "6 x M6 on PCD 94",
+  "face": "exducer shroud T-121 rear face, gas leaves axially, c ~300 m/s, ~600 C, no swirl at design",
+  "roof": [
+   2.056,
+   7.85,
+   0.6
+  ],
+  "mating": "EXHAUST agent diffuser inlet: ID 70.7, cone from here to DN200"
+ },
+ "casing_rear_flange": {
+  "x": 116.0,
+  "r": [
+   39.0,
+   48.0
+  ],
+  "bolts": "4 x M5 PCD 88 at 45/135/225/315 deg (longer bolts, M5x20 A286)",
+  "stack": "casing flange | T-116 support flange (x 116-118) | T-120 housing front wall (x 118-121)"
+ },
+ "turbine_housing_mounts": {
+  "pads": "2 pads y = +/-(73..85), x 128-142, z -10..10, one vertical M10 bolt each at x 135, y +/-79",
+  "roof_left": [
+   2.015,
+   7.929,
+   0.6
+  ],
+  "roof_right": [
+   2.015,
+   7.771,
+   0.6
+  ],
+  "note": "turbine housing carries the hot end on the engine frame (FRAME agent); the 0.3 mm casing sheet must not carry it"
+ },
+ "turbine_housing_envelope": {
+  "x": [
+   118.0,
+   155.0
+  ],
+  "OD": 146.0,
+  "pads_y": 85.0
+ },
+ "tit_probe": {
+  "x": 138.0,
+  "z_top": 80.0,
+  "thread": "M8x1 boss, K-type 3 mm sheathed, tip in the plenum at r ~68"
+ },
+ "generator_pod": {
+  "bore_r": 49.0,
+  "internals_x": [
+   -281.0,
+   -123.0
+  ],
+  "rear_plate_contact_x": -123.0,
+  "terminal_box": {
+   "x": [
+    -232.0,
+    -168.0
+   ],
+   "y": [
+    -26.0,
+    26.0
+   ],
+   "z": [
+    55.0,
+    85.0
+   ],
+   "cable": "3 x 10 mm2 + PE, M32 gland, rear face"
+  },
+  "glycol_ports": {
+   "x": [
+    -250.0,
+    -152.0
+   ],
+   "size": "G1/4, top (z +55), 1.5-2 L/min 50/50 glycol, 35-40 C in"
+  },
+  "quill_guard": {
+   "x": [
+    -108.0,
+    -74.0
+   ],
+   "OD": 20.0
+  }
+ },
+ "oil": {
+  "core_front_jet": "drilled in tunnel flange (top), feed from the outside through a diffuser vane passage (v13A supply-line route)",
+  "core_rear_feed": "tube d4x0.5 along the tunnel top (r 14.5) in the compressor-air annulus",
+  "core_scavenge": "front: tunnel flange bottom port; rear: tube d6x0.5 along the tunnel bottom; both to the scavenge pump",
+  "generator": "jets from the top of each end shield, drains to the pod bottom (x -266 / -136, z -45), G1/8 scavenge ports",
+  "spec": "ISO VG 32 synthetic turbine oil, 2.5 barg, ~0.3 L/min per bearing (4 bearings ~1.2 L/min), 10 um filter"
+ },
+ "buffer_air": {
+  "core_front": "compressor back-face air through the 3-tooth front labyrinth into the bearing chamber (vented)",
+  "core_rear": "compressor-delivery air from the inner combustor annulus through 6 x d2 holes in T-116 to the rear cavity; leaks forward through the 4-tooth labyrinth into the bearing chamber and rearward past the wheel back face",
+  "breather": "bearing-chamber vent to the oil tank / mist separator"
+ },
+ "rotor_axial": {
+  "core_locating_bearing_x": 6.8,
+  "quill_axial_float_mm": 0.5,
+  "engine_nose_cup": [
+   -70.0,
+   -43.0
+  ]
+ }
+}
