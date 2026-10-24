@@ -121,7 +121,7 @@ def air_path(m, T=55.0):
 
 
 # ------------------------------------------------------------------ material / interface data
-K = dict(lam_inplane=26.0, cu=390.0, cuzr=320.0, steel=42.0, smco=10.0, cfrp_tr=0.70, al=170.0, nkn=0.20, serving=0.20, litz_eq=1.5, wedge=0.30,
+K = dict(lam_inplane=26.0, cu=390.0, cuzr=320.0, steel=42.0, smco=10.0, cfrp_tr=0.70, al=170.0, apa=0.20, serving=0.20, litz_eq=1.5, wedge=0.30,
          h_contact_stator_jacket=3000.0, h_bond_magnet=6000.0, h_contact_sleeve=5000.0)
 CP = dict(fe=460.0, cu=385.0, al=900.0, steel=460.0, smco=370.0, cfrp=900.0, ins=1200.0)
 
@@ -203,13 +203,13 @@ def build(m_air, gly_flow_L_min=None, T_air_ref=60.0):
         g_('th%d', 'yk%d', 1.0 / (1 / G_t + 1 / G_yi))
         # slot copper: liner + serving + internal (litz with VPI resin)
         ws = EM['slot_w'] / 1e3; hl = (EM['slot_depth'] - EM['wedge_h']) / 2e3
-        R_wall = WIND['liner'] / 1e3 / K['nkn'] + 0.15e-3 / K['serving']
+        R_wall = WIND['liner'] / 1e3 / K['apa'] + 0.15e-3 / K['serving']
         A_side = EM['slots'] * 2 * hl * DX; A_bot = EM['slots'] * ws * DX
         R_int_side = (ws / 4) / K['litz_eq']; R_int_rad = (hl / 2) / K['litz_eq']
         g_('cb%d', 'th%d', A_side / (R_wall + R_int_side))
         g_('ct%d', 'th%d', A_side / (R_wall + R_int_side))
         g_('cb%d', 'yk%d', A_bot / (R_wall + R_int_rad + 0.5 * (R2 - RB) * 0 + 1.0 / 2e4))
-        g_('ct%d', 'cb%d', A_bot / (WIND['separator'] / 1e3 / K['nkn'] + 2 * 0.15e-3 / K['serving'] + 2 * R_int_rad))
+        g_('ct%d', 'cb%d', A_bot / (WIND['separator'] / 1e3 / K['apa'] + 2 * 0.15e-3 / K['serving'] + 2 * R_int_rad))
         # gap side: wedge, teeth tips
         hg = ap['h_gap_W_m2K']
         A_w = EM['slots'] * ws * DX

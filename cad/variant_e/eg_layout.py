@@ -52,8 +52,8 @@ WIND = dict(
     construction='7 x 180 x 0.20 (180-strand bunches, 7 bunches rope-laid, compacted), lay 30 / 60 mm',
     bare_w=7.30, bare_h=7.65,                            # compacted rectangle (tangential x radial), Cu fill 0.71
     ins_w=7.70, ins_h=8.05,                              # + polyimide tape 2 x 25 um half-lap + glass-yarn serving
-    liner=0.31,                                          # Nomex-Kapton-Nomex (NKN) 0.31 slot liner (ground wall)
-    separator=0.50,                                      # NKN 0.5 between the layers (+ 2 slot PT100 positions)
+    liner=0.31,                                          # aramid / polyimide / aramid (APA) laminate 0.31 slot liner (ground wall; non-US aramid + polyimide)
+    separator=0.50,                                      # APA 0.5 between the layers (+ 2 slot PT100 positions)
     wedge_t=3.0,                                         # glass-epoxy EP GC 203 (IEC 60893) wedge in dovetail notches
     end_straight=12.0, end_angle_deg=32.0,               # straight extension out of the slot, crossing angle of the diamond
     lead_end='front',                                    # series / parallel connections + 6 leads on the front end winding
@@ -109,8 +109,8 @@ HOUS = dict(x=(EB['front']['disk'][1], EB['rear']['disk'][0]), r_out=165.0, bore
 JACK = dict(x=(-762.5, -422.5), r_in=EM['stator_OD'] / 2, r_groove=137.0, r_out=145.0, channel=(-742.5, -442.5), groove_w=18.0, groove_d=8.0, land=5.0,
             starts=2, oring_lands=((-762.5, -742.5), (-442.5, -422.5)), shrink_interference=(0.18, 0.24))
 GUARD = dict(x=(EB['rear']['disk'][1], -98.0), OD=76.0, ID=66.0, flange_r=60.0, flange_t=10.0, vents=4)
-TBOX = dict(x=(-820.0, -690.0), y=(-100.0, 100.0), z=(HOUS['r_out'], 300.0), window=(-815.0, -770.0, 30.0))
-SADDLE = dict(x=(-660.0, -405.0), w=80.0, z_floor=-647.0, cradle_r=HOUS['r_out'], base=(-1160.0, -190.0))
+TBOX = dict(x=(-820.0, -690.0), y=(-100.0, 100.0), z=(HOUS['r_out'], 300.0), window=(-800.0, -765.0, 25.0))
+SADDLE = dict(x=(-660.0, -400.0), w=60.0, strap_w=40.0, z_floor=-647.0, cradle_r=HOUS['r_out'], base=(-1160.0, -190.0))
 BLOWER = dict(x=(-1150.0, -915.0), y=(-150.0, 150.0), z=(-150.0, 150.0), duct_d=80.0, outlet_z=100.0)
 HOOD = dict(x=(EB['front']['disk'][0] - 40.0, EB['front']['disk'][0]), r=138.0, r_in=66.0, screw_r=124.0)
 

@@ -87,3 +87,14 @@ FRAME = dict(z_top=-650.0, rhs=(200.0, 100.0, 6.3), x=(-2100.0, 2000.0), y_rail=
 AXIS_ABOVE_FLOOR = 960.0
 
 OP_RANGE = (0.55 * N_RUN, 1.08 * N_RUN)
+
+# ------------------------------------------------------------------ detailed self-built generator (2026-10-24)
+# True: cad/variant_e/e_generator.py builds the detailed PMG (cad/variant_e/eg_generator.py, numbers in eg_layout.py) and the
+# generator numbers above (GEN, GSHAFT, POD, X_GF, X_GR, QUILL flange / waist) are replaced by eg_layout.E_* so that
+# e_rotor.py / e_check.py see the new rotor and pod; the core / compressor / turbine / intake / frame numbers are untouched.
+# False: the original pod envelope (E-G1xx) above.
+GEN_DETAILED = True
+if GEN_DETAILED:
+    import eg_layout as _EG
+    GEN, GSHAFT, POD, X_GF, X_GR = _EG.E_GEN, _EG.E_GSHAFT, _EG.E_POD, _EG.X_GF, _EG.X_GR
+    QUILL = dict(QUILL, **_EG.E_QUILL)

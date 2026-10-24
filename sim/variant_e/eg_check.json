@@ -1,0 +1,541 @@
+{
+ "tol_mm3": 1.0,
+ "generator_parts": 60,
+ "other_parts": 40,
+ "checked_pairs": 691,
+ "checked_solid_pairs": 2150,
+ "overlaps": [],
+ "contacts": [
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G201_Glycol_Jacket",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G207_Jacket_Circlip_DIN472_290",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G208_Jacket_Dowel_d8",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G230_Front_End_Bell",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G231_Rear_End_Bell",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G240_Terminal_Box",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G255_Accelerometers_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G256_Fittings_Glycol_Oil_x8",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G260_Saddles_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G261_Saddle_Clamp_Straps_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G271_HELICOIL_M10_1.5D_x32",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G272_Dowels_ISO8734_8x24_x4",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G280_O-rings_Jacket_280x3.55_EPDM_x4",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G200_Pod_Housing",
+   "b": "GENERATOR/E-G281_O-rings_Spigots_FKM_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G201_Glycol_Jacket",
+   "b": "GENERATOR/E-G202_Stator_Core_NO10",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G201_Glycol_Jacket",
+   "b": "GENERATOR/E-G280_O-rings_Jacket_280x3.55_EPDM_x4",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G202_Stator_Core_NO10",
+   "b": "GENERATOR/E-G203_Stator_End_Plates_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G202_Stator_Core_NO10",
+   "b": "GENERATOR/E-G206_Slot_Wedges_x24",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G203_Stator_End_Plates_x2",
+   "b": "GENERATOR/E-G205_Winding_End_Turns_Leads",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G203_Stator_End_Plates_x2",
+   "b": "GENERATOR/E-G206_Slot_Wedges_x24",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G204_Winding_Slot_Conductors",
+   "b": "GENERATOR/E-G205_Winding_End_Turns_Leads",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G205_Winding_End_Turns_Leads",
+   "b": "GENERATOR/E-G206_Slot_Wedges_x24",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G207_Jacket_Circlip_DIN472_290",
+   "b": "GENERATOR/E-G208_Jacket_Dowel_d8",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G211_Cu_Eddy_Screen",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G215_Precision_Locknuts_M35x1.5_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G216_Speed_Phase_Wheel",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G216b_Speed_Wheel_Screw_M8",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G217_Quill_Hollow_Taper_AF24",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G218_Quill_Pull_Bolt_M12x1.25",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G219_Front_IR_Spacer",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G220_Bearing_7008E_front",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G210_Generator_Shaft",
+   "b": "GENERATOR/E-G221_Bearing_7008C_rear",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G211_Cu_Eddy_Screen",
+   "b": "GENERATOR/E-G212_Magnet_Segments_x12",
+   "gap_mm": 0.03
+  },
+  {
+   "a": "GENERATOR/E-G211_Cu_Eddy_Screen",
+   "b": "GENERATOR/E-G213_Magnet_End_Rings_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G212_Magnet_Segments_x12",
+   "b": "GENERATOR/E-G213_Magnet_End_Rings_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G212_Magnet_Segments_x12",
+   "b": "GENERATOR/E-G214_CFRP_Sleeve",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G213_Magnet_End_Rings_x2",
+   "b": "GENERATOR/E-G214_CFRP_Sleeve",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G215_Precision_Locknuts_M35x1.5_x2",
+   "b": "GENERATOR/E-G216_Speed_Phase_Wheel",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G215_Precision_Locknuts_M35x1.5_x2",
+   "b": "GENERATOR/E-G219_Front_IR_Spacer",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G215_Precision_Locknuts_M35x1.5_x2",
+   "b": "GENERATOR/E-G221_Bearing_7008C_rear",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G217_Quill_Hollow_Taper_AF24",
+   "b": "GENERATOR/E-G218_Quill_Pull_Bolt_M12x1.25",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G219_Front_IR_Spacer",
+   "b": "GENERATOR/E-G220_Bearing_7008E_front",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G220_Bearing_7008E_front",
+   "b": "GENERATOR/E-G222_SFD_Cartridge_Front",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G220_Bearing_7008E_front",
+   "b": "GENERATOR/E-G232_Front_Bearing_Cap",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G221_Bearing_7008C_rear",
+   "b": "GENERATOR/E-G223_SFD_Cartridge_Rear",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G221_Bearing_7008C_rear",
+   "b": "GENERATOR/E-G224_Wave_Spring_300N",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G222_SFD_Cartridge_Front",
+   "b": "GENERATOR/E-G226_Front_Cartridge_Shim",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G222_SFD_Cartridge_Front",
+   "b": "GENERATOR/E-G232_Front_Bearing_Cap",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G223_SFD_Cartridge_Rear",
+   "b": "GENERATOR/E-G224_Wave_Spring_300N",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G223_SFD_Cartridge_Rear",
+   "b": "GENERATOR/E-G227_Rear_Spacer_Tube",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G223_SFD_Cartridge_Rear",
+   "b": "GENERATOR/E-G231_Rear_End_Bell",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G226_Front_Cartridge_Shim",
+   "b": "GENERATOR/E-G230_Front_End_Bell",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G227_Rear_Spacer_Tube",
+   "b": "GENERATOR/E-G233_Rear_Seal_Cap",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G232_Front_Bearing_Cap",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G234_Air_Inlet_Hood",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G255_Accelerometers_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G256_Fittings_Glycol_Oil_x8",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G270_Screws_ISO4762_M10x35_x32",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G271_HELICOIL_M10_1.5D_x32",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G272_Dowels_ISO8734_8x24_x4",
+   "gap_mm": 0.02
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G273_Screws_M6x16_front_cap_x6",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G281_O-rings_Spigots_FKM_x2",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G282_O-rings_SFD_77.5x2.65_FKM_x4",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G283_O-rings_Caps_80x1.78_FKM_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G230_Front_End_Bell",
+   "b": "GENERATOR/E-G284_Cartridge_Pins_ISO8734_4x10_x2",
+   "gap_mm": 0.02
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G233_Rear_Seal_Cap",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G255_Accelerometers_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G256_Fittings_Glycol_Oil_x8",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G270_Screws_ISO4762_M10x35_x32",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G271_HELICOIL_M10_1.5D_x32",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G272_Dowels_ISO8734_8x24_x4",
+   "gap_mm": 0.02
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G281_O-rings_Spigots_FKM_x2",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G282_O-rings_SFD_77.5x2.65_FKM_x4",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G283_O-rings_Caps_80x1.78_FKM_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G284_Cartridge_Pins_ISO8734_4x10_x2",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G232_Front_Bearing_Cap",
+   "b": "GENERATOR/E-G273_Screws_M6x16_front_cap_x6",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G232_Front_Bearing_Cap",
+   "b": "GENERATOR/E-G283_O-rings_Caps_80x1.78_FKM_x2",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G233_Rear_Seal_Cap",
+   "b": "GENERATOR/E-G235_Quill_Guard_Tube",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G233_Rear_Seal_Cap",
+   "b": "GENERATOR/E-G283_O-rings_Caps_80x1.78_FKM_x2",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G234_Air_Inlet_Hood",
+   "b": "GENERATOR/E-G252_Air_Bellows_DN80",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G234_Air_Inlet_Hood",
+   "b": "GENERATOR/E-G276_Screws_M6x45_hood_x8",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G235_Quill_Guard_Tube",
+   "b": "GENERATOR/E-G274_Screws_M6x30_rear_cap_guard_x6",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G240_Terminal_Box",
+   "b": "GENERATOR/E-G241_Terminal_Box_Lid",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G240_Terminal_Box",
+   "b": "GENERATOR/E-G243_Screws_M8_terminal_box_x4",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G250_Cooling_Air_Blower_EC",
+   "b": "GENERATOR/E-G250b_Blower_Stand",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G250_Cooling_Air_Blower_EC",
+   "b": "GENERATOR/E-G251_F9_Filter_Cartridge",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G250_Cooling_Air_Blower_EC",
+   "b": "GENERATOR/E-G252_Air_Bellows_DN80",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G250b_Blower_Stand",
+   "b": "GENERATOR/E-G262_Saddle_Base_Beam",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G260_Saddles_x2",
+   "b": "GENERATOR/E-G262_Saddle_Base_Beam",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G260_Saddles_x2",
+   "b": "GENERATOR/E-G263_Saddle_Bolts_M16_x4",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G270_Screws_ISO4762_M10x35_x32",
+   "b": "GENERATOR/E-G271_HELICOIL_M10_1.5D_x32",
+   "gap_mm": 0.05
+  },
+  {
+   "a": "GENERATOR/E-G217_Quill_Hollow_Taper_AF24",
+   "b": "ROTOR/E-R101_Core_Shaft",
+   "gap_mm": 0.015
+  },
+  {
+   "a": "GENERATOR/E-G262_Saddle_Base_Beam",
+   "b": "INTAKE/E-I110_Intake_Plenum",
+   "gap_mm": 0.0
+  }
+ ],
+ "mass_kg": {
+  "groups": {
+   "rotor": 26.62,
+   "stator_pod": 142.04,
+   "guard": 2.29,
+   "supports": 81.48,
+   "cooling_air": 25.7
+  },
+  "total": 278.0,
+  "pod_incl_rotor_guard": 170.9
+ },
+ "pod_envelope_mm": {
+  "x": [
+   -905.0,
+   -98.0
+  ],
+  "y": [
+   -180.6,
+   214.0
+  ],
+  "z": [
+   -190.0,
+   300.0
+  ],
+  "L_x_W_x_H": [
+   807,
+   395,
+   490
+  ]
+ },
+ "x_cg_total": -627.9,
+ "rotor_parts": [
+  "GENERATOR/E-G210_Generator_Shaft",
+  "GENERATOR/E-G211_Cu_Eddy_Screen",
+  "GENERATOR/E-G212_Magnet_Segments_x12",
+  "GENERATOR/E-G213_Magnet_End_Rings_x2",
+  "GENERATOR/E-G214_CFRP_Sleeve",
+  "GENERATOR/E-G215_Precision_Locknuts_M35x1.5_x2",
+  "GENERATOR/E-G216_Speed_Phase_Wheel",
+  "GENERATOR/E-G216b_Speed_Wheel_Screw_M8",
+  "GENERATOR/E-G217_Quill_Hollow_Taper_AF24",
+  "GENERATOR/E-G218_Quill_Pull_Bolt_M12x1.25",
+  "GENERATOR/E-G219_Front_IR_Spacer",
+  "GENERATOR/E-G254_Speed_Probes_x2"
+ ],
+ "interfaces": {
+  "quill_socket": [
+   -165.0,
+   -117.0
+  ],
+  "hex_engage": [
+   -140.0,
+   -117.0
+  ],
+  "rear_bearing_x": -400.0,
+  "guard_end_x": -98.0,
+  "saddles_x": [
+   -660.0,
+   -400.0
+  ],
+  "base_beam": [
+   -1160.0,
+   -190.0
+  ],
+  "note": "base beam bolted through the plenum floor onto the frame cross members at x -1050 / -600 / -200"
+ }
+}

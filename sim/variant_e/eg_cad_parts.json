@@ -1,0 +1,1635 @@
+{
+ "subsystem": "GENERATOR",
+ "frame": "ENG mm (x engine axis downstream, x = 0 at the compressor tip, z up)",
+ "parts": {
+  "E-G200_Pod_Housing": {
+   "subsystem": "GENERATOR",
+   "desc": "pod housing: thick tube OD 330, bore 290 H7 (front, jacket seat) / 286 H7 (rear) turned in ONE setting (coaxial <= 0.02), jacket shoulder x -422.5, DIN 472 circlip groove, 2 x 16 HELICOIL M10 + 2 dowels per end face, glycol ports G3/4 (+y), leak-off G1/8 (low -y), lead window (top), 4 x HELICOIL M8 for the terminal box, jacket anti-rotation dowel hole",
+   "make_buy": "make: 6082-T6 forged ring / thick tube d340/280 x 480, CNC turning (both bores one clamping) + 5-axis for ports / holes",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 9066.1,
+   "mass_kg": 24.48,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -825.5,
+     -359.5
+    ],
+    [
+     -165.0,
+     178.0
+    ],
+    [
+     -165.0,
+     165.0
+    ]
+   ],
+   "note": "bores Ra 0.8, coaxiality 290 H7 / 286 H7 <= 0.02, end faces perpendicular <= 0.02; HELICOIL plus M10 x 1.5D",
+   "step": "cad_out/variant_e/GENERATOR/E-G200_Pod_Housing.step"
+  },
+  "E-G201_Glycol_Jacket": {
+   "subsystem": "GENERATOR",
+   "desc": "glycol jacket sleeve: ID 262 H6 (stator shrink 0.18-0.24), OD 290 g6 lands, double-start helical channel 18 x 8 lead 46 (2 x 6.5 turns), front / rear manifold grooves, 2 + 2 O-ring grooves (bottom d284.3) with leak-off grooves, 2 x M10 pull-out threads, anti-rotation dowel slot",
+   "make_buy": "make: 6082-T6 tube d300/250 x 350, CNC turning; helix single-point turned (2-start, like a coarse thread)",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 2425.5,
+   "mass_kg": 6.55,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -762.5,
+     -422.5
+    ],
+    [
+     -145.0,
+     145.0
+    ],
+    [
+     -145.0,
+     145.0
+    ]
+   ],
+   "note": "CAD shows the helix as 12 rings of the same section; h 7200 W/m2K, 28 kPa at 30 L/min (eg_thermal.json)",
+   "step": "cad_out/variant_e/GENERATOR/E-G201_Glycol_Jacket.step"
+  },
+  "E-G207_Jacket_Circlip_DIN472_290": {
+   "subsystem": "GENERATOR",
+   "desc": "internal circlip DIN 472 290 x 4 (axial stop of the jacket, front)",
+   "make_buy": "buy (Hugro DE / Wuerth DE)",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 34.2,
+   "mass_kg": 0.35,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -774.0,
+     -770.0
+    ],
+    [
+     -149.4,
+     149.4
+    ],
+    [
+     -149.4,
+     149.4
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G207_Jacket_Circlip_DIN472_290.step"
+  },
+  "E-G208_Jacket_Dowel_d8": {
+   "subsystem": "GENERATOR",
+   "desc": "radial anti-rotation dowel ISO 8734 8 m6 x 18 (housing -> jacket slot), reacts the stator torque",
+   "make_buy": "buy (Bossard CH, Halder DE)",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 0.9,
+   "mass_kg": 0.01,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -770.0,
+     -762.0
+    ],
+    [
+     140.0,
+     158.0
+    ],
+    [
+     -4.0,
+     4.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G208_Jacket_Dowel_d8.step"
+  },
+  "E-G202_Stator_Core_NO10": {
+   "subsystem": "GENERATOR",
+   "desc": "stator core 24 open slots 8.6 x 37 (+ wedge notches), bore 126, OD 262.24 ground (shrink), stack 270 of 0.10 mm NO10, self-bonding varnish (backlack), no welds / keys",
+   "make_buy": "buy: bonded lamination stack to our drawing (laser cut + backlack bonded, OD ground)",
+   "material": "lam10",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 9104.5,
+   "mass_kg": 66.17,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -727.5,
+     -457.5
+    ],
+    [
+     -131.0,
+     131.0
+    ],
+    [
+     -131.0,
+     131.0
+    ]
+   ],
+   "note": "order spec docs/variant_e/02_generator.md section 5; Kienle+Spiess (DE), Euro Group (IT), Surahammar / Cogent (SE), JFE (JP), Baosteel (CN)",
+   "step": "cad_out/variant_e/GENERATOR/E-G202_Stator_Core_NO10.step"
+  },
+  "E-G203_Stator_End_Plates_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "insulating end plates 1.5 mm (glass-epoxy EP GC 203), slotted like the core, protect the coils at the slot exits",
+   "make_buy": "make: CNC milled / waterjet from EP GC 203 sheet",
+   "material": "GFRP",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 96.0,
+   "mass_kg": 0.18,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -729.0,
+     -456.0
+    ],
+    [
+     -129.0,
+     129.0
+    ],
+    [
+     -129.0,
+     129.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G203_Stator_End_Plates_x2.step"
+  },
+  "E-G204_Winding_Slot_Conductors": {
+   "subsystem": "GENERATOR",
+   "desc": "winding, slot parts: 96 compacted rectangular Litz conductors 7.7 x 8.05 insulated (1260 x 0.20 mm, Cu 39.6 mm2) - 24 diamond coils x 2 turns, double layer, pitch 1-11, 2 parallel paths (pole groups), 8 series turns / phase; APA 0.31 liner, APA 0.5 separator",
+   "make_buy": "make: rewind shop (form-wound coils, VPI class H)",
+   "material": "cu_slot",
+   "valid": true,
+   "n_solids": 96,
+   "volume_cm3": 1624.5,
+   "mass_kg": 10.72,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -729.0,
+     -456.0
+    ],
+    [
+     -99.3,
+     99.3
+    ],
+    [
+     -99.3,
+     99.3
+    ]
+   ],
+   "note": "winding spec docs/variant_e/02_generator.md section 6",
+   "step": "cad_out/variant_e/GENERATOR/E-G204_Winding_Slot_Conductors.step"
+  },
+  "E-G205_Winding_End_Turns_Leads": {
+   "subsystem": "GENERATOR",
+   "desc": "end windings (VPI baskets, overhang 88 mm), front connection ring (series / parallel connections, brazed Cu lugs, glass-tape bound), 6 leads 2 x 70 mm2 silicone (U1 V1 W1 U2 V2 W2) through the lead window; 6 slot + 4 end-winding PT100 embedded",
+   "make_buy": "make: rewind shop",
+   "material": "litz_ew",
+   "valid": true,
+   "n_solids": 5,
+   "volume_cm3": 3292.5,
+   "mass_kg": 15.15,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -815.7,
+     -369.3
+    ],
+    [
+     -118.0,
+     118.0
+    ],
+    [
+     -118.0,
+     176.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G205_Winding_End_Turns_Leads.step"
+  },
+  "E-G206_Slot_Wedges_x24": {
+   "subsystem": "GENERATOR",
+   "desc": "24 slot wedges glass-epoxy EP GC 203, dovetail 10.1 x 1.9 in the notches, 273 long, driven in before VPI",
+   "make_buy": "make: milled strip (wedge profile: Krempel DE / Von Roll CH)",
+   "material": "GFRP",
+   "valid": true,
+   "n_solids": 24,
+   "volume_cm3": 212.1,
+   "mass_kg": 0.4,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -729.0,
+     -456.0
+    ],
+    [
+     -66.7,
+     66.7
+    ],
+    [
+     -66.7,
+     66.7
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G206_Slot_Wedges_x24.step"
+  },
+  "E-G210_Generator_Shaft": {
+   "subsystem": "GENERATOR",
+   "desc": "generator shaft one piece: magnet body d71 (screen seat 71 +0.10/+0.12), seal lands d50 h6, journals d40 js4, threads M35x1.5 (2), spacer seat d38, speed-wheel stub d30 k5, rear 1:10 taper d33 -> d30.6 x 24 for the quill hub, M12x1.25 pull-bolt thread, centres",
+   "make_buy": "make: 42CrMo4 +QT (Rm 1000) bar d80, CNC turn, grind journals / lands / taper in one setting between centres",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 1412.7,
+   "mass_kg": 11.09,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -822.0,
+     -354.5
+    ],
+    [
+     -35.5,
+     35.5
+    ],
+    [
+     -35.5,
+     35.5
+    ]
+   ],
+   "note": "run-out journals <= 2 um, taper / journals coaxial <= 3 um; magnetic particle test; balance as an assembly",
+   "step": "cad_out/variant_e/GENERATOR/E-G210_Generator_Shaft.step"
+  },
+  "E-G211_Cu_Eddy_Screen": {
+   "subsystem": "GENERATOR",
+   "desc": "eddy-current screen sleeve 71/74 x 296 CuCr1Zr (CW106C, 43 MS/m): screens the steel shaft from the 6f / 12f bridge harmonics (950 -> 55 W)",
+   "make_buy": "make: CuCr1Zr tube / bar (KME DE, Wieland DE, Aurubis DE), turn; shrink 0.08-0.12 at 220 C, OD finish-ground 74 h5 on the shaft",
+   "material": "CuCrZr",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 101.1,
+   "mass_kg": 0.9,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -740.5,
+     -444.5
+    ],
+    [
+     -37.0,
+     37.0
+    ],
+    [
+     -37.0,
+     37.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G211_Cu_Eddy_Screen.step"
+  },
+  "E-G212_Magnet_Segments_x12": {
+   "subsystem": "GENERATOR",
+   "desc": "12 Sm2Co17 arc segments 30 deg, r 37.03-53.0 x 272, each laminated from 136 slices 2.0 mm (insulating bond), parallel (diametral) magnetisation of the ring = segment-specific magnetisation angle (marked), bonded on the screen",
+   "make_buy": "buy: magnet maker to our drawing (order spec section 5)",
+   "material": "SmCo",
+   "valid": true,
+   "n_solids": 12,
+   "volume_cm3": 1204.0,
+   "mass_kg": 10.11,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -728.5,
+     -456.5
+    ],
+    [
+     -53.0,
+     53.0
+    ],
+    [
+     -53.0,
+     53.0
+    ]
+   ],
+   "note": "VAC (DE) VACOMAX / Shin-Etsu (JP) / Ningbo Yunsheng, Hangzhou Permanent Magnet Group, Xiamen Tungsten (CN)",
+   "step": "cad_out/variant_e/GENERATOR/E-G212_Magnet_Segments_x12.step"
+  },
+  "E-G213_Magnet_End_Rings_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "end rings 74/106 x 12 (1.4404, non-magnetic): axial stop of the magnet stack, sleeve support, balance planes (12 x d4 radial correction holes, <= 3 deep)",
+   "make_buy": "make: 1.4404 bar d110, CNC turn; OD ground with the magnets (1:500 taper)",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 107.7,
+   "mass_kg": 0.85,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -740.5,
+     -444.5
+    ],
+    [
+     -53.0,
+     53.0
+    ],
+    [
+     -53.0,
+     53.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G213_Magnet_End_Rings_x2.step"
+  },
+  "E-G214_CFRP_Sleeve": {
+   "subsystem": "GENERATOR",
+   "desc": "retention sleeve 106/120 x 296: T800S-class carbon / high-Tg epoxy (Tg >= 190 C), 88 % hoop + 12 % +/-15 deg, taper press-fit 0.57 mm diametral interference (rotor chilled to -150 C), OD ground 120 h6 after pressing",
+   "make_buy": "buy: CFRP winding shop to our spec (eg_sleeve.json) + hot spin test 42,000 rpm",
+   "material": "CFRP",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 735.6,
+   "mass_kg": 1.16,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -740.5,
+     -444.5
+    ],
+    [
+     -60.0,
+     60.0
+    ],
+    [
+     -60.0,
+     60.0
+    ]
+   ],
+   "note": "Toray T800S / T700S (JP) or Zhongfu Shenying SYT55 (CN) fibre; winding: e+a (CH), BUCCI Composites (IT), CompoTech (CZ)",
+   "step": "cad_out/variant_e/GENERATOR/E-G214_CFRP_Sleeve.step"
+  },
+  "E-G215_Precision_Locknuts_M35x1.5_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "precision lock nuts M35x1.5 OD 52 x 12 with 2 radial clamping screws (bearing IR clamp 9 kN, 47 N.m)",
+   "make_buy": "buy: Spieth MSF 35x1.5 (DE) / SKF KMD 7 (SE) / GMN (DE)",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 27.9,
+   "mass_kg": 0.24,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -812.0,
+     -380.5
+    ],
+    [
+     -26.0,
+     26.0
+    ],
+    [
+     -26.0,
+     26.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G215_Precision_Locknuts_M35x1.5_x2.step"
+  },
+  "E-G216_Speed_Phase_Wheel": {
+   "subsystem": "GENERATOR",
+   "desc": "speed / phase wheel d60 x 10, 4 notches (2.33 kHz) + 1 deeper phase notch, on the d30 k5 stub, M8 centre screw",
+   "make_buy": "make: 1.4057 QT, turn + mill",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 20.5,
+   "mass_kg": 0.16,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -822.0,
+     -812.0
+    ],
+    [
+     -30.0,
+     30.0
+    ],
+    [
+     -30.0,
+     30.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G216_Speed_Phase_Wheel.step"
+  },
+  "E-G216b_Speed_Wheel_Screw_M8": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 4762 M8x16 12.9 + Nord-Lock (speed wheel)",
+   "make_buy": "buy",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 1.7,
+   "mass_kg": 0.01,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -830.0,
+     -810.0
+    ],
+    [
+     -6.5,
+     6.5
+    ],
+    [
+     -6.5,
+     6.5
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G216b_Speed_Wheel_Screw_M8.step"
+  },
+  "E-G219_Front_IR_Spacer": {
+   "subsystem": "GENERATOR",
+   "desc": "spacer ring 52/38 x 7.5 between the front bearing IR and the lock nut (ground faces)",
+   "make_buy": "make: 1.4034 hardened, ground",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 7.4,
+   "mass_kg": 0.06,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -800.0,
+     -792.5
+    ],
+    [
+     -26.0,
+     26.0
+    ],
+    [
+     -26.0,
+     26.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G219_Front_IR_Spacer.step"
+  },
+  "E-G217_Quill_Hollow_Taper_AF24": {
+   "subsystem": "GENERATOR",
+   "desc": "hollow quill d30/19 x 180 with taper hub (1:10 bore, OD 56) and AF24 socket (rotary-broached, plasma-nitrided), float +/-1 mm on the crowned core hex",
+   "make_buy": "make: 34CrNiMo6 QT bar d60, deep-drill d19, turn + grind, lap the taper to the shaft, broach the hex, nitride, shot-peen the waist",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 238.8,
+   "mass_kg": 1.87,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -378.5,
+     -117.0
+    ],
+    [
+     -28.0,
+     28.0
+    ],
+    [
+     -28.0,
+     28.0
+    ]
+   ],
+   "note": "eg_rotor.json: tau 20.5 MPa rated, 103 MPa at 5 x; taper T_cap 716 N.m",
+   "step": "cad_out/variant_e/GENERATOR/E-G217_Quill_Hollow_Taper_AF24.step"
+  },
+  "E-G218_Quill_Pull_Bolt_M12x1.25": {
+   "subsystem": "GENERATOR",
+   "desc": "quill pull bolt ISO 4762 M12x1.25x25 12.9 (56 kN, 90 N.m with MoS2), head on the hub wall inside the quill bore, tightened through the hollow quill",
+   "make_buy": "buy (Bossard CH / Wuerth DE)",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 5.7,
+   "mass_kg": 0.05,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -368.5,
+     -332.5
+    ],
+    [
+     -9.0,
+     9.0
+    ],
+    [
+     -9.0,
+     9.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G218_Quill_Pull_Bolt_M12x1.25.step"
+  },
+  "E-G220_Bearing_7008E_front": {
+   "subsystem": "GENERATOR",
+   "desc": "hybrid angular-contact 7008-E (25 deg) P4, locating",
+   "make_buy": "buy",
+   "material": "bearing",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 35.6,
+   "mass_kg": 0.21,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -792.5,
+     -777.5
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "note": "FAG HCB7008-E/C-T-P4S hybrid (or SKF 7008 CE/HCP4A, GMN HY S 7008, NSK 7008 hybrid, ZWZ / LYC hybrid)",
+   "step": "cad_out/variant_e/GENERATOR/E-G220_Bearing_7008E_front.step"
+  },
+  "E-G221_Bearing_7008C_rear": {
+   "subsystem": "GENERATOR",
+   "desc": "hybrid angular-contact 7008-C (15 deg) P4, floating + 300 N wave spring",
+   "make_buy": "buy",
+   "material": "bearing",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 35.6,
+   "mass_kg": 0.21,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -407.5,
+     -392.5
+    ],
+    [
+     -34.0,
+     34.0
+    ],
+    [
+     -34.0,
+     34.0
+    ]
+   ],
+   "note": "FAG HCB7008-E/C-T-P4S hybrid (or SKF 7008 CE/HCP4A, GMN HY S 7008, NSK 7008 hybrid, ZWZ / LYC hybrid)",
+   "step": "cad_out/variant_e/GENERATOR/E-G221_Bearing_7008C_rear.step"
+  },
+  "E-G222_SFD_Cartridge_Front": {
+   "subsystem": "GENERATOR",
+   "desc": "front SFD cartridge (locating): OD 84.000 (0/-10) in 84.24 H6 (film 0.12-0.136), bore 68 H4, lip, 2 FKM O-ring grooves, d1.2 jet / feed, drain slot, pin slot",
+   "make_buy": "make: 1.4542 (17-4PH) H1025 bar d90, turn + internal / external grinding (same family as the core E-B120)",
+   "material": "17-4PH",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 45.8,
+   "mass_kg": 0.36,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -792.5,
+     -768.5
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G222_SFD_Cartridge_Front.step"
+  },
+  "E-G223_SFD_Cartridge_Rear": {
+   "subsystem": "GENERATOR",
+   "desc": "rear SFD cartridge (floating bearing): same OD / O-rings, lip for the wave spring, pin slot",
+   "make_buy": "make: 1.4542 H1025, turn + grind",
+   "material": "17-4PH",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 48.1,
+   "mass_kg": 0.38,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -413.5,
+     -386.5
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G223_SFD_Cartridge_Rear.step"
+  },
+  "E-G224_Wave_Spring_300N": {
+   "subsystem": "GENERATOR",
+   "desc": "crest-to-crest wave spring 300 N (rear outer ring preload)",
+   "make_buy": "buy: Lesjofors (SE) / Scherdel (DE) / TFC (UK)",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 1.6,
+   "mass_kg": 0.01,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -411.0,
+     -407.5
+    ],
+    [
+     -33.8,
+     33.8
+    ],
+    [
+     -33.8,
+     33.8
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G224_Wave_Spring_300N.step"
+  },
+  "E-G226_Front_Cartridge_Shim": {
+   "subsystem": "GENERATOR",
+   "desc": "ground shim 84/69 x 0.5-2.0 (set at assembly): axial rotor position (magnet centre +/-0.3 mm to the stack)",
+   "make_buy": "make: 1.4034 hardened, surface-ground",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 1.8,
+   "mass_kg": 0.01,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -768.5,
+     -767.5
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G226_Front_Cartridge_Shim.step"
+  },
+  "E-G227_Rear_Spacer_Tube": {
+   "subsystem": "GENERATOR",
+   "desc": "rear spacer tube 84/60 x 24.5: clamps the rear cartridge between the hub shoulder and the rear seal cap",
+   "make_buy": "make: 6082-T6, turn",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 66.5,
+   "mass_kg": 0.18,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -386.5,
+     -362.0
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     -42.0,
+     42.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G227_Rear_Spacer_Tube.step"
+  },
+  "E-G230_Front_End_Bell": {
+   "subsystem": "GENERATOR",
+   "desc": "front end bell: disk + re-entrant hub (SFD bore 84.24 H6, 5-tooth labyrinth on the d50 land), spigot 290 g6 + FKM O-ring, 16 x d11 + 2 dowels + 2 x M10 jacking, 12 x d22 cooling-air inlets, 2 IR-pyrometer ports M12x1, oil feed (top, M10x1 ISO 6149) -> axial gallery -> jet, oil drain (bottom, G3/8), HELICOILs for cap / hood",
+   "make_buy": "make: 6082-T6 forged disc d340 x 110, CNC turning (spigot + hub bore one clamping) + 5-axis drilling",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 1429.6,
+   "mass_kg": 3.86,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -839.5,
+     -746.5
+    ],
+    [
+     -165.0,
+     165.0
+    ],
+    [
+     -165.0,
+     165.0
+    ]
+   ],
+   "note": "hub bore 84.24 H6 coaxial to the spigot <= 0.01; labyrinth teeth tips d50.60",
+   "step": "cad_out/variant_e/GENERATOR/E-G230_Front_End_Bell.step"
+  },
+  "E-G231_Rear_End_Bell": {
+   "subsystem": "GENERATOR",
+   "desc": "rear end bell: disk + re-entrant hub (SFD bore 84.24 H6 for the floating bearing, labyrinth nose), spigot 286 g6 + O-ring, 16 x d11 + 2 dowels + 2 x M10 jacking, 12 x d22 cooling-air outlets to the plenum, 2 IR ports, oil feed / drain galleries, 6 x HELICOIL M6 for the seal cap + guard",
+   "make_buy": "make: 6082-T6 forged disc d340 x 110, CNC turning + 5-axis drilling",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 1444.7,
+   "mass_kg": 3.9,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -438.5,
+     -345.5
+    ],
+    [
+     -165.0,
+     165.0
+    ],
+    [
+     -165.0,
+     165.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G231_Rear_End_Bell.step"
+  },
+  "E-G232_Front_Bearing_Cap": {
+   "subsystem": "GENERATOR",
+   "desc": "front bearing cap: spigot clamps the front cartridge + bearing OR, covers nut / speed wheel, 2 axial speed-probe ports M12x1, d16 turning access, spigot O-ring 80 x 1.78, 6 x M6",
+   "make_buy": "make: 6082-T6 bar d110 x 70, CNC turning",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 209.3,
+   "mass_kg": 0.57,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -851.5,
+     -792.5
+    ],
+    [
+     -51.0,
+     51.0
+    ],
+    [
+     -51.0,
+     51.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G232_Front_Bearing_Cap.step"
+  },
+  "E-G233_Rear_Seal_Cap": {
+   "subsystem": "GENERATOR",
+   "desc": "rear seal cap: spigot clamps spacer + rear cartridge, 5-groove labyrinth on the quill hub d56 (0.30 radial), flange shared with the guard (6 x M6x30), spigot O-ring 80 x 1.78",
+   "make_buy": "make: CuSn12 (rub-tolerant), CNC turning",
+   "material": "bronze",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 91.9,
+   "mass_kg": 0.81,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -362.0,
+     -337.5
+    ],
+    [
+     -51.0,
+     51.0
+    ],
+    [
+     -51.0,
+     51.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G233_Rear_Seal_Cap.step"
+  },
+  "E-G234_Air_Inlet_Hood": {
+   "subsystem": "GENERATOR",
+   "desc": "cooling-air inlet hood: annular chamber r 66-138 over the 12 front air inlets, axial DN80 spigot, 8 internal bosses, 8 x M6x45 to the front end bell, EPDM foam gasket",
+   "make_buy": "make: 6082-T6 turned from bar d290 (or spun 4 mm + welded bosses)",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 470.3,
+   "mass_kg": 1.27,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -905.0,
+     -839.5
+    ],
+    [
+     -138.0,
+     138.0
+    ],
+    [
+     -138.0,
+     142.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G234_Air_Inlet_Hood.step"
+  },
+  "E-G235_Quill_Guard_Tube": {
+   "subsystem": "GENERATOR",
+   "desc": "stationary quill guard d76/66 to x -98 (continues the impeller hub line) with flange on the rear seal cap and 4 vent slots 40 x 15 (guard interior at plenum pressure: no compressor-eye suction on the rear seal)",
+   "make_buy": "make: 1.4301 tube 76.1 x 5 + turned flange, TIG",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 289.3,
+   "mass_kg": 2.29,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -337.5,
+     -98.0
+    ],
+    [
+     -51.0,
+     51.0
+    ],
+    [
+     -51.0,
+     51.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G235_Quill_Guard_Tube.step"
+  },
+  "E-G270_Screws_ISO4762_M10x35_x32": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 4762 M10x35 A4-80, end bells -> housing (2 x 16), 29 N.m, Loctite 243",
+   "make_buy": "buy (Bossard CH / Wuerth DE / Boellhoff DE)",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 32,
+   "volume_cm3": 148.1,
+   "mass_kg": 0.96,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -849.5,
+     -335.5
+    ],
+    [
+     -160.0,
+     160.0
+    ],
+    [
+     -160.0,
+     160.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G270_Screws_ISO4762_M10x35_x32.step"
+  },
+  "E-G271_HELICOIL_M10_1.5D_x32": {
+   "subsystem": "GENERATOR",
+   "desc": "HELICOIL plus M10 x 1.5D 1.4301 in the housing end faces",
+   "make_buy": "buy (Boellhoff DE)",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 32,
+   "volume_cm3": 10.4,
+   "mass_kg": 0.1,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -825.5,
+     -359.5
+    ],
+    [
+     -157.7,
+     157.7
+    ],
+    [
+     -157.7,
+     157.7
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G271_HELICOIL_M10_1.5D_x32.step"
+  },
+  "E-G272_Dowels_ISO8734_8x24_x4": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 8734 8 m6 x 24 (1.4034 hardened) end bell / housing location",
+   "make_buy": "buy (Bossard CH / Halder DE)",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 4,
+   "volume_cm3": 4.8,
+   "mass_kg": 0.04,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -833.5,
+     -351.5
+    ],
+    [
+     -19.2,
+     19.2
+    ],
+    [
+     -158.2,
+     158.2
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G272_Dowels_ISO8734_8x24_x4.step"
+  },
+  "E-G273_Screws_M6x16_front_cap_x6": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 4762 M6x22 A4-80 (front bearing cap), 6.0 N.m, HELICOIL M6 x 1.5D",
+   "make_buy": "buy",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 6,
+   "volume_cm3": 6.4,
+   "mass_kg": 0.04,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -857.5,
+     -829.5
+    ],
+    [
+     -45.7,
+     45.7
+    ],
+    [
+     -52.0,
+     52.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G273_Screws_M6x16_front_cap_x6.step"
+  },
+  "E-G274_Screws_M6x30_rear_cap_guard_x6": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 4762 M6x30 A4-80 (guard flange + rear seal cap -> rear hub), 6.0 N.m, HELICOIL M6 x 1.5D",
+   "make_buy": "buy",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 6,
+   "volume_cm3": 7.1,
+   "mass_kg": 0.05,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -353.5,
+     -321.5
+    ],
+    [
+     -45.7,
+     45.7
+    ],
+    [
+     -52.0,
+     52.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G274_Screws_M6x30_rear_cap_guard_x6.step"
+  },
+  "E-G276_Screws_M6x45_hood_x8": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 4762 M6x45 A4-80 (hood through its bosses into the front end bell), 4.5 N.m, HELICOIL M6 x 1D",
+   "make_buy": "buy",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 8,
+   "volume_cm3": 13.8,
+   "mass_kg": 0.1,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -885.5,
+     -833.5
+    ],
+    [
+     -119.6,
+     119.6
+    ],
+    [
+     -119.6,
+     119.6
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G276_Screws_M6x45_hood_x8.step"
+  },
+  "E-G280_O-rings_Jacket_280x3.55_EPDM_x4": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 3601-1 280 x 3.55 EPDM 70 (glycol), jacket lands, squeeze 19.7 %, stretch 1.5 %",
+   "make_buy": "buy (Freudenberg DE / Trelleborg SE / COG DE)",
+   "material": "EPDM",
+   "valid": true,
+   "n_solids": 4,
+   "volume_cm3": 36.4,
+   "mass_kg": 0.05,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -759.9,
+     -425.2
+    ],
+    [
+     -145.0,
+     145.0
+    ],
+    [
+     -145.0,
+     145.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G280_O-rings_Jacket_280x3.55_EPDM_x4.step"
+  },
+  "E-G281_O-rings_Spigots_FKM_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 3601-1 280 x 3.55 (front) / 275 x 3.55 (rear) FKM 75, end-bell spigots",
+   "make_buy": "buy",
+   "material": "FKM",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 18.1,
+   "mass_kg": 0.03,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -820.9,
+     -364.1
+    ],
+    [
+     -145.0,
+     145.0
+    ],
+    [
+     -145.0,
+     145.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G281_O-rings_Spigots_FKM_x2.step"
+  },
+  "E-G282_O-rings_SFD_77.5x2.65_FKM_x4": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 3601-1 77.5 x 2.65 FKM 75, SFD centring (squeeze 12 %, ~3 N/um per cartridge - measure)",
+   "make_buy": "buy",
+   "material": "FKM",
+   "valid": true,
+   "n_solids": 4,
+   "volume_cm3": 6.1,
+   "mass_kg": 0.01,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -789.5,
+     -388.9
+    ],
+    [
+     -42.1,
+     42.1
+    ],
+    [
+     -42.1,
+     42.1
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G282_O-rings_SFD_77.5x2.65_FKM_x4.step"
+  },
+  "E-G283_O-rings_Caps_80x1.78_FKM_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 3601-1 80 x 1.78 FKM 75, radial on the front bearing cap / rear seal cap spigots (squeeze 14.6 %, stretch 1.5 %)",
+   "make_buy": "buy",
+   "material": "FKM",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 1.5,
+   "mass_kg": 0.0,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -836.8,
+     -348.2
+    ],
+    [
+     -42.1,
+     42.1
+    ],
+    [
+     -42.1,
+     42.1
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G283_O-rings_Caps_80x1.78_FKM_x2.step"
+  },
+  "E-G284_Cartridge_Pins_ISO8734_4x10_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 8734 4 m6 x 10 anti-rotation pins (cartridges)",
+   "make_buy": "buy",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 0.2,
+   "mass_kg": 0.0,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -771.0,
+     -410.5
+    ],
+    [
+     24.9,
+     28.9
+    ],
+    [
+     -28.9,
+     -24.9
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G284_Cartridge_Pins_ISO8734_4x10_x2.step"
+  },
+  "E-G240_Terminal_Box": {
+   "subsystem": "GENERATOR",
+   "desc": "terminal box 130 x 200 x 135 with a 10 mm saddle floor (r 165), 3 x M40 EMC glands (+y) for 6 x 95 mm2 cables, 2 x M25 signal glands, star bar, IP65",
+   "make_buy": "make: 6082-T6 block, 3-axis milling (saddle face by ball-end)",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 899.1,
+   "mass_kg": 2.43,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -820.0,
+     -690.0
+    ],
+    [
+     -100.0,
+     100.0
+    ],
+    [
+     140.0,
+     294.0
+    ]
+   ],
+   "note": "mounted on 4 HELICOIL M8 in the housing; flat silicone gasket",
+   "step": "cad_out/variant_e/GENERATOR/E-G240_Terminal_Box.step"
+  },
+  "E-G241_Terminal_Box_Lid": {
+   "subsystem": "GENERATOR",
+   "desc": "terminal box lid 6 mm, 8 x M5, IP65 gasket",
+   "make_buy": "make: 6082 plate, laser + mill",
+   "material": "Al",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 156.0,
+   "mass_kg": 0.42,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -820.0,
+     -690.0
+    ],
+    [
+     -100.0,
+     100.0
+    ],
+    [
+     294.0,
+     300.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G241_Terminal_Box_Lid.step"
+  },
+  "E-G242_PEEK_Terminal_Block_6_Studs": {
+   "subsystem": "GENERATOR",
+   "desc": "PEEK terminal block 100 x 120 x 20 with 6 brass studs M12 (U1 V1 W1 / U2 V2 W2), star bar on U2 V2 W2, creepage >= 12.5 mm",
+   "make_buy": "make: PEEK plate milled + CuZn39Pb3 studs",
+   "material": "PEEK",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 267.1,
+   "mass_kg": 0.35,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -805.0,
+     -705.0
+    ],
+    [
+     -60.0,
+     60.0
+    ],
+    [
+     178.0,
+     238.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G242_PEEK_Terminal_Block_6_Studs.step"
+  },
+  "E-G243_Screws_M8_terminal_box_x4": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 4762 M8x25 A4-80, terminal box -> housing, 14 N.m, HELICOIL M8 x 1.5D",
+   "make_buy": "buy",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 4,
+   "volume_cm3": 8.6,
+   "mass_kg": 0.06,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -806.5,
+     -703.5
+    ],
+    [
+     -83.5,
+     83.5
+    ],
+    [
+     136.9,
+     168.5
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G243_Screws_M8_terminal_box_x4.step"
+  },
+  "E-G250_Cooling_Air_Blower_EC": {
+   "subsystem": "GENERATOR",
+   "desc": "EC high-pressure radial blower 160 m3/h at 4 kPa, 0.55 kW, integrated EC drive 0-10 V (speed = rotor-temperature actuator), outlet DN80 axial",
+   "make_buy": "buy: ebm-papst (DE) / Elektror (DE) / Becker (DE) / FPZ (IT)",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 19883.1,
+   "mass_kg": 18.0,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -1150.0,
+     -915.0
+    ],
+    [
+     -150.0,
+     150.0
+    ],
+    [
+     -150.0,
+     150.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G250_Cooling_Air_Blower_EC.step"
+  },
+  "E-G250b_Blower_Stand": {
+   "subsystem": "GENERATOR",
+   "desc": "blower stand (S355 angle frame 40 x 4) on the saddle base beam, 4 x M8",
+   "make_buy": "make: S355, MAG",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 2502.7,
+   "mass_kg": 6.0,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -1135.0,
+     -945.0
+    ],
+    [
+     -110.0,
+     110.0
+    ],
+    [
+     -547.0,
+     -150.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G250b_Blower_Stand.step"
+  },
+  "E-G251_F9_Filter_Cartridge": {
+   "subsystem": "GENERATOR",
+   "desc": "ePM1 80 % (F9) filter cartridge d200 x 230 on the blower inlet (plenum air already G4 + F7), dp switch",
+   "make_buy": "buy: Camfil (SE) / Freudenberg Viledon (DE) / MANN+HUMMEL (DE)",
+   "material": "filter",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 4624.4,
+   "mass_kg": 1.2,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -1380.0,
+     -1150.0
+    ],
+    [
+     -100.0,
+     100.0
+    ],
+    [
+     -100.0,
+     100.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G251_F9_Filter_Cartridge.step"
+  },
+  "E-G252_Air_Bellows_DN80": {
+   "subsystem": "GENERATOR",
+   "desc": "DN80 stainless bellows + 2 hose clamps (blower -> hood, decouples blower vibration)",
+   "make_buy": "buy: Witzenmann (DE) / BOA (DE)",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 10.1,
+   "mass_kg": 0.5,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -915.0,
+     -905.0
+    ],
+    [
+     -42.0,
+     42.0
+    ],
+    [
+     58.0,
+     142.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G252_Air_Bellows_DN80.step"
+  },
+  "E-G253_IR_Pyrometers_x4": {
+   "subsystem": "GENERATOR",
+   "desc": "4 IR pyrometers 8-14 um (2 per end, 1 used + 1 spare) on the CFRP sleeve ends, M12x1 heads, 4-20 mA",
+   "make_buy": "buy: Optris CSmicro LT (DE) / Calex PyroMini (UK)",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 4,
+   "volume_cm3": 20.4,
+   "mass_kg": 0.2,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -884.5,
+     -300.5
+    ],
+    [
+     -47.0,
+     47.0
+    ],
+    [
+     -47.0,
+     47.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G253_IR_Pyrometers_x4.step"
+  },
+  "E-G254_Speed_Probes_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "2 eddy-current speed + phase probes M12x1 (axial, gap 1.5 mm to the speed wheel)",
+   "make_buy": "buy: Jaquet (CH) DSE / Braun (DE) A5S",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 14.5,
+   "mass_kg": 0.12,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -890.0,
+     -823.5
+    ],
+    [
+     -5.9,
+     5.9
+    ],
+    [
+     -29.9,
+     29.9
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G254_Speed_Probes_x2.step"
+  },
+  "E-G255_Accelerometers_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "2 IEPE accelerometers 100 mV/g on the end-bell rims (+y), M6 studs",
+   "make_buy": "buy: Bruel & Kjaer (DK) / Hansford (UK) / MMF (DE)",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 30.4,
+   "mass_kg": 0.1,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -845.5,
+     -339.5
+    ],
+    [
+     165.0,
+     205.0
+    ],
+    [
+     -11.0,
+     11.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G255_Accelerometers_x2.step"
+  },
+  "E-G256_Fittings_Glycol_Oil_x8": {
+   "subsystem": "GENERATOR",
+   "desc": "fittings: 2 x G3/4 glycol (ISO 1179-2 ED), 2 x G1/8 leak-off to the float switch, 2 x M10x1 oil feed (ISO 6149-3), 2 x G3/8 oil drain",
+   "make_buy": "buy: Hydac (DE) / Voss (DE) / Ham-Let (IL)",
+   "material": "stainless",
+   "valid": true,
+   "n_solids": 8,
+   "volume_cm3": 73.4,
+   "mass_kg": 1.2,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -843.5,
+     -341.5
+    ],
+    [
+     -180.6,
+     214.0
+    ],
+    [
+     -190.0,
+     195.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G256_Fittings_Glycol_Oil_x8.step"
+  },
+  "E-G260_Saddles_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "2 saddles (S355 plate welded, cradle r 165 machined, shim packs under the feet, x / y jack bolts M16, x-slots for the 150 mm slide-out)",
+   "make_buy": "make: S355J2 plate 12/15, MAG, machine cradle + feet",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 6383.4,
+   "mass_kg": 50.11,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -690.0,
+     -370.0
+    ],
+    [
+     -150.0,
+     150.0
+    ],
+    [
+     -547.0,
+     -120.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G260_Saddles_x2.step"
+  },
+  "E-G261_Saddle_Clamp_Straps_x2": {
+   "subsystem": "GENERATOR",
+   "desc": "2 clamp straps 50 x 6 (S355) with ears, 2 x M12 each (strap preload limited: Al housing)",
+   "make_buy": "make: S355 strip, rolled + welded ears",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 2,
+   "volume_cm3": 389.2,
+   "mass_kg": 3.2,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -680.0,
+     -380.0
+    ],
+    [
+     -175.0,
+     175.0
+    ],
+    [
+     -101.0,
+     171.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G261_Saddle_Clamp_Straps_x2.step"
+  },
+  "E-G262_Saddle_Base_Beam": {
+   "subsystem": "GENERATOR",
+   "desc": "saddle base beam RHS 200 x 100 x 6.3 (S355J2H) x 970 on the plenum floor, bolted through the floor onto the frame cross members x -1050 / -600 / -200, carries saddles + blower",
+   "make_buy": "make: RHS cut + plates, MAG, galvanised",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 1,
+   "volume_cm3": 3506.5,
+   "mass_kg": 27.53,
+   "mass_source": "CAD volume",
+   "bbox": [
+    [
+     -1160.0,
+     -190.0
+    ],
+    [
+     -100.0,
+     100.0
+    ],
+    [
+     -647.0,
+     -547.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G262_Saddle_Base_Beam.step"
+  },
+  "E-G263_Saddle_Bolts_M16_x4": {
+   "subsystem": "GENERATOR",
+   "desc": "ISO 4017 M16x40 8.8 + nuts inside the RHS (hand holes) + Nord-Lock (saddles -> base beam, 2 per saddle at y +/-60), 156 N.m",
+   "make_buy": "buy",
+   "material": "steel",
+   "valid": true,
+   "n_solids": 4,
+   "volume_cm3": 41.6,
+   "mass_kg": 0.64,
+   "mass_source": "override (bought / envelope)",
+   "bbox": [
+    [
+     -673.0,
+     -387.0
+    ],
+    [
+     -73.0,
+     73.0
+    ],
+    [
+     -561.0,
+     -525.0
+    ]
+   ],
+   "note": "",
+   "step": "cad_out/variant_e/GENERATOR/E-G263_Saddle_Bolts_M16_x4.step"
+  }
+ },
+ "layout": "cad/variant_e/eg_layout.py",
+ "analyses": [
+  "sim/variant_e/eg_em.json",
+  "eg_sleeve.json",
+  "eg_thermal.json",
+  "eg_rotor.json",
+  "eg_joints.json"
+ ],
+ "detailed": true
+}

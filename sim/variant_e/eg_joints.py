@@ -42,7 +42,7 @@ SCREWS = [  # joint, designation, qty, class, internal thread, k, lock / note
     ('PEEK terminal block E-G242 -> box', 'ISO 4762 M6x20', 4, 'A4-70', 'tapped M6 in 6082 (12 deep)', 0.3, 'Loctite 243'),
     ('blower bracket E-G250 -> saddle base', 'ISO 4017 M8x25 + ISO 4032', 4, '8.8', 'through, nut', 0.6, 'Nord-Lock washers'),
     ('saddle clamp straps E-G261', 'ISO 4017 M12x80 + ISO 4032', 4, '8.8', 'through the strap ears, nut', 0.5, 'Nord-Lock; strap preload limits the Al housing stress'),
-    ('saddles E-G260 -> base beam E-G262', 'ISO 4017 M16x60', 8, '8.8', 'through x-slots, nuts', 0.6, 'after alignment; jack bolts M16 x / y, shims z'),
+    ('saddles E-G260 -> base beam E-G262', 'ISO 4017 M16x40', 4, '8.8', 'through x-slots, nuts inside the RHS', 0.6, 'after alignment; jack bolts M16 x / y, shims z'),
     ('base beam E-G262 -> plenum floor / frame', 'ISO 4017 M16x50', 6, '8.8', 'through floor + doubler, onto the frame cross members x -1050 / -600 / -200', 0.6, 'Nord-Lock'),
 ]
 rows = []
@@ -101,8 +101,8 @@ ORINGS = [
     oring('front end-bell spigot (air / oil mist)', 280.0, 3.55, 284.30, 290.0, 4.8, 'piston', 'FKM 75', 1),
     oring('rear end-bell spigot', 275.0, 3.55, 280.30, 286.0, 4.8, 'piston', 'FKM 75', 1),
     oring('SFD cartridges (2 per cartridge, centring spring ~3 N/um, measure)', 77.5, 2.65, 79.58, 84.24, 3.6, 'piston', 'FKM 75', 4),
-    oring('front bearing cap face (groove r 43.2-46.0)', 85.0, 2.65, 2.00, 0.0, 2.8, 'face', 'FKM 75', 1),
-    oring('rear seal cap face (groove r 43.2-46.0)', 85.0, 2.65, 2.00, 0.0, 2.8, 'face', 'FKM 75', 1),
+    oring('front bearing cap spigot (radial, in the 84.24 hub bore)', 80.0, 1.78, 81.20, 84.24, 2.4, 'piston', 'FKM 75', 1),
+    oring('rear seal cap spigot (radial, in the 84.24 hub bore)', 80.0, 1.78, 81.20, 84.24, 2.4, 'piston', 'FKM 75', 1),
 ]
 ORINGS.append(dict(seal='glycol fittings G3/4 + leak-off G1/8 (ISO 1179-2 form E)', oring='ED-rings G3/4 + G1/8', material='EPDM', qty=4, groove='-', squeeze_pct=None, stretch_pct=None, ok=True))
 
@@ -120,8 +120,8 @@ AXIAL = dict(rotor_axial_position='front 7008-E locates; its cartridge is clampe
              thermal='rotor grows ~+0.35 mm rearward vs. the housing at full load (steel shaft 85 C vs Al pod 60 C): taken by the floating rear OR and the +/-1 mm quill float',
              end_float_quill='+/-1.0 mm at the AF24 socket (hex engagement 23 mm)')
 ELECTRICAL = dict(creepage='terminal block: >= 12.5 mm creepage, 8 mm clearance (IEC 60664-1, 1000 V, pollution 3)',
-                  insulation='strand enamel grade 2 class 200 + polyimide tape + glass serving per conductor; NKN 0.31 slot liner (ground wall); NKN 0.5 layer separator; '
-                             'Nomex 410 0.25 phase paper in the end windings; VPI epoxy class H (Elantas Elmotherm / Von Roll Damisol, CH/DE)',
+                  insulation='strand enamel grade 2 class 200 + polyimide tape + glass serving per conductor; APA (aramid / polyimide / aramid) 0.31 slot liner (ground wall); APA 0.5 layer separator; '
+                             'aramid paper 0.25 phase separators in the end windings (Metastar CN / Teijin JP); VPI epoxy class H (Elantas Elmotherm / Von Roll Damisol, CH/DE)',
                   tests='IEC 60034-1: 2 U + 1000 V = 2.3 kV ac 1 min (new winding; 1.0 kV dc IR > 1 GOhm at 40 C); surge 3.5 kV (IEC 60034-15 level for 690 V class)')
 
 out = dict(title='GR180 version E generator joints / fits / seals / fasteners', date='2026-10-24', script='sim/variant_e/eg_joints.py',
