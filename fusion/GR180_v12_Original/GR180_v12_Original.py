@@ -27,7 +27,14 @@ D2_REPLACED = {'EXHAUST': {'RT-180_Exhaust_Diffuser_DN150'},
 D_SKIP = {'GR180_Starter', 'GR180_NoseCone', 'GR180_Exhaust'}      # replaced by the generator pod and the exhaust diffuser
 SKIP = {'GR180_Combustion_chamber', 'GR180_Shaft_assembly', 'GR180_Shaft_with_nose'}   # composites of other files
 # first match wins: (substring, rgb, opacity)
-STYLE = [('Compressor_Wheel', (205, 210, 220), 1.0), ('Turbine_Wheel', (230, 175, 40), 1.0), ('Nozzle_Ring', (60, 110, 210), 1.0),
+STYLE = [('Eddy_Screen', (200, 110, 50), 1.0), ('CFRP_Sleeve', (40, 40, 45), 1.0), ('Slot_Wedges', (230, 200, 120), 1.0),
+         ('Stator_End_Plates', (150, 150, 160), 1.0), ('Bearing_Cap', (170, 200, 225), 0.4), ('Seal_Cap', (170, 200, 225), 0.4),
+         ('Air_Inlet_Hood', (170, 200, 225), 0.35), ('Blower', (40, 120, 220), 1.0), ('Filter_Cartridge', (235, 235, 230), 0.6),
+         ('Bellows', (60, 60, 65), 1.0), ('Pyrometers', (40, 180, 100), 1.0), ('Probes', (40, 180, 100), 1.0),
+         ('Accelerometers', (40, 180, 100), 1.0), ('Fittings', (40, 120, 220), 1.0), ('Straps', (55, 60, 65), 1.0),
+         ('Base_Beam', (55, 60, 65), 1.0), ('HELICOIL', (150, 150, 160), 1.0), ('Circlip', (110, 110, 115), 1.0),
+         ('Rear_Spacer', (150, 150, 160), 1.0), ('Pull_Bolt', (110, 110, 115), 1.0),
+         ('Compressor_Wheel', (205, 210, 220), 1.0), ('Turbine_Wheel', (230, 175, 40), 1.0), ('Nozzle_Ring', (60, 110, 210), 1.0),
          ('Liner', (235, 95, 60), 1.0), ('Swirler', (240, 190, 0), 1.0), ('Gas_Lance', (240, 190, 0), 1.0), ('Igniter', (40, 180, 100), 1.0),
          ('UV_Flame', (40, 180, 100), 1.0), ('Combustor_Casing', (170, 200, 225), 0.3), ('Top_Cover', (170, 200, 225), 0.4),
          ('Transition_Cone', (235, 95, 60), 1.0), ('Hangers', (90, 95, 100), 1.0), ('Outer_Casing', (170, 200, 225), 0.3),
