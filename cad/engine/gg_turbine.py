@@ -46,6 +46,11 @@ X_FL0, X_FL1, R_H0, R_H1 = 110.30, 118.60, 22.10, 19.00   # hub flare r 22.1 -> 
 ROT_LE = (111.20, 110.95)          # rotor LE (hub, tip): hub set back so the R0.8 root fillet stays on the platform
 ROT_TE = (118.70, 117.60)          # rotor TE (hub, tip): tip chord shortened for blade taper (root stress), 1.2 inside the shroud end x 118.8
 FILLET_ROT, FILLET_NGV = 0.80, 1.00
+# sensitivity hooks (defaults = the design; used by the blade-root fillet study, docs/engine/E1_gg_turbine.md section 6):
+#   E1_FILLET_ROT    rotor root fillet radius [mm]
+#   E1_TTE_ROOT_ADD  extra trailing-edge thickness at the hub [mm], tapering linearly to 0 at span s = 0.25
+FILLET_ROT = float(os.environ.get('E1_FILLET_ROT', FILLET_ROT))
+TTE_ROOT_ADD = float(os.environ.get('E1_TTE_ROOT_ADD', 0.0))
 
 def r_hub(x):
     """Rotor hub (platform) radius [mm] at axial x: C1 smooth step 22.1 -> 19.0 between X_FL0 and X_FL1."""
@@ -172,12 +177,25 @@ class Section:
         up = np.stack([mpv - hv / rv * np.sin(kv), thv + hv / rv * np.cos(kv)], 1)           # +theta side
         mpl, thl, kl, hl, rl = at(sg)
         lo = np.stack([mpl + hl / rl * np.sin(kl), thl - hl / rl * np.cos(kl)], 1)            # -theta side
-        # TE cap: semicircle around the camber end (conformal plane, radius tte/2 / r)
+        # TE cap: circular arc around the camber end (conformal plane, radius tte/2 / r), tangent to both sides. The sides
+        # converge at the TE (wedge half-angle w ~ 7 deg), so a plain semicircle met them with a ~8 deg kink and the B-spline
+        # through the outline rang there; the arc runs between +-(90 deg - w) and the side end points move onto its ends
+        # (the sides extended along their end tangent by rr*tan(w), ~0.03 mm; offset from the straight extension ~rr*w^2/2, 2 um)
         mpe, the, ke, re = self.mp[-1], self.th[-1], self.kap[-1], self.st.r(self.x_te)
         rr = 0.5 * self.tte / re
-        ang = np.linspace(-math.pi / 2, math.pi / 2, n_te + 2)[1:-1]     # from lower to upper
+        e1 = np.array([math.cos(ke), math.sin(ke)])
+        def wedge(a, b):                                         # angle from the camber direction to the side's aft tangent a -> b
+            t = b - a; return math.atan2(e1[0] * t[1] - e1[1] * t[0], e1 @ t)
+        hs = 1e-4
+        mq, tq, kq, hq, rq = at(np.array([1.0 - hs, 1.0]))
+        pu = np.stack([mq - hq / rq * np.sin(kq), tq + hq / rq * np.cos(kq)], 1)
+        pl = np.stack([mq + hq / rq * np.sin(kq), tq - hq / rq * np.cos(kq)], 1)
+        w_up, w_lo = -wedge(pu[0], pu[1]), wedge(pl[0], pl[1])
+        ang = np.linspace(-(math.pi / 2 - w_lo), math.pi / 2 - w_up, n_te + 2)     # from lower to upper, ends = tangent points
         cap = np.stack([mpe + rr * (np.cos(ang) * math.cos(ke) - np.sin(ang) * math.sin(ke)),
                         the + rr * (np.cos(ang) * math.sin(ke) + np.sin(ang) * math.cos(ke))], 1)
+        up[0], lo[-1] = cap[-1], cap[0]
+        cap = cap[1:-1]
         capm = cap[n_te // 2:]                                   # TE mid -> upper
         capl = cap[:n_te // 2]                                   # lower -> TE mid
         P = np.vstack([capm, up[:-1] if False else up, lo[1:], capl])
@@ -298,13 +316,22 @@ def design_ngv(verbose=False):
     return secs
 
 # ======================================================================================== rotor design
-ROT_SPANS = [0.0, 0.25, 0.50, 0.75, 1.0]           # 5 design stream surfaces (+ extensions below the hub / above the tip)
+# 7 design stream surfaces (+ extensions below the hub / above the tip), denser at the hub where the blade twists fastest. With
+# only 5 (and the loft starting at s 0.25) the CAD surface strayed up to ~1 mm from the design between them (bumps on the blade);
+# now <= 0.1 mm for s >= 0.19, 0.37 mm just above the root fillet. 12 spans fit even closer but break the 29-blade fuse.
+ROT_SPANS = [0.0, 0.125, 0.25, 0.375, 0.50, 0.75, 1.0]
+ROT_LOFT_MIN_S = 0.10                               # design sections used in the loft start above the root fillet (h 0.9 mm)
 ROT_EXT = (-0.04, 1.05)
+# section outlines sampled densely, then resampled to 200 evenly spaced points: B-splines through the raw cosine-clustered
+# outline (spacing ratio ~600:1 nose : mid-chord) rang, curvature spikes up to ~90 /mm at LE / TE (design 5.6); now 5-7 /mm.
+# (curvature-weighted spacing made self-intersecting loft sections)
+ROT_DENSE, ROT_NPTS = (1500, 61), 200
 def rot_params(s):
     sc = min(max(s, 0.0), 1.0)
     # t/c 0.22 at the root -> 0.068 at the tip (strong outer taper keeps the root P/A ~290 MPa @115k), LE radius 0.36 -> 0.18,
     # cast TE 0.48 -> 0.45 mm, max thickness at 32-38 % of the camber, camber loading exponent 2.0 (hub) -> 1.6 (tip)
-    return dict(tau=0.068 + 0.152 * (1 - sc)**2.2, rle=0.36 - 0.18 * sc, tte=0.48 - 0.03 * sc, sig_m=0.32 + 0.06 * sc, p=2.0 - 0.4 * sc)
+    return dict(tau=0.068 + 0.152 * (1 - sc)**2.2, rle=0.36 - 0.18 * sc, tte=0.48 - 0.03 * sc + TTE_ROOT_ADD * max(0.0, 1.0 - sc / 0.25),
+                sig_m=0.32 + 0.06 * sc, p=2.0 - 0.4 * sc)
 
 def rot_le_te(s):
     return ROT_LE[0] + (ROT_LE[1] - ROT_LE[0]) * s, ROT_TE[0] + (ROT_TE[1] - ROT_TE[0]) * s
@@ -459,6 +486,10 @@ def aero_report(ngv, rot, verbose=True):
 # x 109.8 (r 21.25-22.25) -> platform front face x 110.1; old exhaust cone x 120.31 (r 7-26) -> platform rear x 119.4.
 # Web parameters were chosen with the axisymmetric study in sim/engine/e1_turbine_fea.py (--opt); values below = selected design.
 DISC = dict(xf_w=111.60, xr_w=115.60, r_web=15.0, x_boss=118.50, r_lip_f=19.70, r_lip_r=17.30, R_web=2.5, r_hf=6.4, r_hr=6.5)
+# Bore-less disc (sim/engine/e1_disc_thermal_study.py): solid hub, web 6 mm, R4 web fillets. Hot 115k peak 615 MPa (margin 1.13 to
+# minimum yield), burst 201k, creep (reference stress) >= 1e6 h; the Ø8 bore reached 957-1172 MPa hot. The wheel is friction
+# welded to the shaft at the sleeve front face (x 104.3); no rear nut / thread (fc_shaft_welded).
+DISC_BORELESS = dict(r_bore=0.0, xf_w=110.6, xr_w=116.6, R_web=4.0)
 
 def _fillet_corner(P0, V, P1, R, kind):
     """Corner at V between segments P0-V and V-P1. kind 'f' fillet radius R, 'c' chamfer length R. Returns (t0, mid, t1)."""
@@ -485,13 +516,15 @@ def disc_profile(kind='final', P=None):
     P = dict(DISC, **(P or {}))
     ck = kind == 'cast'
     rb = 3.00 if ck else 4.00                   # bore: cast Ø6 pilot hole, machined Ø8
+    if 'r_bore' in P: rb = max(P['r_bore'] - (1.0 if ck else 0.0), 0.0)   # r_bore 0: bore-less disc (wheel welded to a stub shaft)
+    kb = 'c' if rb > 0 else None                # no chamfer on the axis
     xf = X_HUB - (0.50 if ck else 0.0)          # sleeve front face
     rs = 6.40 + (0.50 if ck else 0.0)           # sleeve OD Ø12.8 (pilot / bearing-ring shoulder)
     xb = X_HUB + HUB_L + (0.50 if ck else 0.0)  # nut seat face
     rbo = 6.50 + (0.50 if ck else 0.0)          # boss OD Ø13
     xpf = X_PF - (0.30 if ck else 0.0)          # platform front face (axial gap to the NGV ring) machined
     pts = [  # vertex, corner kind, size
-        ((xf, rb), 'c', 0.30), ((xb, rb), 'c', 0.30), ((xb, rbo), 'c', 0.20), ((P['x_boss'], rbo), 'f', 0.60),
+        ((xf, rb), kb, 0.30), ((xb, rb), kb, 0.30), ((xb, rbo), 'c', 0.20), ((P['x_boss'], rbo), 'f', 0.60),
         ] + ([((P['x_boss'], P['r_hr']), 'f', 1.0)] if P['r_hr'] > rbo + 0.8 else []) + [
         ((P['xr_w'], P['r_web']), 'f', P['R_web']), ((X_PR, P['r_lip_r']), 'f', 0.40), ((X_PR, R_H1), 'f', 0.30),
         ('FLARE',),
@@ -567,6 +600,10 @@ def polygon_area_centroid(poly):
 # ======================================================================================== FreeCAD geometry
 NGV_BORE_R_DEFAULT = R_NGV_SHR      # cold NGV shroud bore radius; replaced by the FEA recommendation (E1_fea_results.json)
 TIP_STOCK, CAST_SHROUD_STOCK = 0.30, 0.30
+# NGV shroud bore: the bore between the vanes (x 96.24..109.35) cannot be turned (the vanes cut the bore), so the cast blank
+# carries the 0.3 mm bore stock only aft of the vanes, from x 109.8 (u 15.0, 0.44 aft of the vane fillet foot) via a 45 deg
+# ramp; the vane-region bore and the vanes are as cast = final (Fusion CAM finding, docs/engine/E1_fusion_drawings.md 3-3)
+CAST_SHROUD_STOCK_U0 = 15.0
 
 def ngv_bore_r():
     f = os.path.join(OUT, 'E1_fea_results.json')
@@ -597,6 +634,13 @@ def _fc():
     import FreeCAD as App, Part
     return App, Part, App.Vector
 
+def resample_closed(P, n=240):
+    """Closed outline (no duplicate end point) resampled at equal arc length, seam point kept. The NGV fillet offsets spread the
+    TE-cap points and bunch the concave side; interpolating them as they are puts small loops into the B-spline."""
+    Q = np.vstack([P, P[:1]]); d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(Q, axis=0), axis=1))]
+    t = np.linspace(0, d[-1], n + 1)[:-1]
+    return np.stack([np.interp(t, d, Q[:, k]) for k in range(3)], 1)
+
 def bs_wire(pts):
     """Closed, non-periodic B-spline interpolation (seam at the TE mid-point; periodic curves break ThruSections)."""
     App, Part, V = _fc()
@@ -626,27 +670,56 @@ def fc_blade(rot):
     """Single rotor blade loft (centroids stacked on +y, theta = 0) with the integral R0.8 root fillet, trimmed at R_TIP
     (final) and R_TIP + TIP_STOCK (cast). Returns blade_raw, blade_f, blade_c."""
     App, Part, V = _fc()
-    ss = sorted(rot); hub = rot[0.0]
+    ss = sorted(rot); hub = rot[0.0]; nxt = rot[min(s_ for s_ in rot if s_ > 0)]
     root = []
     for hk in FILLET_H:
         h = hk * FILLET_ROT / 0.8
-        sec = Section(StreamOffset(h), hub.x_le, hub.x_te, hub.k1, hub.k2, hub.p, hub.tau, hub.rle, hub.tte, hub.sig_m, hub.dth)
-        root.append(sec.outline_offset(fillet_offset(h, FILLET_ROT)))
+        # the blade section at height h (parameters interpolated hub -> first span by the LE height), not the hub section
+        # copied upward: copies stack the fillet vertically while the blade leans ~17-30 deg there, and the loft made a knee
+        # at the fillet top (LE shifted 0.67 mm sideways over the next 1.1 mm)
+        w = h / (nxt.r_in - hub.r_in); L = lambda a, b: a + w * (b - a)
+        sec = Section(StreamOffset(h), *(L(getattr(hub, k), getattr(nxt, k)) for k in ('x_le', 'x_te', 'k1', 'k2', 'p', 'tau', 'rle', 'tte', 'sig_m', 'dth')))
+        root.append(resample_closed(sec.outline_offset(fillet_offset(h, FILLET_ROT), *ROT_DENSE), ROT_NPTS))
     capH = project_to_plane(root[0], hub_cap_plane())
-    capT = project_to_plane(rot[1.0].outline()[0], lambda x: np.full_like(np.asarray(x, float), R_TIP + 1.25))
-    wires = [bs_wire(capH)] + [bs_wire(p_) for p_ in root] + [bs_wire(rot[s_].outline()[0]) for s_ in ss if s_ >= 0.2] + [bs_wire(capT)]
+    tip = resample_closed(rot[1.0].outline(*ROT_DENSE)[0], ROT_NPTS)
+    capT = project_to_plane(tip, lambda x: np.full_like(np.asarray(x, float), R_TIP + 1.25))
+    wires = ([bs_wire(capH)] + [bs_wire(p_) for p_ in root]
+             + [bs_wire(resample_closed(rot[s_].outline(*ROT_DENSE)[0], ROT_NPTS)) for s_ in ss if s_ >= ROT_LOFT_MIN_S] + [bs_wire(capT)])
     blade_raw = Part.makeLoft(wires, True, False)
     if blade_raw.Volume < 0: blade_raw.reverse()
-    return blade_raw, blade_raw.common(cyl(R_TIP, 100, 125)), blade_raw.common(cyl(R_TIP + TIP_STOCK, 100, 125)), len(wires)
+    # axial trim to the platform: the root fillet foot otherwise overhangs the platform edges (TE ~0.4-0.65 mm into the rear
+    # cavity, LE sliver into the 0.30 mm gap to the NGV ring); the fillet now runs out at the platform edges. Trim planes 0.02 mm
+    # inside the edges: planes coincident with the disc faces break the 29-blade fuse (front plane 0.05: at 0.02 it grazes the
+    # fillet foot near the LE and the trimmed blade is invalid)
+    e, ef = 0.02, 0.05
+    return (blade_raw, blade_raw.common(cyl(R_TIP, X_PF + ef, X_PR - e)), blade_raw.common(cyl(R_TIP + TIP_STOCK, X_PF - 0.30 + e, X_PR - e)),
+            len(wires))
 
 def fc_disc(kind='final', P=None):
     """Revolved wheel body; the revolve seam is put mid-passage (rotated by half a pitch)."""
     App, Part, V = _fc()
     d_ = rev_prims(disc_profile(kind, P)); d_.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z_ROT); return d_
 
+def fc_shaft_welded():
+    """GR180 shaft (build_gr180.py profile, silver steel -> 42CrMo4 Q+T for welding) cut at the wheel's front face and inertia /
+    friction welded to the bore-less wheel there: rear 608 journal Ø8 x 97.3..104.3, weld face Ø8 at x 104.3 (flash removed,
+    0.5 mm relief on the wheel face inside the 608 inner-ring contact). ENG frame."""
+    App, Part, V = _fc()
+    SH_OFF = 97.30 - 145.0                       # shaft local 145 (rear shoulder) on the rear 608 front face (build_gr180.py)
+    x_w = X_HUB - SH_OFF                         # weld face in shaft local x (152.0)
+    re_, rm = 11.0 / 2, 15.5 / 2
+    pts = [(0, 0), (0, 3), (15, 3), (15, 3.5), (49, 3.5), (49, 4), (58, 4), (58, re_), (76, rm), (127, rm), (145, re_), (145, 4),
+           (x_w, 4), (x_w, 0)]
+    w = Part.makePolygon([V(SH_OFF + a, r, 0) for a, r in pts] + [V(SH_OFF + pts[0][0], pts[0][1], 0)])
+    return Part.Face(w).revolve(V(0, 0, 0), V(1, 0, 0), 360)
+
 def fc_full_wheel(disc, piece, Z=Z_ROT):
     App, Part, V = _fc()
-    w = disc.fuse([rot_shape(piece, 360.0 * k / Z) for k in range(Z)])
+    # a few blades per fuse: a single 29-shape fuse of the 12-span blades needs > 14 GB, and one at a time can fail on the
+    # second blade (null result of (disc + blade 0) + blade 1, while disc + [blade 0, blade 1] is fine)
+    w, B = disc, 4
+    for k0 in range(0, Z, B):
+        w = w.fuse([rot_shape(piece, 360.0 * k / Z) for k in range(k0, min(k0 + B, Z))]); __import__('gc').collect()
     try: w = w.removeSplitter()
     except Exception: pass
     return w
@@ -681,7 +754,8 @@ def fc_sector_tool(rot, ruled=True):
         a_in = Part.Arc(prr[-1], V(float(x), ri * math.cos(thL[0] + half), ri * math.sin(thL[0] + half)), pl[0])
         sec_wires.append(Part.Wire([cL.toShape(), a_out.toShape(), cR.toShape(), a_in.toShape()]))
     tool = Part.makeLoft(sec_wires, True, ruled)
-    if tool.Volume < 0: tool.reverse()
+    if tool.Volume < 0:      # loft in the other order instead of reverse(): a reversed shell makes w1f.common(tool) empty
+        tool = Part.makeLoft(sec_wires[::-1], True, ruled)
     return tool, (xs, rr_st, THL, half)
 
 def fc_sector(w1f, rot, log=print):
@@ -710,13 +784,22 @@ def ngv_body(kind, RB):
     App, Part, V = _fc()
     ck = kind == 'cast'
     def rvp(pts):
+        # counter-clockwise in (u, r): a clockwise profile revolves into an inside-out solid (booleans then drop the ring)
+        if sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(pts, pts[1:] + pts[:1])) < 0: pts = pts[::-1]
         return Part.Face(Part.makePolygon([V(X_NGV + u, r, 0) for u, r in pts] + [V(X_NGV + pts[0][0], pts[0][1], 0)])).revolve(V(0, 0, 0), V(1, 0, 0), 360)
-    rb = RB - (CAST_SHROUD_STOCK if ck else 0.0)
+    rb = RB                                                            # vane-region bore: final (cast blank: as cast)
     u_web0 = 8.5 - (0.5 if ck else 0.0); r_web_b = 13.0 - (0.5 if ck else 0.0); u_in1 = 15.0 + (0.3 if ck else 0.0)
     u_f = 0.0 - (0.3 if ck else 0.0)                                   # front land face (machined datum)
     r_rib = 37.95 + (0.3 if ck else 0.0); u_r0, u_r1 = 14.5 - (0.3 if ck else 0.0), 16.0 + (0.3 if ck else 0.0)   # rib faces / OD machined
-    chl = (36.05 - rb) / math.tan(math.radians(26))
-    outer = rvp([(chl, rb), (u_f, 36.05 - (chl - u_f) * math.tan(math.radians(26)) if False else 36.05), (u_f, 36.35), (u_r0, 36.35), (u_r0, r_rib), (u_r1, r_rib), (u_r1, 36.35), (24.0, 36.35), (24.0, rb)])
+    t26 = math.tan(math.radians(26))
+    chl = (36.05 - rb) / t26                                           # 26 deg inlet chamfer from (u 0, r 36.05) down to the bore
+    r_front = 36.05 - u_f * t26                                        # cast: chamfer line extended to the cast front face
+    if ck:   # bore stock only aft of the vanes (CAST_SHROUD_STOCK_U0), 45 deg ramp from the as-cast vane-region bore
+        u0, rs = CAST_SHROUD_STOCK_U0, RB - CAST_SHROUD_STOCK
+        aft = [(24.0, rs), (u0 + CAST_SHROUD_STOCK, rs), (u0, rb)]
+    else:
+        aft = [(24.0, rb)]
+    outer = rvp([(chl, rb), (u_f, r_front), (u_f, 36.35), (u_r0, 36.35), (u_r0, r_rib), (u_r1, r_rib), (u_r1, 36.35), (24.0, 36.35)] + aft)
     inner = rvp([(0, 21.25), (0, 22.25), (u_in1, 22.25), (u_in1, 21.25)])
     web = rvp([(u_web0, r_web_b), (u_web0, 21.3), (10.0, 21.3), (10.0, r_web_b)])
     return outer.fuse([inner, web]), rb
@@ -725,16 +808,33 @@ def fc_vane(ngv, rb):
     """Single NGV vane loft (TE stacked at theta 0) with integral R1.0 fillets to both rings, buried in the rings."""
     App, Part, V = _fc()
     hubs, shr = ngv[R_NGV_HUB], ngv[R_NGV_SHR]
-    mk = lambda w, r: Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m, w.dth)
-    inner = [mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H]
-    outer = [mk(shr, rb - hk * FILLET_NGV / 0.8).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV)) for hk in FILLET_H][::-1]
+    def mk(w, r):
+        # TE stacking at this radius (as design_ngv): reusing w.dth of the end section rotates the fillet sections off the
+        # vane (~1 deg at the hub) and twists the loft into an invalid solid
+        s0 = Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m)
+        return Section(Stream(r_const=r), NGV_LE, NGV_TE, 0.0, w.k2, w.p, w.tau, w.rle, w.tte, w.sig_m, -s0.th[-1])
+    # fillet foot sections (h = 0) sunk 0.05 mm into the rings: a section edge lying exactly on the ring cylinder makes the
+    # vane/ring boolean fail (invalid NGV solid); the sunk part is fused away, the visible fillet is unchanged
+    sink = lambda hk: -0.05 if hk == 0 else 0.0
+    inner = [resample_closed(mk(hubs, R_NGV_HUB + hk * FILLET_NGV / 0.8 + sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV), *ROT_DENSE))
+             for hk in FILLET_H]
+    outer = [resample_closed(mk(shr, rb - hk * FILLET_NGV / 0.8 - sink(hk)).outline_offset(fillet_offset(hk * FILLET_NGV / 0.8, FILLET_NGV), *ROT_DENSE))
+             for hk in FILLET_H][::-1]
     r_in_max, r_out_min = R_NGV_HUB + FILLET_H[-1] * FILLET_NGV / 0.8 + 1.0, rb - FILLET_H[-1] * FILLET_NGV / 0.8 - 1.0
-    mids = [ngv[r].outline()[0] for r in sorted(ngv) if r_in_max < r < r_out_min]
-    capI = project_to_plane(inner[0], lambda x: np.full_like(np.asarray(x, float), 21.60))
-    capO = project_to_plane(outer[-1], lambda x: np.full_like(np.asarray(x, float), rb + 0.55))
+    mids = [resample_closed(ngv[r].outline(*ROT_DENSE)[0]) for r in sorted(ngv) if r_in_max < r < r_out_min]   # dense + even (see ROT_DENSE)
+    # end caps on true planes (normal at the section's mid angle, radial projection), buried in the rings: caps on r = const
+    # are not planar, give invalid faces and an unorientable vane. Hub: vane spans ~23 deg -> r <= 21.40 / cos(12) = 21.9 < 22.25
+    def flat(P, c):
+        th = np.arctan2(P[:, 2], P[:, 1]); tm = 0.5 * (th.min() + th.max()); d = th - tm
+        return np.stack([P[:, 0], c * np.cos(tm) - c * np.tan(d) * np.sin(tm), c * np.sin(tm) + c * np.tan(d) * np.cos(tm)], 1)
+    capI = flat(inner[0], 21.40)
+    capO = flat(outer[-1], rb + 0.15)
     vw = [bs_wire(capI)] + [bs_wire(p_) for p_ in inner + mids + outer] + [bs_wire(capO)]
     v_ = Part.makeLoft(vw, True, False)
-    if v_.Volume < 0: v_.reverse()
+    if v_.Volume < 0:        # loft in the other order instead of reverse(): a reversed shell breaks the ring booleans
+        v_ = Part.makeLoft(vw[::-1], True, False)
+    if not v_.isValid():     # end caps (buried in the rings) have self-intersecting outlines; repair keeps the volume
+        v_.fix(1e-4, 1e-5, 1e-3)
     return v_, len(vw)
 
 def fc_ngv(ngv, kind, RB):

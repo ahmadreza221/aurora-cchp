@@ -1,0 +1,10 @@
+{
+	"autodeskProduct": "Fusion",
+	"type": "script",
+	"author": "GR180-CCHP",
+	"description": {
+		"": "Build the GR180 E1 turbine stage (blisk, NGV, welded shaft) from fusion/E1 STEP parts"
+	},
+	"supportedOS": "windows|mac",
+	"editEnabled": true
+}

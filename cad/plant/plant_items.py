@@ -183,8 +183,8 @@ def equipment(m):
 
     # ---------------------------------------------------------------- NP-1 neutraliser pot
     t = 'NP-1'
-    m.add(t, 'NP-1 pot', cyl(6.20, 8.05, 0.0, 0.25, 0.40), 'equip', (0.5, 0.5, 0.55))
-    m.nozzle(t, 'in', (6.20, 8.05, 0.40), (0, 0, 1), 25, 'condensate in', stub=0.03, mat='SS316D', flange=False)
+    m.add(t, 'NP-1 pot', cyl(6.40, 8.05, 0.0, 0.25, 0.40), 'equip', (0.5, 0.5, 0.55))
+    m.nozzle(t, 'in', (6.40, 8.05, 0.40), (0, 0, 1), 25, 'condensate in', stub=0.03, mat='SS316D', flange=False)
     m.item(t, 'condensate neutraliser pot (MgO / limestone granulate), to roof drain', 'buy', 'PP/316L body', '10 L',
            'Neutrakon (DE) or domestic', 15, 'exhaust')
 
@@ -224,15 +224,15 @@ def equipment(m):
     for xb in (2.85, 3.70, 4.65, 5.55):
         m.add(t, 'PS-1 frame y-beam', box(xb - 0.03, 5.45, zf, 0.06, 0.80, 0.12), 'equip', C_STEEL)
     m.add(t, 'ET-2 25 L', cyl(3.45, 5.90, zf + 0.12, 0.30, 0.42), 'equip', (0.8, 0.15, 0.15))
-    m.add(t, 'JB-PS1 junction box', box(2.90, 6.12, zf + 0.12, 0.30, 0.10, 0.40), 'equip', C_ELEC)
-    m.add(t, 'FU-1 fill unit (BA + meter + pot)', box(4.10, 5.88, zf + 0.12, 0.40, 0.20, 0.30), 'equip', (0.3, 0.55, 0.3))
+    m.add(t, 'JB-PS1 junction box', box(2.85, 5.50, zf + 0.12, 0.20, 0.10, 0.40), 'equip', C_ELEC)
+    m.add(t, 'FU-1 fill unit (BA + meter + pot)', box(4.10, 5.68, zf + 0.12, 0.40, 0.20, 0.30), 'equip', (0.3, 0.55, 0.3))
     m.nozzle(t, 'et2', (3.45, 5.75, 0.55), (0, -1, 0), 20, 'ET-2 connection', stub=0.10)
     m.item(t, 'hydronic pump skid PS-1: galvanised frame on spring isolators, carrying P-2A/B, P-5A/B, FT-211, HM-2/4, '
               'AS-2, ET-2 25 L, closed-loop fill unit FU-1 (BA backflow preventer, FQ-410, XV-410, dosing pot), JB-PS1',
            'make', 'S235 galvanised UPN120 frame, prefabricated and pressure-tested', '2.8 x 1.1 m',
            'domestic HVAC skid fabricator', 180, 'pumps', notes='pumps, valves and pipes listed separately')
     m.footprints[t] = (2.80, 5.20, 5.60, 6.30)
-    dunnage(m, t, 2.80, 5.45, 5.60, 6.25, axis='x', inset=0.0, ext=0.10)
+    dunnage(m, t, 2.80, 5.45, 5.60, 6.25, axis='x', inset=0.0, ext=0.02)
     mounts(m, t, [(2.85, 5.45), (3.70, 5.45), (4.65, 5.45), (5.55, 5.45), (2.85, 6.25), (3.70, 6.25), (4.65, 6.25), (5.55, 6.25)], 'spring')
     m.zone(t, 2.80, 6.32, 5.60, 7.00, z0=0.40, label='skid access N')
 
@@ -240,9 +240,9 @@ def equipment(m):
     t = 'PS-3'
     m.add(t, 'PS-3 module', box(5.75, 5.30, B_PAD, 0.60, 0.40, 1.20), 'equip', (0.35, 0.55, 0.75))
     m.nozzle(t, 'hw_in', (6.25, 5.70, 1.15), (0, 1, 0), 25, 'HW from header', stub=0.10)
-    m.nozzle(t, 'hw_out', (6.05, 5.70, 0.85), (0, 1, 0), 25, 'HW to return header', stub=0.10)
-    m.nozzle(t, 'chw_tk', (6.30, 5.30, 0.95), (0, -1, 0), 50, 'CHW secondary from TK-1', stub=0.10)
-    m.nozzle(t, 'chwr_tk', (6.10, 5.30, 0.55), (0, -1, 0), 50, 'CHW secondary return to TK-1', stub=0.10)
+    m.nozzle(t, 'hw_out', (6.05, 5.70, 0.75), (0, 1, 0), 25, 'HW to return header', stub=0.10)
+    m.nozzle(t, 'chw_tk', (6.30, 5.30, 0.30), (0, -1, 0), 50, 'CHW secondary from TK-1', stub=0.10)
+    m.nozzle(t, 'chwr_tk', (6.10, 5.30, 0.30), (0, -1, 0), 50, 'CHW secondary return to TK-1', stub=0.10)
     m.nozzle(t, 'chw_p5', (5.75, 5.50, 0.95), (-1, 0, 0), 50, 'CHW to P-5', stub=0.10)
     m.nozzle(t, 'chwr_hdr', (5.75, 5.50, 0.55), (-1, 0, 0), 50, 'CHW return from header', stub=0.10)
     m.nozzle(t, 'dhw_s', (6.35, 5.62, 0.50), (1, 0, 0), 25, 'DHW charging supply', stub=0.10)
@@ -252,7 +252,7 @@ def equipment(m):
            'buy', 'insulated sheet housing, SS316 brazed PHE, Belimo-class valves', '0.60 x 0.40 x 1.20 m',
            'domestic HVAC module builders; components Grundfos (DK), Belimo (CH), SWEP (SE)', 120, 'pumps')
     m.footprints[t] = (5.75, 5.30, 6.35, 5.70)
-    dunnage(m, t, 5.75, 5.30, 6.35, 5.70, axis='x', inset=0.08)
+    dunnage(m, t, 5.75, 5.30, 6.35, 5.70, axis='y', inset=0.08, ext=0.0)
     mounts(m, t, [(5.82, 5.38), (6.28, 5.38), (5.82, 5.62), (6.28, 5.62)], 'pad')
 
     # ---------------------------------------------------------------- chillers
@@ -335,19 +335,19 @@ def equipment(m):
     t = 'PS-2'
     zf = B_SPR
     for yb in (0.43, 1.27):
-        m.add(t, 'PS-2 frame x-beam', box(5.00, yb - 0.03, zf, 1.40, 0.06, 0.12), 'equip', C_STEEL)
-    for xb in (5.03, 5.70, 6.37):
+        m.add(t, 'PS-2 frame x-beam', box(5.00, yb - 0.03, zf, 1.35, 0.06, 0.12), 'equip', C_STEEL)
+    for xb in (5.03, 5.70, 6.32):
         m.add(t, 'PS-2 frame y-beam', box(xb - 0.03, 0.40, zf, 0.06, 0.90, 0.12), 'equip', C_STEEL)
     m.add(t, 'VFD cabinet (P-6A/B)', box(5.55, 0.40, 0.55, 0.75, 0.08, 0.70), 'equip', C_ELEC)
     m.add(t, 'VFD stand', box(5.58, 0.40, zf + 0.12, 0.04, 0.04, 0.55 - zf - 0.12).fuse(box(6.24, 0.40, zf + 0.12, 0.04, 0.04, 0.55 - zf - 0.12)),
           'equip', C_STEEL)
     m.item(t, 'condenser-water pump skid PS-2: galvanised frame on spring isolators, P-6A/B, IP55 VFD cabinet (2 x 1.5 kW '
-              'HVAC VFD, Modbus, DC choke), HX-4 bracket', 'make', 'S235 galvanised, prefabricated', '1.4 x 0.9 m',
+              'HVAC VFD, Modbus, DC choke), HX-4 bracket', 'make', 'S235 galvanised, prefabricated', '1.35 x 0.9 m',
            'domestic skid fabricator; VFD Danfoss FC 102 (DK), ABB ACH580 (FI), Siemens G120P (DE)', 120, 'pumps')
-    m.footprints[t] = (5.00, 0.40, 6.40, 1.30)
-    dunnage(m, t, 5.00, 0.43, 6.40, 1.27, axis='x', inset=0.0, ext=0.10)
-    mounts(m, t, [(5.03, 0.43), (5.70, 0.43), (6.37, 0.43), (5.03, 1.27), (5.70, 1.27), (6.37, 1.27)], 'spring')
-    m.zone(t, 5.00, 1.30, 6.40, 1.90, label='pump access N')
+    m.footprints[t] = (5.00, 0.40, 6.35, 1.30)
+    dunnage(m, t, 5.00, 0.43, 6.35, 1.27, axis='x', inset=0.0, ext=0.0)
+    mounts(m, t, [(5.03, 0.43), (5.70, 0.43), (6.32, 0.43), (5.03, 1.27), (5.70, 1.27), (6.32, 1.27)], 'spring')
+    m.zone(t, 5.00, 1.30, 6.35, 1.90, label='pump access N')
 
     t = 'HX-4'
     m.add(t, 'HX-4 brazed PHE', box(5.05, 0.70, 0.45, 0.12, 0.25, 0.38), 'equip', (0.7, 0.7, 0.75))
@@ -361,23 +361,23 @@ def equipment(m):
 
     # ---------------------------------------------------------------- WT-1 water treatment skid (moved south, near PS-2)
     t = 'WT-1'
-    x0, y0 = 3.70, 0.40
+    x0, y0 = 3.55, 0.40
     m.add(t, 'WT-1 bund tray', box(x0, y0, B_PAD, 1.20, 0.70, 0.15), 'equip', (0.30, 0.55, 0.30))
-    for k, xx in enumerate((4.05, 4.45, 4.85 - 0.19)):
+    for k, xx in enumerate((3.90, 4.30, 4.51)):
         m.add(t, 'WT-1 chemical drum %d' % (k + 1), cyl(xx, 0.62, B_PAD + 0.15, 0.36, 0.55), 'equip', (0.9, 0.9, 0.3))
     m.add(t, 'WT-1 dosing/controller panel', box(x0, y0 + 0.05, B_PAD + 0.15, 0.06, 0.60, 1.10), 'equip', (0.85, 0.85, 0.88))
-    m.add(t, 'F-SS separator', cyl(4.75, 0.95, B_PAD + 0.15, 0.16, 0.75), 'equip', (0.35, 0.35, 0.40))
+    m.add(t, 'F-SS separator', cyl(4.60, 0.95, B_PAD + 0.15, 0.16, 0.75), 'equip', (0.35, 0.35, 0.40))
     m.add(t, 'sample cell + coupon rack', box(x0 + 0.08, 0.95, 0.60, 0.40, 0.10, 0.35), 'equip', (0.6, 0.6, 0.65))
-    m.nozzle(t, 'ss_in', (4.90, 1.00, 0.60), (1, 0, 0), 32, 'side-stream in', stub=0.06)
-    m.nozzle(t, 'ss_out', (4.90, 0.80, 0.60), (1, 0, 0), 32, 'side-stream out', stub=0.06)
-    m.nozzle(t, 'bd', (3.70, 0.90, 0.40), (-1, 0, 0), 25, 'blowdown to drain', stub=0.06, mat='PVC', flange=False)
+    m.nozzle(t, 'ss_in', (4.75, 1.00, 0.60), (1, 0, 0), 32, 'side-stream in', stub=0.06)
+    m.nozzle(t, 'ss_out', (4.75, 0.80, 0.60), (1, 0, 0), 32, 'side-stream out', stub=0.06)
+    m.nozzle(t, 'bd', (3.55, 0.90, 0.40), (-1, 0, 0), 25, 'blowdown to drain', stub=0.06, mat='PVC', flange=False)
     m.item(t, 'cooling-water treatment skid: chemical bund, 3 x 60 L drums, DP-1..3 diaphragm dosing pumps, EC/pH/ORP '
               'controller WT-1 (AIT-301/302/303), sample cell, coupon rack, F-SS centrifugal separator 2.2 m3/h with XV-303 '
               'purge, XV-302 blowdown + FQ-302', 'buy', 'PP/PE bund, SS fittings',
            '1.2 x 0.7 x 1.3 m', 'ProMinent DULCOMETER (DE), Emec, Seko (IT); Netafim/Arkal or Amiad (separator); domestic skid', 300, 'water')
-    m.footprints[t] = (3.70, 0.40, 4.90, 1.10)
-    dunnage(m, t, 3.70, 0.40, 4.90, 1.10, axis='x', inset=0.10)
-    m.zone(t, 3.10, 0.40, 3.70, 1.10, label='dosing panel access W')
+    m.footprints[t] = (3.55, 0.40, 4.75, 1.10)
+    dunnage(m, t, 3.55, 0.40, 4.75, 1.10, axis='x', inset=0.10, ext=0.0)
+    m.zone(t, 2.95, 0.40, 3.55, 1.10, label='dosing panel access W')
 
     # ---------------------------------------------------------------- DC-1 dry cooler with adiabatic pads
     t = 'DC-1'
@@ -397,7 +397,7 @@ def equipment(m):
            '4.0 kW @ 46 C dry (glycol 52 C) / 38.5 C with pads; 2600 m3/h', 'Guentner (DE), LU-VE (IT), Alfa Laval (SE); domestic air-cooler makers',
            90, 'engine', notes='interface with engine glycol loop M-751 (docs/electrical)')
     m.footprints[t] = (0.40, 5.52, 1.60, 6.28)
-    dunnage(m, t, 0.40, 5.60, 1.60, 6.20, axis='x', inset=0.06)
+    dunnage(m, t, 0.40, 5.60, 1.60, 6.20, axis='x', inset=0.06, ext=0.0)
     m.zone(t, 0.40, 5.00, 1.60, 5.52, label='coil / pad access S')
 
     # ---------------------------------------------------------------- RS-1 riser hood + penetration
@@ -505,7 +505,7 @@ def piping(m):
     add('HW-P3S', 'L-HW-05', 'HW to PS-3 (P-3 DHW / heating)', 25, 'CS40',
         [(6.25, 6.10, 1.15), nz('PS-3', 'hw_in')], ins='MW50', parent='HW-S', connects={'PS-3'})
     add('HW-P3R', 'L-HW-05', 'HW from PS-3 to return header', 25, 'CS40',
-        [nz('PS-3', 'hw_out'), (6.05, 6.10, 0.85), (6.05, 6.10, 0.75)], ins='MW50', end_parent='HW-R', connects={'PS-3'})
+        [nz('PS-3', 'hw_out'), (6.05, 6.10, 0.75)], ins='MW50', end_parent='HW-R', connects={'PS-3'})
 
     # ---------------- CHW primary (chillers <-> TK-1 with P-4A/B)
     add('CHP-1O', 'L-CH-01', 'CHW CH-1 evaporator out -> TK-1', 50, 'CS40',
@@ -527,11 +527,11 @@ def piping(m):
 
     # ---------------- CHW secondary TK-1 <-> PS-3 <-> PS-1
     add('CHS-T', 'L-CH-03', 'CHW secondary TK-1 -> PS-3 (V-CO1)', 50, 'CS40',
-        [nz('TK-1', 's_out'), (6.30, 4.25, 0.95), (6.30, 4.25, 0.30), (6.30, 5.08, 0.30), (6.30, 5.08, 0.95), nz('PS-3', 'chw_tk')],
+        [nz('TK-1', 's_out'), (6.30, 4.25, 0.95), (6.30, 4.25, 0.30), nz('PS-3', 'chw_tk')],
         ins='EL40', connects={'TK-1', 'PS-3'})
     add('CHR-T', 'L-CH-03', 'CHW secondary PS-3 (V-CO2) -> TK-1', 50, 'CS40',
         [nz('PS-3', 'chwr_tk'), (6.10, 4.30, 0.55), (6.10, 4.30, 0.30)] if False else
-        [nz('PS-3', 'chwr_tk'), (6.10, 5.08, 0.55), (6.10, 5.08, 0.30), (6.10, 4.40, 0.30), (6.10, 4.40, 0.55), nz('TK-1', 's_in')],
+        [nz('PS-3', 'chwr_tk'), (6.10, 4.30, 0.30), (6.10, 4.30, 0.55), nz('TK-1', 's_in')],
         ins='EL40', connects={'TK-1', 'PS-3'})
     add('CHW-S', 'L-CH-03', 'CHW secondary supply header PS-3 -> P-5 -> PS-1', 50, 'CS40',
         [nz('PS-3', 'chw_p5'), (3.40, 5.50, 0.95)], ins='EL40', connects={'PS-3', 'PS-1'},
@@ -555,20 +555,20 @@ def piping(m):
         inline=[dict(type='heatmeter', tag='HM-4', at=(2.95, 6.53, 0.30)), dict(type='ball', tag='', at=(1.12, 7.00, 0.95))])
 
     # ---------------- hall + ER branches (PS-1 -> corridor -> RS-1)
+    # hall lane y 5.94 (clear of the HW headers at 6.10). Supplies drop at x 5.68 (hall) / 6.80 (ER, east of the HW headers);
+    # returns stay at z 0.55 and leave the lane east of the supply risers (hall -> CHW-R, ER -> hall return).
     add('HALL-S', 'L-CH-05', 'CHW hall supply (roof)', 40, 'CS40',
-        [(4.35, 5.50, 0.95), (4.35, 5.95, 0.95), (5.68, 5.95, 0.95), (5.68, 5.95, 0.30), (9.25, 5.95, 0.30), (9.25, 5.95, -0.42),
-         (8.40, 5.95, -0.42)], ins='EL40', parent='CHW-S', connects={'PS-1', 'RS-1', 'REF'}, support=True)
+        [(4.35, 5.50, 0.95), (4.35, 5.94, 0.95), (5.68, 5.94, 0.95), (5.68, 5.94, 0.30), (9.25, 5.94, 0.30), (9.25, 5.94, -0.42),
+         (8.40, 5.94, -0.42)], ins='EL40', parent='CHW-S', connects={'PS-1', 'RS-1', 'REF'}, support=True)
     add('HALL-R', 'L-CH-05', 'CHW hall return (roof)', 40, 'CS40',
-        [(8.55, 5.95, -0.60), (9.50, 5.95, -0.60), (9.50, 5.95, 0.50), (5.62, 5.95, 0.50), (5.62, 5.95, 0.55)] if False else
-        [(8.55, 5.95, -0.60), (9.50, 5.95, -0.60), (9.50, 5.95, 0.50), (5.66, 5.95, 0.50), (5.66, 5.80, 0.50)],
-        ins='EL40', connects={'PS-1', 'RS-1', 'REF'})
+        [(8.55, 5.94, -0.60), (9.50, 5.94, -0.60), (9.50, 5.94, 0.55), (5.85, 5.94, 0.55), (5.85, 5.78, 0.55), (5.55, 5.78, 0.55),
+         (5.55, 5.50, 0.55)], ins='EL40', end_parent='CHW-R', connects={'PS-1', 'RS-1', 'REF'})
     add('ER-S', 'L-CH-08', 'CHW electrical-room supply', 20, 'CS40',
-        [(4.20, 5.50, 0.95), (4.20, 6.12, 0.95), (5.68, 6.12, 0.95), (5.68, 6.12, 0.30), (9.25, 6.12, 0.30), (9.25, 6.12, -2.50),
+        [(4.20, 5.50, 0.95), (4.20, 6.12, 0.95), (6.80, 6.12, 0.95), (6.80, 6.12, 0.30), (9.25, 6.12, 0.30), (9.25, 6.12, -2.50),
          (10.0, 6.12, -2.50)], ins='EL40', parent='CHW-S', connects={'PS-1', 'RS-1', 'REF'})
-    add('ER-R', 'L-CH-08', 'CHW electrical-room return', 20, 'CS40',
-        [(10.0, 6.12, -2.30), (9.50, 6.12, -2.30), (9.50, 6.12, 0.50), (5.66, 6.12, 0.50), (5.66, 6.12, 0.55)] if False else
-        [(10.0, 6.12, -2.30), (9.50, 6.12, -2.30), (9.50, 6.12, 0.50), (4.05, 6.12, 0.50), (4.05, 6.12, 0.55), (4.05, 5.50, 0.55)],
-        ins='EL40', end_parent='CHW-R', connects={'PS-1', 'RS-1', 'REF'})
+    add('ER-R', 'L-CH-08', 'CHW electrical-room return (joins the hall return)', 20, 'CS40',
+        [(10.0, 6.12, -2.30), (9.50, 6.12, -2.30), (9.50, 6.12, 0.55), (7.00, 6.12, 0.55), (7.00, 5.94, 0.55)],
+        ins='EL40', end_parent='HALL-R', connects={'PS-1', 'RS-1', 'REF'})
     add('DHW-S', 'L-HW-05', 'DHW charging supply PS-3 -> indoor TK-DHW', 25, 'CS40',
         [nz('PS-3', 'dhw_s'), (6.62, 5.62, 0.50), (6.62, 5.80, 0.50), (9.50, 5.80, 0.50), (9.50, 5.80, -2.30), (10.0, 5.80, -2.30)],
         ins='MW50', connects={'PS-3', 'RS-1', 'REF'})
@@ -578,16 +578,16 @@ def piping(m):
 
     # ---------------- make-up, pad water, fill
     add('MU-1', 'L-MU-01', 'tower make-up (softened / RO blend) RS-1 -> CT-1', 20, 'PPR',
-        [(10.0, 6.24, -2.50), (9.68, 6.24, -2.50), (9.68, 6.24, 0.40), (9.68, 1.95, 0.40), (9.50, 1.95, 0.40), (9.50, 1.95, 0.80),
-         nz('CT-1', 'mu_in')], ins='EL25H', connects={'RS-1', 'CT-1', 'REF'}, heat_trace=True,
+        [(10.0, 6.24, -2.50), (9.68, 6.24, -2.50), (9.68, 6.24, 0.75), (8.95, 6.24, 0.75), (8.95, 5.45, 0.75), (8.95, 5.45, 0.40),
+         (9.68, 5.45, 0.40), (9.68, 1.95, 0.40), (9.50, 1.95, 0.40), (9.50, 1.95, 0.80), nz('CT-1', 'mu_in')], ins='EL25H', connects={'RS-1', 'CT-1', 'REF'}, heat_trace=True,
         inline=[dict(type='meter_water', tag='FQ-301', at=(9.68, 3.40, 0.40), dn=20), dict(type='motorball', tag='XV-301', at=(9.68, 2.95, 0.40), dn=20)])
     add('PW-1', 'L-MU-02', 'softened water to DC-1 pads + closed-loop fill', 15, 'PPR',
         [(9.68, 6.24, 0.40), (2.65, 6.24, 0.40), (2.65, 6.24, 0.30), (1.66, 6.24, 0.30), (1.66, 6.10, 0.30), (1.66, 6.10, 1.05),
          nz('DC-1', 'pad_w')] if False else
-        [(9.68, 6.24, 0.40), (9.00, 6.24, 0.40), (9.00, 6.24, 0.62), (2.65, 6.24, 0.62), (2.65, 6.24, 0.30), (1.80, 6.24, 0.30),
-         (1.80, 6.24, 1.05), nz('DC-1', 'pad_w')],
+        [(9.68, 6.24, 0.40), (6.40, 6.24, 0.40), (6.40, 6.24, 0.70), (2.65, 6.24, 0.70), (2.65, 6.24, 0.30), (1.66, 6.24, 0.30),
+         (1.66, 6.24, 1.05), nz('DC-1', 'pad_w')],
         ins='EL25H', parent='MU-1', connects={'DC-1', 'PS-1'}, heat_trace=True,
-        inline=[dict(type='motorball', tag='XV-307', at=(1.80, 6.24, 0.70), dn=15)])
+        inline=[dict(type='motorball', tag='XV-307', at=(2.80, 6.24, 0.70), dn=15)])
 
     # ---------------- glycol loop EP-1 <-> DC-1 <-> HX-4 (perimeter route)
     add('GL-R', 'L-GL-01', 'glycol engine return -> DC-1', 25, 'SS304',
@@ -624,7 +624,7 @@ def piping(m):
         parent='CW-D', connects={'PS-2', 'CH-2'}, inline=[dict(type='butterfly', tag='', at=(3.68, 2.40, 0.75), dn=65)])
     add('CW-2R', 'L-CW-03', 'CW return CH-2 (MV-CH2C)', 65, 'PE100',
         [nz('CH-2', 'cw_out'), (3.68, 3.10, 1.40), (3.68, 3.10, 2.55), (5.85, 3.10, 2.55)], connects={'CH-2'}, end_parent='CW-R',
-        inline=[dict(type='mbutterfly', tag='MV-CH2C', at=(3.68, 3.10, 1.95), dn=65)])
+        inline=[dict(type='mbutterfly', tag='MV-CH2C', at=(3.68, 3.10, 1.95), dn=65, act=(0, -1, 0))])
     add('CW-R', 'L-CW-01', 'CW return CH-1 -> TV-301 -> tower', 100, 'PE100',
         [nz('CH-1', 'cw_out'), (5.85, 3.10, 1.55), (5.85, 3.10, 2.55), (7.00, 3.10, 2.55), (7.00, 1.95, 2.55), (7.00, 1.95, 0.75),
          nz('CT-1', 'byp_in')], connects={'CH-1', 'CT-1'},
@@ -637,7 +637,7 @@ def piping(m):
         parent='CW-D', connects={'WT-1', 'PS-2'}, support=False)
     add('CW-SSR', 'L-CW-04', 'F-SS -> suction header', 32, 'CS40',
         [nz('WT-1', 'ss_out'), (5.25, 0.80, 0.60), (5.25, 0.55, 0.60), (5.25, 0.55, 0.45)] if False else
-        [nz('WT-1', 'ss_out'), (5.33, 0.80, 0.60), (5.33, 0.55, 0.60), (5.33, 0.55, 0.45)],
+        [nz('WT-1', 'ss_out'), (4.95, 0.80, 0.60), (4.95, 0.55, 0.60), (5.33, 0.55, 0.60), (5.33, 0.55, 0.45)],
         end_parent='CW-S', connects={'WT-1', 'PS-2'}, support=False)
     add('CW-H4I', 'L-CW-05', 'CW discharge -> XV-305 -> HX-4', 25, 'CS40',
         [(5.40, 1.22, 0.45), (5.40, 1.22, 0.25)] if False else
@@ -647,13 +647,13 @@ def piping(m):
         parent='CW-S', connects={'HX-4', 'PS-2'}, support=False,
         inline=[])
     add('CW-H4O', 'L-CW-05', 'HX-4 -> XV-305 -> CW discharge', 25, 'CS40',
-        [nz('HX-4', 'w_out'), (5.14, 0.60, 0.80), (5.14, 0.60, 1.05), (5.36, 0.60, 1.05), (5.36, 1.22, 1.05), (5.36, 1.22, 0.45)],
+        [nz('HX-4', 'w_out'), (5.14, 0.60, 0.80), (5.14, 0.60, 1.12), (5.36, 0.60, 1.12), (5.36, 1.22, 1.12), (5.36, 1.22, 0.45)],
         end_parent='CW-D', connects={'HX-4', 'PS-2'}, support=False,
-        inline=[dict(type='motorball', tag='XV-305', at=(5.36, 0.95, 1.05), dn=25)])
+        inline=[dict(type='motorball', tag='XV-305', at=(5.36, 0.95, 1.12), dn=25)])
 
     # ---------------- drains
     add('DR-HX', 'L-DR-01', 'HX-1 start-up condensate -> NP-1', 25, 'SS316D',
-        [nz('HX-1', 'drain'), (6.20, 8.05, 0.55), nz('NP-1', 'in')], connects={'HX-1', 'NP-1'}, support=False)
+        [nz('HX-1', 'drain'), (6.40, 8.05, 0.55), nz('NP-1', 'in')], connects={'HX-1', 'NP-1'}, support=False)
     add('DR-CC', 'L-DR-02', 'CC-1 condensate -> roof drain RD-1', 25, 'PVC',
         [nz('IF-1', 'cond'), (0.65, 7.05, 0.28), (0.15, 7.05, 0.28), (0.15, 7.05, 0.03)], connects={'IF-1', 'RD-1'})
     add('DR-OV', 'L-DR-03', 'CT-1 overflow -> RD-2', 50, 'PVC',
@@ -707,9 +707,8 @@ def hall(m):
                '5.9 kW nominal / 5.1 kW site, 0.76 m3/h', 'Saravel, Iran Radiator (IR); Gree, Midea (CN); Daikin (JP), Sabiana (IT)',
                30, 'hall')
     # supply / return mains and branches (supply z -0.42, return z -0.60)
-    add('H-S1', 'L-CH-05', 'hall supply main DN40 -> tee x 8.40', 40, 'CS40', [(8.40, 5.95, -0.42), (8.40, 5.95, -0.42)] if False else
-        [(8.40, 5.95, -0.42), (3.40, 5.95, -0.42)], ins='EL19', parent='HALL-S', hall=True, connects={'REF'})
-    add('H-R1', 'L-CH-05', 'hall return main', 40, 'CS40', [(3.55, 5.95, -0.60), (8.55, 5.95, -0.60)], ins='EL19', end_parent='HALL-R',
+    add('H-S1', 'L-CH-05', 'hall supply main DN40 -> tee x 8.40', 40, 'CS40', [(8.40, 5.94, -0.42), (3.40, 5.94, -0.42)], ins='EL19', parent='HALL-S', hall=True, connects={'REF'})
+    add('H-R1', 'L-CH-05', 'hall return main', 40, 'CS40', [(3.55, 5.94, -0.60), (8.55, 5.94, -0.60)], ins='EL19', end_parent='HALL-R',
         hall=True, connects={'REF'})
     for t, xc, yc, wall in fcu:
         xs = xc + 0.60 + 0.30
@@ -718,12 +717,12 @@ def hall(m):
         par_s = 'HALL-S' if xc > 5 else 'H-S1'
         par_r = 'HALL-R' if xc > 5 else 'H-R1'
         add('%s-S' % t, 'L-CH-06/07', 'hall branch supply %s' % t, 25, 'CS40',
-            [(xs, 5.95, -0.42), (xs, nin[1], -0.42), nin], ins='EL19', parent=par_s, hall=True, connects={t, 'REF'},
+            [(xs, 5.94, -0.42), (xs, nin[1], -0.42), nin], ins='EL19', parent=par_s, hall=True, connects={t, 'REF', 'HALL-S', 'H-S1'},
             inline=[dict(type='picv', tag='PICV-%s' % t, at=(xs, nin[1] + (0.40 if wall == 'S' else -0.40), -0.42), dn=20),
                     dict(type='ball', tag='', at=(xs, nin[1] + (0.75 if wall == 'S' else -0.75), -0.42), dn=20)])
         add('%s-R' % t, 'L-CH-06/07', 'hall branch return %s' % t, 25, 'CS40',
-            [nout, (xr, nout[1], -0.42), (xr, nout[1], -0.60), (xr, 5.95, -0.60)], ins='EL19', end_parent=par_r, hall=True,
-            connects={t, 'REF'}, inline=[dict(type='ball', tag='', at=(xr, nout[1] + (0.45 if wall == 'S' else -0.45), -0.60), dn=20)])
+            [nout, (xr, nout[1], -0.42), (xr, nout[1], -0.60), (xr, 5.94, -0.60)], ins='EL19', end_parent=par_r, hall=True,
+            connects={t, 'REF', 'HALL-R', 'H-R1'}, inline=[dict(type='ball', tag='', at=(xr, nout[1] + (0.45 if wall == 'S' else -0.45), -0.60), dn=20)])
         yw = 0.05 if wall == 'S' else 9.95
         add('%s-CD' % t, 'L-DR-05', 'condensate %s -> building drain' % t, 20, 'PVC',
             [ncd, (xs + 0.40, ncd[1], -0.53), (xs + 0.40, yw, -0.53), (xs + 0.40, yw, -2.70)], hall=True, connects={t, 'REF'})

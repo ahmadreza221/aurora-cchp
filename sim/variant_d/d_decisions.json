@@ -1,0 +1,101 @@
+{
+ "title": "GR180 version D2 single-shaft turbo-generator: research decisions (build 1)",
+ "date": "2026-10-23",
+ "doc": "docs/variant_d/01_research_decisions.md",
+ "frame": "ENG frame, mm, x = engine axis (downstream +), x = 0 at the shaft-tunnel spigot front face",
+ "status": "decisions for build 1; values marked est are engineering estimates, to be confirmed by supplier data / FEA / tests",
+ "design_point": {"N_rpm": 115000, "air_kg_s": 0.395, "compressor_kW": 59.5, "generator_shaft_kW": 25.5, "turbine_work_kW": 85.0,
+                  "TIT_C": 800, "site_air": "30 C, 50 m, rho 1.158 kg/m3 -> 0.341 m3/s = 1228 m3/h = 20.5 m3/min"},
+
+ "coupling": {
+  "type": "quill_shaft",
+  "rejected": {"diaphragm_disc": "no catalogue part at 115k rpm (Voith range ends ~80k); custom thin diaphragm = more machining, balancing and fatigue risk for 2 N.m",
+               "magnetic": "extra magnet mass + sleeve at 115k, eddy losses, slip/decoupling on faults, no benefit at 2 N.m",
+               "single_rotor_capstone": "3+ bearings on one line (over-constrained) or a new core; generator and core could not be balanced/tested separately; good for a later foil-bearing generation, not build 1"},
+  "torque_rated_Nm": 2.12, "torque_design_fault_Nm": 8.5,
+  "quill_waist_d_mm": 6.0, "quill_free_length_mm": 58, "material": "17-4PH H900 or 34CrNiMo6 QT, shot-peened, waist radii R>=3",
+  "shear_rated_MPa": 50, "shear_fault_MPa": 200,
+  "quill_first_bending_pinned_rpm_est": 215000, "margin_vs_run": 1.87,
+  "generator_end": "rigid: taper + nut into the generator shaft",
+  "engine_end": "crowned external hex AF7 (nitrided/DLC) sliding in a hex socket on a drive nut keyed to the shaft nose, axial float +/-0.5 mm, oil mist from the front bearing chamber",
+  "rule": "generator torque must never pass through the compressor clamp nut friction or the LH nose thread: positive drive on the shaft",
+  "alignment_target": {"offset_mm": 0.05, "angle_deg": 0.1}
+ },
+
+ "bearings": {
+  "type": "hybrid ceramic (Si3N4 balls) angular-contact spindle bearing, 15 deg contact (C), P4, single, spring-preloaded",
+  "size": "10 x 22 x 6 (71900 / 61900 class)",
+  "candidates": ["FAG HCB71900-C-T-P4S (DE)", "SKF 71900 CE/HCP4A (SE)", "GMN HY S 61900 C TA (DE)", "NSK 7900C hybrid P4 (JP)", "LYC / ZWZ / HRB B71900C hybrid P4 (CN)"],
+  "GMN_limit_oil_rpm": 135000, "GMN_limit_grease_rpm": 100000, "speed_ratio_at_115k": 0.85, "ndm_mm_rpm": 1.84e6,
+  "C_dyn_kN_est": 3.0, "P_equiv_N_est": 100, "L10_h_basic_est": 3900, "life_with_aISO_3to5_h_est": [12000, 20000],
+  "planned_replacement_h": 8000,
+  "preload_N_est": 30,
+  "core": {"front": {"x_centre": 6.8, "role": "locating (axially fixed), takes net forward thrust"},
+           "rear": {"x_centre": 100.8, "role": "floating in its cartridge, preload springs"},
+           "span_mm": 94.0},
+  "generator": {"front": {"x_centre": -266.0}, "rear": {"x_centre": -136.0}, "span_mm": 130.0, "size": "10x22x6 hybrid, same as core"},
+  "support": "squeeze-film damper cartridges centred by 2 FKM O-rings, target support stiffness 1-2 N/um (as E3 B1/B2)",
+  "lubrication": "closed-loop oil jet (not grease, not oil-air): ISO VG 32 synthetic turbine oil, 2.5 barg, ~0.3 L/min per bearing (est), 10 um filter, oil cooler on glycol, scavenge pump",
+  "grease_ok": false,
+  "foil_air_bearings": "not for build 1 (custom design, coatings, thrust foil bearing, start/stop wear); keep as phase-3 option with a single-rotor layout",
+  "608_and_d8_must_go": true,
+  "why_608_goes": "D2 shaft carries 85 kW = 7.06 N.m through the rear journal (tau 70 MPa at d8 vs 36 at d10), heavier overhung wheel, and the shaft is new anyway (wheel friction/EB-welded to its stub)"
+ },
+
+ "shaft": {
+  "journal_d_mm": 10, "body_d_mm": 16, "turbine_stub_d_mm": 18, "compressor_seat_d_mm": 8,
+  "nose": "M8x1 LH compressor nut + hex AF7 drive (compressor bore reamed 7 -> 8 mm)",
+  "construction": "two-piece rotor: turbine wheel friction- or EB-welded to a 42CrMo4 shaft (turbocharger practice); compressor clamped by the front nut",
+  "rotordynamics_est_rpm": {
+    "method": "beam FE + gyroscopics, same as sim/gr180_rotor.py, wheel Ip ~55 % of a solid disc (est)",
+    "A_v13A_d8_wheel96_1kg": {"1N/um": [5046, 21273, 67384, 224420], "10N/um": [9452, 51890, 108935, 250544]},
+    "B_d10_d16_d18_wheel96_1kg": {"1N/um": [5192, 20759, 76580, 261996], "10N/um": [11470, 57228, 107945, 282720]},
+    "C_d10_d16_d18_wheel82_0.55kg": {"1N/um": [7156, 20715, 87106, 288234], "2N/um": [9687, 28800, 90722, 290459], "10N/um": [16681, 57244, 114674, 305634]},
+    "conclusion": "stiff mounts (>=5 N/um) put a mode at 90-135k = on the run speed; soft damped supports 1-2 N/um put 3 modes below 91k and the first bending mode at 2.5x run (case C)"
+  }
+ },
+
+ "turbine_wheel": {
+  "decision": "buy a catalogue turbocharger turbine shaft&wheel (IN713C/K418), not the custom D4 96 mm",
+  "why_not_96": "D4 96 at 115k gives U4 578 m/s; catalogue wheels are rated about 480 m/s (HX40 76 mm @120k = 478; S400 95.7 mm @96.4k = 483)",
+  "D4_mm": [76, 80], "exducer_mm": [64, 70], "mass_kg_est": [0.4, 0.55],
+  "U4_m_s_at_115k": [458, 482], "psi": [1.01, 0.92], "U_over_C0": [0.63, 0.66], "eta_ts_est": [0.76, 0.78],
+  "required_rating": "supplier max speed for the chosen diameter >= 121k rpm (>= 1.05 x 115k), burst/FEA data, spin proof at 120 % (138k) before use",
+  "families": ["Holset HX40 class 76/64 mm, max ~120k (reference geometry; buy as CN aftermarket IN713C/K418 replica or JP equivalent)",
+               "MHI TD07/TD08 class (JP), sizes to confirm from supplier drawings",
+               "IHI RHF/RHG large class (JP), sizes to confirm",
+               "Changzhou E&E Turbo-Power (CN): 20-270 mm wheels, IN713C, friction/EB welding, also custom castings"],
+  "initial_TIT_limit_C": 780,
+  "follow_up": "re-run the D radial meanline/nozzle ring for D4 76-80 (psi ~1, alpha4 ~75 deg)"
+ },
+
+ "intake_filter": {
+  "concept": "coaxial cylindrical gas-turbine filter cartridge around the generator pod; clean side = intake plenum, pod cooled by intake air",
+  "interface": "tube-sheet ring with the standard GT cartridge opening ID 324 mm (cartridge OD 445, length 660), PU/EPDM gasket, yoke + end cap",
+  "interface_ID_mm": 324, "cartridge_OD_mm": 445, "cartridge_L_mm": 660,
+  "flow_m3_h": 1228,
+  "options": {"single_cyl_F9": {"dp_initial_Pa_est": 138}, "pair_cyl_cyl_F9": {"rated_m3_h": 2500, "dp_initial_Pa_est": 69, "recommended": true}},
+  "change_out_dp_Pa": 500, "inlet_loss_budget_Pa": 1000,
+  "suppliers": ["Camfil CamPulse GTC (SE)", "MANN+HUMMEL Vokes Air (DE/UK)", "Freudenberg Viledon (DE)"],
+  "annulus_velocity_m_s": 4.7,
+  "build1": "stainless FOD mesh on the radial gap + tube-sheet ring ready for the cartridge"
+ },
+
+ "exhaust": {
+  "outlet": "DN200, 90 deg elbow pointing UP, EN 1092-1 PN6 flange (OD 320, PCD 280, 8 x M16)",
+  "DN": 200, "Q_m3_s_at_600C": 0.983,
+  "DN200": {"v_m_s": 28.3, "q_Pa": 164, "elbow_Pa": 41, "total_incl_exit_dump_pct": 0.22},
+  "DN150": {"v_m_s": 48.7, "q_Pa": 483, "elbow_Pa": 121, "total_incl_exit_dump_pct": 0.65},
+  "elbow_R_over_D": 1.0,
+  "after_elbow": "DN200 stainless bellows (axial + lateral), duct weight carried by its own support, not by the engine",
+  "material": "1.4828 / 1.4841 or 321 stainless, insulated"
+ },
+
+ "starter": {
+  "type": "generator motoring via the machine-side converter (active front end, sensorless FOC)",
+  "requirement": "4-quadrant machine-side converter, output >= 2 kHz (2-pole PMG at 115k = 1917 Hz), start power ~5-8 kW short time (est), DC source for black start (battery/UPS) when the grid is absent",
+  "power_est_kW": {"25pct": 0.9, "35pct": 2.6, "50pct": 7.4},
+  "light_off_pct_est": 25, "self_sustain_pct_est": [45, 55],
+  "air_start_M5": "keep only for core-only turbojet tests before the generator exists; plug it in D2"
+ }
+}

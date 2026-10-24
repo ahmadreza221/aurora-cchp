@@ -26,3 +26,17 @@ sim/engine/fea/*.12d
 sim/engine/fea/*.log
 sim/engine/fea/*.out
 sim/engine/fea/*.inp
+graphify-out/20[0-9][0-9]-*/
+graphify-out/*.pending.json
+
+# compact parts for Autodesk Fusion (fusion/README.md)
+!fusion/E1/*.step
+# Fusion script diagnostics (fusion/GR180_E1_Import writes _e1_verify.json)
+fusion/_*.json
+sim/cfd/e1_stage/ngv/
+sim/cfd/e1_stage/test_*/
+sim/cfd/e1_stage/geometry/*.stl
+
+# web viewer meshes (regenerate: cad/engine/engine_viewer_export.py)
+viewer/engine/engine.glb
+viewer/engine/engine.json

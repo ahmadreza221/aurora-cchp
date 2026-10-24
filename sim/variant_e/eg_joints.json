@@ -1,0 +1,420 @@
+{
+ "title": "GR180 version E generator joints / fits / seals / fasteners",
+ "date": "2026-10-24",
+ "script": "sim/variant_e/eg_joints.py",
+ "screws": [
+  {
+   "joint": "front end bell E-G230 -> housing E-G200",
+   "screw": "ISO 4762 M10x35",
+   "qty": 16,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M10 x 1.5D (15) in 6082-T6, blind 22",
+   "preload_kN": 17.4,
+   "torque_Nm": 29.2,
+   "lock": "Loctite 243, cross pattern 3 steps"
+  },
+  {
+   "joint": "rear end bell E-G231 -> housing E-G200",
+   "screw": "ISO 4762 M10x35",
+   "qty": 16,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M10 x 1.5D (15) in 6082-T6, blind 22",
+   "preload_kN": 17.4,
+   "torque_Nm": 29.2,
+   "lock": "Loctite 243, cross pattern 3 steps"
+  },
+  {
+   "joint": "front bearing cap E-G232 -> front hub",
+   "screw": "ISO 4762 M6x20",
+   "qty": 6,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M6 x 1.5D (9)",
+   "preload_kN": 6.0,
+   "torque_Nm": 6.2,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "rear seal cap E-G233 + guard flange E-G235 -> rear hub",
+   "screw": "ISO 4762 M6x30",
+   "qty": 6,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M6 x 1.5D (9)",
+   "preload_kN": 6.0,
+   "torque_Nm": 6.2,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "air hood E-G234 -> front end bell",
+   "screw": "ISO 4762 M6x45",
+   "qty": 8,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M6 x 1D (6), through the hood bosses",
+   "preload_kN": 4.8,
+   "torque_Nm": 5.0,
+   "lock": "EPDM foam gasket"
+  },
+  {
+   "joint": "terminal box E-G240 -> housing",
+   "screw": "ISO 4762 M8x25",
+   "qty": 4,
+   "cls": "A4-80",
+   "internal_thread": "HELICOIL plus M8 x 1.5D (12)",
+   "preload_kN": 11.0,
+   "torque_Nm": 14.9,
+   "lock": "Loctite 243, flat silicone gasket"
+  },
+  {
+   "joint": "terminal-box lid E-G241",
+   "screw": "ISO 7380-1 M5x10",
+   "qty": 8,
+   "cls": "A4-70",
+   "internal_thread": "HELICOIL plus M5 x 1.5D (7.5)",
+   "preload_kN": 2.2,
+   "torque_Nm": 1.9,
+   "lock": "IP65 gasket"
+  },
+  {
+   "joint": "PEEK terminal block E-G242 -> box",
+   "screw": "ISO 4762 M6x20",
+   "qty": 4,
+   "cls": "A4-70",
+   "internal_thread": "tapped M6 in 6082 (12 deep)",
+   "preload_kN": 2.7,
+   "torque_Nm": 2.8,
+   "lock": "Loctite 243"
+  },
+  {
+   "joint": "blower bracket E-G250 -> saddle base",
+   "screw": "ISO 4017 M8x25 + ISO 4032",
+   "qty": 4,
+   "cls": "8.8",
+   "internal_thread": "through, nut",
+   "preload_kN": 14.1,
+   "torque_Nm": 19.1,
+   "lock": "Nord-Lock washers"
+  },
+  {
+   "joint": "saddle clamp straps E-G261",
+   "screw": "ISO 4017 M12x80 + ISO 4032",
+   "qty": 4,
+   "cls": "8.8",
+   "internal_thread": "through the strap ears, nut",
+   "preload_kN": 27.0,
+   "torque_Nm": 53.4,
+   "lock": "Nord-Lock; strap preload limits the Al housing stress"
+  },
+  {
+   "joint": "saddles E-G260 -> base beam E-G262",
+   "screw": "ISO 4017 M16x40",
+   "qty": 4,
+   "cls": "8.8",
+   "internal_thread": "through x-slots, nuts inside the RHS",
+   "preload_kN": 60.3,
+   "torque_Nm": 156.0,
+   "lock": "after alignment; jack bolts M16 x / y, shims z"
+  },
+  {
+   "joint": "base beam E-G262 -> plenum floor / frame",
+   "screw": "ISO 4017 M16x50",
+   "qty": 6,
+   "cls": "8.8",
+   "internal_thread": "through floor + doubler, onto the frame cross members x -1050 / -600 / -200",
+   "preload_kN": 60.3,
+   "torque_Nm": 156.0,
+   "lock": "Nord-Lock"
+  },
+  {
+   "joint": "quill hub on the 1:10 shaft taper",
+   "screw": "ISO 4762 M12x1.25x25",
+   "qty": 1,
+   "cls": "12.9",
+   "internal_thread": "M12x1.25 in the 42CrMo4 shaft end, 24 deep",
+   "preload_kN": 55.7,
+   "torque_Nm": 90.5,
+   "lock": "MoS2 paste under the head + on the thread; drive-up 0.6 +/-0.1 mm checked with a dial gauge"
+  },
+  {
+   "joint": "bearing inner rings (front 7008-E + speed wheel, rear 7008-C)",
+   "screw": "precision lock nut M35x1.5 OD 52 B 12 (Spieth MSF 35x1.5 / SKF KMD 7)",
+   "qty": 2,
+   "cls": "steel",
+   "internal_thread": "M35x1.5 6g on the shaft",
+   "preload_kN": 9.0,
+   "torque_Nm": 47.0,
+   "lock": "2 radial clamping screws M5, 4 N.m (nut-maker value)"
+  }
+ ],
+ "fits": [
+  {
+   "joint": "bearing IR on the d40 journals",
+   "hole": "bearing bore P4 (0/-6)",
+   "shaft": "40 js4 (+/-3.5)",
+   "result": "-3.5 .. +9.5 um (light press: heat IR to 80 C)"
+  },
+  {
+   "joint": "bearing OR in the cartridges",
+   "hole": "68 H4 (0/+8) in the cartridge",
+   "shaft": "OR P4 (0/-7)",
+   "result": "0 .. 15 um clearance (rear floats on the wave spring; front clamped by the cap)"
+  },
+  {
+   "joint": "SFD land",
+   "hole": "84.24 H6 (0/+22) in the end-bell hubs",
+   "shaft": "cartridge OD 84.000 (0/-10)",
+   "result": "radial oil film 0.120 .. 0.136 mm (same as the core cartridges)"
+  },
+  {
+   "joint": "Cu screen on the shaft (shrink)",
+   "hole": "screen bore 71 H6 (0/+19)",
+   "shaft": "71 +0.120/+0.100",
+   "result": "0.081 .. 0.120 interference; heat screen to 220 C (CuCr1Zr, 20 min)"
+  },
+  {
+   "joint": "magnet segments on the screen",
+   "hole": "magnet ID 74.06 +0.02/0 (ground arc segments)",
+   "shaft": "screen OD 74.00 h5 (0/-13)",
+   "result": "0.06 .. 0.093 bond gap: Henkel Loctite AA 326 + 7649 activator (or Araldite-free: Loctite EA 9497 high-temp epoxy)"
+  },
+  {
+   "joint": "end rings on the screen",
+   "hole": "74 H7 (0/+30)",
+   "shaft": "74 h5",
+   "result": "0 .. 43 clearance, Loctite 648 + axial clamp by the sleeve"
+  },
+  {
+   "joint": "CFRP sleeve on magnets + end rings",
+   "hole": "sleeve ID 1:500 taper",
+   "shaft": "magnet OD 1:500 taper, ground after bonding",
+   "result": "diametral interference 0.57 +/-0.02 mm set by the press stroke (eg_sleeve.json)"
+  },
+  {
+   "joint": "stator stack in the jacket (shrink)",
+   "hole": "jacket ID 262.000 +0.032/0",
+   "shaft": "stack OD 262.240 0/-0.025 (ground)",
+   "result": "0.183 .. 0.240 interference; heat jacket to 180 C; 0.08 .. 0.13 left at 60 C"
+  },
+  {
+   "joint": "jacket in the housing",
+   "hole": "290 H7 (0/+52)",
+   "shaft": "jacket lands 290 g6 (-17/-49)",
+   "result": "17 .. 101 clearance, 2 + 2 O-rings with leak-off groove"
+  },
+  {
+   "joint": "front end-bell spigot",
+   "hole": "290 H7 (housing, same setting as the 286 H7)",
+   "shaft": "290 g6",
+   "result": "17 .. 101 clearance + 2 dowels 8 m6"
+  },
+  {
+   "joint": "rear end-bell spigot",
+   "hole": "286 H7 (0/+52)",
+   "shaft": "286 g6 (-17/-49)",
+   "result": "17 .. 101 clearance + 2 dowels 8 m6; bores 290 / 286 coaxial <= 0.02"
+  },
+  {
+   "joint": "dowels end bell / housing",
+   "hole": "8 H7 housing (press) / 8 F7 end bell (slip)",
+   "shaft": "ISO 8734 8 m6",
+   "result": "location +/-0.01"
+  },
+  {
+   "joint": "cartridge anti-rotation pins",
+   "hole": "4 H7 in the hub shoulder; slot 4.2 in the cartridge lip",
+   "shaft": "ISO 8734 4 m6 x 10",
+   "result": "cartridge free radially, no rotation"
+  },
+  {
+   "joint": "quill hub on the shaft taper",
+   "hole": "hub taper 1:10 (lapped, blue check >= 85 % contact)",
+   "shaft": "shaft taper 1:10 ground",
+   "result": "drive-up 0.6 mm -> 0.06 mm diametral interference, T_cap 716 N.m (eg_rotor.json)"
+  },
+  {
+   "joint": "quill socket on the core hex",
+   "hole": "socket AF 24.020 .. 24.040 (rotary broached, plasma nitrided)",
+   "shaft": "crowned hex AF 23.990 .. 24.000 (core shaft, gas nitrided)",
+   "result": "0.020 .. 0.050 on flats, axial float +/-1 mm, no adjustment"
+  },
+  {
+   "joint": "labyrinths (hub bores, 5 teeth)",
+   "hole": "tooth tips d50.60 +0.05/0",
+   "shaft": "seal lands 50 h6",
+   "result": "radial 0.30 .. 0.33 mm (SFD orbit + thermal); outer: quill hub d56 h6 in d56.60"
+  },
+  {
+   "joint": "speed wheel on the shaft",
+   "hole": "38 H6",
+   "shaft": "38 k5",
+   "result": "-0.018 .. +0.014; clamped between IR and nut"
+  },
+  {
+   "joint": "guard flange spigot",
+   "hole": "rear end bell 120 H8",
+   "shaft": "guard flange 120 f7",
+   "result": "centres the guard on the shaft axis (<= 0.1)"
+  }
+ ],
+ "orings": [
+  {
+   "seal": "jacket O-ring lands (2 per end, leak-off groove 2 x 1 mm between)",
+   "oring": "ISO 3601-1 280 x 3.55",
+   "material": "EPDM 70 (glycol, peroxide-cured)",
+   "qty": 4,
+   "groove": "piston groove: bottom d 284.30, width 4.8",
+   "squeeze_pct": 19.7,
+   "stretch_pct": 1.5,
+   "ok": true
+  },
+  {
+   "seal": "front end-bell spigot (air / oil mist)",
+   "oring": "ISO 3601-1 280 x 3.55",
+   "material": "FKM 75",
+   "qty": 1,
+   "groove": "piston groove: bottom d 284.30, width 4.8",
+   "squeeze_pct": 19.7,
+   "stretch_pct": 1.5,
+   "ok": true
+  },
+  {
+   "seal": "rear end-bell spigot",
+   "oring": "ISO 3601-1 275 x 3.55",
+   "material": "FKM 75",
+   "qty": 1,
+   "groove": "piston groove: bottom d 280.30, width 4.8",
+   "squeeze_pct": 19.7,
+   "stretch_pct": 1.9,
+   "ok": true
+  },
+  {
+   "seal": "SFD cartridges (2 per cartridge, centring spring ~3 N/um, measure)",
+   "oring": "ISO 3601-1 77.5 x 2.65",
+   "material": "FKM 75",
+   "qty": 4,
+   "groove": "piston groove: bottom d 79.58, width 3.6",
+   "squeeze_pct": 12.1,
+   "stretch_pct": 2.7,
+   "ok": true
+  },
+  {
+   "seal": "front bearing cap spigot (radial, in the 84.24 hub bore)",
+   "oring": "ISO 3601-1 80 x 1.78",
+   "material": "FKM 75",
+   "qty": 1,
+   "groove": "piston groove: bottom d 81.20, width 2.4",
+   "squeeze_pct": 14.6,
+   "stretch_pct": 1.5,
+   "ok": true
+  },
+  {
+   "seal": "rear seal cap spigot (radial, in the 84.24 hub bore)",
+   "oring": "ISO 3601-1 80 x 1.78",
+   "material": "FKM 75",
+   "qty": 1,
+   "groove": "piston groove: bottom d 81.20, width 2.4",
+   "squeeze_pct": 14.6,
+   "stretch_pct": 1.5,
+   "ok": true
+  },
+  {
+   "seal": "glycol fittings G3/4 + leak-off G1/8 (ISO 1179-2 form E)",
+   "oring": "ED-rings G3/4 + G1/8",
+   "material": "EPDM",
+   "qty": 4,
+   "groove": "-",
+   "squeeze_pct": null,
+   "stretch_pct": null,
+   "ok": true
+  }
+ ],
+ "helicoils": [
+  {
+   "size": "M10 x 1.5D",
+   "qty": 32,
+   "where": "housing end faces (end bells)"
+  },
+  {
+   "size": "M8 x 1.5D",
+   "qty": 4,
+   "where": "housing top (terminal box)"
+  },
+  {
+   "size": "M6 x 1.5D",
+   "qty": 12,
+   "where": "hub end faces r 47 (front bearing cap, rear seal cap + guard)"
+  },
+  {
+   "size": "M6 x 1D",
+   "qty": 8,
+   "where": "front end-bell face (hood)"
+  },
+  {
+   "size": "M5 x 1.5D",
+   "qty": 8,
+   "where": "terminal box (lid)"
+  },
+  {
+   "size": "M12 x 1 x 1.5D",
+   "qty": 2,
+   "where": "end-bell IR-pyrometer ports"
+  }
+ ],
+ "jacking": [
+  {
+   "part": "end bells",
+   "threads": "2 x M10 in each flange (180 deg apart), push against the housing face",
+   "tool": "ISO 4017 M10x40 8.8 (2)"
+  },
+  {
+   "part": "jacket + stator",
+   "threads": "2 x M10 in the jacket front face",
+   "tool": "pull bar + 2 x M10 rods, hydraulic cylinder 2 t against the housing face"
+  },
+  {
+   "part": "front bearing cap",
+   "threads": "2 x M6",
+   "tool": "M6x25"
+  },
+  {
+   "part": "quill hub",
+   "threads": "M14 x 1.5 in the hub bore behind the bolt seat",
+   "tool": "M14 jacking screw through the hollow quill"
+  },
+  {
+   "part": "SFD cartridges",
+   "threads": "internal groove for a puller",
+   "tool": "Kukko 21-5 internal puller (DE)"
+  }
+ ],
+ "axial": {
+  "rotor_axial_position": "front 7008-E locates; its cartridge is clamped by the front bearing cap on a ground shim (E-G226, 0.5-2.0 mm) -> magnet centre to stack centre +/-0.3 mm (measured from the rear seal-cap face with a depth gauge)",
+  "rear": "7008-C outer ring floats in its cartridge (0..15 um), 300 N wave spring (E-G224) between the cartridge lip and the OR -> preload on both bearings",
+  "thermal": "rotor grows ~+0.35 mm rearward vs. the housing at full load (steel shaft 85 C vs Al pod 60 C): taken by the floating rear OR and the +/-1 mm quill float",
+  "end_float_quill": "+/-1.0 mm at the AF24 socket (hex engagement 23 mm)"
+ },
+ "electrical": {
+  "creepage": "terminal block: >= 12.5 mm creepage, 8 mm clearance (IEC 60664-1, 1000 V, pollution 3)",
+  "insulation": "strand enamel grade 2 class 200 + polyimide tape + glass serving per conductor; APA (aramid / polyimide / aramid) 0.31 slot liner (ground wall); APA 0.5 layer separator; aramid paper 0.25 phase separators in the end windings (Metastar CN / Teijin JP); VPI epoxy class H (Elantas Elmotherm / Von Roll Damisol, CH/DE)",
+  "tests": "IEC 60034-1: 2 U + 1000 V = 2.3 kV ac 1 min (new winding; 1.0 kV dc IR > 1 GOhm at 40 C); surge 3.5 kV (IEC 60034-15 level for 690 V class)"
+ },
+ "dowels": [
+  {
+   "where": "end bell / housing",
+   "item": "ISO 8734 8 m6 x 24, 1.4034 hardened",
+   "qty": 4
+  },
+  {
+   "where": "cartridge anti-rotation",
+   "item": "ISO 8734 4 m6 x 10",
+   "qty": 2
+  },
+  {
+   "where": "terminal box / housing",
+   "item": "ISO 8734 6 m6 x 16",
+   "qty": 2
+  }
+ ],
+ "notes": [
+  "A4-80 into Al only with HELICOIL plus (Boellhoff DE, 1.4301), tapped with STI taps; k 0.5 keeps the Al bearing stress < 250 MPa under the heads (washer-face heads)",
+  "all rotating fasteners (nuts, pull bolt) are balanced with the rotor and angle-marked"
+ ]
+}

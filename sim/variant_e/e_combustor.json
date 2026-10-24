@@ -1,0 +1,236 @@
+{
+ "title": "GR180 version E single can combustor (reverse flow, vertical, cool casing)",
+ "date": "2026-10-23",
+ "script": "sim/variant_e/e_combustor.py",
+ "design_770": {
+  "case": "TIT 770 C design",
+  "air_kg_s": 2.973,
+  "T3_C": 212.2419675849364,
+  "P3_bar": 3.9868070479626265,
+  "fuel_kg_s": 0.04114364440385855,
+  "TIT_C": 770.0000000000001,
+  "casing": {
+   "pipe": "DN300 (323.9 x 7.1, EN 10216-2 P265GH or 1.4541)",
+   "D_ref_mm": 309.7,
+   "A_ref_m2": 0.07533075012993755,
+   "U_ref_m_s": 13.881128856972612,
+   "q_ref_Pa": 273.9160038934673,
+   "dP_liner_kPa": 11.96042114388788,
+   "PLF": 43.6645576522779,
+   "annulus_velocity_m_s": 26.340755204694826
+  },
+  "liner": {
+   "D_mm": 210.0,
+   "L_mm": 588.0000000000001,
+   "L_pz_mm": 168.0,
+   "L_sz_mm": 105.0,
+   "L_dz_mm": 315.0,
+   "volume_L": 20.366002695426555,
+   "material": "2.4951 alloy 75 (VDM) sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional"
+  },
+  "air_split": {
+   "swirler": 0.12,
+   "primary": 0.18,
+   "secondary": 0.15,
+   "film": 0.2,
+   "dilution": 0.35
+  },
+  "phi_overall": 0.23862579576225737,
+  "phi_primary": 0.6519830485307578,
+  "phi_secondary": 0.4100099583543941,
+  "T_primary_C": 1545.3406877239672,
+  "T_secondary_C": 1119.537231089204,
+  "holes": {
+   "primary": {
+    "n": 8,
+    "d_mm": 23.3,
+    "area_geo_mm2": 3420,
+    "J": 3.8,
+    "penetration_mm": 42,
+    "penetration_over_R": 0.4
+   },
+   "secondary": {
+    "n": 12,
+    "d_mm": 17.4,
+    "area_geo_mm2": 2850,
+    "J": 5.0,
+    "penetration_mm": 36,
+    "penetration_over_R": 0.34
+   },
+   "dilution": {
+    "n": 10,
+    "d_mm": 28.0,
+    "area_geo_mm2": 6139,
+    "J": 6.7,
+    "penetration_mm": 67,
+    "penetration_over_R": 0.64
+   }
+  },
+  "film": {
+   "rings": 4,
+   "slot_h_mm": 2.0,
+   "per_ring_kg_s": 0.1487,
+   "slot_velocity_m_s": 39.6,
+   "build": "4 machined slot rings (turned 2.4951 alloy 75 (VDM), 48 x d4.0 metering holes each) welded between the rolled liner sections"
+  },
+  "swirler": {
+   "type": "axial, 12 flat 1.5 mm vanes at 45 deg slotted into turned hub 50 / tip 110 rings",
+   "velocity_m_s": 25.35165420362172,
+   "swirl_number": 0.7613636363636361
+  },
+  "injector": {
+   "holes": 8,
+   "d_mm": 4.497292285958017,
+   "dP_bar": 0.3,
+   "gas_density": 2.7296696982599413,
+   "jet_m_s": 118.60706599642268,
+   "type": "central gas lance with 8 radial jets into the swirler exit (partially premixed diffusion flame), 1.4404 + 2.4665 tip"
+  },
+  "loading": {
+   "theta": 335547695.78689724,
+   "eta_comb_est": 0.9999905605250546,
+   "residence_ms": 6.459132195397999,
+   "heat_release_MW_m3_atm": 24.39893276984075
+  },
+  "pattern_factor": {
+   "liner_exit": 0.110278042908175,
+   "at_nozzle_est": 0.08270853218113125,
+   "T_peak_nozzle_inlet_C": 816.1313481732858
+  },
+  "wall": {
+   "T_max_est_C": 745.4814556405487
+  }
+ },
+ "peak_850": {
+  "case": "TIT 850 C peak",
+  "air_kg_s": 2.930809647661182,
+  "T3_C": 215.89796463714117,
+  "P3_bar": 4.0797800824288455,
+  "fuel_kg_s": 0.046849271331101325,
+  "TIT_C": 850.0000000000001,
+  "casing": {
+   "pipe": "DN300 (323.9 x 7.1, EN 10216-2 P265GH or 1.4541)",
+   "D_ref_mm": 309.7,
+   "A_ref_m2": 0.07533075012993755,
+   "U_ref_m_s": 13.473015937518038,
+   "q_ref_Pa": 262.0898174029869,
+   "dP_liner_kPa": 12.239340247286536,
+   "PLF": 46.6990300064479,
+   "annulus_velocity_m_s": 25.566322331259865
+  },
+  "liner": {
+   "D_mm": 210.0,
+   "L_mm": 588.0000000000001,
+   "L_pz_mm": 168.0,
+   "L_sz_mm": 105.0,
+   "L_dz_mm": 315.0,
+   "volume_L": 20.366002695426555,
+   "material": "2.4951 alloy 75 (VDM) sheet 1.5 mm (or 2.4665 alloy X), laser-cut flat patterns, rolled + TIG, thermal-barrier coat optional"
+  },
+  "air_split": {
+   "swirler": 0.12,
+   "primary": 0.18,
+   "secondary": 0.15,
+   "film": 0.2,
+   "dilution": 0.35
+  },
+  "phi_overall": 0.27562891090905856,
+  "phi_primary": 0.7530844560356791,
+  "phi_secondary": 0.47358919400181876,
+  "T_primary_C": 1705.8712576983698,
+  "T_secondary_C": 1240.3334600030016,
+  "holes": {
+   "primary": {
+    "n": 8,
+    "d_mm": 22.9,
+    "area_geo_mm2": 3307,
+    "J": 3.8,
+    "penetration_mm": 41,
+    "penetration_over_R": 0.39
+   },
+   "secondary": {
+    "n": 12,
+    "d_mm": 17.1,
+    "area_geo_mm2": 2756,
+    "J": 5.0,
+    "penetration_mm": 35,
+    "penetration_over_R": 0.33
+   },
+   "dilution": {
+    "n": 10,
+    "d_mm": 27.5,
+    "area_geo_mm2": 5936,
+    "J": 6.7,
+    "penetration_mm": 66,
+    "penetration_over_R": 0.62
+   }
+  },
+  "film": {
+   "rings": 4,
+   "slot_h_mm": 2.0,
+   "per_ring_kg_s": 0.1465,
+   "slot_velocity_m_s": 38.5,
+   "build": "4 machined slot rings (turned 2.4951 alloy 75 (VDM), 48 x d4.0 metering holes each) welded between the rolled liner sections"
+  },
+  "swirler": {
+   "type": "axial, 12 flat 1.5 mm vanes at 45 deg slotted into turned hub 50 / tip 110 rings",
+   "velocity_m_s": 24.606301450495607,
+   "swirl_number": 0.7613636363636361
+  },
+  "injector": {
+   "holes": 8,
+   "d_mm": 4.773331135063665,
+   "dP_bar": 0.3,
+   "gas_density": 2.788871260657841,
+   "jet_m_s": 117.34143059913882,
+   "type": "central gas lance with 8 radial jets into the swirler exit (partially premixed diffusion flame), 1.4404 + 2.4665 tip"
+  },
+  "loading": {
+   "theta": 358735489.6396756,
+   "eta_comb_est": 0.9999957567849006,
+   "residence_ms": 6.1720890334956575,
+   "heat_release_MW_m3_atm": 27.149346289525187
+  },
+  "pattern_factor": {
+   "liner_exit": 0.10349703498806895,
+   "at_nozzle_est": 0.07762277624105171,
+   "T_peak_nozzle_inlet_C": 899.2207604049669
+  },
+  "wall": {
+   "T_max_est_C": 811.8872818616325
+  }
+ },
+ "hot_section_life": {
+  "TIT_770": {
+   "liner_h": 69226,
+   "nozzle_oxidation_h": 80000,
+   "nozzle_creep_h": 7934561,
+   "wheel_creep_h": 89936090,
+   "hot_section_overhaul_h": 69226
+  },
+  "TIT_850": {
+   "liner_h": 14925,
+   "nozzle_oxidation_h": 9548,
+   "nozzle_creep_h": 58076,
+   "wheel_creep_h": 924750,
+   "hot_section_overhaul_h": 9548
+  },
+  "life_consumption_850_vs_770": 7.3,
+  "plan": "inspection (borescope: liner, transition, nozzle, wheel LE) every 8,000 h; liner + transition exchange at ~69 kh at 770 C; nozzle ring at ~80 kh; turbine wheel creep is not limiting at 770 C - wheel life is set by LCF (starts, est >= 10,000) and by the supplier rating; every hour at 850 C counts as ~7 h at 770 C for the liner / nozzle"
+ },
+ "nox": {
+  "range_ppm_15O2": [
+   60,
+   120
+  ],
+  "basis": "diffusion-type primary zone at phi_pz 0.65 (T_pz 1545 C), P3 4 bar, T3 212 C: comparable small single-can industrial GTs without water injection 80-150 ppm; low P3 / T3 lowers it (estimate, measure on the rig)",
+  "v2": "lean-premixed swirler (phi_pz ~0.55-0.6, premix tube, pilot) for <= 25 ppm: flashback / acoustics development - later version"
+ },
+ "ignition": {
+  "igniter": "industrial gas-engine spark plug in a cooled sleeve (M18x1.5 boss), high-energy capacitive coil (MOTORTECH DE / NGK JP plug)",
+  "position": "primary zone, 0.35 x L_pz from the dome, 30 deg off the top",
+  "light_off": "motored by the PMG at ~20-25 % speed, phi_pz ~1 at light-off"
+ },
+ "flame_detection": "UV flame scanner on a sight tube through the dome (DURAG DE, Siemens QRA class) + 2 EGT thermocouples in the diffuser",
+ "removal": "top flange DN350 PN10: lift the dome + injector + liner out upward (no engine strip); transition duct stays in the hot plenum (spigot + piston ring)"
+}
