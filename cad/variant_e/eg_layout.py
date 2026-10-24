@@ -90,7 +90,7 @@ ROT = dict(
            ('front_seal_land_d50', -777.5, -741.0, 25.0), ('magnet_body_d71', -741.0, -444.0, 35.5), ('rear_seal_land_d50', -444.0, -407.5, 25.0),
            ('rear_journal_d40', -407.5, -392.5, 20.0), ('rear_thread_M35x1.5', -392.5, -380.5, 17.5),
            ('relief_d32', -380.5, -378.5, 16.0), ('quill_taper_1to10_d33_30.6', -378.5, -354.5, 16.5)],
-    taper=dict(x_large=-378.5, x_small=-354.5, d_large=33.0, d_small=30.6, ratio='1:10 on diameter', pull_bolt='ISO 4762 M12x1.25 x 45 12.9, 60 kN'),
+    taper=dict(x_large=-378.5, x_small=-354.5, d_large=33.0, d_small=30.6, ratio='1:10 on diameter', pull_bolt='ISO 4762 M12x1.25 x 25 12.9, 56 kN'),
     nut=dict(name='precision lock nut M35x1.5, OD 52, B 12, 2 radial clamping screws (Spieth MSF 35x1.5 (DE) / SKF KMD 7 class)', OD=52.0, B=12.0,
              x_front=(-812.0, -800.0), x_rear=(-392.5, -380.5)),
     speed_wheel=dict(x=(-800.0, -792.5), OD=60.0, teeth='4 teeth + 1 phase notch, 1.4057 QT'),

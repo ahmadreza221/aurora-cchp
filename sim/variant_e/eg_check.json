@@ -308,11 +308,6 @@
   },
   {
    "a": "GENERATOR/E-G230_Front_End_Bell",
-   "b": "GENERATOR/E-G273_Screws_M6x16_front_cap_x6",
-   "gap_mm": 0.0
-  },
-  {
-   "a": "GENERATOR/E-G230_Front_End_Bell",
    "b": "GENERATOR/E-G281_O-rings_Spigots_FKM_x2",
    "gap_mm": 0.05
   },
@@ -363,6 +358,11 @@
   },
   {
    "a": "GENERATOR/E-G231_Rear_End_Bell",
+   "b": "GENERATOR/E-G274_Screws_M6x30_rear_cap_guard_x6",
+   "gap_mm": 0.0
+  },
+  {
+   "a": "GENERATOR/E-G231_Rear_End_Bell",
    "b": "GENERATOR/E-G281_O-rings_Spigots_FKM_x2",
    "gap_mm": 0.05
   },
@@ -383,7 +383,7 @@
   },
   {
    "a": "GENERATOR/E-G232_Front_Bearing_Cap",
-   "b": "GENERATOR/E-G273_Screws_M6x16_front_cap_x6",
+   "b": "GENERATOR/E-G273_Screws_M6x20_front_cap_x6",
    "gap_mm": 0.0
   },
   {

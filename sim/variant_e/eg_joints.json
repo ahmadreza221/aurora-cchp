@@ -25,7 +25,7 @@
   },
   {
    "joint": "front bearing cap E-G232 -> front hub",
-   "screw": "ISO 4762 M6x16",
+   "screw": "ISO 4762 M6x20",
    "qty": 6,
    "cls": "A4-80",
    "internal_thread": "HELICOIL plus M6 x 1.5D (9)",
@@ -125,7 +125,7 @@
   },
   {
    "joint": "quill hub on the 1:10 shaft taper",
-   "screw": "ISO 4762 M12x1.25x45",
+   "screw": "ISO 4762 M12x1.25x25",
    "qty": 1,
    "cls": "12.9",
    "internal_thread": "M12x1.25 in the 42CrMo4 shaft end, 24 deep",

@@ -588,7 +588,7 @@
  },
  "quill_taper": {
   "taper": "1:10 on diameter, d33 -> d30.6 x 24",
-  "pull_bolt": "ISO 4762 M12x1.25 x 45 12.9, 60 kN",
+  "pull_bolt": "ISO 4762 M12x1.25 x 25 12.9, 56 kN",
   "preload_kN": 60.0,
   "torque_capacity_Nm": 716,
   "over_5x_rated": 1.57,

@@ -974,20 +974,20 @@
    "note": "",
    "step": "cad_out/variant_e/GENERATOR/E-G272_Dowels_ISO8734_8x24_x4.step"
   },
-  "E-G273_Screws_M6x16_front_cap_x6": {
+  "E-G273_Screws_M6x20_front_cap_x6": {
    "subsystem": "GENERATOR",
-   "desc": "ISO 4762 M6x22 A4-80 (front bearing cap), 6.0 N.m, HELICOIL M6 x 1.5D",
+   "desc": "ISO 4762 M6x20 A4-80 (front bearing cap), 6.0 N.m, HELICOIL M6 x 1.5D",
    "make_buy": "buy",
    "material": "stainless",
    "valid": true,
    "n_solids": 6,
-   "volume_cm3": 6.4,
+   "volume_cm3": 6.1,
    "mass_kg": 0.04,
    "mass_source": "override (bought / envelope)",
    "bbox": [
     [
      -857.5,
-     -829.5
+     -831.5
     ],
     [
      -45.7,
@@ -999,7 +999,7 @@
     ]
    ],
    "note": "",
-   "step": "cad_out/variant_e/GENERATOR/E-G273_Screws_M6x16_front_cap_x6.step"
+   "step": "cad_out/variant_e/GENERATOR/E-G273_Screws_M6x20_front_cap_x6.step"
   },
   "E-G274_Screws_M6x30_rear_cap_guard_x6": {
    "subsystem": "GENERATOR",
@@ -1008,12 +1008,12 @@
    "material": "stainless",
    "valid": true,
    "n_solids": 6,
-   "volume_cm3": 7.1,
+   "volume_cm3": 7.4,
    "mass_kg": 0.05,
    "mass_source": "override (bought / envelope)",
    "bbox": [
     [
-     -353.5,
+     -355.5,
      -321.5
     ],
     [

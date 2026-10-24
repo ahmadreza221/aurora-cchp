@@ -34,7 +34,7 @@ def screw(size, cls, k, mu=0.12):
 SCREWS = [  # joint, designation, qty, class, internal thread, k, lock / note
     ('front end bell E-G230 -> housing E-G200', 'ISO 4762 M10x35', 16, 'A4-80', 'HELICOIL plus M10 x 1.5D (15) in 6082-T6, blind 22', 0.5, 'Loctite 243, cross pattern 3 steps'),
     ('rear end bell E-G231 -> housing E-G200', 'ISO 4762 M10x35', 16, 'A4-80', 'HELICOIL plus M10 x 1.5D (15) in 6082-T6, blind 22', 0.5, 'Loctite 243, cross pattern 3 steps'),
-    ('front bearing cap E-G232 -> front hub', 'ISO 4762 M6x16', 6, 'A4-80', 'HELICOIL plus M6 x 1.5D (9)', 0.5, 'Loctite 243'),
+    ('front bearing cap E-G232 -> front hub', 'ISO 4762 M6x20', 6, 'A4-80', 'HELICOIL plus M6 x 1.5D (9)', 0.5, 'Loctite 243'),
     ('rear seal cap E-G233 + guard flange E-G235 -> rear hub', 'ISO 4762 M6x30', 6, 'A4-80', 'HELICOIL plus M6 x 1.5D (9)', 0.5, 'Loctite 243'),
     ('air hood E-G234 -> front end bell', 'ISO 4762 M6x45', 8, 'A4-80', 'HELICOIL plus M6 x 1D (6), through the hood bosses', 0.4, 'EPDM foam gasket'),
     ('terminal box E-G240 -> housing', 'ISO 4762 M8x25', 4, 'A4-80', 'HELICOIL plus M8 x 1.5D (12)', 0.5, 'Loctite 243, flat silicone gasket'),
@@ -51,7 +51,7 @@ for j, des, q, cls, ins, k, lock in SCREWS:
     F, T = screw(size, cls, k)
     rows.append(dict(joint=j, screw=des, qty=q, cls=cls, internal_thread=ins, preload_kN=round(F / 1e3, 1), torque_Nm=round(T, 1), lock=lock))
 F_pb, T_pb = screw('M12x1.25', '12.9', 0.55, mu=0.10)
-rows.append(dict(joint='quill hub on the 1:10 shaft taper', screw='ISO 4762 M12x1.25x45', qty=1, cls='12.9', internal_thread='M12x1.25 in the 42CrMo4 shaft end, 24 deep',
+rows.append(dict(joint='quill hub on the 1:10 shaft taper', screw='ISO 4762 M12x1.25x25', qty=1, cls='12.9', internal_thread='M12x1.25 in the 42CrMo4 shaft end, 24 deep',
                  preload_kN=round(F_pb / 1e3, 1), torque_Nm=round(T_pb, 1), lock='MoS2 paste under the head + on the thread; drive-up 0.6 +/-0.1 mm checked with a dial gauge'))
 F_nut = 9.0e3
 P, As, d2, dk, dh = THREAD['M35x1.5']

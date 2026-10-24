@@ -307,9 +307,9 @@ add('E-G271_HELICOIL_M10_1.5D_x32', Part.makeCompound([coil_ax(X0, 155.0, a, 10.
     'stainless', 'HELICOIL plus M10 x 1.5D 1.4301 in the housing end faces', 'buy (Boellhoff DE)', mass=32 * 0.003)
 add('E-G272_Dowels_ISO8734_8x24_x4', Part.makeCompound([ax_cyl(X0 - 8.0, X0 + 16.0, 155.0, a, 3.98) for a in DOW] + [ax_cyl(X1 - 16.0, X1 + 8.0, 155.0, a, 3.98) for a in DOW]),
     'steel', 'ISO 8734 8 m6 x 24 (1.4034 hardened) end bell / housing location', 'buy (Bossard CH / Halder DE)', mass=4 * 0.009)
-add('E-G273_Screws_M6x16_front_cap_x6', Part.makeCompound([screw_ax(-851.5, 47.0, a, 6.0, 22.0, 10.0, 6.0, +1) for a in polar(6, 30.0)]), 'stainless',
-    'ISO 4762 M6x22 A4-80 (front bearing cap), 6.0 N.m, HELICOIL M6 x 1.5D', 'buy', mass=6 * 0.007)
-add('E-G274_Screws_M6x30_rear_cap_guard_x6', Part.makeCompound([screw_ax(rx1 + 18.0, 47.0, a, 6.0, 26.0, 10.0, 6.0, -1) for a in polar(6, 30.0)]), 'stainless',
+add('E-G273_Screws_M6x20_front_cap_x6', Part.makeCompound([screw_ax(-851.5, 47.0, a, 6.0, 20.0, 10.0, 6.0, +1) for a in polar(6, 30.0)]), 'stainless',
+    'ISO 4762 M6x20 A4-80 (front bearing cap), 6.0 N.m, HELICOIL M6 x 1.5D', 'buy', mass=6 * 0.007)
+add('E-G274_Screws_M6x30_rear_cap_guard_x6', Part.makeCompound([screw_ax(rx1 + 18.0, 47.0, a, 6.0, 28.0, 10.0, 6.0, -1) for a in polar(6, 30.0)]), 'stainless',
     'ISO 4762 M6x30 A4-80 (guard flange + rear seal cap -> rear hub), 6.0 N.m, HELICOIL M6 x 1.5D', 'buy', mass=6 * 0.009)
 add('E-G276_Screws_M6x45_hood_x8', Part.makeCompound([screw_ax(HX0, G.HOOD['screw_r'], a, 6.0, 46.0, 10.0, 6.0, +1) for a in polar(8, 22.5)]), 'stainless',
     'ISO 4762 M6x45 A4-80 (hood through its bosses into the front end bell), 4.5 N.m, HELICOIL M6 x 1D', 'buy', mass=8 * 0.012)
