@@ -39,6 +39,25 @@ ALPHA_CARRIER = 17.8e-6                                        # shroud carrier 
 TARGET_CLEAR = dict(R1=0.45, R2=0.55)                          # running tip clearance target [mm] (~1.3 % / 1.0 % of height)
 
 
+MAT_E = np.array([200e3, 186e3, 176e3, 163e3, 156e3, 148e3])  # MPa (same table as the FE models)
+RA = 0.06                                                      # reduction of area, cast MAR-M247 at 600-800 C (typical)
+STARTS_REQ = 10000                                             # start-stop cycles: ~1 a day for 27 years
+
+
+def manson_cycles(d_eps, T):
+    """LCF life by Manson's universal slopes, d_eps = 3.5 Su/E N^-0.12 + D^0.6 N^-0.6, with the design factors
+    2 on strain / 20 on life (the smaller life)"""
+    Su, E = float(np.interp(T, MAT_T, MAT_UTS)), float(np.interp(T, MAT_T, MAT_E)); D = -math.log(1 - RA)
+    def N_of(de):
+        lo, hi = 0.0, 12.0
+        for _ in range(80):
+            m = 0.5 * (lo + hi); N = 10 ** m
+            if 3.5 * Su / E * N ** -0.12 + D ** 0.6 * N ** -0.6 > de: lo = m
+            else: hi = m
+        return 10 ** lo
+    return min(N_of(2 * d_eps), N_of(d_eps) / 20)
+
+
 def load(name):
     p = os.path.join(FEA, name)
     return json.load(open(p)) if os.path.exists(p) else None
@@ -125,6 +144,13 @@ def main():
                      ('%s disc burst / 15k' % row, d['burst_ratio'], 1.22 * 1.10, 'x', d['burst_ratio'] >= 1.22 * 1.10, '>= 1.22 x trip'),
                      ('%s disc creep (x1.25 stress)' % row, d['creep_life_h_x125'], LIFE_TARGET, 'h',
                       d['creep_life_h_x125'] >= LIFE_TARGET, '%.0f MPa @ %.0f C' % (d['creep_vm'], d['creep_T']))]
+            # LCF of a start-stop cycle 0 -> 15,000 rpm (+ thermal) -> 0 at the peak point and at the centre (elastic range)
+            for lab, sv, T in (('peak', d['vm_max'], d['T_at_max']), ('centre', d['vm_centre'], d['T_centre'])):
+                de = sv / float(np.interp(T, MAT_T, MAT_E)); Nl = manson_cycles(de, T)
+                out['discs'][row]['lcf_%s' % lab] = dict(vm=sv, T=T, d_eps=de, cycles=Nl)
+                rows.append(('%s disc LCF starts (%s)' % (row, lab), Nl, STARTS_REQ, 'cyc', Nl >= STARTS_REQ,
+                             '%.0f MPa @ %.0f C, de %.2f %%, factors 2 / 20' % (sv, T, 100 * de)))
+                print('%s disc LCF %s: %.0f MPa at %.0f C, strain range %.3f %% -> %.1e starts' % (row, lab, sv, T, 100 * de, Nl))
     if rd:
         sel = rd[rd['selected']]
         for c in sel['damped_criticals']:
@@ -137,7 +163,7 @@ def main():
     json.dump(out, open(os.path.join(FEA, 'a1000_turbine_checks.json'), 'w'), indent=1, default=float)
     print('\n%-42s %12s %12s  %s' % ('check', 'value', 'limit', 'result'))
     for t, v, l, u, o, n in rows:
-        fmt = (lambda z: '%.2e' % z) if u == 'h' else (lambda z: '%.2f' % z if abs(z) < 10 else '%.0f' % z)
+        fmt = (lambda z: '%.2e' % z) if u in ('h', 'cyc') else (lambda z: '%.2f' % z if abs(z) < 10 else '%.0f' % z)
         print('%-42s %10s %-2s %10s %-2s %s  %s' % (t, fmt(v), u, fmt(l), u, 'PASS' if o else 'FAIL', n))
     plot(rows)
 
@@ -151,15 +177,15 @@ def plot(rows):
         upper = u in ('C', 'um')
         if u == '%': ratio = (v + 1e-9) / l if l > 0 else 2.0 + min(v / 50, 1.0)
         elif upper: ratio = l / v
-        elif u == 'h': ratio = math.log10(max(v, 1.0)) / math.log10(l)
+        elif u in ('h', 'cyc'): ratio = math.log10(max(v, 1.0)) / math.log10(l)
         else: ratio = v / l
         ratio = min(ratio, 3.0)
         ax.barh(y, ratio, color='#2e7d32' if o else '#c62828', alpha=0.85)
-        lab = ('%.1e %s' % (v, u)) if u == 'h' else ('%.2f %s' % (v, u) if abs(v) < 10 else '%.0f %s' % (v, u))
+        lab = ('%.1e %s' % (v, u)) if u in ('h', 'cyc') else ('%.2f %s' % (v, u) if abs(v) < 10 else '%.0f %s' % (v, u))
         ax.text(min(ratio, 3.0) + 0.03, y, '%s   (%s)' % (lab, n), va='center', fontsize=7.5)
     ax.axvline(1.0, color='k', lw=1.2)
     ax.set_yticks(ys); ax.set_yticklabels([r[0] for r in rows], fontsize=8)
-    ax.set_xlim(0, 4.6); ax.set_xlabel('margin ratio (value / requirement; creep life on a log scale; 1 = limit)')
+    ax.set_xlim(0, 4.6); ax.set_xlabel('margin ratio (value / requirement; lives and cycles on a log scale; 1 = limit)')
     ax.set_title('AURORA-1000 turbine design checks (FE: CalculiX; green = pass)', fontsize=11)
     ax.grid(axis='x', alpha=0.3); fig.tight_layout()
     fig.savefig(os.path.join(ROOT, 'docs', 'img', 'a1000_turbine_checks.png')); print('written docs/img/a1000_turbine_checks.png')

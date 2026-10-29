@@ -29,7 +29,7 @@ from a1000_disc_fea import TEMP as DISC_TEMP, MAT_T, MAT_E, RHO   # noqa: E402
 CAD = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
 FEA = os.path.join(HERE, 'fea')
 N_OP = 15000.0
-FAM = 6                                                        # mode families per nodal diameter
+FAM = dict(R1=7, R2=10)                                       # mode families per nodal diameter (R2: up to 2 x NPF)
 ROWS = dict(R1=dict(T=870.0, h_blade=1.0, h_disc=5.0), R2=dict(T=735.0, h_blade=1.3, h_disc=6.0))
 NGV = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 Z_N1, Z_N2 = NGV['N1']['Z'], NGV['N2']['Z']
@@ -123,9 +123,9 @@ def run(row, nodes, els, nl, nr, meta, nds, tag):
         f.write('*BOUNDARY\nNHUB, 1, 3, 0.\n')
         f.write('*STEP, NLGEOM\n*STATIC\n*DLOAD\nEALL, CENTRIF, %.6e, 0., 0., 0., 1., 0., 0.\n*END STEP\n' % om**2)
         f.write('*STEP, PERTURBATION\n*FREQUENCY\n%d\n*SELECT CYCLIC SYMMETRY MODES, NMIN=%d, NMAX=%d\n*END STEP\n'
-                % (2 * FAM, min(nds), max(nds)))
+                % (2 * FAM[row], min(nds), max(nds)))
     F.run_ccx(job, threads=int(os.environ.get('CCX_THREADS', 4)))
-    return {nd: v[:FAM] for nd, v in C.parse_dat(os.path.join(FEA, job + '.dat')).items() if nd in nds}
+    return {nd: v[:FAM[row]] for nd, v in C.parse_dat(os.path.join(FEA, job + '.dat')).items() if nd in nds}
 
 
 def main():
@@ -140,6 +140,8 @@ def main():
     print('%s sector mesh: %d nodes, %d C3D10, cut faces %d / %d nodes' % (row, len(nodes), len(els), len(nl), len(nr)), flush=True)
     nd_all = list(range(0, Z // 2 + 1))
     table = run(row, nodes, els, nl, nr, meta, nd_all, '15k')
+    if len(table) < len(nd_all):
+        raise RuntimeError('cyclic frequency step returned %d of %d nodal diameters (ccx killed? see the .log)' % (len(table), len(nd_all)))
     for nd in sorted(table):
         print('   ND %2d: %s' % (nd, '  '.join('%7.0f' % f for f in table[nd])), flush=True)
     hits = []
@@ -158,7 +160,7 @@ def main():
               open(os.path.join(FEA, 'a1000_blisk_%s_cyclic.json' % row), 'w'), indent=1, default=float)
     import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(11, 7), dpi=120)
-    for m in range(FAM):
+    for m in range(FAM[row]):
         pts = [(n, table[n][m]) for n in sorted(table) if len(table[n]) > m]
         ax.plot(*zip(*pts), 'o-', ms=4, lw=1, color='C%d' % m, label='family %d' % (m + 1))
     top = max(max(v) for v in table.values()) * 1.05

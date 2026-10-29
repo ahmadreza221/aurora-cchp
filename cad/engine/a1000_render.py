@@ -18,7 +18,8 @@ from vtk.util.numpy_support import numpy_to_vtk, numpy_to_vtkIdTypeArray
 ROOT = os.environ.get('GR180_ROOT', os.getcwd())
 CAD = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
 IMG = os.path.join(ROOT, 'docs', 'img')
-Z = dict(N1=43, R1=59, N2=33, R2=36)
+import json  # noqa: E402
+Z = {k: json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))[k]['Z'] for k in ('N1', 'R1', 'N2', 'R2')}
 COL = dict(N1=(0.86, 0.52, 0.30), R1=(0.74, 0.76, 0.80), N2=(0.88, 0.64, 0.38), R2=(0.66, 0.70, 0.78),
            disc=(0.58, 0.60, 0.64), ring=(0.36, 0.37, 0.40))
 
@@ -96,5 +97,5 @@ def render(acts, png, focal, pos, angle, size=(1800, 1250)):
 
 
 acts = scene()
-render(acts, os.path.join(IMG, 'a1000_turbine_render_iso.png'), (95.0, 90.0, 0.0), (-260.0, 780.0, 700.0), 32)
+render(acts, os.path.join(IMG, 'a1000_turbine_render_iso.png'), (80.0, 20.0, 0.0), (-300.0, 640.0, 900.0), 36)
 if os.environ.get('A1000_ISO_ONLY') is None: render(acts, os.path.join(IMG, 'a1000_turbine_render_blades.png'), (60.0, 225.0, 0.0), (-150.0, 330.0, 190.0), 26)

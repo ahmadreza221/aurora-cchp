@@ -4,8 +4,10 @@ diagram and engine-order interference (CalculiX + gmsh). Same method as sim/engi
 metal at the rotor-relative gas temperature, MAR-M247), for the two rotor rows R1 / R2.
 
 Excitations (engine orders): 1-4 (single can combustor, inlet distortion), 5 (exhaust struts), the NGV counts upstream /
-downstream (R1: 43 N1 wakes, 33 N2 potential field; R2: 33 N2 wakes, 43 N1 wakes carried through) and 2x the upstream count
-(NGV1 rev 2: 47 -> 43 vanes, 2 x 47 = EO94 crossed the R1 6th mode at 15,300 rpm).
+downstream (R1: N1 wakes, N2 potential field; R2: N2 wakes, N1 wakes carried through) and 2x the upstream count, with the
+vane counts read from sim/a1000_turbine_design.json (rev 2: NGV1 47 -> 43, EO94 crossed the R1 6th mode at 15,300 rpm;
+rev 3: NGV2 33 -> 47, EO33 hit the R2 3rd mode at +0.4 %).
+--post: redo the interference check and the Campbell plot from the saved json (no ccx run), e.g. after a vane-count change.
 Operating speed 15,000 rpm fixed (grid frequency +-2 %), overspeed trip 16,500 rpm; start-up crossings below 14,000 rpm are
 passed in seconds.
 Input:  cad_out/engine/A1000/A1000_R1_blade.step, A1000_R2_blade.step   (cad/engine/a1000_turbine.py --cad)
@@ -35,8 +37,9 @@ MAT_T = np.array([20., 400., 600., 800., 900., 1000.])
 MAT_E = np.array([200e3, 186e3, 176e3, 163e3, 156e3, 148e3])
 MAT_YS = np.array([815., 800., 820., 830., 770., 590.])        # 0.2 % yield, typical
 RHO = 8.54e-9                                                   # t/mm3
-ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, 33, 43, 86], h=0.8),
-            R2=dict(T=735.0, EO=[1, 2, 3, 4, 5, 33, 43, 66], h=1.1))
+_ZN1, _ZN2 = DES['N1']['Z'], DES['N2']['Z']                    # vane counts of the current design (rev 3: 43 / 47)
+ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, _ZN1, _ZN2, 2 * _ZN1], h=0.8),
+            R2=dict(T=735.0, EO=[1, 2, 3, 4, 5, _ZN2, _ZN1, 2 * _ZN2], h=1.1))
 CURV = 10                                                       # gmsh elements per 2 pi of surface curvature
 
 
@@ -82,6 +85,8 @@ def run(nodes, els, base, N, tag, T, static_out=False):
     for line in txt.splitlines():
         p = line.split()
         if len(p) == 5 and p[0].isdigit(): fr.append(float(p[3]))
+    if len(fr) < N_MODES:
+        raise RuntimeError('%s: frequency step returned %d modes (ccx killed? see %s.log)' % (job, len(fr), job))
     res = dict(freqs=fr[:N_MODES])
     if static_out:
         _, blocks = F.read_frd(os.path.join(FEA, job + '.frd'))
@@ -121,15 +126,19 @@ def main():
     rh = DES[row]['sections'][0]['r']
     BASE_R.update(rh=rh, rt=DES[row]['sections'][-1]['r'], fillet=dict(R1=3.0, R2=3.5)[row])
     speeds = [N_OP] if '--static' in sys.argv else SPEEDS
-    nodes, els = mesh(os.path.join(OUT, 'A1000_%s_blade.step' % row), cfg['h'])
-    base = [k for k, p in nodes.items() if math.hypot(p[1], p[2]) <= rh + 0.02]
-    print('%s mesh: %d nodes, %d C3D10, %d base nodes, metal %.0f C' % (row, len(nodes), len(els), len(base), cfg['T']), flush=True)
-    table, stress = {}, None
-    for N in speeds:
-        r = run(nodes, els, base, N, '%s_%dk' % (row, N / 1e3), cfg['T'], static_out=(N == N_OP))
-        table[N] = r['freqs']
-        if N == N_OP: stress = r
-        print('  %6.0f rpm: ' % N + ' '.join('%7.0f' % f for f in r['freqs']), flush=True)
+    if '--post' in sys.argv:
+        old = json.load(open(os.path.join(FEA, 'a1000_blade_%s.json' % row)))
+        table = {float(k): v for k, v in old['freqs'].items()}; stress = old['stress']
+    else:
+        nodes, els = mesh(os.path.join(OUT, 'A1000_%s_blade.step' % row), cfg['h'])
+        base = [k for k, p in nodes.items() if math.hypot(p[1], p[2]) <= rh + 0.02]
+        print('%s mesh: %d nodes, %d C3D10, %d base nodes, metal %.0f C' % (row, len(nodes), len(els), len(base), cfg['T']), flush=True)
+        table, stress = {}, None
+        for N in speeds:
+            r = run(nodes, els, base, N, '%s_%dk' % (row, N / 1e3), cfg['T'], static_out=(N == N_OP))
+            table[N] = r['freqs']
+            if N == N_OP: stress = r
+            print('  %6.0f rpm: ' % N + ' '.join('%7.0f' % f for f in r['freqs']), flush=True)
     ys = float(np.interp(cfg['T'], MAT_T, MAT_YS))
     print('  15k: net-section radial stress above the fillet: mean %.0f / max %.0f MPa; at 25/50/75 %% span %s MPa' % (
         stress['srr_root_mean'], stress['srr_root_max'], '/'.join('%.0f' % stress['srr_mean_%.2f' % s_] for s_ in (0.25, 0.5, 0.75))))
@@ -155,7 +164,7 @@ def main():
         print('    F%d x EO%-3d  f %7.0f Hz  margin %+5.1f %%  crossings %s' % (
             r['mode'], r['eo'], r['f_op'], 100 * r['margin'], ', '.join('%.0f' % c for c in r['crossings']) or '-'))
     json.dump(dict(row=row, speeds=SPEEDS, freqs={str(int(k)): v for k, v in table.items()}, stress=stress, yield_MPa=ys,
-                   metal_C=cfg['T'], interference=res, critical=crit), open(os.path.join(FEA, 'a1000_blade_%s.json' % row), 'w'),
+                   metal_C=cfg['T'], eo=cfg['EO'], vanes=dict(N1=_ZN1, N2=_ZN2), interference=res, critical=crit), open(os.path.join(FEA, 'a1000_blade_%s.json' % row), 'w'),
               indent=1, default=float)
     import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(10, 7), dpi=120)

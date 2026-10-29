@@ -37,6 +37,10 @@ OUT = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
 S1, S2 = T['stages']
 GAP1, GAP2, GAP3 = 8.0, 9.0, 11.0
 CX_ROW = dict(N1=S1['cx_ngv'] * 1e3, R1=S1['cx_rot'] * 1e3, N2=S2['cx_ngv'] * 1e3, R2=S2['cx_rot'] * 1e3)
+# rev 3 (blade FEA): NGV2 33 -> 47 vanes with the NGV1 axial chord (26 mm instead of 37): EO33 hit the R2 3rd mode
+# (8,282 Hz at 15k: +0.4 %) and the R1 2nd mode (-7.7 %); EO47 = 11,750 Hz lies in the gaps R1 F2-F3 (7,615-14,044 Hz)
+# and R2 F5-F6 (10,109-14,560 Hz), margins >= 14 %; same Zweifel band, 11 mm shorter turbine, weaker potential field on R1
+CX_ROW['N2'] = 26.0
 X_LE = dict(N1=0.0)
 X_LE['R1'] = X_LE['N1'] + CX_ROW['N1'] + GAP1
 X_LE['N2'] = X_LE['R1'] + CX_ROW['R1'] + GAP2
@@ -48,6 +52,7 @@ H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'] + GAP1 / 2, S1['h_ngv_ou
 Z = dict(N1=S1['Z_ngv'], R1=S1['Z_rot'], N2=S2['Z_ngv'], R2=S2['Z_rot'])
 # rev 2: NGV1 47 -> 43 vanes: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm (+2 % at 15k); 43 keeps EO43 / EO86 >= 11 % away
 Z['N1'] = 43
+Z['N2'] = 47
 SPANS = [0.0, 0.25, 0.50, 0.75, 1.0]
 ROW_T0 = dict(N1=S1['T0_in'], R1=S1['T0_in'], N2=S2['T0_in'], R2=S2['T0_in'])
 
@@ -153,8 +158,10 @@ def report(rows):
                 f, s.r, s.flow_in, s.flow_out, s.k1, s.k2, s.gauging, s.dev, s.o / s.pitch, s.chord, s.tmax_mm, s.zweifel,
                 s.M_exit_row, extra))
         # throat area: integrate o(r) over the span at the TE
+        # (sections sit on the mid-chord radii; the throat lies at the TE, where the flared annulus is taller: span-scaled)
         rr = [secs[f].r for f in rs]; oo = [secs[f].o for f in rs]
         A = Z[row] * np.trapezoid(oo, rr) if hasattr(np, 'trapezoid') else Z[row] * np.trapz(oo, rr)
+        xm = 0.5 * (X_LE[row] + X_TE[row]); A *= height(X_TE[row]) / height(xm)
         print('    throat area %.0f cm2' % (A / 100) + (' (meanline %.0f)' % ((S1 if row == 'N1' else S2)['A_throat_ngv'] * 1e4)
                                                      if row.startswith('N') else ''))
         out[row] = dict(Z=Z[row], x_le=X_LE[row], x_te=X_TE[row], throat_cm2=A / 100,
