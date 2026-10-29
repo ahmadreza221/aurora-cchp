@@ -274,13 +274,35 @@ def turbine_options(r, ma, rpms, psi_max=1.9, Cx=180.0, clearance=0.40e-3, U_hub
     return res
 
 
-def mar_m247_rupture_hours(sigma_MPa, T_K, C=20.0):
-    """Larson-Miller fit for MAR-M247 (equiaxed, cast): log10(sigma) linear in P = T(C+log t)/1000.
-    Anchors (approximate handbook values): 620 MPa at P 23.8, 380 MPa at P 26.3, 200 MPa at P 27.6."""
-    Ps = np.array([23.8, 26.3, 27.6]); ls = np.log10([620.0, 380.0, 200.0])
-    a, b = np.polyfit(ls, Ps, 1)
-    P = a * math.log10(sigma_MPa) + b
-    return 10 ** (P * 1000 / T_K - C)
+# Larson-Miller master curve, equiaxed cast MAR-M247 (TYPICAL), P = T (20 + log10 t) / 1000, T [K], t [h]. Consistent
+# with the handbook 100 / 1000 h rupture strengths at 760-980 C (Nickel Institute 393 / ASM vol. 1, quoted from memory: the
+# primary tables could not be read from this environment) and with > 1500 h at 871 C / 250 MPa (Pan et al., Metals 13,
+# 2023). Rev 4 (review): the earlier 3-anchor fit did not pass through its anchors and was optimistic below ~200 MPa.
+LMP_P = (22.5, 24.0, 25.5, 27.0, 28.0, 29.0, 30.0)
+LMP_S = (700.0, 560.0, 420.0, 260.0, 190.0, 135.0, 95.0)
+
+
+def mar_m247_rupture_stress(P, curve='min'):
+    """rupture stress [MPa] at Larson-Miller parameter P; curve 'typical' or 'min' (design minimum: 0.8 x typical stress,
+    a further 10 % knock-down from P 28 to 29 and above for long-term ageing and the low-stress data scatter)"""
+    lp, ls = np.array(LMP_P), np.log10(LMP_S)
+    if P <= lp[0]: v = ls[0] + (ls[1] - ls[0]) / (lp[1] - lp[0]) * (P - lp[0])
+    elif P >= lp[-1]: v = ls[-1] + (ls[-1] - ls[-2]) / (lp[-1] - lp[-2]) * (P - lp[-1])
+    else: v = float(np.interp(P, lp, ls))
+    s = 10 ** v
+    if curve == 'min':
+        s *= 0.8 * (1.0 - 0.1 * min(max(P - 28.0, 0.0), 1.0))
+    return s
+
+
+def mar_m247_rupture_hours(sigma_MPa, T_K, curve='min'):
+    """rupture life [h] at stress sigma and metal temperature T_K on the 'min' (design) or 'typical' curve"""
+    lo, hi = 15.0, 34.0
+    for _ in range(80):
+        m = 0.5 * (lo + hi)
+        if mar_m247_rupture_stress(m, curve) > sigma_MPa: lo = m
+        else: hi = m
+    return 10 ** (0.5 * (lo + hi) * 1000.0 / T_K - 20.0)
 
 
 def gearbox(rpm_in, P_kW, n_out=1500):
@@ -371,8 +393,8 @@ def main():
     # relative one) + 25 K radial / circumferential pattern margin; the blade root (max stress) sits ~30 K cooler
     T_rel = ARCH_SEL['TIT'] - 0.5 * (ARCH_SEL['TIT'] - r['T4']) * 0.55 + 25.0
     T_root = T_rel - 30.0
-    life = mar_m247_rupture_hours(ts_['sigma_root_first'] * 1.5, T_root)
-    life_last = mar_m247_rupture_hours(ts_['sigma_root_last'] * 1.5, r['T4'] + 40 - 30)
+    life = mar_m247_rupture_hours(ts_['sigma_root_first'] * 1.5, T_root, 'typical')
+    life_last = mar_m247_rupture_hours(ts_['sigma_root_last'] * 1.5, r['T4'] + 40 - 30, 'typical')
     # cycle with the component efficiencies the sizing supports (selected compressor / turbine, -1.5 pt margin)
     r_tgt, ma_tgt = size_for(dict(ARCH_SEL, eta_c=cs_['eta'] - 0.015, eta_t=ts_['eta'] - 0.015))
     out['selected'] = dict(rpm=sel_rpm, compressor=cs_, turbine=ts_, gearbox=gb, recuperator=rec,
@@ -391,7 +413,7 @@ def main():
     for n_ in RPMS:
         t2 = [o for o in turb if o['rpm'] == n_ and o['stages'] == 2][0]
         print('    %5d rpm: stage-1 root %3.0f MPa -> life at 1.5x stress %.2g h' % (
-            n_, t2['sigma_root_first'], mar_m247_rupture_hours(t2['sigma_root_first'] * 1.5, T_root)))
+            n_, t2['sigma_root_first'], mar_m247_rupture_hours(t2['sigma_root_first'] * 1.5, T_root, 'typical')))
     out['pr_sweep'] = pr_sweep()
     json.dump(out, open(os.path.join(HERE, 'mw1_results.json'), 'w'), indent=1, default=float)
     plots(out)

@@ -35,7 +35,7 @@ N_MODES = dict(R1=10, R2=16)       # enough modes to pass 2 x NPF at the trip sp
 # MAR-M247 (cast, equiaxed): typical data; E [MPa] vs T [C]
 MAT_T = np.array([20., 400., 600., 800., 900., 1000.])
 MAT_E = np.array([200e3, 186e3, 176e3, 163e3, 156e3, 148e3])
-MAT_YS = np.array([815., 800., 820., 830., 770., 590.])        # 0.2 % yield, typical
+MAT_YS = np.array([815., 790., 770., 740., 640., 450.])        # 0.2 % yield, typical (rev 4 data search)
 RHO = 8.54e-9                                                   # t/mm3
 _ZN1, _ZN2 = DES['N1']['Z'], DES['N2']['Z']                    # vane counts of the current design (rev 3: 43 / 47)
 ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, _ZN1, _ZN2, 2 * _ZN1, 2 * _ZN2], h=0.8),
@@ -49,7 +49,7 @@ def mesh(step, h):
     import gmsh
     gmsh.initialize(); gmsh.option.setNumber('General.Terminal', 0); gmsh.model.add('blade')
     gmsh.model.occ.importShapes(step); gmsh.model.occ.synchronize()
-    gmsh.option.setNumber('Mesh.CharacteristicLengthMax', h); gmsh.option.setNumber('Mesh.CharacteristicLengthMin', 0.2 * h)
+    gmsh.option.setNumber('Mesh.CharacteristicLengthMax', h); gmsh.option.setNumber('Mesh.CharacteristicLengthMin', 0.4 * h)   # 0.2 h over-refined the rev-4 R1 (580k tets)
     gmsh.option.setNumber('Mesh.MeshSizeFromCurvature', CURV)
     gmsh.option.setNumber('Mesh.ElementOrder', 2); gmsh.option.setNumber('Mesh.SecondOrderLinear', 1)
     gmsh.model.mesh.generate(3)

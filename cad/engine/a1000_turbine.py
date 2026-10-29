@@ -116,8 +116,10 @@ def params(row, f):
 
 
 # rotor taper for the creep life of the uncooled blades (rev 2, 2026-10-29): root net-section stress R1 129 -> ~105 MPa
-ROT_TAU = dict(R1=(0.21, 0.07), R2=(0.20, 0.06))                 # max thickness / chord at hub, tip
-CX_TAPER = dict(R1=0.15, R2=0.25, N1=0.0, N2=0.0)                # axial chord at the tip = (1 - taper) x hub (LE line fixed)
+# rev 4: R1 thicker root, thinner and shorter-chord tip for the creep life on the MINIMUM rupture curve: net-section P/A
+# 117.5 -> 100 MPa at the hub T0,rel of 865 C (allowable 124 MPa for 1e5 h); tip t_max 1.8 mm, tip Zweifel 1.09
+ROT_TAU = dict(R1=(0.24, 0.055), R2=(0.20, 0.06))                # max thickness / chord at hub, tip
+CX_TAPER = dict(R1=0.30, R2=0.25, N1=0.0, N2=0.0)                # axial chord at the tip = (1 - taper) x hub (LE line fixed)
 
 
 def x_te_of(row, f):
@@ -259,11 +261,13 @@ def _plane_wire(sec, n, delta=0.0):
     return GG.bs_wire(GG.project_to_plane(pts, lambda x: np.full_like(np.asarray(x, float), n), tm))
 
 
-def _rev(poly):
-    """solid of revolution about x of a closed (x, r) polygon"""
+def _rev(poly, angle=360.0):
+    """solid of revolution about x of a closed (x, r) polygon; angle < 360: a segment centred on theta = 0"""
     App, Part, V = _fc()
     w = Part.makePolygon([V(x, r, 0) for x, r in poly] + [V(poly[0][0], poly[0][1], 0)])
-    return Part.Face(w).revolve(V(0, 0, 0), V(1, 0, 0), 360)
+    s = Part.Face(w).revolve(V(0, 0, 0), V(1, 0, 0), angle)
+    if angle < 360.0: s.rotate(V(0, 0, 0), V(1, 0, 0), -angle / 2)
+    return s
 
 
 def _ext_section(sec, r_new):
@@ -330,8 +334,10 @@ def round_polygon(poly, radii, n=10):
     return out
 
 
-DISC = dict(R1=dict(rim_d=16.0, t_rim=16.0, t_hub=40.0, r_web_in=110.0, hub_w=56.0, r_boss=85.0, R_rim=10.0, R_hub=28.0),
-            R2=dict(rim_d=17.0, t_rim=18.0, t_hub=46.0, r_web_in=110.0, hub_w=62.0, r_boss=85.0, R_rim=10.0, R_hub=30.0))
+# rev 4: larger web-rim fillets (R1, R2) and a thicker R2 rim: peak (total) stress at the R2 web-rim fillet 543 -> 466 MPa,
+# trip yield margin 1.34 -> 1.57 (the LCF-critical point of the discs); the platform and the blade foot are unchanged
+DISC = dict(R1=dict(rim_d=16.0, t_rim=16.0, t_hub=40.0, r_web_in=110.0, hub_w=56.0, r_boss=85.0, R_rim=14.0, R_hub=28.0),
+            R2=dict(rim_d=17.0, t_rim=22.0, t_hub=46.0, r_web_in=110.0, hub_w=62.0, r_boss=85.0, R_rim=14.0, R_hub=30.0))
 
 
 def disc_profile(row, P=None):
@@ -379,8 +385,14 @@ def build_cad():
         print('%-22s valid %s solids %d  vol %.0f cm3  mass %.2f kg' % (name, s.isValid(), len(s.Solids), vol / 1e3, vol * 8.54e-6), flush=True)
     for row in ('R1', 'R2'):
         blade = fc_rotor_blade(row, rows[row])
-        disc = _rev(disc_profile(row)); disc.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z[row])
-        piece = blade.cut(disc)
+        disc = _rev(disc_profile(row)); disc.rotate(V(0, 0, 0), V(1, 0, 0), 180.0)
+        # the blade is cut by a disc whose revolve seam lies at theta = 0, i.e. through the root footprint (stacking line):
+        # the blade's bottom face then comes out as two open cylinder patches. With the seam away from the footprint (or a
+        # disc segment) it is one patch bounded by a single closed curve, which OCC built inside-out (negative area and
+        # volume) for the rev-4 blades and gmsh / Netgen could not mesh.
+        piece = blade.cut(_rev(disc_profile(row)))
+        if piece.Volume < 0 or any(f.Area < 0 for f in piece.Faces):
+            raise RuntimeError('%s blade piece is inside-out (negative face area / volume)' % row)
         save('A1000_%s_blade' % row, piece); save('A1000_%s_disc' % row, disc)
         if '--full' in sys.argv:
             w, B = disc, 6

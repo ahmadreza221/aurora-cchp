@@ -236,30 +236,46 @@ def rotor_mass(R):
     return m + MAT['steel'][0] * math.pi / 4 * (dt * 1e-3) ** 2 * (t1 - t0) * 1e-3
 
 
+def journal_loads(R):
+    """static journal loads [kg] of the two bearings from the mass distribution (statics)"""
+    items = [(d['m'], d['x']) for d in R['discs'].values()]
+    for s_ in R['seg']:
+        if s_[5]: items.append((MAT[s_[4]][0] * math.pi / 4 * ((s_[2] * 1e-3) ** 2 - (s_[3] * 1e-3) ** 2) * (s_[1] - s_[0]) * 1e-3,
+                                0.5 * (s_[0] + s_[1])))
+    t0, t1, dt = R['tie']; items.append((MAT['steel'][0] * math.pi / 4 * (dt * 1e-3) ** 2 * (t1 - t0) * 1e-3, 0.5 * (t0 + t1)))
+    m = sum(a for a, _ in items); xc = sum(a * b for a, b in items) / m; x1, x2 = R['brg']
+    W1 = m * (x2 - xc) / (x2 - x1)
+    return W1, m - W1, xc
+
+
 def unbalance(R, sup, speeds, cases):
-    """API 617 unbalance response: U = 6350 W / N [g mm] per case (W = journal static load [kg]); journal amplitudes"""
+    """API 617 unbalance response, U = 6350 W / N_MCS [g mm] per plane with W the journal static load the plane is based
+    on [kg]: cases = {name: [(x, phase, W_kg), ...]} (rev 4: the single-plane mode-1 case uses the sum of both journal
+    loads at the antinode; rev 1-3 applied the per-journal amount, about half the API requirement); journal amplitudes"""
     x = mesh_nodes(R); M, K, C, G = assemble(R, x, sup)
-    W = rotor_mass(R) / 2
-    U = 6350 * W / N_MCS * 1e-6                                  # kg m
     jb = [2 * int(np.argmin(abs(x - b))) for b in R['brg']]
     res = {}
     for name, locs in cases.items():
         amp = []
         for N in speeds:
             Om = N * 2 * math.pi / 60; F = np.zeros(len(M), complex)
-            for xl, ph in locs:
+            for xl, ph, Wk in locs:
+                U = 6350 * Wk / N_MCS * 1e-6                       # kg m
                 j = int(np.argmin(abs(x - xl))); F[2 * j] += U * Om * Om * np.exp(1j * ph)
             q = np.linalg.solve(K - Om * Om * M + 1j * Om * C + Om * Om * G, F)
             amp.append([2 * abs(q[j]) * 1e6 for j in jb])         # peak-to-peak [um]
         res[name] = np.array(amp)
-    return res, U * 1e6, W
+    W1, W2, xc = journal_loads(R)
+    return res, {k: [6350 * Wk / N_MCS for _, _, Wk in v] for k, v in cases.items()}, (W1, W2)
 
 
 # ------------------------------------------------------------------------------------------------ main
 # tilting-pad journals 110 mm x 55 mm (light load, preload 0.3): oil film stiffness / damping incl. the pedestal;
 # SFD option: squeeze-film damper (OD 150 mm, land 30 mm, clearance 0.15 mm) on a squirrel-cage centering spring
-SUP = dict(rigid=dict(kb=1.2e8, cb=6.0e4), sfd=dict(kb=1.2e8, cb=6.0e4, ks=2.5e7, cs=3.0e4, mh=8.0))
-CONF = {'A': ('A', 'rigid'), 'A-SFD': ('A', 'sfd'), 'B': ('B', 'rigid'), 'B-SFD': ('B', 'sfd')}
+# sfd_lo: cavitated pi-film / hot oil (~70 C) gives about half the SFD damping (review): sensitivity case
+SUP = dict(rigid=dict(kb=1.2e8, cb=6.0e4), sfd=dict(kb=1.2e8, cb=6.0e4, ks=2.5e7, cs=3.0e4, mh=8.0),
+           sfd_lo=dict(kb=1.2e8, cb=6.0e4, ks=2.5e7, cs=1.2e4, mh=8.0))
+CONF = {'A': ('A', 'rigid'), 'A-SFD': ('A', 'sfd'), 'A-SFD-lo': ('A', 'sfd_lo'), 'B': ('B', 'rigid'), 'B-SFD': ('B', 'sfd')}
 SEL = 'A-SFD'
 API_LIM = 25.4 * math.sqrt(12000 / N_MCS)                     # API 617 unbalance-response limit [um pk-pk]
 
@@ -273,9 +289,10 @@ def main():
         R = rotor(lay); sup = SUP[sk]
         x, wh = whirl(R, sup, speeds)
         dc = damped_criticals(R, sup)
-        cases = dict(mid=[(R['discs']['impeller2']['x'], 0.0), (R['discs']['blisk1']['x'], 0.0)],
-                     conical=[(R['discs']['impeller1']['x'], 0.0), (R['discs']['blisk2']['x'], math.pi)],
-                     turbine=[(R['discs']['blisk2']['x'], 0.0)])
+        W1, W2, xcg = journal_loads(R)
+        cases = dict(mid=[(xcg, 0.0, W1 + W2)],                                   # mode 1: one plane at the antinode
+                     conical=[(R['discs']['impeller1']['x'], 0.0, W1), (R['discs']['blisk2']['x'], math.pi, W2)],
+                     turbine=[(R['discs']['blisk2']['x'], 0.0, 2 * W2)])
         ub, U, W = unbalance(R, sup, fine, cases)
         amp_max = {c: float(a[(fine >= 0.95 * N_OP) & (fine <= N_TRIP)].max()) for c, a in ub.items()}
         amp_all = {c: float(a.max()) for c, a in ub.items()}
@@ -285,8 +302,9 @@ def main():
                          amp_max_any_um=amp_all, whirl=[dict(N=w['N'], fw=w['fw'], bw=w['bw']) for w in wh])
         plot_data[name] = (R, x, wh, ub)
         w15 = [w for w in wh if w['N'] == N_OP][0]
-        print('%-5s bearings x = %s mm, rotor %.0f kg, U = %.0f g mm per case' % (
-            name, ', '.join('%.0f' % b for b in R['brg']), rotor_mass(R), U))
+        print('%-9s bearings x = %s mm, rotor %.0f kg, journal loads %.0f / %.0f kg, U %s g mm' % (
+            name, ', '.join('%.0f' % b for b in R['brg']), rotor_mass(R), W[0], W[1],
+            '; '.join('%s %s' % (k, '/'.join('%.0f' % u for u in v)) for k, v in U.items())))
         print('      whirl at 15,000 rpm: %s' % ', '.join('%.0f Hz (ld %.2f)' % fd for fd in w15['fw']))
         for c in dc:
             print('      critical %6.0f rpm  mode %d  log dec %5.2f  AF %5.1f  SM %5.1f %%  API req %4.1f %%  %s' % (
