@@ -46,6 +46,8 @@ H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'] + GAP1 / 2, S1['h_ngv_ou
         (X_TE['R1'] + GAP2 / 2, S1['h_rot_out'] * 1e3), (X_TE['N2'] + GAP3 / 2, S2['h_ngv_out'] * 1e3),
         (X_TE['R2'], S2['h_rot_out'] * 1e3)]
 Z = dict(N1=S1['Z_ngv'], R1=S1['Z_rot'], N2=S2['Z_ngv'], R2=S2['Z_rot'])
+# rev 2: NGV1 47 -> 43 vanes: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm (+2 % at 15k); 43 keeps EO43 / EO86 >= 11 % away
+Z['N1'] = 43
 SPANS = [0.0, 0.25, 0.50, 0.75, 1.0]
 ROW_T0 = dict(N1=S1['T0_in'], R1=S1['T0_in'], N2=S2['T0_in'], R2=S2['T0_in'])
 
@@ -91,15 +93,25 @@ def params(row, f):
     if row.startswith('N'):
         c = CX_ROW[row]
         return dict(tau=0.20, rle=0.075 * c, tte=1.0, sig_m=0.30, p=1.9)
-    c = CX_ROW[row]
-    return dict(tau=0.20 - 0.10 * f, rle=(0.045 - 0.015 * f) * c, tte=0.95 - 0.20 * f, sig_m=0.32 + 0.06 * f, p=2.0 - 0.4 * f)
+    c = CX_ROW[row] * (1 - CX_TAPER[row] * f)
+    t0, t1 = ROT_TAU[row]
+    return dict(tau=t0 - (t0 - t1) * f, rle=(0.045 - 0.015 * f) * c, tte=1.0 - 0.25 * f, sig_m=0.32 + 0.06 * f, p=2.0 - 0.4 * f)
 
 
-def design_row(row):
+# rotor taper for the creep life of the uncooled blades (rev 2, 2026-10-29): root net-section stress R1 129 -> ~105 MPa
+ROT_TAU = dict(R1=(0.21, 0.07), R2=(0.20, 0.06))                 # max thickness / chord at hub, tip
+CX_TAPER = dict(R1=0.15, R2=0.25, N1=0.0, N2=0.0)                # axial chord at the tip = (1 - taper) x hub (LE line fixed)
+
+
+def x_te_of(row, f):
+    return X_LE[row] + CX_ROW[row] * (1 - CX_TAPER[row] * f)
+
+
+def design_row(row, spans=SPANS):
     secs = {}
-    for f in SPANS:
+    for f in spans:
         r = row_radius(row, f); q = params(row, f); st = GG.Stream(r_const=r)
-        x0, x1 = X_LE[row], X_TE[row]
+        x0, x1 = X_LE[row], x_te_of(row, f)
         if row.startswith('N'):
             flow_out = alpha_ngv_out(r); k1 = 0.0
             Mx = mach(math.hypot(CX, ct2(r)), ROW_T0[row])
@@ -176,16 +188,34 @@ def _fc():
     return App, Part, App.Vector
 
 
+SEG_N = (12, 88, 88, 12)                          # points: TE cap (to suction), suction side, pressure side, TE cap (back)
+
+
+def _consistent_points(sec, delta=0.0):
+    """outline resampled PER SEGMENT (TE half-cap, upper side, lower side, TE half-cap) at even arc length with fixed point
+    counts: every section has the same topology, so the loft rulings join TE to TE and LE to LE. A global arc-length
+    resample shifts the TE cap points between sections of very different chord / thickness and folds the loft at the TE
+    (gmsh then fails with intersecting facets)."""
+    pts, side, xis = sec.outline(*DENSE)
+    if delta > 0: pts = sec.outline_offset(delta, *DENSE)
+    i_up0 = int(np.argmax(side == 1)); i_lo0 = int(np.argmax(side == -1)); i_cap2 = len(side) - int(np.argmax(side[::-1] != 0))
+    segs = [pts[:i_up0 + 1], pts[i_up0:i_lo0], pts[i_lo0 - 1:i_cap2], np.vstack([pts[i_cap2 - 1:], pts[:1]])]
+    out = []
+    for seg, n in zip(segs, SEG_N):
+        d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(seg, axis=0), axis=1))]
+        t = np.linspace(0, d[-1], n + 1)[:-1]
+        out.append(np.stack([np.interp(t, d, seg[:, k]) for k in range(3)], 1))
+    return np.vstack(out)
+
+
 def _wire(sec, delta=0.0):
-    pts = sec.outline_offset(delta, *DENSE) if delta > 0 else sec.outline(*DENSE)[0]
-    return GG.bs_wire(GG.resample_closed(pts, NPTS))
+    return GG.bs_wire(_consistent_points(sec, delta))
 
 
 def _plane_wire(sec, n, delta=0.0):
     """end cap of a closed loft: the section outline moved radially onto the plane at distance n from the axis, normal to
     the radial direction at the section's mid angle (non-planar caps on r = const give invalid solids)"""
-    pts = sec.outline_offset(delta, *DENSE) if delta > 0 else sec.outline(*DENSE)[0]
-    pts = GG.resample_closed(pts, NPTS)
+    pts = _consistent_points(sec, delta)
     th = np.arctan2(pts[:, 2], pts[:, 1]); tm = 0.5 * (th.min() + th.max())
     return GG.bs_wire(GG.project_to_plane(pts, lambda x: np.full_like(np.asarray(x, float), n), tm))
 
@@ -204,6 +234,17 @@ def _ext_section(sec, r_new):
     if sec.k1 == 0.0:                                             # NGV: TE stacking
         return GG.Section(*a, -s0.th[-1])
     return GG.Section(*a, -s0.centroid()[1])
+
+
+CAD_N = 7                                          # rotor CAD sections above the root fillet
+
+
+def rotor_cad_spans(row):
+    """loft sections for the rotor CAD: hub + sections EVENLY spaced from the fillet top to the tip. The design spans
+    (0, .25, .5, .75, 1) after the closely spaced fillet sections made the B-spline loft overshoot between 0.25 and 0.5 span,
+    and the 1 mm trailing edge folded through itself (Netgen / gmsh: self-intersecting facets at r 227 mm, x 57 mm on R1)"""
+    xm = 0.5 * (X_LE[row] + X_TE[row]); ff = max(GG.FILLET_H) * FILLET[row] / 0.8 / height(xm)
+    return [0.0] + [ff + k * (1 - ff) / CAD_N for k in range(1, CAD_N)] + [1.0]
 
 
 def fc_rotor_blade(row, secs):
@@ -232,15 +273,38 @@ def fc_rotor_blade(row, secs):
     return b.common(trim)
 
 
-def disc_profile(row):
-    """bore-less disc (x, r) polygon: platform rim, web, solid hub boss; MAR-M247 integral with the blades"""
+def round_polygon(poly, radii, n=10):
+    """replace each vertex of a closed polygon by a tangent circular arc of radius radii[i] (0 = sharp)"""
+    P = np.array(poly, float); out = []
+    for i in range(len(P)):
+        R = radii[i]; a, v, c = P[i - 1], P[i], P[(i + 1) % len(P)]
+        if R <= 0: out.append(tuple(v)); continue
+        u1 = (a - v) / np.linalg.norm(a - v); u2 = (c - v) / np.linalg.norm(c - v)
+        ang = math.acos(np.clip(u1 @ u2, -1, 1)); d = R / math.tan(ang / 2)
+        d = min(d, 0.45 * np.linalg.norm(a - v), 0.45 * np.linalg.norm(c - v)); R = d * math.tan(ang / 2)
+        p1, p2 = v + u1 * d, v + u2 * d
+        bis = (u1 + u2) / np.linalg.norm(u1 + u2); ctr = v + bis * R / math.sin(ang / 2)
+        t1, t2 = math.atan2(*(p1 - ctr)[::-1]), math.atan2(*(p2 - ctr)[::-1])
+        dt = (t2 - t1 + math.pi) % (2 * math.pi) - math.pi
+        for k in range(n + 1):
+            t = t1 + dt * k / n; out.append((ctr[0] + R * math.cos(t), ctr[1] + R * math.sin(t)))
+    return out
+
+
+DISC = dict(R1=dict(rim_d=16.0, t_rim=16.0, t_hub=40.0, r_web_in=110.0, hub_w=56.0, r_boss=85.0, R_rim=10.0, R_hub=28.0),
+            R2=dict(rim_d=17.0, t_rim=18.0, t_hub=46.0, r_web_in=110.0, hub_w=62.0, r_boss=85.0, R_rim=10.0, R_hub=30.0))
+
+
+def disc_profile(row, P=None):
+    """bore-less disc (x, r) polygon: platform rim, web tapered from the rim to the hub (constant-strength trend), large
+    fillets, solid hub boss; cast MAR-M247 integral with the blades"""
+    q = dict(DISC[row], **(P or {}))
     rh = row_radius(row, 0.0); x0, x1 = X_LE[row] - PLAT_OVH, X_TE[row] + PLAT_OVH; xm = 0.5 * (x0 + x1)
-    rim_d = 18.0 if row == 'R1' else 19.0; web = 18.0 if row == 'R1' else 20.0; hub_w = 42.0 if row == 'R1' else 46.0
-    r_rim, r_hubb = rh - rim_d, 95.0
-    return [(x0, rh), (x1, rh), (x1, r_rim + 4), (xm + web / 2 + 6, r_rim - 2), (xm + web / 2, r_rim - 10),
-            (xm + web / 2, r_hubb + 12), (xm + hub_w / 2, r_hubb - 4), (xm + hub_w / 2, 0.0), (xm - hub_w / 2, 0.0),
-            (xm - hub_w / 2, r_hubb - 4), (xm - web / 2, r_hubb + 12), (xm - web / 2, r_rim - 10),
-            (xm - web / 2 - 6, r_rim - 2), (x0, r_rim + 4)]
+    r_rim = rh - q['rim_d']; tr, th, hw = q['t_rim'] / 2, q['t_hub'] / 2, q['hub_w'] / 2
+    poly = [(x0, rh), (x1, rh), (x1, r_rim + 6), (xm + tr, r_rim - 4), (xm + th, q['r_web_in']), (xm + hw, q['r_boss']),
+            (xm + hw, 0.0), (xm - hw, 0.0), (xm - hw, q['r_boss']), (xm - th, q['r_web_in']), (xm - tr, r_rim - 4), (x0, r_rim + 6)]
+    radii = [0, 0, 3.0, q['R_rim'], q['R_hub'], 8.0, 0, 0, 8.0, q['R_hub'], q['R_rim'], 3.0]
+    return round_polygon(poly, radii)
 
 
 def fc_ngv_vane(row, secs):
@@ -266,6 +330,7 @@ def build_cad():
     App, Part, V = _fc()
     os.makedirs(OUT, exist_ok=True)
     rows = design_all()
+    for row in ('R1', 'R2'): rows[row] = design_row(row, rotor_cad_spans(row))
     info = {}
     def save(name, s):
         s.exportStep(os.path.join(OUT, name + '.step')); s.exportBrep(os.path.join(OUT, name + '.brep'))
@@ -278,6 +343,8 @@ def build_cad():
         disc = _rev(disc_profile(row)); disc.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z[row])
         piece = blade.cut(disc)
         save('A1000_%s_blade' % row, piece); save('A1000_%s_disc' % row, disc)
+        import Mesh                                                   # watertight STL for the FEA mesher (sim/engine/a1000_blade_fea.py)
+        Mesh.Mesh(piece.tessellate(0.01)).write(os.path.join(OUT, 'A1000_%s_blade.stl' % row))
         if '--full' in sys.argv:
             w, B = disc, 6
             for k0 in range(0, Z[row], B):

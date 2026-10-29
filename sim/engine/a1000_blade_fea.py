@@ -4,7 +4,8 @@ diagram and engine-order interference (CalculiX + gmsh). Same method as sim/engi
 metal at the rotor-relative gas temperature, MAR-M247), for the two rotor rows R1 / R2.
 
 Excitations (engine orders): 1-4 (single can combustor, inlet distortion), 5 (exhaust struts), the NGV counts upstream /
-downstream (R1: 47 N1 wakes, 33 N2 potential field; R2: 33 N2 wakes, 47 N1 wakes carried through) and 2x the upstream count.
+downstream (R1: 43 N1 wakes, 33 N2 potential field; R2: 33 N2 wakes, 43 N1 wakes carried through) and 2x the upstream count
+(NGV1 rev 2: 47 -> 43 vanes, 2 x 47 = EO94 crossed the R1 6th mode at 15,300 rpm).
 Operating speed 15,000 rpm fixed (grid frequency +-2 %), overspeed trip 16,500 rpm; start-up crossings below 14,000 rpm are
 passed in seconds.
 Input:  cad_out/engine/A1000/A1000_R1_blade.step, A1000_R2_blade.step   (cad/engine/a1000_turbine.py --cad)
@@ -34,17 +35,18 @@ MAT_T = np.array([20., 400., 600., 800., 900., 1000.])
 MAT_E = np.array([200e3, 186e3, 176e3, 163e3, 156e3, 148e3])
 MAT_YS = np.array([815., 800., 820., 830., 770., 590.])        # 0.2 % yield, typical
 RHO = 8.54e-9                                                   # t/mm3
-ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, 33, 47, 94], h=0.8),
-            R2=dict(T=735.0, EO=[1, 2, 3, 4, 5, 33, 47, 66], h=1.1))
+ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, 33, 43, 86], h=0.8),
+            R2=dict(T=735.0, EO=[1, 2, 3, 4, 5, 33, 43, 66], h=1.1))
+CURV = 10                                                       # gmsh elements per 2 pi of surface curvature
 
 
 def mesh(step, h):
+    """tetrahedral C3D10 mesh of the CAD solid (gmsh, default algorithms; curvature sizing resolves the 1 mm TE)"""
     import gmsh
-    gmsh.initialize(); gmsh.option.setNumber('General.Terminal', 0)
-    gmsh.model.add('blade'); gmsh.model.occ.importShapes(step); gmsh.model.occ.synchronize()
-    gmsh.option.setNumber('Mesh.CharacteristicLengthMax', h); gmsh.option.setNumber('Mesh.CharacteristicLengthMin', 0.15 * h)
-    gmsh.option.setNumber('Mesh.Algorithm', 1); gmsh.option.setNumber('Mesh.Algorithm3D', 4)   # MeshAdapt + Frontal: the
-    # Delaunay / HXT defaults fail on the thin round TE (surface facets intersect near the TE at mid span)
+    gmsh.initialize(); gmsh.option.setNumber('General.Terminal', 0); gmsh.model.add('blade')
+    gmsh.model.occ.importShapes(step); gmsh.model.occ.synchronize()
+    gmsh.option.setNumber('Mesh.CharacteristicLengthMax', h); gmsh.option.setNumber('Mesh.CharacteristicLengthMin', 0.2 * h)
+    gmsh.option.setNumber('Mesh.MeshSizeFromCurvature', CURV)
     gmsh.option.setNumber('Mesh.ElementOrder', 2); gmsh.option.setNumber('Mesh.SecondOrderLinear', 1)
     gmsh.model.mesh.generate(3)
     nt, xyz, _ = gmsh.model.mesh.getNodes(); xyz = xyz.reshape(-1, 3)
@@ -57,6 +59,7 @@ def mesh(step, h):
         def mid(a, b):
             p = 0.5 * (nodes[a] + nodes[b]); return min(mids, key=lambda m: np.linalg.norm(nodes[m] - p))
         els.append(c + [mid(c[0], c[1]), mid(c[1], c[2]), mid(c[2], c[0]), mid(c[0], c[3]), mid(c[1], c[3]), mid(c[2], c[3])])
+    if not els: raise RuntimeError('no volume mesh')
     return nodes, els
 
 
@@ -88,23 +91,51 @@ def run(nodes, els, base, N, tag, T, static_out=False):
         res.update(vm_max=vm[k_max], vm_max_at=[float(c) for c in nodes[k_max]])
         # mean radial stress over a plane 1 fillet radius above the hub (gross section, = P/A check)
         res['vm_p99'] = float(np.percentile(list(vm.values()), 99.0))
+        # mean radial (spanwise) stress on the net section just above the root fillet = the creep design stress
+        rh = BASE_R['rh']; band = (rh + BASE_R['fillet'] + 1.0, rh + BASE_R['fillet'] + 3.0)
+        srr = []
+        for k, v in S.items():
+            x, y, z = nodes[k]; r = math.hypot(y, z)
+            if band[0] <= r <= band[1]:
+                c, s_ = y / r, z / r          # frd 3D order: xx yy zz xy yz zx
+                srr.append(v[1] * c * c + v[2] * s_ * s_ + 2 * v[4] * c * s_)
+        res['srr_root_mean'] = float(np.mean(srr)); res['srr_root_max'] = float(np.max(srr))
+        for sp in (0.25, 0.5, 0.75):
+            rr = rh + sp * (BASE_R['rt'] - rh); vals = []
+            for k, v in S.items():
+                x, y, z = nodes[k]; r = math.hypot(y, z)
+                if abs(r - rr) < 1.0:
+                    c, s_ = y / r, z / r; vals.append(v[1] * c * c + v[2] * s_ * s_ + 2 * v[4] * c * s_)
+            res['srr_mean_%.2f' % sp] = float(np.mean(vals)) if vals else None
     return res
+
+
+BASE_R = {}
+ROW_CUR = ['R1']
 
 
 def main():
     row = sys.argv[1] if len(sys.argv) > 1 else 'R1'
+    ROW_CUR[0] = row
     cfg = ROWS[row]
     rh = DES[row]['sections'][0]['r']
+    BASE_R.update(rh=rh, rt=DES[row]['sections'][-1]['r'], fillet=dict(R1=3.0, R2=3.5)[row])
+    speeds = [N_OP] if '--static' in sys.argv else SPEEDS
     nodes, els = mesh(os.path.join(OUT, 'A1000_%s_blade.step' % row), cfg['h'])
     base = [k for k, p in nodes.items() if math.hypot(p[1], p[2]) <= rh + 0.02]
     print('%s mesh: %d nodes, %d C3D10, %d base nodes, metal %.0f C' % (row, len(nodes), len(els), len(base), cfg['T']), flush=True)
     table, stress = {}, None
-    for N in SPEEDS:
+    for N in speeds:
         r = run(nodes, els, base, N, '%s_%dk' % (row, N / 1e3), cfg['T'], static_out=(N == N_OP))
         table[N] = r['freqs']
         if N == N_OP: stress = r
         print('  %6.0f rpm: ' % N + ' '.join('%7.0f' % f for f in r['freqs']), flush=True)
     ys = float(np.interp(cfg['T'], MAT_T, MAT_YS))
+    print('  15k: net-section radial stress above the fillet: mean %.0f / max %.0f MPa; at 25/50/75 %% span %s MPa' % (
+        stress['srr_root_mean'], stress['srr_root_max'], '/'.join('%.0f' % stress['srr_mean_%.2f' % s_] for s_ in (0.25, 0.5, 0.75))))
+    if '--static' in sys.argv:
+        json.dump(stress, open(os.path.join(FEA, 'a1000_blade_%s_static.json' % row), 'w'), indent=1, default=float)
+        print('  15k: von Mises max %.0f MPa (99th pct %.0f)' % (stress['vm_max'], stress['vm_p99'])); return
     print('  15k: von Mises max %.0f MPa at r %.1f (99th pct %.0f); yield %.0f MPa at %.0f C' % (
         stress['vm_max'], math.hypot(*stress['vm_max_at'][1:]), stress['vm_p99'], ys, cfg['T']))
     sp = np.array(SPEEDS); res = []
