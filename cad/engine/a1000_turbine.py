@@ -343,8 +343,6 @@ def build_cad():
         disc = _rev(disc_profile(row)); disc.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z[row])
         piece = blade.cut(disc)
         save('A1000_%s_blade' % row, piece); save('A1000_%s_disc' % row, disc)
-        import Mesh                                                   # watertight STL for the FEA mesher (sim/engine/a1000_blade_fea.py)
-        Mesh.Mesh(piece.tessellate(0.01)).write(os.path.join(OUT, 'A1000_%s_blade.stl' % row))
         if '--full' in sys.argv:
             w, B = disc, 6
             for k0 in range(0, Z[row], B):
