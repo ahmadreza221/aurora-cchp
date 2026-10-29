@@ -110,12 +110,12 @@ Design record: `docs/08_aurora1000_1MW_concept.md` §12. Geometry: `cad/engine/a
 
    | Component | Pattern | Colour |
    |---|---|---|
-   | NGV1 | 39 vanes | orange |
+   | NGV1 | 48 vanes | orange |
    | blisk 1 | 59 blades | silver |
-   | NGV2 | 29 vanes | light orange |
+   | NGV2 | 24 vanes | light orange |
    | blisk 2 | 36 blades | blue-grey |
 
    Units are mm and the engine axis is X.
-3. Verify against `parts.json` → `expected`: blisk 1 44.4 kg, blisk 2 52.5 kg, NGV1 8.6 kg, NGV2 14.4 kg, at MAR-M247 8.54 g/cc.
+3. Verify against `parts.json` → `expected`: blisk 1 44.4 kg, blisk 2 52.5 kg, NGV1 7.2 kg, NGV2 17.1 kg, at MAR-M247 8.54 g/cc.
    Fix any Fusion-API problem in the script in the repo.
 4. Save the design as **"AURORA-1000 Turbine rev5"**, take a screenshot for the user, then commit and push.

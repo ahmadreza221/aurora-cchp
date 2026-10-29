@@ -1,7 +1,7 @@
 {
  "A1000_R1_blade": {
   "mass_kg": 0.0346,
-  "vol_cm3": 4.05,
+  "vol_cm3": 4.049,
   "valid": true,
   "solids": 1
  },
@@ -13,7 +13,7 @@
  },
  "A1000_R2_blade": {
   "mass_kg": 0.1393,
-  "vol_cm3": 16.316,
+  "vol_cm3": 16.315,
   "valid": true,
   "solids": 1
  },
@@ -24,34 +24,34 @@
   "solids": 1
  },
  "A1000_N1_vane": {
-  "mass_kg": 0.0611,
-  "vol_cm3": 7.152,
+  "mass_kg": 0.0406,
+  "vol_cm3": 4.75,
   "valid": true,
   "solids": 1
  },
  "A1000_N1_rings": {
-  "mass_kg": 6.1708,
-  "vol_cm3": 722.573,
+  "mass_kg": 5.2892,
+  "vol_cm3": 619.349,
   "valid": true,
   "solids": 2
  },
  "A1000_N2_vane": {
-  "mass_kg": 0.1985,
-  "vol_cm3": 23.241,
+  "mass_kg": 0.2901,
+  "vol_cm3": 33.972,
   "valid": true,
   "solids": 1
  },
  "A1000_N2_rings": {
-  "mass_kg": 8.5928,
-  "vol_cm3": 1006.18,
+  "mass_kg": 10.0987,
+  "vol_cm3": 1182.517,
   "valid": true,
   "solids": 2
  },
  "pattern": {
   "Z": {
-   "N1": 39,
+   "N1": 48,
    "R1": 59,
-   "N2": 29,
+   "N2": 24,
    "R2": 36
   },
   "axis": "x",
@@ -62,19 +62,19 @@
   "rows": {
    "N1": {
     "x_le": 0.0,
-    "x_te": 27.0
+    "x_te": 22.0
    },
    "R1": {
-    "x_le": 35.0,
-    "x_te": 60.96
+    "x_le": 30.0,
+    "x_te": 55.96
    },
    "N2": {
-    "x_le": 69.96,
-    "x_te": 110.46
+    "x_le": 64.96,
+    "x_te": 113.96
    },
    "R2": {
-    "x_le": 121.46,
-    "x_te": 163.46
+    "x_le": 124.96,
+    "x_te": 166.96
    }
   },
   "note": "blade / vane pieces at 0 deg; disc seam and NGV rings rotated by half a pitch (cad/engine/a1000_turbine.py)"
@@ -82,7 +82,7 @@
  "expected": {
   "blisk1_kg": 44.38,
   "blisk2_kg": 52.5,
-  "ngv1_kg": 8.55,
-  "ngv2_kg": 14.35
+  "ngv1_kg": 7.24,
+  "ngv2_kg": 17.06
  }
 }

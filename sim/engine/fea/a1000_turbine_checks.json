@@ -4,66 +4,46 @@
    "metal_C": 870.0,
    "T_root_C": 865.3621748584475,
    "sigma_root_fe": 93.97054468253096,
-   "sigma_root_PA": 100.08630412571436,
-   "sigma_root": 100.08630412571436,
-   "A_net_mm2": 163.48467659289264,
+   "sigma_root_PA": 100.08630412571463,
+   "sigma_root": 100.08630412571463,
+   "A_net_mm2": 163.48467659289247,
    "sigma_allow_1e5h_min": 123.75847002424409,
    "creep_life_h_min": 260037.03412843315,
-   "creep_life_h_typ": 1658870.5899123352,
+   "creep_life_h_typ": 1658870.589912308,
    "vm_max": 187.74047090987068,
    "vm_p99": 144.2628330002572,
    "yield_margin_peak": 3.5687563621892138,
-   "goodman_allow_root": 31.560727702049352,
+   "goodman_allow_root": 31.560727702048982,
    "goodman_allow_peak": 0.0,
    "interference_critical": [
     {
-     "mode": 2,
-     "eo": 39,
-     "f_op": 8663.326,
-     "margin": -0.11145374358974368,
-     "margin_band": -0.09345214024071166,
+     "mode": 6,
+     "eo": 96,
+     "f_op": 24163.21,
+     "margin": 0.00680041666666663,
+     "margin_band": 0.0,
      "crossings": [
-      13317.310729704117
-     ]
-    },
-    {
-     "mode": 3,
-     "eo": 58,
-     "f_op": 14789.9,
-     "margin": 0.019993103448275838,
-     "margin_band": 0.00017822853279245585,
-     "crossings": [
-      15302.752868441572
-     ]
-    },
-    {
-     "mode": 5,
-     "eo": 78,
-     "f_op": 17863.47,
-     "margin": -0.08392461538461532,
-     "margin_band": -0.06527307692307695,
-     "crossings": [
-      13738.418368723525
+      15102.410344149623
      ]
     }
    ],
-   "worst_margin_npf": 0.09345214024071166,
-   "worst_margin_weak": 0.00017822853279245585,
+   "worst_margin_npf": 0.1185752891156463,
+   "worst_margin_weak": 0.0,
    "worst_margin_low_orders": 3.069582588235294,
    "weak_orders_covered": true,
    "cyclic": {
-    "39": {
-     "margin": -0.12630842490842495,
-     "family": 2,
-     "f": 8348.123,
-     "nd": 20,
+    "48": {
+     "margin": -0.1205986394557823,
+     "family": 3,
+     "f": 10341.76,
+     "nd": 11,
      "covered": true
     },
-    "29": {
-     "margin": 0.1303076402974983,
-     "family": 2,
-     "f": 8358.625,
-     "nd": 29,
+    "24": {
+     "margin": -0.1652365646258504,
+     "family": 1,
+     "f": 4908.409,
+     "nd": 24,
      "covered": true
     },
     "1": {
@@ -103,35 +83,28 @@
     }
    },
    "cyclic_weak": {
-    "78": {
-     "margin": -0.06463055991627421,
-     "family": 5,
-     "f": 17874.91,
-     "nd": 19,
-     "covered": true
-    },
-    "58": {
-     "margin": -0.3742575650950036,
+    "96": {
+     "margin": -0.04875297619047612,
      "family": 6,
-     "f": 8891.8,
-     "nd": 1,
+     "f": 22373.33,
+     "nd": 22,
      "covered": true
     },
-    "10": {
-     "margin": 0.880266274509804,
-     "family": 1,
-     "f": 4794.679,
-     "nd": 10,
+    "48": {
+     "margin": -0.1205986394557823,
+     "family": 3,
+     "f": 10341.76,
+     "nd": 11,
      "covered": true
     }
    },
    "weak_orders": [
-    78,
-    58
+    96,
+    48
    ],
-   "potential_2xN2_decay": 0.10510031368224039,
+   "potential_2xN2_decay": 0.15498618051632282,
    "gas_force_N": 49.562825952942134,
-   "gas_bending_MPa": 4.91931370553415,
+   "gas_bending_MPa": 4.919313705534147,
    "freqs_15k": [
     5185.579,
     8663.326,
@@ -143,84 +116,34 @@
     32189.82,
     33983.15,
     39343.79
-   ],
-   "interaction_forced_response": {
-    "eo": 10,
-    "nd": 10,
-    "family": 1,
-    "f": 4794.679,
-    "sigma_resonance": 18.447426395753062,
-    "sigma_15k": 0.10134094335378013,
-    "A_int": 0.01,
-    "zeta": 0.002,
-    "mistune": 1.5
-   }
+   ]
   },
   "R2": {
    "metal_C": 735.0,
    "T_root_C": 723.1830594758,
    "sigma_root_fe": 180.8013579811633,
-   "sigma_root_PA": 187.81206295184373,
-   "sigma_root": 187.81206295184373,
-   "A_net_mm2": 379.262525551443,
+   "sigma_root_PA": 187.81206295184666,
+   "sigma_root": 187.81206295184666,
+   "A_net_mm2": 379.26252555143725,
    "sigma_allow_1e5h_min": 376.37540703895104,
-   "creep_life_h_min": 26673017.859067697,
-   "creep_life_h_typ": 137109674.27517346,
+   "creep_life_h_min": 26673017.859064642,
+   "creep_life_h_typ": 137109674.27515888,
    "vm_max": 361.9170263496631,
    "vm_p99": 279.9481876506736,
    "yield_margin_peak": 2.071607427708127,
-   "goodman_allow_root": 85.16966809016509,
+   "goodman_allow_root": 85.16966809016377,
    "goodman_allow_peak": 0.0,
-   "interference_critical": [
-    {
-     "mode": 1,
-     "eo": 10,
-     "f_op": 2745.65,
-     "margin": 0.09826000000000004,
-     "margin_band": 0.07808666666666671,
-     "crossings": []
-    },
-    {
-     "mode": 4,
-     "eo": 39,
-     "f_op": 9502.286,
-     "margin": -0.025406564102564096,
-     "margin_band": -0.005784751439037231,
-     "crossings": [
-      14613.833248372095
-     ]
-    },
-    {
-     "mode": 5,
-     "eo": 39,
-     "f_op": 10039.19,
-     "margin": 0.029660512820512873,
-     "margin_band": 0.009558169934640573,
-     "crossings": [
-      15446.892352704834
-     ]
-    },
-    {
-     "mode": 6,
-     "eo": 58,
-     "f_op": 14327.07,
-     "margin": -0.011926206896551744,
-     "margin_band": 0.0,
-     "crossings": [
-      14820.081360305465
-     ]
-    }
-   ],
-   "worst_margin_npf": 0.12253187288708586,
-   "worst_margin_weak": 0.0,
+   "interference_critical": [],
+   "worst_margin_npf": 0.18746712585034014,
+   "worst_margin_weak": 0.14639306972789104,
    "worst_margin_low_orders": 1.1561733333333335,
    "weak_orders_covered": true,
    "cyclic": {
-    "29": {
-     "margin": 0.10423204868154162,
-     "family": 4,
-     "f": 8165.796,
-     "nd": 7,
+    "24": {
+     "margin": 0.18190473856209144,
+     "family": 3,
+     "f": 7233.257,
+     "nd": 12,
      "covered": true
     },
     "1": {
@@ -238,9 +161,9 @@
      "covered": true
     },
     "3": {
-     "margin": 1.4038300653594773,
+     "margin": 1.4038026143790852,
      "family": 1,
-     "f": 1838.93,
+     "f": 1838.909,
      "nd": 3,
      "covered": true
     },
@@ -260,35 +183,21 @@
     }
    },
    "cyclic_weak": {
-    "39": {
-     "margin": -0.13558440607012034,
+    "48": {
+     "margin": 0.057508986928104563,
      "family": 6,
-     "f": 8259.491,
-     "nd": 3,
-     "covered": true
-    },
-    "58": {
-     "margin": -0.07704222378606618,
-     "family": 6,
-     "f": 13115.23,
-     "nd": 14,
-     "covered": true
-    },
-    "10": {
-     "margin": 0.00696901960784321,
-     "family": 1,
-     "f": 2567.771,
-     "nd": 10,
+     "f": 12943.91,
+     "nd": 12,
      "covered": true
     }
    },
    "weak_orders": [
-    39,
-    58
+    48,
+    48
    ],
    "potential_2xN2_decay": null,
    "gas_force_N": 81.22796475621072,
-   "gas_bending_MPa": 4.7587934617750065,
+   "gas_bending_MPa": 4.758793461775004,
    "freqs_15k": [
     2745.65,
     4778.965,
@@ -306,18 +215,7 @@
     28705.81,
     29865.03,
     31786.4
-   ],
-   "interaction_forced_response": {
-    "eo": 10,
-    "nd": 10,
-    "family": 1,
-    "f": 2567.771,
-    "sigma_resonance": 17.845475481656273,
-    "sigma_15k": 1.3665622013771181,
-    "A_int": 0.01,
-    "zeta": 0.002,
-    "mistune": 1.5
-   }
+   ]
   }
  },
  "discs": {
@@ -661,36 +559,36 @@
   "criticals": [
    {
     "mode": 1,
-    "N": 3972.548070433569,
-    "f_Hz": 66.20913450722615,
-    "logdec": 1.35920195878339,
-    "AF": 2.3113508873999904,
-    "SM": 72.12246968116793,
+    "N": 3963.9887176976126,
+    "f_Hz": 66.06647862829354,
+    "logdec": 1.352828162689992,
+    "AF": 2.322240725195271,
+    "SM": 72.18253531440273,
     "SM_req": 0.0,
     "ok": true
    },
    {
     "mode": 2,
-    "N": 6796.191479657578,
-    "f_Hz": 113.26985799429298,
-    "logdec": 2.5418977532564138,
-    "AF": 1.2359240845014765,
-    "SM": 52.307428212929274,
+    "N": 6779.857042772202,
+    "f_Hz": 112.99761737953669,
+    "logdec": 2.5388166732713273,
+    "AF": 1.2374239883739908,
+    "SM": 52.42205584019508,
     "SM_req": 0.0,
     "ok": true
    },
    {
     "mode": 3,
-    "N": 23564.372668737666,
-    "f_Hz": 392.7395444789611,
-    "logdec": 0.43095579098429637,
-    "AF": 7.289825822770461,
-    "SM": 49.615064563413746,
-    "SM_req": 24.063814953959113,
+    "N": 23190.508602501057,
+    "f_Hz": 386.50847670835094,
+    "logdec": 0.44460695104357195,
+    "AF": 7.065999859462192,
+    "SM": 47.24132446032417,
+    "SM_req": 23.94574192791255,
     "ok": true
    }
   ],
-  "amp_max_um": 2.447631677893621,
+  "amp_max_um": 2.515619919811754,
   "limit_um": 22.170937647976825
  },
  "tips": {
@@ -733,16 +631,16 @@
    "note": "vm 188 MPa (local, fillet/TE)"
   },
   {
-   "test": "R1 blade EO margin, NPF 39/29",
-   "value": 9.345214024071167,
+   "test": "R1 blade EO margin, NPF 48/24",
+   "value": 11.85752891156463,
    "limit": 10.0,
    "unit": "%",
    "ok": null,
    "note": "rigid hub, worst over 14.7-15.3k rpm"
   },
   {
-   "test": "R1 blade EO margin, weak 78/58",
-   "value": 0.017822853279245585,
+   "test": "R1 blade EO margin, weak 96/48",
+   "value": 0.0,
    "limit": 5.0,
    "unit": "%",
    "ok": null,
@@ -757,28 +655,20 @@
    "note": "rigid hub, band"
   },
   {
-   "test": "R1 blisk (cyclic) EO margin, NPF 39/29",
-   "value": 12.630842490842495,
+   "test": "R1 blisk (cyclic) EO margin, NPF 48/24",
+   "value": 12.059863945578229,
    "limit": 10.0,
    "unit": "%",
    "ok": true,
-   "note": "ND 20 family 2 8348 Hz"
+   "note": "ND 11 family 3 10342 Hz"
   },
   {
-   "test": "R1 blisk (cyclic) EO margin, weak 78/58",
-   "value": 6.463055991627422,
+   "test": "R1 blisk (cyclic) EO margin, weak 96/48",
+   "value": 4.875297619047612,
    "limit": 5.0,
    "unit": "%",
-   "ok": true,
-   "note": "ND 19 family 5 17875 Hz, families 1-6"
-  },
-  {
-   "test": "R1 blisk (cyclic) EO margin, N1-N2 10",
-   "value": 88.0266274509804,
-   "limit": 0.1,
-   "unit": "%",
-   "ok": true,
-   "note": "ND 10 family 1 4795 Hz, families 1-6; outside the band, +91.8 % at 15k"
+   "ok": false,
+   "note": "ND 22 family 6 22373 Hz, modes < 25371 Hz"
   },
   {
    "test": "R1 blisk (cyclic) EO margin, EO 1-5",
@@ -787,14 +677,6 @@
    "unit": "%",
    "ok": true,
    "note": "ND 3 family 1 1779 Hz"
-  },
-  {
-   "test": "R1 EO10 (N1-N2) forced response, estimate",
-   "value": 18.447426395753062,
-   "limit": 15.780363851024676,
-   "unit": "MPa",
-   "ok": false,
-   "note": "at resonance (15k: 0.1 MPa); 1 % load, zeta 0.002, x1.5 mistuning; limit Goodman/2"
   },
   {
    "test": "R1 tip carrier temperature",
@@ -806,7 +688,7 @@
   },
   {
    "test": "R2 blade creep (root, min curve)",
-   "value": 26673017.859067697,
+   "value": 26673017.859064642,
    "limit": 100000.0,
    "unit": "h",
    "ok": true,
@@ -821,16 +703,16 @@
    "note": "vm 362 MPa (local, fillet/TE)"
   },
   {
-   "test": "R2 blade EO margin, NPF 29",
-   "value": 12.253187288708586,
+   "test": "R2 blade EO margin, NPF 24",
+   "value": 18.746712585034015,
    "limit": 10.0,
    "unit": "%",
    "ok": null,
    "note": "rigid hub, worst over 14.7-15.3k rpm"
   },
   {
-   "test": "R2 blade EO margin, weak 39/58",
-   "value": 0.0,
+   "test": "R2 blade EO margin, weak 48/48",
+   "value": 14.639306972789104,
    "limit": 5.0,
    "unit": "%",
    "ok": null,
@@ -845,28 +727,20 @@
    "note": "rigid hub, band"
   },
   {
-   "test": "R2 blisk (cyclic) EO margin, NPF 29",
-   "value": 10.423204868154162,
+   "test": "R2 blisk (cyclic) EO margin, NPF 24",
+   "value": 18.190473856209145,
    "limit": 10.0,
    "unit": "%",
    "ok": true,
-   "note": "ND 7 family 4 8166 Hz"
+   "note": "ND 12 family 3 7233 Hz"
   },
   {
-   "test": "R2 blisk (cyclic) EO margin, weak 39/58",
-   "value": 7.704222378606618,
+   "test": "R2 blisk (cyclic) EO margin, weak 48/48",
+   "value": 5.750898692810456,
    "limit": 5.0,
    "unit": "%",
    "ok": true,
-   "note": "ND 14 family 6 13115 Hz, families 1-6"
-  },
-  {
-   "test": "R2 blisk (cyclic) EO margin, N1-N2 10",
-   "value": 0.696901960784321,
-   "limit": 0.1,
-   "unit": "%",
-   "ok": true,
-   "note": "ND 10 family 1 2568 Hz, families 1-6; outside the band, +2.7 % at 15k"
+   "note": "ND 12 family 6 12944 Hz, modes < 15043 Hz"
   },
   {
    "test": "R2 blisk (cyclic) EO margin, EO 1-5",
@@ -875,14 +749,6 @@
    "unit": "%",
    "ok": true,
    "note": "ND 5 family 1 2435 Hz"
-  },
-  {
-   "test": "R2 EO10 (N1-N2) forced response, estimate",
-   "value": 17.845475481656273,
-   "limit": 42.584834045082545,
-   "unit": "MPa",
-   "ok": true,
-   "note": "at resonance (15k: 1.4 MPa); 1 % load, zeta 0.002, x1.5 mistuning; limit Goodman/2"
   },
   {
    "test": "R2 tip carrier temperature",
@@ -989,32 +855,32 @@
    "note": "328 MPa (Kt 1.3) @ 690 C, de 0.19 %; Grainex LB 9.1e+06"
   },
   {
-   "test": "rotor critical 3973 rpm (AF 2.3)",
-   "value": 72.12246968116793,
+   "test": "rotor critical 3964 rpm (AF 2.3)",
+   "value": 72.18253531440273,
    "limit": 0.0,
    "unit": "%",
    "ok": true,
-   "note": "mode 1, log dec 1.36"
+   "note": "mode 1, log dec 1.35"
   },
   {
-   "test": "rotor critical 6796 rpm (AF 1.2)",
-   "value": 52.307428212929274,
+   "test": "rotor critical 6780 rpm (AF 1.2)",
+   "value": 52.42205584019508,
    "limit": 0.0,
    "unit": "%",
    "ok": true,
    "note": "mode 2, log dec 2.54"
   },
   {
-   "test": "rotor critical 23564 rpm (AF 7.3)",
-   "value": 49.615064563413746,
-   "limit": 24.063814953959113,
+   "test": "rotor critical 23191 rpm (AF 7.1)",
+   "value": 47.24132446032417,
+   "limit": 23.94574192791255,
    "unit": "%",
    "ok": true,
-   "note": "mode 3, log dec 0.43"
+   "note": "mode 3, log dec 0.44"
   },
   {
    "test": "rotor unbalance response (API)",
-   "value": 2.447631677893621,
+   "value": 2.515619919811754,
    "limit": 22.170937647976825,
    "unit": "um",
    "ok": true,
