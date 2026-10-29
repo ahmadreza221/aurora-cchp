@@ -171,7 +171,10 @@ def report(rows):
                                        zweifel=secs[f].zweifel, M_exit=secs[f].M_exit_row, tte=secs[f].tte,
                                        rle=secs[f].rle) for f in rs])
     out['annulus'] = dict(stations=H_ST, rm=RM)
-    json.dump(out, open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json'), 'w'), indent=1, default=float)
+    path = os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')       # atomic: readers never see a half-written file
+    with open(path + '.tmp', 'w') as f:
+        json.dump(out, f, indent=1, default=float)
+    os.replace(path + '.tmp', path)
     return out
 
 

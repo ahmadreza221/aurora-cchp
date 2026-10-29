@@ -50,9 +50,16 @@ def mesh(step, theta0, pitch, rh, cfg):
     gmsh.initialize(); gmsh.option.setNumber('General.Terminal', 0)
     gmsh.model.add('sector'); gmsh.model.occ.importShapes(step); gmsh.model.occ.synchronize()
     def on_plane(tag, th):
+        """face lies in the plane through the x axis at angle th: its vertices AND interior samples (a curved blade-skin
+        patch bounded only by the cut curves has all its vertices on the plane; taken as a cut face it was tied and
+        suppressed the blade flap mode: family 1 at 7.7 kHz instead of ~4.5 kHz)"""
         n = np.array([-math.sin(th), math.cos(th)])
+        d = lambda p: abs(p[1] * n[0] + p[2] * n[1])
         pts = [gmsh.model.getValue(0, t, []) for _, t in gmsh.model.getBoundary([(2, tag)], recursive=True)]
-        return len(pts) >= 3 and all(abs(p[1] * n[0] + p[2] * n[1]) < 1e-3 for p in pts)
+        if len(pts) < 3 or any(d(p) > 1e-3 for p in pts): return False
+        lo, hi = gmsh.model.getParametrizationBounds(2, tag)
+        uv = [(lo[0] + (hi[0] - lo[0]) * a, lo[1] + (hi[1] - lo[1]) * b) for a in (0.2, 0.5, 0.8) for b in (0.2, 0.5, 0.8)]
+        return all(d(gmsh.model.getValue(2, tag, list(q))) < 1e-3 for q in uv)
     th0, th1 = math.radians(theta0), math.radians(theta0 + pitch)
     faces = [t for _, t in gmsh.model.getEntities(2)]
     left = [t for t in faces if on_plane(t, th0)]; right = [t for t in faces if on_plane(t, th1)]
