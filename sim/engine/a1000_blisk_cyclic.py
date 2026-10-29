@@ -36,8 +36,9 @@ FAM = dict(R1=7, R2=10)                                       # most mode famili
 # rev 4: ALL nodal diameters (complete ZZENF), so the vane counts can be chosen on coupled data (rev 3 solved only the NDs
 # of the current orders and the vane-count scan then had no data for the alternatives); R1 7 families reach ~29 kHz
 # (2 x NPF), R2 10 families ~20 kHz (its 2 x NPF orders are checked on the high-ND families + the 16 rigid-hub modes)
-# (R2 restricted to the NDs of EO 1-5 and of the candidate vane orders 43-49 / 86-98 to save ~1 h: ND 0-5, 7-8, 11-14)
-ND_STEPS = dict(R1=[(0, 29, 7)], R2=[(0, 5, 6), (7, 8, 10), (11, 14, 10)])
+# (R2 first ran ND 0-5, 7-8, 11-14; rev 5 added ND 6, 9, 10 with A1000_ND for the vane-count choice: ND 0-14 solved,
+# ND 15-18 not needed by EO 1-5, 29, 39, 58, 10)
+ND_STEPS = dict(R1=[(0, 29, 7)], R2=[(0, 5, 6), (6, 14, 10)])
 # A1000_ND="6:6:10" solves only these groups (nmin:nmax:families, comma separated) and merges them into the saved json
 ND_ADD = [tuple(int(v) for v in g.split(':')) for g in os.environ.get('A1000_ND', '').split(',') if g]
 ROWS = dict(R1=dict(T=870.0, h_blade=1.0, h_disc=5.0), R2=dict(T=735.0, h_blade=1.3, h_disc=6.0))

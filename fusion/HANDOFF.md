@@ -102,20 +102,20 @@ Blade frequencies at 115k (Hz):
 
 Design rule: no 4-fold features in the gas path ahead of the turbine.
 
-## AURORA-1000 (1 MW, geared, 15,000 rpm): two-stage turbine, rev 3
+## AURORA-1000 (1 MW, geared, 15,000 rpm): two-stage turbine, rev 5
 Design record: `docs/08_aurora1000_1MW_concept.md` §12. Geometry: `cad/engine/a1000_turbine.py`.
-1. `git pull`. Check that `fusion/A1000/*.step` (8 files) and `fusion/A1000/parts.json` exist.
+1. `git pull`. Check that `fusion/A1000/*.step` (8 files) and `fusion/A1000/parts.json` exist (`pattern.revision` = "rev 5").
 2. Run `fusion/AURORA1000_Import/AURORA1000_Import.py` through the Fusion MCP, the same way as the E1 import. It builds
-   four coloured components:
+   four coloured components (counts are read from `parts.json`):
 
    | Component | Pattern | Colour |
    |---|---|---|
-   | NGV1 | 43 vanes | orange |
+   | NGV1 | 39 vanes | orange |
    | blisk 1 | 59 blades | silver |
-   | NGV2 | 47 vanes | light orange |
+   | NGV2 | 29 vanes | light orange |
    | blisk 2 | 36 blades | blue-grey |
 
    Units are mm and the engine axis is X.
-3. Verify against `parts.json` → `expected`: blisk 1 44.5 kg, blisk 2 51.0 kg, NGV1 8.4 kg, NGV2 9.9 kg, at MAR-M247 8.54 g/cc.
+3. Verify against `parts.json` → `expected`: blisk 1 44.4 kg, blisk 2 52.5 kg, NGV1 8.6 kg, NGV2 14.4 kg, at MAR-M247 8.54 g/cc.
    Fix any Fusion-API problem in the script in the repo.
-4. Save the design as **"AURORA-1000 Turbine rev3"**, take a screenshot for the user, then commit and push.
+4. Save the design as **"AURORA-1000 Turbine rev5"**, take a screenshot for the user, then commit and push.

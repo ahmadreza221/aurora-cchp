@@ -51,6 +51,12 @@ CX_ROW = dict(N1=S1['cx_ngv'] * 1e3, R1=S1['cx_rot'] * 1e3, N2=S2['cx_ngv'] * 1e
 # 0.76, Kacker-Okapuu secondary loss x 1.44 (~ -0.4 pt turbine efficiency), turbine 14.5 mm longer. 24 vanes also clear
 # (larger margins) but need a 48 mm chord (h/c 0.63, secondary loss x 1.7) and 24 / 36 = 2 / 3 puts 3 x NPF on ND0.
 CX_ROW['N2'] = 40.5
+# rev 5: NGV1 43 -> 39 vanes (EO43 sat on R2 ND7 F6 at 0.0 % and 2 x 43 = EO86 2.9 % from R1 ND27 F6); 39 keeps the
+# Zweifel at <= 1.10 with a 27 mm axial chord (+1 mm). Margins (coupled, grid band): R1 EO39 -12.6 %, R1 EO78 -6.5 %,
+# R2 EO39 (N1 wakes through two rows) -13.6 %. The vane-vane interaction order |39 - 29| = EO10 lies 0.7 % beyond the band
+# edge from the R2 ND10 F1 (2,568 Hz, +2.7 % at 15,000 rpm): a second-order forcing, accepted with the forced-response
+# estimate of docs/08 section 12 and the tip-timing test (fallback: NGV1 29 vanes, no interaction order, NGV1 cx 36 mm)
+CX_ROW['N1'] = 27.0
 X_LE = dict(N1=0.0)
 X_LE['R1'] = X_LE['N1'] + CX_ROW['N1'] + GAP1
 X_LE['N2'] = X_LE['R1'] + CX_ROW['R1'] + GAP2
@@ -62,8 +68,9 @@ H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'], S1['h_ngv_out'] * 1e3),
         (X_TE['R1'] + GAP2 / 2, S1['h_rot_out'] * 1e3), (X_TE['N2'], S2['h_ngv_out'] * 1e3),
         (X_TE['R2'], S2['h_rot_out'] * 1e3)]
 Z = dict(N1=S1['Z_ngv'], R1=S1['Z_rot'], N2=S2['Z_ngv'], R2=S2['Z_rot'])
-# rev 2: NGV1 47 -> 43 vanes: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm (+2 % at 15k); 43 keeps EO43 / EO86 >= 11 % away
-Z['N1'] = 43
+# rev 2: NGV1 47 -> 43 vanes (rigid-hub blades: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm); rev 5: 39 (coupled blisks,
+# see CX_ROW above)
+Z['N1'] = 39
 Z['N2'] = 29
 SPANS = [0.0, 0.25, 0.50, 0.75, 1.0]
 ROW_T0 = dict(N1=S1['T0_in'], R1=S1['T0_in'], N2=S2['T0_in'], R2=S2['T0_in'])

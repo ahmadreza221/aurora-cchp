@@ -1,88 +1,88 @@
 {
  "A1000_R1_blade": {
-  "mass_kg": 0.0375,
-  "vol_cm3": 4.395,
+  "mass_kg": 0.0346,
+  "vol_cm3": 4.05,
   "valid": true,
   "solids": 1
  },
  "A1000_R1_disc": {
-  "mass_kg": 42.2955,
-  "vol_cm3": 4952.638,
+  "mass_kg": 42.3409,
+  "vol_cm3": 4957.949,
   "valid": true,
   "solids": 1
  },
  "A1000_R2_blade": {
   "mass_kg": 0.1393,
-  "vol_cm3": 16.317,
+  "vol_cm3": 16.316,
   "valid": true,
   "solids": 1
  },
  "A1000_R2_disc": {
-  "mass_kg": 46.0234,
-  "vol_cm3": 5389.16,
+  "mass_kg": 47.4837,
+  "vol_cm3": 5560.155,
   "valid": true,
   "solids": 1
  },
  "A1000_N1_vane": {
-  "mass_kg": 0.0548,
-  "vol_cm3": 6.421,
+  "mass_kg": 0.0611,
+  "vol_cm3": 7.152,
   "valid": true,
   "solids": 1
  },
  "A1000_N1_rings": {
-  "mass_kg": 5.9945,
-  "vol_cm3": 701.928,
+  "mass_kg": 6.1708,
+  "vol_cm3": 722.573,
   "valid": true,
   "solids": 2
  },
  "A1000_N2_vane": {
-  "mass_kg": 0.0804,
-  "vol_cm3": 9.411,
+  "mass_kg": 0.1985,
+  "vol_cm3": 23.241,
   "valid": true,
   "solids": 1
  },
  "A1000_N2_rings": {
-  "mass_kg": 6.0239,
-  "vol_cm3": 705.377,
+  "mass_kg": 8.5928,
+  "vol_cm3": 1006.18,
   "valid": true,
   "solids": 2
  },
  "pattern": {
   "Z": {
-   "N1": 43,
+   "N1": 39,
    "R1": 59,
-   "N2": 47,
+   "N2": 29,
    "R2": 36
   },
   "axis": "x",
   "units": "mm",
   "density_g_cc": 8.54,
   "alloy": "MAR-M247",
-  "revision": "rev 4 (work in progress)",
+  "revision": "rev 5",
   "rows": {
    "N1": {
     "x_le": 0.0,
-    "x_te": 26.0
+    "x_te": 27.0
    },
    "R1": {
-    "x_le": 34.0,
-    "x_te": 59.96
+    "x_le": 35.0,
+    "x_te": 60.96
    },
    "N2": {
-    "x_le": 68.96,
-    "x_te": 94.96
+    "x_le": 69.96,
+    "x_te": 110.46
    },
    "R2": {
-    "x_le": 105.96,
-    "x_te": 147.96
+    "x_le": 121.46,
+    "x_te": 163.46
    }
   },
   "note": "blade / vane pieces at 0 deg; disc seam and NGV rings rotated by half a pitch (cad/engine/a1000_turbine.py)"
  },
  "expected": {
-  "blisk1_kg": 44.51,
-  "blisk2_kg": 51.04,
-  "ngv1_kg": 8.35,
-  "ngv2_kg": 9.8
+  "blisk1_kg": 44.38,
+  "blisk2_kg": 52.5,
+  "ngv1_kg": 8.55,
+  "ngv2_kg": 14.35
  }
 }

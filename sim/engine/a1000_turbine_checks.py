@@ -8,8 +8,11 @@ Inputs (run first):  sim/engine/a1000_blade_fea.py R1 / R2   -> fea/a1000_blade_
 Checks (rev 4, after the adversarial review):
   blades  creep rupture of the net section above the fillet on the design MINIMUM Larson-Miller curve, at the hub
           rotor-relative total temperature; net-section stress = max(FE band mean, P/A from the design sections);
-          yield of the peak; engine-order interference over the +-2 % grid band (rigid hub and cyclic blisk);
-          allowable vibratory stress (Goodman, mean-stress intercept = 1e5 h minimum rupture strength in the creep range)
+          yield of the peak; engine-order interference over the +-2 % grid band on the coupled (cyclic) blisk modes:
+          strong 1 x NPF 10 % against all modes, weak orders 5 % against the modes below 1.05 x blade mode 6, the
+          vane-vane interaction |N1 - N2| outside the band + forced-response estimate (rev 5; rigid-hub margins shown
+          for reference only); allowable vibratory stress (Goodman, mean-stress intercept = 1e5 h minimum rupture
+          strength in the creep range)
   discs   yield margin at trip (total stress), burst (area-mean hoop, 85 % UTS), creep on the PRIMARY (mechanical)
           stress, LCF of the start-stop cycle (total stress; Manson universal slopes + Morrow mean stress, factors 2 on
           strain / 20 on life; NASA Grainex MAR-M247 disk data at 649 C as a cross-check)
@@ -41,7 +44,13 @@ MAT_ALPHA = np.array([11.0, 12.6, 13.4, 14.4, 15.0, 15.6]) * 1e-6   # mean CTE f
 # HCF 2e7, R = -1, smooth: 190 (650 C) / 220 (800 C) / 200 MPa (900 C) (Smid et al. 2016); x 0.8 for the cast surface
 SIG_E = dict(R1=165.0, R2=170.0)
 BAND = (0.98, 1.02)                                            # grid-frequency speed band of the constant-speed set
-WEAK_MODES = 6                                                 # weak orders (2 x NPF, wakes through 2 rows): first 6 modes
+WEAK_MODES = 6                                                 # weak orders (2 x NPF, wakes through 2 rows): coupled modes
+                                                               # below 1.05 x the rigid-hub blade mode 6 (rev 5)
+REQ_INT = 0.001                                                # vane-vane interaction |N1 - N2|: no crossing in the grid band
+# forced-response estimate of the interaction order: unsteady load = A_INT x steady gas load (upper estimate: the N1 wake
+# left after two rows ~10 % of the N2 wake, clocking modulation <= 10 % of it; N2 wake unsteady load ~10 % of the steady),
+# blisk damping ZETA (material + aero, lower bound), mistuning amplification MISTUNE; limit = Goodman allowable / 2
+A_INT, ZETA, MISTUNE = 0.01, 0.002, 1.5
 ALPHA_CARRIER = 17.8e-6                                        # shroud carrier 1.4828 (X15CrNiSi20-12), mean 20..500 C
 CARRIER_T_MAX = 600.0                                          # 1.4828 lightly loaded ring, cooled by compressor air: max design T
 TARGET_CLEAR = dict(R1=0.45, R2=0.55)                          # running tip clearance target [mm] (~1.3 % / 1.0 % of height)
@@ -97,22 +106,24 @@ def blade_PA(row, n=41):
     return F_ / As[0], As[0]
 
 
-def cyclic_margins(row, eos, nmax=None):
+def cyclic_margins(row, eos, f_lim=None):
     """band margins of engine orders eos against the coupled blade-disc families (fea/a1000_blisk_<row>_cyclic.json);
-    nmax: only the first nmax families (weak orders), an order above all of them is covered by definition"""
+    f_lim: weak orders, only the modes below f_lim (the band of the first WEAK_MODES blade modes: at low ND the disc modes
+    interleave, so a family index would miss blade modes); covered = the computed families reach above the order or f_lim"""
     c = load('a1000_blisk_%s_cyclic.json' % row)
     if not c: return None
     Z = c['Z']; tab = {int(k): v for k, v in c['freqs'].items()}; out = {}
     for k in eos:
         m = k % Z; nd = min(m, Z - m)
         if nd not in tab: out[k] = None; continue
-        fl = tab[nd][:nmax] if nmax else tab[nd]
+        fk = k * BAND[1] * 15000 / 60 * 1.05
+        fl = [f for f in tab[nd] if f_lim is None or f <= f_lim] or tab[nd][:1]
         best = None
         for fam, f in enumerate(fl):
             mb = [(f - k * b * 15000 / 60) / (k * b * 15000 / 60) for b in BAND]
             mbs = 0.0 if mb[0] * mb[1] <= 0 else min(mb, key=abs)
             if best is None or abs(mbs) < abs(best[0]): best = (mbs, fam + 1, f, nd)
-        covered = bool(nmax) or max(fl) > k * BAND[1] * 15000 / 60 * 1.05
+        covered = max(tab[nd]) > (fk if f_lim is None else min(fk, f_lim))
         out[k] = dict(margin=best[0], family=best[1], f=best[2], nd=best[3], covered=covered)
     return out
 
@@ -159,15 +170,17 @@ def main():
         # counted); the 29 long-chord vanes of rev 5 (s = 50 mm): 0.105 -> 2 x N2 is a weak order on R1
         pf2 = math.exp(-4 * math.pi * A.GAP2 / (2 * math.pi * A.RM / n2))
         weak = ((2 * n1,) + ((2 * n2,) if pf2 >= 0.05 else ())) if row == 'R1' else (n1, 2 * n2)
-        # vane-vane interaction (N1 wakes chopped by NGV2): circumferential order |N1 - N2|, weak on both rotors
-        if abs(n1 - n2) > 5: weak += (abs(n1 - n2),)        # (<= 5: one of the EO 1-5 checks)
+        # vane-vane interaction (N1 wakes chopped by NGV2): circumferential order |N1 - N2| on both rotors, second-order
+        # forcing: no crossing of the first WEAK_MODES families inside the grid band (forced response / tip timing beyond)
+        inter = (abs(n1 - n2),) if abs(n1 - n2) > 5 else ()   # (<= 5: one of the EO 1-5 checks)
         key = 'margin_band' if 'margin_band' in b['interference'][0] else 'margin'
         mg = lambda eos, nm=None: min((abs(r[key]) for r in b['interference'] if r['eo'] in eos and (nm is None or r['mode'] <= nm)),
                                       default=float('nan'))
         # weak orders against the first WEAK_MODES modes (the dense higher modes: forced response / tip timing)
         worst, worst_weak, worst_low = mg(strong), mg(weak, WEAK_MODES), mg((1, 2, 3, 4, 5))
         weak_cov = True
-        cyc = cyclic_margins(row, list(strong) + [1, 2, 3, 4, 5]); cyc_w = cyclic_margins(row, weak, WEAK_MODES)
+        f_lim = 1.05 * b['freqs'][str(15000)][WEAK_MODES - 1]          # band of the first WEAK_MODES blade modes
+        cyc = cyclic_margins(row, list(strong) + [1, 2, 3, 4, 5]); cyc_w = cyclic_margins(row, weak + inter, f_lim)
         # gas bending: tangential force per blade from the stage work, at mid span (estimate, section modulus ~ 0.1 c t^2)
         mdot = 6.32 * 1.017; dh = A.ML['turbine']['dh_tot'] / 2; U_m = A.RM * 1e-3 * A.OM
         Ft = mdot * dh / U_m / A.Z[row]                         # N per blade (torque / (r_m Z))
@@ -195,7 +208,9 @@ def main():
                   info(worst_weak >= 0.05 and weak_cov), 'rigid hub, band, modes 1-%d' % WEAK_MODES),
                  ('%s blade EO margin (EO 1-5)' % row, 100 * worst_low, 10.0, '%', info(worst_low >= 0.10), 'rigid hub, band')]
         if cyc:
-            for lab, eos, req, src in (('NPF', strong, 0.10, cyc), ('weak', weak, 0.05, cyc_w), ('EO 1-5', (1, 2, 3, 4, 5), 0.10, cyc)):
+            for lab, eos, req, src in (('NPF', strong, 0.10, cyc), ('weak', weak, 0.05, cyc_w), ('N1-N2', inter, REQ_INT, cyc_w),
+                                       ('EO 1-5', (1, 2, 3, 4, 5), 0.10, cyc)):
+                if not eos: continue
                 missing = [k for k in eos if not src.get(k)]
                 ms = [src[k] for k in eos if src.get(k)]
                 if not ms: continue
@@ -203,8 +218,22 @@ def main():
                 rows.append(('%s blisk (cyclic) EO margin, %s %s' % (row, lab, '/'.join(map(str, eos))) if lab != 'EO 1-5' else
                              '%s blisk (cyclic) EO margin, EO 1-5' % row, 100 * abs(w['margin']), 100 * req, '%',
                              abs(w['margin']) >= req and cov,
-                             'ND %d family %d %.0f Hz%s%s' % (w['nd'], w['family'], w['f'], '' if req >= 0.10 else ', families 1-%d' % WEAK_MODES,
-                                                             '' if cov else '; NOT COVERED')))
+                             'ND %d family %d %.0f Hz%s%s%s' % (w['nd'], w['family'], w['f'], '' if req >= 0.10 else ', modes < %.0f Hz' % f_lim,
+                                                               '; outside the band, %+.1f %% at 15k' % (100 * (w['f'] - eos[0] * 250.0) / (eos[0] * 250.0))
+                                                               if lab == 'N1-N2' else '', '' if cov else '; NOT COVERED')))
+        for k in inter:
+            q = (cyc_w or {}).get(k)
+            if not q: continue
+            amp = lambda r: 1.0 / math.hypot(1 - r * r, 2 * ZETA * r)
+            rb = [k * b * 250.0 / q['f'] for b in BAND]             # frequency ratio at the band edges
+            r_w = 1.0 if (rb[0] - 1) * (rb[1] - 1) <= 0 else min(rb, key=lambda r: abs(r - 1))
+            s_band, s_res, s_op = (s_gas * A_INT * amp(r) * MISTUNE for r in (r_w, 1.0, k * 250.0 / q['f']))
+            out['blades'][row]['interaction_forced_response'] = dict(eo=k, nd=q['nd'], family=q['family'], f=q['f'],
+                                                                     sigma_band=s_band, sigma_resonance=s_res, sigma_15k=s_op,
+                                                                     A_int=A_INT, zeta=ZETA, mistune=MISTUNE)
+            rows.append(('%s EO%d (N1-N2) forced response, estimate' % (row, k), s_band, sa_root / 2, 'MPa', s_band <= sa_root / 2,
+                         'worst in band (15k %.1f, resonance %.1f MPa); %.0f %% load, zeta %.3f, x%.1f mistuning; Goodman/2' % (
+                             s_op, s_res, 100 * A_INT, ZETA, MISTUNE)))
         print('%s blade: net section %.0f MPa (FE %.0f, P/A %.0f) at %.0f C (hub T0rel) -> min-curve life %.1e h (typ %.1e), '
               'allowable 1e5 h %.0f MPa; peak vm %.0f (margin %.2f); Goodman allow %.0f MPa root / %.0f peak; gas bending ~%.0f MPa; '
               'EO band margins NPF %.1f %%, weak %.1f %%, EO1-5 %.1f %%' % (
@@ -277,7 +306,7 @@ def plot(rows):
     ys = np.arange(len(rows))[::-1]
     for y, (t, v, l, u, o, n) in zip(ys, rows):
         # margin ratio: >1 passes (for the carrier temperature and the vibration the limit is an upper bound)
-        upper = u in ('C', 'um')
+        upper = u in ('C', 'um', 'MPa')
         if u == '%': ratio = (v + 1e-9) / l if l > 0 else 2.0 + min(v / 50, 1.0)
         elif upper: ratio = l / v
         elif u in ('h', 'cyc'): ratio = math.log10(max(v, 1.0)) / math.log10(l)
