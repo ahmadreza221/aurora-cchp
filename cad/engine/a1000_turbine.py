@@ -364,5 +364,72 @@ def build_cad():
     json.dump(info, open(os.path.join(OUT, 'A1000_parts.json'), 'w'), indent=1, default=float)
 
 
+R_IN_SECTOR = 60.0                                 # cyclic sector: inner cut of the disc (held at the curvic hub faces)
+
+
+def build_sector(row):
+    """1/Z cyclic-symmetry sector of a blisk for CalculiX (sim/engine/a1000_blisk_cyclic.py): disc between r = R_IN_SECTOR and
+    the platform, cut by two radial planes one pitch apart through the blade stacking line; the sector is
+    (disc + blades -1, 0, +1) x wedge, so both cut faces match exactly"""
+    App, Part, V = _fc()
+    # the exported pieces (--cad) are used, the same as in the blade FEA; booleans on the re-read BREPs are also the robust
+    # ones (the in-memory pieces gave empty fuse results for R2)
+    piece = Part.Shape(); piece.read(os.path.join(OUT, 'A1000_%s_blade.brep' % row))
+    disc = Part.Shape(); disc.read(os.path.join(OUT, 'A1000_%s_disc.brep' % row))
+    rh = row_radius(row, 0.0)
+    th = []
+    for f in piece.Faces:
+        u0, u1, v0, v1 = f.ParameterRange
+        for i in range(31):
+            for j in range(31):
+                p = f.valueAt(u0 + (u1 - u0) * i / 30, v0 + (v1 - v0) * j / 30)
+                if math.hypot(p.y, p.z) <= rh + 0.25 and f.isInside(p, 1e-4, True): th.append(math.atan2(p.z, p.y))
+    pitch = 2 * math.pi / Z[row]; th_lo, th_hi = min(th), max(th)
+    # cut planes near the centroid stacking line (theta = 0) of blade 0 and blade +1: the blades are cut where they are
+    # thickest at every span (a plane between the roots crosses the thin LE / TE of a neighbour: invalid sliver fuse).
+    # The disc is fused with blades -1, 0, +1 first and the wedge taken from that (fusing the disc sector with the cut blade
+    # fragments returned reversed / empty solids for R2); a result failing the volume check is retried at an offset.
+    poly = disc_profile(row); xa, xb = min(x for x, r in poly) - 2.0, max(x for x, r in poly) + 2.0
+    Rw = rh + 80.0
+    blades = []
+    for k in (-1, 0, 1):
+        bk = piece.copy(); bk.rotate(V(0, 0, 0), V(1, 0, 0), math.degrees(k * pitch)); blades.append(bk)
+    full = disc.fuse(blades)
+    hole = Part.makeCylinder(R_IN_SECTOR, xb - xa, V(xa, 0, 0), V(1, 0, 0))
+    def n_cut_faces(q, th):                                      # faces lying in the plane through the axis at angle th
+        nrm = (-math.sin(th), math.cos(th))
+        return sum(1 for f in q.Faces if all(abs(v.Point.y * nrm[0] + v.Point.z * nrm[1]) < 1e-4 for v in f.Vertexes))
+    for theta0 in [math.radians(a) for a in (0.0, 0.35, -0.35, 0.7, -0.7)]:
+        tri = Part.makePolygon([V(xa, 0, 0), V(xa, Rw * math.cos(theta0), Rw * math.sin(theta0)),
+                                V(xa, Rw * math.cos(theta0 + pitch), Rw * math.sin(theta0 + pitch)), V(xa, 0, 0)])
+        wedge = Part.Face(tri).extrude(V(xb - xa, 0, 0))
+        disc_cut = disc.common(wedge).cut(hole)
+        v_exp = disc_cut.Volume + piece.Volume
+        ok = lambda q: len(q.Solids) == 1 and q.isValid() and abs(abs(q.Solids[0].Volume) - v_exp) < 0.05 * v_exp
+        sector = full.common(wedge).cut(hole)
+        try:                                                      # merge the coplanar cut faces (one face per cut plane)
+            s2 = sector.removeSplitter()
+            if ok(s2): sector = s2
+        except Exception: pass
+        nl_, nr_ = n_cut_faces(sector, theta0), n_cut_faces(sector, theta0 + pitch)
+        if ok(sector): break     # cut faces may split differently on the two planes: CalculiX ties non-matching meshes
+        print('  theta0 %.2f deg: %d solids %s, cut faces %d / %d, retry' % (
+            math.degrees(theta0), len(sector.Solids), [round(q.Volume) for q in sector.Solids], nl_, nr_), flush=True)
+    clear = min(th_lo - theta0, theta0 + pitch - th_hi)
+    sols = [q for q in sector.Solids if abs(q.Volume) > 1.0]      # (a reversed solid reports a negative volume)
+    print('%s sector: solids %d, vol %.0f mm3 (disc %.0f + blade %.0f), valid %s' % (
+        row, len(sols), sum(abs(q.Volume) for q in sols), disc_cut.Volume, piece.Volume, sector.isValid()), flush=True)
+    if len(sols) != 1: raise SystemExit('sector is not a single solid')
+    os.makedirs(OUT, exist_ok=True)
+    sols[0].exportStep(os.path.join(OUT, 'A1000_%s_sector.step' % row))
+    print('%s cut faces on the planes: %d / %d' % (row, nl_, nr_), flush=True)
+    json.dump(dict(row=row, Z=Z[row], theta0_deg=math.degrees(theta0), pitch_deg=math.degrees(pitch), r_in=R_IN_SECTOR,
+                   clearance_deg=math.degrees(clear), vol_mm3=abs(sols[0].Volume)),
+              open(os.path.join(OUT, 'A1000_%s_sector.json' % row), 'w'), indent=1)
+
+
 if '--cad' in sys.argv:
     build_cad()
+if '--sector' in sys.argv:
+    for row_ in [a for a in sys.argv if a in ('R1', 'R2')] or ['R1', 'R2']:
+        build_sector(row_)
