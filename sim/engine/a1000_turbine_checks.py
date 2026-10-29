@@ -97,20 +97,22 @@ def blade_PA(row, n=41):
     return F_ / As[0], As[0]
 
 
-def cyclic_margins(row, eos):
-    """band margins of engine orders eos against the coupled blade-disc families (fea/a1000_blisk_<row>_cyclic.json)"""
+def cyclic_margins(row, eos, nmax=None):
+    """band margins of engine orders eos against the coupled blade-disc families (fea/a1000_blisk_<row>_cyclic.json);
+    nmax: only the first nmax families (weak orders), an order above all of them is covered by definition"""
     c = load('a1000_blisk_%s_cyclic.json' % row)
     if not c: return None
     Z = c['Z']; tab = {int(k): v for k, v in c['freqs'].items()}; out = {}
     for k in eos:
         m = k % Z; nd = min(m, Z - m)
         if nd not in tab: out[k] = None; continue
+        fl = tab[nd][:nmax] if nmax else tab[nd]
         best = None
-        for fam, f in enumerate(tab[nd]):
+        for fam, f in enumerate(fl):
             mb = [(f - k * b * 15000 / 60) / (k * b * 15000 / 60) for b in BAND]
             mbs = 0.0 if mb[0] * mb[1] <= 0 else min(mb, key=abs)
             if best is None or abs(mbs) < abs(best[0]): best = (mbs, fam + 1, f, nd)
-        top = max(tab[nd]); covered = top > k * BAND[1] * 15000 / 60 * 1.05
+        covered = bool(nmax) or max(fl) > k * BAND[1] * 15000 / 60 * 1.05
         out[k] = dict(margin=best[0], family=best[1], f=best[2], nd=best[3], covered=covered)
     return out
 
@@ -153,15 +155,19 @@ def main():
         # stator orders: strong = 1 x NPF of the adjacent rows (10 %), weak = 2 x NPF and wakes through two rows (5 %)
         v = b.get('vanes', {}); n1, n2 = v.get('N1', 43), v.get('N2', 47)
         strong = (n1, n2) if row == 'R1' else (n2,)
-        # (R1: the 2nd harmonic of the downstream N2 potential field decays as exp(-4 pi g/s) = 0.026: not counted)
-        weak = (2 * n1,) if row == 'R1' else (n1, 2 * n2)
+        # R1: the 2nd harmonic of the downstream N2 potential field decays as exp(-4 pi g / s) (47 vanes: 0.026, not
+        # counted); the 29 long-chord vanes of rev 5 (s = 50 mm): 0.105 -> 2 x N2 is a weak order on R1
+        pf2 = math.exp(-4 * math.pi * A.GAP2 / (2 * math.pi * A.RM / n2))
+        weak = ((2 * n1,) + ((2 * n2,) if pf2 >= 0.05 else ())) if row == 'R1' else (n1, 2 * n2)
+        # vane-vane interaction (N1 wakes chopped by NGV2): circumferential order |N1 - N2|, weak on both rotors
+        if abs(n1 - n2) > 5: weak += (abs(n1 - n2),)        # (<= 5: one of the EO 1-5 checks)
         key = 'margin_band' if 'margin_band' in b['interference'][0] else 'margin'
         mg = lambda eos, nm=None: min((abs(r[key]) for r in b['interference'] if r['eo'] in eos and (nm is None or r['mode'] <= nm)),
                                       default=float('nan'))
         # weak orders against the first WEAK_MODES modes (the dense higher modes: forced response / tip timing)
         worst, worst_weak, worst_low = mg(strong), mg(weak, WEAK_MODES), mg((1, 2, 3, 4, 5))
         weak_cov = True
-        cyc = cyclic_margins(row, list(strong) + list(weak) + [1, 2, 3, 4, 5])
+        cyc = cyclic_margins(row, list(strong) + [1, 2, 3, 4, 5]); cyc_w = cyclic_margins(row, weak, WEAK_MODES)
         # gas bending: tangential force per blade from the stage work, at mid span (estimate, section modulus ~ 0.1 c t^2)
         mdot = 6.32 * 1.017; dh = A.ML['turbine']['dh_tot'] / 2; U_m = A.RM * 1e-3 * A.OM
         Ft = mdot * dh / U_m / A.Z[row]                         # N per blade (torque / (r_m Z))
@@ -174,24 +180,31 @@ def main():
                                   creep_life_h_typ=life_typ, vm_max=s['vm_max'], vm_p99=s['vm_p99'], yield_margin_peak=y_margin,
                                   goodman_allow_root=sa_root, goodman_allow_peak=sa_peak, interference_critical=crit,
                                   worst_margin_npf=worst, worst_margin_weak=worst_weak, worst_margin_low_orders=worst_low,
-                                  weak_orders_covered=weak_cov, cyclic=cyc, gas_force_N=Ft, gas_bending_MPa=s_gas,
+                                  weak_orders_covered=weak_cov, cyclic=cyc, cyclic_weak=cyc_w, weak_orders=weak,
+                                  potential_2xN2_decay=pf2 if row == 'R1' else None, gas_force_N=Ft, gas_bending_MPa=s_gas,
                                   freqs_15k=b['freqs'][str(15000)])
+        # rigid-hub margins: shown for reference only (ok = None) when the coupled blisk model exists, which governs: the
+        # disc lowers the low-ND families and the rigid hub is not the engine (rev 5)
+        info = (lambda ok: None) if cyc else (lambda ok: ok)
         rows += [('%s blade creep (root, min curve)' % row, life, LIFE_TARGET, 'h', life >= LIFE_TARGET,
                   '%.0f MPa (FE %.0f / P/A %.0f) @ %.0f C; allow %.0f' % (s_root, s['srr_root_mean'], s_pa, T_root, s_allow)),
                  ('%s blade peak / yield' % row, y_margin, 1.0, '-', y_margin >= 1.0, 'vm %.0f MPa (local, fillet/TE)' % s['vm_max']),
-                 ('%s blade EO margin, NPF %s' % (row, '/'.join(map(str, strong))), 100 * worst, 10.0, '%', worst >= 0.10,
+                 ('%s blade EO margin, NPF %s' % (row, '/'.join(map(str, strong))), 100 * worst, 10.0, '%', info(worst >= 0.10),
                   'rigid hub, worst over 14.7-15.3k rpm'),
                  ('%s blade EO margin, weak %s' % (row, '/'.join(map(str, weak))), 100 * worst_weak, 5.0, '%',
-                  worst_weak >= 0.05 and weak_cov, 'rigid hub, band, modes 1-%d' % WEAK_MODES),
-                 ('%s blade EO margin (EO 1-5)' % row, 100 * worst_low, 10.0, '%', worst_low >= 0.10, 'rigid hub, band')]
+                  info(worst_weak >= 0.05 and weak_cov), 'rigid hub, band, modes 1-%d' % WEAK_MODES),
+                 ('%s blade EO margin (EO 1-5)' % row, 100 * worst_low, 10.0, '%', info(worst_low >= 0.10), 'rigid hub, band')]
         if cyc:
-            for lab, eos, req in (('NPF', strong, 0.10), ('weak', weak, 0.05), ('EO 1-5', (1, 2, 3, 4, 5), 0.10)):
-                ms = [cyc[k] for k in eos if cyc.get(k) and (req >= 0.10 or cyc[k]['family'] <= WEAK_MODES)]
+            for lab, eos, req, src in (('NPF', strong, 0.10, cyc), ('weak', weak, 0.05, cyc_w), ('EO 1-5', (1, 2, 3, 4, 5), 0.10, cyc)):
+                missing = [k for k in eos if not src.get(k)]
+                ms = [src[k] for k in eos if src.get(k)]
                 if not ms: continue
-                w = min(ms, key=lambda q: abs(q['margin'])); cov = all(q['covered'] for q in ms)
-                rows.append(('%s blisk (cyclic) EO margin, %s' % (row, lab), 100 * abs(w['margin']), 100 * req, '%',
-                             abs(w['margin']) >= req and cov, 'ND %d family %d %.0f Hz%s' % (w['nd'], w['family'], w['f'],
-                                                                                           '' if cov else '; NOT COVERED')))
+                w = min(ms, key=lambda q: abs(q['margin'])); cov = all(q['covered'] for q in ms) and not missing
+                rows.append(('%s blisk (cyclic) EO margin, %s %s' % (row, lab, '/'.join(map(str, eos))) if lab != 'EO 1-5' else
+                             '%s blisk (cyclic) EO margin, EO 1-5' % row, 100 * abs(w['margin']), 100 * req, '%',
+                             abs(w['margin']) >= req and cov,
+                             'ND %d family %d %.0f Hz%s%s' % (w['nd'], w['family'], w['f'], '' if req >= 0.10 else ', families 1-%d' % WEAK_MODES,
+                                                             '' if cov else '; NOT COVERED')))
         print('%s blade: net section %.0f MPa (FE %.0f, P/A %.0f) at %.0f C (hub T0rel) -> min-curve life %.1e h (typ %.1e), '
               'allowable 1e5 h %.0f MPa; peak vm %.0f (margin %.2f); Goodman allow %.0f MPa root / %.0f peak; gas bending ~%.0f MPa; '
               'EO band margins NPF %.1f %%, weak %.1f %%, EO1-5 %.1f %%' % (
@@ -246,13 +259,15 @@ def main():
         amax = max(sel['amp_max_operating_um'].values()); lim = 25.4 * math.sqrt(12000 / 15750.0)
         rows.append(('rotor unbalance response (API)', amax, lim, 'um', amax <= lim, 'pk-pk at the journals'))
         out['rotor'] = dict(selected=rd['selected'], criticals=sel['damped_criticals'], amp_max_um=amax, limit_um=lim)
-    out['sheet'] = [dict(test=t, value=v, limit=l, unit=u, ok=bool(o), note=n) for t, v, l, u, o, n in rows]
+    out['sheet'] = [dict(test=t, value=v, limit=l, unit=u, ok=None if o is None else bool(o), note=n) for t, v, l, u, o, n in rows]
     json.dump(out, open(os.path.join(FEA, 'a1000_turbine_checks.json'), 'w'), indent=1, default=float)
     print('\n%-44s %12s %12s  %s' % ('check', 'value', 'limit', 'result'))
     for t, v, l, u, o, n in rows:
         fmt = (lambda z: '%.2e' % z) if u in ('h', 'cyc') else (lambda z: '%.2f' % z if abs(z) < 10 else '%.0f' % z)
-        print('%-44s %10s %-3s %10s %-3s %s  %s' % (t, fmt(v), u, fmt(l), u, 'PASS' if o else 'FAIL', n))
-    print('%d checks, %d pass, %d fail' % (len(rows), sum(1 for r in rows if r[4]), sum(1 for r in rows if not r[4])))
+        print('%-44s %10s %-3s %10s %-3s %s  %s' % (t, fmt(v), u, fmt(l), u, 'info' if o is None else ('PASS' if o else 'FAIL'), n))
+    crit = [r for r in rows if r[4] is not None]
+    print('%d checks, %d pass, %d fail (+ %d for reference)' % (len(crit), sum(1 for r in crit if r[4]),
+                                                               sum(1 for r in crit if not r[4]), len(rows) - len(crit)))
     plot(rows)
 
 
@@ -268,13 +283,13 @@ def plot(rows):
         elif u in ('h', 'cyc'): ratio = math.log10(max(v, 1.0)) / math.log10(l)
         else: ratio = v / l
         ratio = min(ratio, 3.0)
-        ax.barh(y, ratio, color='#2e7d32' if o else '#c62828', alpha=0.85)
+        ax.barh(y, ratio, color='#9e9e9e' if o is None else ('#2e7d32' if o else '#c62828'), alpha=0.85)
         lab = ('%.1e %s' % (v, u)) if u in ('h', 'cyc') else ('%.2f %s' % (v, u) if abs(v) < 10 else '%.0f %s' % (v, u))
         ax.text(min(ratio, 3.0) + 0.03, y, '%s   (%s)' % (lab, n), va='center', fontsize=7.5)
     ax.axvline(1.0, color='k', lw=1.2)
     ax.set_yticks(ys); ax.set_yticklabels([r[0] for r in rows], fontsize=8)
     ax.set_xlim(0, 4.6); ax.set_xlabel('margin ratio (value / requirement; lives and cycles on a log scale; 1 = limit)')
-    ax.set_title('AURORA-1000 turbine design checks (FE: CalculiX; green = pass)', fontsize=11)
+    ax.set_title('AURORA-1000 turbine design checks (FE: CalculiX; green = pass, grey = reference only)', fontsize=11)
     ax.grid(axis='x', alpha=0.3); fig.tight_layout()
     fig.savefig(os.path.join(ROOT, 'docs', 'img', 'a1000_turbine_checks.png')); print('written docs/img/a1000_turbine_checks.png')
 

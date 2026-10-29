@@ -38,8 +38,9 @@ MAT_E = np.array([200e3, 186e3, 176e3, 163e3, 156e3, 148e3])
 MAT_YS = np.array([815., 790., 770., 740., 640., 450.])        # 0.2 % yield, typical (rev 4 data search)
 RHO = 8.54e-9                                                   # t/mm3
 _ZN1, _ZN2 = DES['N1']['Z'], DES['N2']['Z']                    # vane counts of the current design (rev 3: 43 / 47)
-ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, _ZN1, _ZN2, 2 * _ZN1, 2 * _ZN2], h=0.8),
-            R2=dict(T=735.0, EO=[1, 2, 3, 4, 5, _ZN2, _ZN1, 2 * _ZN2], h=1.1))
+_DZ = [abs(_ZN1 - _ZN2)] if abs(_ZN1 - _ZN2) > 5 else []     # vane-vane interaction order (rev 5)
+ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, _ZN1, _ZN2, 2 * _ZN1, 2 * _ZN2] + _DZ, h=0.8),
+            R2=dict(T=735.0, EO=[1, 2, 3, 4, 5, _ZN2, _ZN1, 2 * _ZN2] + _DZ, h=1.1))
 BAND = (0.98, 1.02)                # grid-frequency band of the constant-speed set: margins are checked over 14,700-15,300 rpm
 CURV = 10                                                       # gmsh elements per 2 pi of surface curvature
 

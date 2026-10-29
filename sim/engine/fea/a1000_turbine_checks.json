@@ -31,7 +31,70 @@
    "worst_margin_weak": 0.10191992704058364,
    "worst_margin_low_orders": 3.069582588235294,
    "weak_orders_covered": true,
-   "cyclic": null,
+   "cyclic": {
+    "43": {
+     "margin": 0.1625836753305973,
+     "family": 3,
+     "f": 12747.73,
+     "nd": 16,
+     "covered": true
+    },
+    "47": {
+     "margin": -0.03500564481111595,
+     "family": 3,
+     "f": 11111.91,
+     "nd": 12,
+     "covered": true
+    },
+    "1": {
+     "margin": 4.333623529411765,
+     "family": 1,
+     "f": 1360.074,
+     "nd": 1,
+     "covered": true
+    },
+    "2": {
+     "margin": 1.7744019607843136,
+     "family": 1,
+     "f": 1414.945,
+     "nd": 2,
+     "covered": true
+    },
+    "3": {
+     "margin": 1.3255071895424835,
+     "family": 1,
+     "f": 1779.013,
+     "nd": 3,
+     "covered": true
+    },
+    "4": {
+     "margin": 1.3696588235294118,
+     "family": 1,
+     "f": 2417.052,
+     "nd": 4,
+     "covered": true
+    },
+    "5": {
+     "margin": 1.5059811764705884,
+     "family": 1,
+     "f": 3195.126,
+     "nd": 5,
+     "covered": true
+    }
+   },
+   "cyclic_weak": {
+    "86": {
+     "margin": 0.028807569539443686,
+     "family": 6,
+     "f": 22561.75,
+     "nd": 27,
+     "covered": true
+    }
+   },
+   "weak_orders": [
+    86
+   ],
+   "potential_2xN2_decay": 0.025961139088844013,
    "gas_force_N": 49.562825952942134,
    "gas_bending_MPa": 4.91931370553415,
    "freqs_15k": [
@@ -108,7 +171,71 @@
    "worst_margin_weak": 0.0471364499288086,
    "worst_margin_low_orders": 1.1561733333333335,
    "weak_orders_covered": true,
-   "cyclic": null,
+   "cyclic": {
+    "47": {
+     "margin": 0.06739841468502299,
+     "family": 6,
+     "f": 12792.77,
+     "nd": 11,
+     "covered": true
+    },
+    "1": {
+     "margin": 4.521721568627451,
+     "family": 1,
+     "f": 1408.039,
+     "nd": 1,
+     "covered": true
+    },
+    "2": {
+     "margin": 1.857070588235294,
+     "family": 1,
+     "f": 1457.106,
+     "nd": 2,
+     "covered": true
+    },
+    "3": {
+     "margin": 1.4038300653594773,
+     "family": 1,
+     "f": 1838.93,
+     "nd": 3,
+     "covered": true
+    },
+    "4": {
+     "margin": 1.208691176470588,
+     "family": 1,
+     "f": 2252.865,
+     "nd": 4,
+     "covered": true
+    },
+    "5": {
+     "margin": 0.9098603921568629,
+     "family": 1,
+     "f": 2435.072,
+     "nd": 5,
+     "covered": true
+    }
+   },
+   "cyclic_weak": {
+    "43": {
+     "margin": 0.0,
+     "family": 6,
+     "f": 10748.78,
+     "nd": 7,
+     "covered": true
+    },
+    "94": {
+     "margin": -0.43051541467650895,
+     "family": 6,
+     "f": 13115.23,
+     "nd": 14,
+     "covered": true
+    }
+   },
+   "weak_orders": [
+    43,
+    94
+   ],
+   "potential_2xN2_decay": null,
    "gas_force_N": 81.22796475621072,
    "gas_bending_MPa": 4.758793461775007,
    "freqs_15k": [
@@ -548,7 +675,7 @@
    "value": 17.778217370669196,
    "limit": 10.0,
    "unit": "%",
-   "ok": true,
+   "ok": null,
    "note": "rigid hub, worst over 14.7-15.3k rpm"
   },
   {
@@ -556,7 +683,7 @@
    "value": 10.191992704058364,
    "limit": 5.0,
    "unit": "%",
-   "ok": true,
+   "ok": null,
    "note": "rigid hub, band, modes 1-6"
   },
   {
@@ -564,8 +691,32 @@
    "value": 306.9582588235294,
    "limit": 10.0,
    "unit": "%",
-   "ok": true,
+   "ok": null,
    "note": "rigid hub, band"
+  },
+  {
+   "test": "R1 blisk (cyclic) EO margin, NPF 43/47",
+   "value": 3.500564481111595,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": false,
+   "note": "ND 12 family 3 11112 Hz"
+  },
+  {
+   "test": "R1 blisk (cyclic) EO margin, weak 86",
+   "value": 2.8807569539443687,
+   "limit": 5.0,
+   "unit": "%",
+   "ok": false,
+   "note": "ND 27 family 6 22562 Hz, families 1-6"
+  },
+  {
+   "test": "R1 blisk (cyclic) EO margin, EO 1-5",
+   "value": 132.55071895424834,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": true,
+   "note": "ND 3 family 1 1779 Hz"
   },
   {
    "test": "R1 tip carrier temperature",
@@ -596,7 +747,7 @@
    "value": 12.82312201476334,
    "limit": 10.0,
    "unit": "%",
-   "ok": true,
+   "ok": null,
    "note": "rigid hub, worst over 14.7-15.3k rpm"
   },
   {
@@ -604,7 +755,7 @@
    "value": 4.713644992880861,
    "limit": 5.0,
    "unit": "%",
-   "ok": false,
+   "ok": null,
    "note": "rigid hub, band, modes 1-6"
   },
   {
@@ -612,8 +763,32 @@
    "value": 115.61733333333335,
    "limit": 10.0,
    "unit": "%",
-   "ok": true,
+   "ok": null,
    "note": "rigid hub, band"
+  },
+  {
+   "test": "R2 blisk (cyclic) EO margin, NPF 47",
+   "value": 6.7398414685022985,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": false,
+   "note": "ND 11 family 6 12793 Hz"
+  },
+  {
+   "test": "R2 blisk (cyclic) EO margin, weak 43/94",
+   "value": 0.0,
+   "limit": 5.0,
+   "unit": "%",
+   "ok": false,
+   "note": "ND 7 family 6 10749 Hz, families 1-6"
+  },
+  {
+   "test": "R2 blisk (cyclic) EO margin, EO 1-5",
+   "value": 90.98603921568629,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": true,
+   "note": "ND 5 family 1 2435 Hz"
   },
   {
    "test": "R2 tip carrier temperature",

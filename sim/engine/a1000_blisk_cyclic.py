@@ -10,6 +10,7 @@ temperature, disc field as in a1000_disc_fea.py (E(T) only, no thermal stress). 
 perturbation *FREQUENCY per nodal diameter.
 Engine order k excites ND n = k mod Z folded to 0..Z/2.
 Run:    python sim/engine/a1000_blisk_cyclic.py [R1|R2]       (CCX = path to ccx)
+        ... [R1|R2] --post      re-score the saved families against the current vane counts (no solve)
 Writes: sim/engine/fea/a1000_blisk_<row>_cyclic.json, docs/img/a1000_<row>_zzenf.png
 """
 import json
@@ -37,10 +38,13 @@ FAM = dict(R1=7, R2=10)                                       # most mode famili
 # (2 x NPF), R2 10 families ~20 kHz (its 2 x NPF orders are checked on the high-ND families + the 16 rigid-hub modes)
 # (R2 restricted to the NDs of EO 1-5 and of the candidate vane orders 43-49 / 86-98 to save ~1 h: ND 0-5, 7-8, 11-14)
 ND_STEPS = dict(R1=[(0, 29, 7)], R2=[(0, 5, 6), (7, 8, 10), (11, 14, 10)])
+# A1000_ND="6:6:10" solves only these groups (nmin:nmax:families, comma separated) and merges them into the saved json
+ND_ADD = [tuple(int(v) for v in g.split(':')) for g in os.environ.get('A1000_ND', '').split(',') if g]
 ROWS = dict(R1=dict(T=870.0, h_blade=1.0, h_disc=5.0), R2=dict(T=735.0, h_blade=1.3, h_disc=6.0))
 NGV = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 Z_N1, Z_N2 = NGV['N1']['Z'], NGV['N2']['Z']
-EO = dict(R1=[1, 2, 3, 4, 5, Z_N1, Z_N2, 2 * Z_N1, 2 * Z_N2], R2=[1, 2, 3, 4, 5, Z_N2, Z_N1, 2 * Z_N2])
+_DZ = [abs(Z_N1 - Z_N2)] if abs(Z_N1 - Z_N2) > 5 else []     # vane-vane interaction order (rev 5)
+EO = dict(R1=[1, 2, 3, 4, 5, Z_N1, Z_N2, 2 * Z_N1, 2 * Z_N2] + _DZ, R2=[1, 2, 3, 4, 5, Z_N2, Z_N1, 2 * Z_N2] + _DZ)
 
 
 def nd_of(k, Z):
@@ -145,6 +149,10 @@ def run(row, nodes, els, nl, nr, meta, nds, tag):
 
 def main():
     row = sys.argv[1] if len(sys.argv) > 1 else 'R1'
+    out = os.path.join(FEA, 'a1000_blisk_%s_cyclic.json' % row)
+    if '--post' in sys.argv:                                  # re-score the saved families against the current vane counts
+        d = json.load(open(out))
+        return post(row, d['Z'], {int(k): v for k, v in d['freqs'].items()}, d['mesh'], out)
     meta = json.load(open(os.path.join(CAD, 'A1000_%s_sector.json' % row)))
     sys.argv_saved = list(sys.argv); sys.argv = [sys.argv[0], '--quiet']
     sys.path.insert(0, os.path.join(ROOT, 'cad', 'engine')); import a1000_turbine as A   # noqa: E401
@@ -153,10 +161,18 @@ def main():
     nodes, els, nl, nr = mesh(os.path.join(CAD, 'A1000_%s_sector.step' % row), meta['theta0_deg'], meta['pitch_deg'],
                               meta['rh'], ROWS[row])
     print('%s sector mesh: %d nodes, %d C3D10, cut faces %d / %d nodes' % (row, len(nodes), len(els), len(nl), len(nr)), flush=True)
+    if ND_ADD: ND_STEPS[row] = ND_ADD
     nd_all = sorted({n for n0, n1, _ in ND_STEPS[row] for n in range(n0, n1 + 1)})
-    table = run(row, nodes, els, nl, nr, meta, nd_all, '15k')
+    table = run(row, nodes, els, nl, nr, meta, nd_all, '15k' if not ND_ADD else '15k_add')
     if len(table) < len(nd_all):
         raise RuntimeError('cyclic frequency step returned %d of %d nodal diameters (ccx killed? see the .log)' % (len(table), len(nd_all)))
+    if ND_ADD and os.path.exists(out):
+        old = {int(k): v for k, v in json.load(open(out))['freqs'].items()}
+        table = {**old, **table}
+    post(row, Z, table, dict(nodes=len(nodes), elements=len(els)), out)
+
+
+def post(row, Z, table, mesh_info, out):
     for nd in sorted(table):
         print('   ND %2d: %s' % (nd, '  '.join('%7.0f' % f for f in table[nd])), flush=True)
     hits = []
@@ -171,8 +187,8 @@ def main():
     near = {k: min(((abs(f - k * N_OP / 60) / (k * N_OP / 60), m + 1, f) for m, f in enumerate(table.get(nd_of(k, Z), []))),
                    default=None) for k in EO[row]}
     json.dump(dict(row=row, Z=Z, N=N_OP, eo=EO[row], freqs={str(n): v for n, v in table.items()}, hits=hits,
-                   nearest={str(k): v for k, v in near.items()}, mesh=dict(nodes=len(nodes), elements=len(els))),
-              open(os.path.join(FEA, 'a1000_blisk_%s_cyclic.json' % row), 'w'), indent=1, default=float)
+                   nearest={str(k): v for k, v in near.items()}, mesh=mesh_info),
+              open(out, 'w'), indent=1, default=float)
     import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(11, 7), dpi=120)
     for m in range(FAM[row]):
@@ -185,7 +201,7 @@ def main():
         ax.plot([n], [fk], 'kx', ms=11, mew=2); ax.annotate(' EO%d' % k, (n, fk), fontsize=9)
         ax.fill_between([n - 0.35, n + 0.35], fk * 0.9, fk * 1.1, color='k', alpha=0.10)
     ax.set_xlabel('nodal diameter'); ax.set_ylabel('frequency at 15,000 rpm [Hz]'); ax.set_ylim(0, top)
-    ax.set_xticks(nd_all); ax.set_xlim(-0.5, Z // 2 + 0.5); ax.grid(alpha=0.3); ax.legend(fontsize=8, loc='upper left')
+    ax.set_xticks(sorted(table)); ax.set_xlim(-0.5, Z // 2 + 0.5); ax.grid(alpha=0.3); ax.legend(fontsize=8, loc='upper left')
     ax.set_title('AURORA-1000 %s blisk (%d blades, cyclic symmetry, disc included): ZZENF at 15,000 rpm, x = EO (+-10 %%)'
                  % (row, Z), fontsize=10)
     fig.tight_layout(); png = os.path.join(ROOT, 'docs', 'img', 'a1000_%s_zzenf.png' % row); fig.savefig(png); print('written', png)

@@ -42,9 +42,15 @@ S1, S2 = T['stages']
 GAP1, GAP2, GAP3 = 8.0, 9.0, 11.0
 CX_ROW = dict(N1=S1['cx_ngv'] * 1e3, R1=S1['cx_rot'] * 1e3, N2=S2['cx_ngv'] * 1e3, R2=S2['cx_rot'] * 1e3)
 # rev 3 (blade FEA): NGV2 33 -> 47 vanes with the NGV1 axial chord (26 mm instead of 37): EO33 hit the R2 3rd mode
-# (8,282 Hz at 15k: +0.4 %) and the R1 2nd mode (-7.7 %); EO47 = 11,750 Hz lies in the gaps R1 F2-F3 (7,615-14,044 Hz)
-# and R2 F5-F6 (10,109-14,560 Hz), margins >= 14 %; same Zweifel band, 11 mm shorter turbine, weaker potential field on R1
-CX_ROW['N2'] = 26.0
+# (8,282 Hz at 15k: +0.4 %) and the R1 2nd mode (-7.7 %) of the rigid-hub blades
+# rev 5 (coupled blade-disc ZZENF, sim/engine/a1000_blisk_cyclic.py): the disc changes the picture. No NGV2 count in 40-55
+# clears R2: its families 5 / 6 / 7 at ND 7-18 (9.9 / 10.7-13.2 / 16-17.5 kHz) leave no 10 % window for EO 40-55 (47:
+# +6.7 % to ND11 F6, 48: +5.8 % to ND12 F6), and EO47 sat 3.5 % from the R1 ND12 F3. 29 vanes (prime): EO29 = 7,250 Hz
+# lies between R2 ND7 F3 / F4 (-19 / +10.4 % over the grid band) and between R1 ND29 F1 / F2 (+13 %); 2 x 29 = EO58 is
+# 7.7 % from R2 ND14 F6. The axial chord grows 26 -> 40.5 mm for the same Zweifel (<= 1.12, throat unchanged): h/c 1.19 ->
+# 0.76, Kacker-Okapuu secondary loss x 1.44 (~ -0.4 pt turbine efficiency), turbine 14.5 mm longer. 24 vanes also clear
+# (larger margins) but need a 48 mm chord (h/c 0.63, secondary loss x 1.7) and 24 / 36 = 2 / 3 puts 3 x NPF on ND0.
+CX_ROW['N2'] = 40.5
 X_LE = dict(N1=0.0)
 X_LE['R1'] = X_LE['N1'] + CX_ROW['N1'] + GAP1
 X_LE['N2'] = X_LE['R1'] + CX_ROW['R1'] + GAP2
@@ -58,7 +64,7 @@ H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'], S1['h_ngv_out'] * 1e3),
 Z = dict(N1=S1['Z_ngv'], R1=S1['Z_rot'], N2=S2['Z_ngv'], R2=S2['Z_rot'])
 # rev 2: NGV1 47 -> 43 vanes: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm (+2 % at 15k); 43 keeps EO43 / EO86 >= 11 % away
 Z['N1'] = 43
-Z['N2'] = 47
+Z['N2'] = 29
 SPANS = [0.0, 0.25, 0.50, 0.75, 1.0]
 ROW_T0 = dict(N1=S1['T0_in'], R1=S1['T0_in'], N2=S2['T0_in'], R2=S2['T0_in'])
 

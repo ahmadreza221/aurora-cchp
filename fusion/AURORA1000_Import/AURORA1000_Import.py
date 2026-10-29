@@ -1,14 +1,14 @@
-"""Autodesk Fusion script: build the AURORA-1000 two-stage turbine (rev 4, work in progress) from the compact STEP parts in fusion/A1000/.
+"""Autodesk Fusion script: build the AURORA-1000 two-stage turbine from the compact STEP parts in fusion/A1000/.
 
 Utilities > Scripts and Add-Ins > + (My Scripts) > pick this folder > Run. Imports into a new design, coloured:
-  A1000 NGV1   : inner / outer rings + 1 vane, vane patterned 43 x   (MAR-M247 + TBC, orange)
-  A1000 blisk 1: bore-less disc + 1 blade, blade patterned 59 x      (MAR-M247, silver)
-  A1000 NGV2   : rings + 1 vane, patterned 47 x                      (MAR-M247, light orange)
-  A1000 blisk 2: disc + 1 blade, patterned 36 x                      (MAR-M247, blue-grey)
-Engine frame: X = engine axis (flow +x from the NGV1 leading edge), mm, as cad/engine/a1000_turbine.py. Counts and the
-expected masses are read from fusion/A1000/parts.json. Geometry comes from the Python design code; change it there and
-re-export (cad/engine/a1000_turbine.py --cad, then copy the pieces to fusion/A1000/), never edit the surfaces in Fusion.
-The rim thermal-relief slots of the blisks (EDM, docs/08 section 12.9) are not in the CAD yet.
+  A1000 NGV1   : inner / outer rings + 1 vane, vane patterned Z_N1 x   (MAR-M247 + TBC, orange)
+  A1000 blisk 1: bore-less disc + 1 blade, blade patterned Z_R1 x      (MAR-M247, silver)
+  A1000 NGV2   : rings + 1 vane, patterned Z_N2 x                      (MAR-M247, light orange)
+  A1000 blisk 2: disc + 1 blade, patterned Z_R2 x                      (MAR-M247, blue-grey)
+Engine frame: X = engine axis (flow +x from the NGV1 leading edge), mm, as cad/engine/a1000_turbine.py. Counts, revision
+and the expected masses are read from fusion/A1000/parts.json.
+Geometry comes from the Python design code; change it there and re-export (cad/engine/a1000_turbine.py --cad, then
+python3 fusion/export_a1000_parts.py), never edit the surfaces in Fusion.
 """
 import os
 import json
@@ -22,11 +22,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PARTS = os.path.join(HERE, '..', 'A1000')
 VERIFY = os.path.normpath(os.path.join(HERE, '..', '_a1000_verify.json'))
 RHO = 8.54                # MAR-M247 g/cc (design-record density, independent of the library material)
-ROWS = [  # component name, rings / disc file, vane / blade file, count key, colour
-    ('A1000 NGV1 MAR-M247 (43 vanes)', 'A1000_N1_rings', 'A1000_N1_vane', 'N1', (222, 132, 76)),
-    ('A1000 blisk 1 MAR-M247 (59 blades)', 'A1000_R1_disc', 'A1000_R1_blade', 'R1', (190, 194, 204)),
-    ('A1000 NGV2 MAR-M247 (47 vanes)', 'A1000_N2_rings', 'A1000_N2_vane', 'N2', (226, 164, 97)),
-    ('A1000 blisk 2 MAR-M247 (36 blades)', 'A1000_R2_disc', 'A1000_R2_blade', 'R2', (150, 170, 199)),
+ROWS = [  # component name (count filled in from parts.json), rings / disc file, vane / blade file, count key, colour
+    ('A1000 NGV1 MAR-M247 (%d vanes)', 'A1000_N1_rings', 'A1000_N1_vane', 'N1', (222, 132, 76)),
+    ('A1000 blisk 1 MAR-M247 (%d blades)', 'A1000_R1_disc', 'A1000_R1_blade', 'R1', (190, 194, 204)),
+    ('A1000 NGV2 MAR-M247 (%d vanes)', 'A1000_N2_rings', 'A1000_N2_vane', 'N2', (226, 164, 97)),
+    ('A1000 blisk 2 MAR-M247 (%d blades)', 'A1000_R2_disc', 'A1000_R2_blade', 'R2', (150, 170, 199)),
 ]
 
 
@@ -126,8 +126,9 @@ def run(context):
         design.fusionUnitsManager.distanceDisplayUnits = adsk.fusion.DistanceUnits.MillimeterDistanceUnits
         root = design.rootComponent
         base_app = base_appearance(app)
-        out = {'components': {}, 'expected': meta.get('expected', {})}
-        for cname, fbase, fpiece, key, rgb in ROWS:
+        out = {'revision': meta['pattern'].get('revision', ''), 'components': {}, 'expected': meta.get('expected', {})}
+        for cfmt, fbase, fpiece, key, rgb in ROWS:
+            cname = cfmt % int(Z[key])
             occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create()); occ.component.name = cname
             c = occ.component
             bases = import_step(app, occ, fbase)
@@ -145,8 +146,9 @@ def run(context):
             f.write(json.dumps(out, indent=2))
         app.activeViewport.fit()
         if ui and context is not None:
-            ui.messageBox('AURORA-1000 turbine imported: NGV1 43, blisk 1 59, NGV2 47, blisk 2 36.\n'
-                          'Engine axis = X, mm. Masses in fusion/_a1000_verify.json.')
+            ui.messageBox('AURORA-1000 turbine (%s) imported: NGV1 %d, blisk 1 %d, NGV2 %d, blisk 2 %d.\n'
+                          'Engine axis = X, mm. Masses in fusion/_a1000_verify.json.' % (
+                              meta['pattern'].get('revision', ''), Z['N1'], Z['R1'], Z['N2'], Z['R2']))
     except Exception:
         if ui and context is not None:
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))

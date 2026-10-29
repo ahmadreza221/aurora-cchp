@@ -1,0 +1,329 @@
+{
+ "note": "Independent review of AURORA-1000 turbine rev 3 (2026-10-29): 36 confirmed findings (trimmed: claim text shortened). Resolutions: docs/08_aurora1000_1MW_concept.md section 12.2.",
+ "findings": [
+  {
+   "id": 1,
+   "dim": "aero",
+   "severity": "major",
+   "file": "sim/mw1_meanline.py",
+   "line": 74,
+   "title": "Blade rows use the meanline alpha2 but drop its exit swirl: stage loading is psi 1.175, not 1.25, and mean reaction is 0.41, not 0.45",
+   "claim": "The meanline alpha2 = 66.95 deg comes from tan(alpha2) = (psi/2 + 1 - R)/phi with psi 1.25 and R 0.45. That formula describes a repeating stage with alpha1 = alpha3 = -8.5 deg (Ct3 = -0.075 U). It is not the zero-exit-swirl stage that the comment claims ('with alpha1 = 0') and that the docstring says ('zero exit swirl'). With alpha1 = alpha3 = 0, psi = 2(1-R), so psi 1.25 needs R 0.375. a1000_turbine.py keeps this alpha2 (lines 30-31: CT2_M = Cx tan(alpha2), K_SW = r*Ct) but imposes axial NGV inflow and zero rotor exit swirl (line 85: beta_rot_out = atan(-U/Cx)). The designed blading therefore delivers psi = Ct2/U = 1.175 and R_mean = 0.41. Docs section 10 still lists psi 1.25 and reaction 0.45, and the meanline beta3 65.06 deg / M3rel do not describe the blades (design beta3 is 63.43 deg)."
+  },
+  {
+   "id": 2,
+   "dim": "aero",
+   "severity": "critical",
+   "file": "cad/engine/gg_turbine.py",
+   "line": 271,
+   "title": "Throats sized as gauging = flow angle + Carter deviation: all four rows are 5-7 % below the cosine rule, and the NGV throats run near or at choke at the design flow",
+   "claim": "_solve_section sizes every throat so that acos(o/s) = |flow angle| + delta_Carter. delta_Carter = 0.19*theta_u*s/c, faded by the Mach factor (1-M)/0.5, which the code attributes to Ainley-Mathieson. At the row exit Mach numbers (0.6-0.8) this gives 1.2-2.2 deg of 'deviation', so the vanes and blades are closed about 1.5-2 deg beyond the target flow angle. Ainley-Mathieson (am_exit_angle in the same file) predicts only 0.2-0.5 deg between gauging and flow angle here. Its low-speed value at gauge 68.6 deg is 11.15 - 0.154*68.6 = 0.58 deg, against Carter's 2.84 deg. The cast rows would therefore overturn, and the throat areas fall short of continuity for every row. Docs section 12.1 says the NGV1 gap of 160 vs 177 cm2 'comes from deviation in the subsonic exit' and is fixed with +-1 deg restagger. That is not supported: a throat smaller than s*cos(alpha) at subsonic exit means a faster thro"
+  },
+  {
+   "id": 3,
+   "dim": "aero",
+   "severity": "minor",
+   "file": "cad/engine/a1000_turbine.py",
+   "line": 103,
+   "title": "Rotor TE is 0.75-0.94 mm over most of the span, while the casting requirement in the docs says TE >= 1 mm",
+   "claim": "params() gives rotor sections tte = 1.0 - 0.25*f, so the TE is 0.94/0.88/0.81/0.75 mm at 25/50/75/100 % span (stored in a1000_turbine_design.json and used by the CAD loft and _ext_section). Docs section 12.1 states 'round TE 1 mm (castable)' and section 12.9 item 1 lists 'TE >= 1 mm' as a casting requirement. The code docstring (line 97) says TE >= 0.8 mm is castable, yet the outer 20 % of span is below 0.8 mm."
+  },
+  {
+   "id": 4,
+   "dim": "blade_fea",
+   "severity": "critical",
+   "file": "sim/engine/a1000_blade_fea.py",
+   "line": 34,
+   "title": "R2 2xNGV2 order (EO94) lies above every computed mode, so its 'pass' was never checked",
+   "claim": "Only N_MODES = 8 modes are extracted. EO94 (2 x 47 NGV2 vanes) is in the R2 EO list and in the check sheet's R2 'weak' orders (43/94, 5 % criterion). EO94 = 23,500 Hz at 15,000 rpm and 25,850 Hz at trip, but the highest R2 mode computed is F8 = 18,182 Hz. The 'margin' for EO94 is therefore only measured against modes 1-8 (best case F8 at -22.6 %), and the check reports a clear pass with no information. Modes 9 and up of R2, roughly 19-28 kHz, were never computed."
+  },
+  {
+   "id": 5,
+   "dim": "blade_fea",
+   "severity": "major",
+   "file": "sim/engine/a1000_blade_fea.py",
+   "line": 153,
+   "title": "EO margin is checked only at 15,000 rpm although the stated grid band is +-2 %; R2 F5 x EO43 is -4.0 % at 14,700 rpm",
+   "claim": "The docstring sets the operating range as 15,000 rpm +-2 % (14,700-15,300 rpm). The margin is computed only at N_OP: f_op = interp(N_OP), fe = eo*N_OP/60. At the low edge of the band, the R2 F5 x EO43 margin falls below the 5 % 'weak order' limit used by the check sheet. At the high edge, R1 F6 x EO86 shrinks from 9.8 % to 7.6 %."
+  },
+  {
+   "id": 6,
+   "dim": "blade_fea",
+   "severity": "minor",
+   "file": "sim/engine/a1000_blade_fea.py",
+   "line": 100,
+   "title": "'Net-section mean' creep stress is an unweighted nodal average in a band 1-3 mm above the fillet, not the area-weighted P/A at the critical section",
+   "claim": "srr_root_mean = np.mean(srr) over all nodes with r in [rh+R+1, rh+R+3]. A tet10 mesh with curvature sizing clusters nodes at the LE and TE, so the nodal mean is not the section mean. The band also sits 1-3 mm above the fillet end (offset = 0 at h = R), while the highest net-section P/A of these strongly tapered blades is at the fillet end. The same unweighted mean is used for the 25/50/75 % span values."
+  },
+  {
+   "id": 7,
+   "dim": "blade_fea",
+   "severity": "minor",
+   "file": "sim/engine/fea/a1000_blade_R2.json",
+   "line": 1,
+   "title": "R2 FE was run on the pre-rev-3 CAD (11 mm further downstream); stored vm_max_at uses the old axial frame",
+   "claim": "The R2 mesh in a1000_R2_15k.inp spans x = 113.19-162.88 mm. The rev-3 blade (X_LE 105.96, X_TE 147.96 plus fillet feet) spans about 102.3-151.7 mm, because NGV2 Cx went from 37.2 to 26 mm after this run (inp 02:58, STEP re-exported 03:25). The radial geometry is identical: base r = 203.326 = rev-3 rh, and the tip max r of 260.53 matches the rev-3 trim cone. Stresses and frequencies therefore remain valid, since CENTRIF is about the x axis. However, vm_max_at = [150.33, ...] is in the old frame."
+  },
+  {
+   "id": 8,
+   "dim": "disc_fea",
+   "severity": "critical",
+   "file": "sim/engine/a1000_disc_fea.py",
+   "line": 133,
+   "title": "R1 rim-slot bottom is never checked for LCF/TMF: the smeared FE already gives -360 to -420 MPa hoop at 710 C at the 3 mm hole",
+   "claim": "The disc run passes only vm_max (the web/rim fillet) and vm_centre to the check sheet. The LCF check (a1000_turbine_checks.py line 155) is therefore run at those two points only. The R1 slot bottom has the same nominal von Mises as the peak, but it sits at a drilled 3 mm hole (a notch) that the axisymmetric band model smears out. Its stress is mostly thermal hoop compression, which reverses on every start-stop. With the sheet's own Manson rule, any realistic hole Kt fails the 10^4-start requirement. So the reported pass 'R1 disc LCF 1.8e5 starts' and the '26/26 criteria passed' claim do not cover the most likely crack site. The design-change row 4 in doc section 12.2 says the slots cure the ~520 MPa thermal-hoop TMF problem. The FE shows the problem has moved down to the slot root at about 70-80 % of that value, plus the hole's Kt."
+  },
+  {
+   "id": 9,
+   "dim": "disc_fea",
+   "severity": "major",
+   "file": "sim/engine/a1000_disc_fea.py",
+   "line": 120,
+   "title": "Mean hoop stress for burst is a plain node average (not area-weighted) and includes the slotted band that carries no hoop",
+   "claim": "hoop_mean = np.mean(S[k][2]) averages corner and midside node values with equal weight on a non-uniform mesh (refined at fillets, boundary nodes over-weighted). It also includes the ESLOT band, whose hoop modulus is 1 % and whose hoop stress is about 0, yet whose area counts in the denominator. For the mean-hoop burst method the slotted rim is dead load and must be excluded from the hoop-carrying area. The reported mean hoop is 8-20 % low and the burst ratios are 4-9 % high. The thermal part also leaks into the plain average, so op and trip give different burst speeds, which they should not: both loads scale with N^2."
+  },
+  {
+   "id": 10,
+   "dim": "disc_fea",
+   "severity": "minor",
+   "file": "sim/engine/a1000_disc_fea.py",
+   "line": 131,
+   "title": "Slot-bottom creep-rupture life is computed from thermal (secondary) compressive hoop stress",
+   "claim": "The creep-critical point is the R1 slot bottom, where von Mises is set by about -372 MPa of thermal hoop compression. A Larson-Miller rupture check on 1.25 x vm of a self-relieving, displacement-controlled compressive stress is not a rupture assessment. The code itself excludes the platform corners for exactly this reason (lines 127-128). The R1 trip case has more mechanical load but gives a lower vm and a longer life at this node. The purge requirement 'slot bottom <= 710 C -> 1.5e5 h' (TEMP comment lines 34-37, doc 12.2 row 5, 12.8 item 2, 12.9) therefore rests on a non-physical criterion. The real consequence of that stress (relaxation, then tension at shutdown) is the LCF/TMF item in the first finding."
+  },
+  {
+   "id": 11,
+   "dim": "rotordynamics",
+   "severity": "major",
+   "file": "sim/engine/a1000_rotordynamics.py",
+   "line": 243,
+   "title": "API 617 unbalance is about half the required amount, so the reported vibration is about 2x too low",
+   "claim": "The unbalance response uses U = 6350 W/N with W = rotor_mass/2 = 96 kg. That U goes at each of two locations per case. API 617 (8th and 9th ed.) asks for more in three ways. (1) The analysis unbalance is 2 x Ur, with Ur = 6350 W/N. (2) For the translatory mode, W is the SUM of the journal static loads, applied at the antinode. (3) For the conical mode, each end uses the static load of the adjacent bearing, 180 deg out of phase. The real static loads are not 96/96 kg. In layout A they are 78.2 / 114.4 kg (CG at x = 584 mm). In layout B they are 0.4 / 185 kg, so the CG sits on bearing 2 and the front tilting pad carries no load. The script's own docstring (line 240) omits the 2x factor."
+  },
+  {
+   "id": 12,
+   "dim": "rotordynamics",
+   "severity": "minor",
+   "file": "sim/engine/a1000_rotordynamics.py",
+   "line": 261,
+   "title": "SFD damping 3e4 N s/m assumes a full film at about 53 C; cavitated or hotter oil gives 2-3x less, which changes the stated AFs",
+   "claim": "cs = 3.0e4 N s/m per damper is only reached by an uncavitated full (2pi) film with VG32 at about 53 C or cooler. A cavitated pi-film (open-ended, unsealed, the usual design assumption) gives 1.7e4 at 50 C and 0.9-1.2e4 at 60-70 C. 60-70 C is plausible for the rear damper inside the exhaust hub. The doc's statement that both rigid modes are passed 'with high damping (AF 2.3 and 1.2)' depends on this unstated film and temperature assumption."
+  },
+  {
+   "id": 13,
+   "dim": "rotordynamics",
+   "severity": "minor",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 407,
+   "title": "Section 12.6 numbers for 'A rigid' and 'B' do not match a1000_rotordynamics.json",
+   "claim": "Some values in the section 12.6 comparison table are stale or not in any result file. The selected A-SFD column does match."
+  },
+  {
+   "id": 14,
+   "dim": "life",
+   "severity": "critical",
+   "file": "sim/engine/a1000_turbine_checks.py",
+   "line": 155,
+   "title": "Disc LCF uses Manson's fully-reversed universal slopes on a 0->max->0 elastic cycle with no mean-stress correction; the R2 disc 'pass' becomes a fail",
+   "claim": "manson_cycles() applies the universal-slopes relation, which comes from fully reversed (R = -1) strain-controlled tests, to the start-stop cycle 0 -> sigma_max -> 0. The cycle is entirely elastic: 0.24-0.30 % strain range, peak 419-520 MPa against a yield of about 820 MPa, at 630 C, where MAR-M247 barely relaxes. So the tensile mean stress sigma_max/2 is retained, but nothing accounts for it. At the R2 peak the stress state is uniaxial radial tension (principal stresses 557 / 78 / 5 MPa), and the max principal stress is 7 % above the von Mises value the code uses."
+  },
+  {
+   "id": 15,
+   "dim": "life",
+   "severity": "critical",
+   "file": "sim/mw1_concept_study.py",
+   "line": 281,
+   "title": "Creep fit does not honour its own anchors and extrapolates optimistically; the R1 blade creep pass (2.7e5 h) is not supported",
+   "claim": "mar_m247_rupture_hours() fits one straight line through the three anchors by least squares (np.polyfit), so it misses every anchor. It is above the 620 and 200 MPa anchors, which makes the life too long, and below the 380 MPa anchor. The anchors themselves are strongly curved: the local slope dP/dlog(sigma) is -11.8 between 620 and 380 MPa and -4.7 between 380 and 200 MPa, while the fit uses -7.6. The R1 blade design point with the 1.25 factor (138 MPa at 870 C) sits at P = 29.07, well beyond the last anchor at 27.6. That is about 19x beyond it in time, and in that region the real curve keeps falling more steeply. Published cast MAR-M247 data also fall below the fit at 200 MPa."
+  },
+  {
+   "id": 16,
+   "dim": "life",
+   "severity": "critical",
+   "file": "sim/engine/a1000_turbine_checks.py",
+   "line": 155,
+   "title": "R1 rim-slot bottom: the slot-end hole (the LCF/TMF-critical feature) is never checked, and its 'creep' criterion is computed from a compressive thermal stress",
+   "claim": "The LCF loop checks only the von Mises maximum (the fillet at r 192.8) and the disc centre. Just below the R1 thermal-relief slots, the FE gives a continuous ring in about -340 to -420 MPa hoop compression at 710 C, plus the 3 mm drilled hole at each slot end, which is not modelled. The hole's notch factor (Kt about 2-3) applies to that hoop stress. The local range then reaches 700-1000+ MPa, close to or above yield (about 825 MPa), and fails 1e4 starts by the code's own Manson method. Separately, the slot-bottom 'creep life' (1.5e5 h), which sets the 710 C purge requirement, is computed from a von Mises stress that is mostly compressive self-relaxing thermal hoop stress. The same function excludes exactly this kind of secondary stress at the platform corners as 'a TMF item, not a rupture site' (a1000_disc_fea.py:127-130)."
+  },
+  {
+   "id": 17,
+   "dim": "life",
+   "severity": "major",
+   "file": "sim/engine/a1000_turbine_checks.py",
+   "line": 94,
+   "title": "Goodman allowable uses UTS as the mean-stress intercept at 870 C; in the creep range it should be the creep-rupture strength for the design life",
+   "claim": "sa = SIG_E*(1 - sigma_m/UTS) with UTS(870 C) = 870 MPa. For a hot blade the steady mean stress is limited by creep rupture at the design life, not by short-time UTS. The standard hot-section modified Goodman/Haigh diagram therefore runs from the endurance limit to the stress-rupture strength (e.g. Boyce, Gas Turbine Engineering Handbook; Sims, Stoloff & Hagel, Superalloys II). The mean stress is also taken without the 1.25 factor used for creep."
+  },
+  {
+   "id": 18,
+   "dim": "life",
+   "severity": "minor",
+   "file": "sim/engine/a1000_disc_fea.py",
+   "line": 120,
+   "title": "Burst criterion uses an unweighted node average of hoop stress, not the area mean; burst margin overstated by about 7-9 %",
+   "claim": "sh_mean = np.mean over all nodes, including mid-side nodes and the slotted band, which carries almost no hoop stress by construction. The mean-hoop (Robinson) criterion needs the area-weighted mean over the load-carrying meridional section. The mesh is not uniform enough for the node mean to approximate it."
+  },
+  {
+   "id": 19,
+   "dim": "cyclic",
+   "severity": "critical",
+   "file": "sim/engine/a1000_vane_count.py",
+   "line": 60,
+   "title": "2 x NGV2 (EO94) on R1 is never checked and sits 0.4 % from R1 mode 6, inside the speed band",
+   "claim": "Rev 3 raised NGV2 to 47 vanes, so EO94 now comes from the row just downstream of R1 (9 mm gap). EO94 is the order that forced NGV1 off 47 in rev 2. The project's own rule (turbine_checks.py:96, 'weak = 2 x NPF of the adjacent rows, 5 %') covers 2 x N2 on R1, but every tool leaves it out: vane_count checks R1 only for N1, N2 and 2N1; turbine_checks.py:99 uses weak = (2*n1,) for R1; blade_fea.py:41 uses R1 EO = [1-5, 43, 47, 86]; blisk_cyclic.py:40 has the same EO list and ND_STEPS (line 35) has no ND 24."
+  },
+  {
+   "id": 20,
+   "dim": "cyclic",
+   "severity": "critical",
+   "file": "sim/engine/a1000_vane_count.py",
+   "line": 41,
+   "title": "R2 EO94 (2 x N2 wakes) 'pass' is measured against the highest computed mode; the frequency range is never reached",
+   "claim": "margin() returns the distance to the nearest mode in the list and never checks that the list reaches the excitation frequency. The R2 rigid-hub run computes only N_MODES = 8 modes (a1000_blade_fea.py:34), the highest at 18,182 Hz. EO94 = 23,500 Hz, so the '22.6 %' margin is just the gap to the last computed mode. Modes between 18.2 and 25.9 kHz are unknown. The same blind spot exists in blade_fea (interference list) and in blisk_cyclic 'near'/'hits' (lines 159-169)."
+  },
+  {
+   "id": 21,
+   "dim": "cyclic",
+   "severity": "major",
+   "file": "cad/engine/a1000_turbine.py",
+   "line": 416,
+   "title": "Cyclic blisk sector (and rigid-hub model) omit the rim thermal-relief slots that the design and disc FEA assume",
+   "claim": "build_sector() cuts the sector from the axisymmetric disc BREP (_rev(disc_profile)), which has a continuous rim. The design has one EDM slot 10 mm deep between every pair of blades (docs/08 12.2 #4, 12.9; a1000_disc_fea.py SLOT = 10 mm, modelled there as a band with 1 % hoop modulus). fusion/AURORA1000_Import.py:11 says 'The rim thermal-relief slots ... are not in the CAD yet'. Above the slot bottom the slotted rim has no hoop bending or twisting stiffness. That hoop stiffness is exactly what stiffens the disc and rim families at medium and high ND in the cyclic model."
+  },
+  {
+   "id": 22,
+   "dim": "cyclic",
+   "severity": "major",
+   "file": "sim/engine/a1000_vane_count.py",
+   "line": 40,
+   "title": "R2 EO43 (N1 wakes) margin checked only at 15,000 rpm; it fails the 5 % rule at the stated -2 % grid speed",
+   "claim": "All margins use fe = k*N_OP/60 at exactly 15,000 rpm. The generator is directly grid-connected, and the operating band is stated as 15,000 rpm +-2 % (a1000_blade_fea.py:11). At 14,700 rpm the R2 / N1 margin drops below its own 5 % requirement."
+  },
+  {
+   "id": 23,
+   "dim": "cyclic",
+   "severity": "major",
+   "file": "sim/engine/a1000_blisk_cyclic.py",
+   "line": 36,
+   "title": "ND_STEPS family counts are never checked against the EO band; R2 ND7 and ND14 very likely fall short",
+   "claim": "The comment says the families requested 'reach the order's frequency', but nothing verifies that the highest computed family at each ND exceeds 1.1 x k*N/60. hits/near (lines 159-169) only look at the computed families, so a family inside the band but above the last computed one is silently missed and 'near' reports the gap to the last family."
+  },
+  {
+   "id": 24,
+   "dim": "cyclic",
+   "severity": "major",
+   "file": "sim/engine/a1000_vane_count.py",
+   "line": 32,
+   "title": "Vane-count scan with cyclic data gives a 100 % margin to every nodal diameter that was not solved",
+   "claim": "When a1000_blisk_<row>_cyclic.json exists (the run going now writes it), freqs() returns tab.get(n, []) and margin() turns an empty list into (1.0, None), a 100 % margin. The cyclic job solves only the ND of the current 43/47 orders (R1 0-5, 12, 16, 27, 29; R2 0-5, 7, 11, 14, 18). Almost every other (n1, n2) in the scan maps to unsolved NDs, so it passes those checks automatically."
+  },
+  {
+   "id": 25,
+   "dim": "cyclic",
+   "severity": "minor",
+   "file": "cad/engine/a1000_turbine.py",
+   "line": 53,
+   "title": "Rev-2 comment claims EO86 stays >= 11 % from R1 modes; the result file gives 9.8 %",
+   "claim": "'43 keeps EO43 / EO86 >= 11 % away' (and '+2 % at 15k' for EO94) does not match the current blade results."
+  },
+  {
+   "id": 26,
+   "dim": "cyclic",
+   "severity": "minor",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 376,
+   "title": "EO1-5 margins in docs/08 12.4 (>= 264 % R1, >= 119 % R2) are rigid-hub values; the coupled first family is about 3x lower",
+   "claim": "Low orders excite the low-ND disc families, which the rigid hub does not have, so the quoted margins overstate separation. a1000_blisk_cyclic.py's own docstring says the same."
+  },
+  {
+   "id": 27,
+   "dim": "docs",
+   "severity": "critical",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 22,
+   "title": "R1 blade creep passes only because the stress factor was quietly cut from 1.5 to 1.25; summary still says 90 MPa / 3e5 h at 1.5",
+   "claim": "Sections 1 and 4 say the stage-1 blade life is ~3x10^5 h with a 1.5 factor on stress, at a root stress of 90 MPa. Section 12.3 reports 2.7x10^5 h using the FEA stress of 110 MPa and a factor of only 1.25. The factor change is never stated or justified. With the FEA stress and the documented 1.5 factor, the R1 blade fails the 1e5 h target. That is the item the doc ranks as the lowest-margin pass ('خزش ریشهٔ پرهٔ R1: ۲٫۷×۱۰⁵ h در برابر هدف ۱۰⁵')."
+  },
+  {
+   "id": 28,
+   "dim": "docs",
+   "severity": "major",
+   "file": "sim/engine/a1000_blade_fea.py",
+   "line": 41,
+   "title": "Rev-3 NGV2 count of 47 puts 2xNGV2 (EO94) 0.4 % from R1 mode 6, the same coincidence that forced rev 2; never checked",
+   "claim": "Change #1 in section 12.2 removed 47 NGV1 vanes because EO94 = 2x47 crossed R1 mode 6. Rev 3 then gave NGV2 47 vanes. Section 12.4 counts the NGV2 potential field as a strong R1 excitation (EO47, 10 % rule), but its second harmonic EO94 on R1 is in none of the checks. R1 F6 sits 0.42 % from EO94 at 15,000 rpm, crossing at about 15,060 rpm. That is inside the grid-frequency speed band the script itself assumes (±2 %, 14,700-15,300 rpm). The doc's claim that the vane-count tool screens 'all NGV1/NGV2 combinations against both rotors' is therefore not true."
+  },
+  {
+   "id": 29,
+   "dim": "docs",
+   "severity": "major",
+   "file": "sim/engine/a1000_turbine_checks.py",
+   "line": 99,
+   "title": "R2 2xNGV2 (EO94) 'margin 22.6 %' is just the distance to the highest extracted mode",
+   "claim": "The sheet passes 'R2 blade EO margin, weak 43/94', and the vane-count tool reports R2/2N2 = 22.6 %. The rigid-hub R2 model extracts only 8 modes, up to 18,182 Hz, while EO94 is 23,500 Hz. The 22.6 % is the gap to mode 8, not to the nearest mode. Modes 9 and up, which lie between 18 and 25 kHz, were never computed, so this check is unsupported."
+  },
+  {
+   "id": 30,
+   "dim": "docs",
+   "severity": "major",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 429,
+   "title": "Rigid-hub frequencies presented as final: cyclic blisk run unfinished, partial results show disc modes about 3x lower",
+   "claim": "Section 12.8 says 'همهٔ ۲۶ معیار قبول شدند' and section 4 (line 132) says blade AND disc vibration were checked by FEA in rev 3. All EO margins, however, come from a blade on a rigid platform. The only coupled blade-disc model (a1000_blisk_cyclic.py) is still running, and its first run was invalid according to commit 9ab0a7c. The limitations list (12.10) does not mention that the blisk modal analysis is pending. Partial output of the running R1 job shows family-1 blisk modes at 1.36-2.39 kHz for ND0-4, against the rigid-hub F1 of 4,550 Hz. The quoted low-order margins (≥264 % R1) are therefore about 2x too high, and the NPF margins at ND 12/16/27 (R1) and ND 7/11/14 (R2) have not been verified. The 10 mm rim slots, which free each blade root, are also absent from the blade model."
+  },
+  {
+   "id": 31,
+   "dim": "docs",
+   "severity": "major",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 332,
+   "title": "NGV throats about 10 % below the meanline, leaving the vanes near choke; 'subsonic deviation, fixed by ±1° restagger' is not right",
+   "claim": "The doc gives an NGV1 throat of 160 cm² against the meanline 177 cm² and attributes the difference to subsonic exit deviation, to be trimmed by ±1° restagger. For the design flow (6.35 kg/s at 3.547 bar, 1223 K), 160.5 cm² is practically the sonic area. NGV1 would run at a throat Mach of 0.86-0.94, not the 0.67-0.74 listed. The NGV2 throat (258.9 cm² against 281.9 cm² meanline) is at or below its sonic area, so it cannot pass the design flow once any loss is counted. At M ≈ 0.7 the exit angle follows acos(o/s) closely: Ainley-Mathieson gives about 68.3° for the NGV1 mean section, against the intended 66.95°, so roughly 0.3° deviation instead of the 1.7° (Carter) the design used. ±1° restagger moves the throat by only 4.4 %, not enough to recover 9.5 %."
+  },
+  {
+   "id": 32,
+   "dim": "docs",
+   "severity": "major",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 392,
+   "title": "Rim slots move the TMF problem to the slot-end hole; that location is not life-checked and its 'creep' rating uses a compressive stress",
+   "claim": "Change #4 adds rim slots to cure the TMF-driving hoop stress (~520 MPa) at the R1 platform. The axisymmetric model shows the slot bottom still carries −372 MPa compressive hoop stress at 710 °C. The 3 mm hole at the slot end concentrates that hoop field, and its LCF/TMF life is not computed. The sheet's LCF items use the fillet under the rim and the centre, never the slot bottom. The slot-bottom '410 MPa → 1.5e5 h creep' row applies a rupture curve to a von Mises stress that is dominated by compression, while the actual risk there is TMF cracking. 'All 26 pass' and the 'requirement ≤710 °C' rest on the wrong criterion."
+  },
+  {
+   "id": 33,
+   "dim": "docs",
+   "severity": "minor",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 430,
+   "title": "The 'least-margin' list leaves out the actual smallest margins",
+   "claim": "Section 12.8 ranks R1 blade creep (2.7x margin), R1 slot creep and R2 disc LCF as the least-margin items. By the sheet's own value/requirement ratio, the smallest margin is R2 F5 x EO43 at 5.96 % against 5 % (ratio 1.19, the same 'ratio' the vane-count tool reports). That mode crosses EO43 at 14,103 rpm, inside the 14-16.5k window the blade script itself flags as critical. Next comes the R2 disc yield margin at trip, 1.39. Neither is mentioned."
+  },
+  {
+   "id": 34,
+   "dim": "docs",
+   "severity": "minor",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 73,
+   "title": "Stale or contradictory numbers in sections 1, 3.1 and 4 and in the 12.6 comparison columns",
+   "claim": "Several turbine numbers were not updated to rev 3. Sections 1 and 3.1 give Dm 461 mm, Um 362 m/s, stage-1 height 31 mm, exit height 58 mm, tip clearance 0.4 mm and compressor Ø422 mm. Rev 3 has Dm 463, Um 364, R1 214-249 mm (about 35 mm), exit about 63 mm, cold clearance 0.50/0.60 mm and impellers Ø413/448 mm. Section 4 gives the R2 root as 169 MPa at ~680 °C against the FEA's 185 MPa at 735 °C. In 12.6 the 'A rigid' and 'B' columns are rev-2 values from commit 5ed644b, while A-SFD is rev 3. The current B result has no bending critical below 26,000 rpm."
+  },
+  {
+   "id": 35,
+   "dim": "docs",
+   "severity": "minor",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 440,
+   "title": "Rotor trailing edges taper to 0.75 mm, contradicting the stated '≥1 mm' casting requirement",
+   "claim": "Sections 12.1 and 12.9 state a round 1 mm trailing edge ('لبهٔ فرار گرد ۱ mm (قابل ریخته‌گری)', 'لبهٔ فرار ≥ ۱ mm') as a casting requirement. The rotor sections in the design and CAD taper the TE from 1.0 mm at the hub to 0.75 mm at the tip. Only the NGVs are 1.0 mm throughout."
+  },
+  {
+   "id": 36,
+   "dim": "docs",
+   "severity": "minor",
+   "file": "docs/08_aurora1000_1MW_concept.md",
+   "line": 82,
+   "title": "NGV segmenting text ignores the prime vane counts 43 and 47",
+   "claim": "The doc proposes NGV rings 'or 8-12 segments' and '24 NGV segments' in total. With 43 and 47 vanes, both prime, no equal-segment split exists, and 24 segments cannot divide 90 vanes."
+  }
+ ]
+}

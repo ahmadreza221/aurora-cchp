@@ -13,12 +13,18 @@ Frequencies: coupled blade-disc families from the cyclic blisk model (sim/engine
 diameter each order reaches; an order whose nodal diameter was not solved is UNKNOWN (rev 4: rev 3 scored it 100 %), and
 the rigid-hub blade modes (sim/engine/a1000_blade_fea.py) are shown beside it as an indication only. An order above the
 highest computed mode is also UNKNOWN.
-Aero limits: Zweifel of the vane rows scaled from the design (Zw ~ pitch / cx): 0.70 <= Zw <= 1.12 (axial chord scale
-allowed 0.9 .. 1.2 for N2); vane count differs from the downstream blade count by >= 4 (low-ND disc excitation, noise).
+R1 also sees the 2nd harmonic of the N2 potential field when it is not negligible: exp(-4 pi g / s) >= 0.05 (a few
+large-pitch vanes), then 2 x N2 is a weak order on R1. Vane-vane interaction: the N1 wakes chopped by the N2 vanes (and the
+N2 field seen through R1) carry the circumferential order |N1 - N2|, a weak order on both rotors (rev 5).
+Aero limits: Zweifel of the vane rows scaled from the design (Zw ~ pitch / cx): 0.70 <= Zw <= 1.12, the axial chord is
+scaled up to keep Zw <= 1.12 (N1 up to x1.1, N2 up to x1.7: the low counts with long chords pay a secondary loss, reported
+as the Kacker-Okapuu aspect-ratio factor f(h/c) relative to the design); vane count differs from the downstream blade
+count by >= 4 (low-ND disc excitation, noise).
 Run:    python3 sim/engine/a1000_vane_count.py
 Writes: sim/engine/fea/a1000_vane_count.json
 """
 import json
+import math
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +35,22 @@ BAND = (0.98, 1.02)
 DES = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 Z_R = dict(R1=DES['R1']['Z'], R2=DES['R2']['Z'])
 ZW_LIM = (0.70, 1.12)
+CS_MAX = dict(N1=1.10, N2=1.70)          # largest axial-chord scale of the vane rows
 WEAK_MODES = 6
+GAP_R1_N2 = 9.0                          # R1 TE - NGV2 LE [mm] (potential-field decay)
+RM = DES['annulus']['rm']
+
+
+def ko_far(hc):
+    """Kacker-Okapuu secondary-loss aspect-ratio factor"""
+    return (1 - 0.25 * (2 - hc) ** 0.5) / hc if hc <= 2 else 1 / hc
+
+
+def hc_of(row):
+    sec = DES[row]['sections']; st = DES['annulus']['stations']
+    xm = 0.5 * (DES[row]['x_le'] + DES[row]['x_te'])
+    h = float(__import__('numpy').interp(xm, [a for a, b in st], [b for a, b in st]))
+    return h / (sum(x['chord'] for x in sec) / len(sec))
 
 
 def load(name):
@@ -75,17 +96,23 @@ def main():
     zw1 = [s['zweifel'] for s in DES['N1']['sections']]; zw2 = [s['zweifel'] for s in DES['N2']['sections']]
     Z1_0, Z2_0 = DES['N1']['Z'], DES['N2']['Z']
     res = []
-    for n1 in range(36, 53):
-        z1 = [z * Z1_0 / n1 for z in zw1]
-        if not (ZW_LIM[0] <= min(z1) and max(z1) <= ZW_LIM[1]): continue
-        for n2 in range(24, 56):
-            z2 = [z * Z2_0 / n2 for z in zw2]
-            cs = 1.0
-            if max(z2) > ZW_LIM[1]: cs = max(z2) / ZW_LIM[1]
-            if min(z2) / cs < ZW_LIM[0] or cs > 1.2: continue
+    cx1_0, cx2_0 = (DES[r]['x_te'] - DES[r]['x_le'] for r in ('N1', 'N2'))
+    hc1_0, hc2_0 = hc_of('N1'), hc_of('N2')
+    def scale(zw, n, n0, row):
+        z = [v * n0 / n for v in zw]; cs = max(1.0, max(z) / ZW_LIM[1])
+        return (cs, (min(z) / cs, max(z) / cs)) if min(z) / cs >= ZW_LIM[0] and cs <= CS_MAX[row] else (None, None)
+    for n1 in range(20, 56):
+        cs1, z1 = scale(zw1, n1, Z1_0, 'N1')
+        if cs1 is None: continue
+        for n2 in range(20, 56):
+            cs, z2 = scale(zw2, n2, Z2_0, 'N2')
+            if cs is None: continue
             if abs(n2 - Z_R['R2']) < 4 or abs(n1 - Z_R['R1']) < 4 or abs(n2 - Z_R['R1']) < 4: continue
             checks = [('R1', 'N1', n1, 0.10), ('R1', 'N2', n2, 0.10), ('R1', '2N1', 2 * n1, 0.05),
                       ('R2', 'N2', n2, 0.10), ('R2', 'N1', n1, 0.05), ('R2', '2N2', 2 * n2, 0.05)]
+            pf2 = math.exp(-4 * math.pi * GAP_R1_N2 / (2 * math.pi * RM / n2))
+            if pf2 >= 0.05: checks.insert(3, ('R1', '2N2', 2 * n2, 0.05))
+            if abs(n1 - n2) > 5: checks += [('R1', 'N1-N2', abs(n1 - n2), 0.05), ('R2', 'N1-N2', abs(n1 - n2), 0.05)]
             ms, need = [], set()
             for row, lab, k, req in checks:
                 tab, rig, nd = src[row]
@@ -99,8 +126,10 @@ def main():
             ratio = min((abs(m['cyclic'][0]) / m['req'] for m in known), default=float('nan'))
             ratio_rig = min((abs(m['rigid'][0]) / m['req'] if m['rigid'] else 0.0 for m in ms))
             if not need: pass
-            res.append(dict(n1=n1, n2=n2, cx2_scale=cs, ratio_cyclic=ratio, ratio_rigid=ratio_rig, complete=not need,
-                            need_nd=sorted(need), zw1=(min(z1), max(z1)), zw2=(min(z2) / cs, max(z2) / cs), checks=ms))
+            res.append(dict(n1=n1, n2=n2, cx1_scale=cs1, cx2_scale=cs, cx1_mm=cx1_0 * cs1, cx2_mm=cx2_0 * cs,
+                            ko_sec_N1=ko_far(hc1_0 / cs1) / ko_far(hc1_0), ko_sec_N2=ko_far(hc2_0 / cs) / ko_far(hc2_0),
+                            ratio_cyclic=ratio, ratio_rigid=ratio_rig, complete=not need,
+                            need_nd=sorted(need), zw1=z1, zw2=z2, checks=ms))
     cur = [r for r in res if r['n1'] == Z1_0 and r['n2'] == Z2_0]
     print('current N1 %d / N2 %d:' % (Z1_0, Z2_0))
     for r in cur:
@@ -110,11 +139,13 @@ def main():
             print('   %s %-3s EO%-3d -> ND%-2d need %2.0f %%: cyclic %s; rigid hub %s' % (m['row'], m['order'], m['eo'], m['nd'],
                                                                                      100 * m['req'], cy, rg))
     ok = sorted([r for r in res if r['complete'] and r['ratio_cyclic'] >= 1.0],
-                key=lambda r: (abs(r['n1'] - Z1_0) + abs(r['n2'] - Z2_0) + 4 * (r['cx2_scale'] - 1), -r['ratio_cyclic']))
-    print('feasible on solved cyclic data (all orders known, all margins met):')
-    for r in ok[:10]:
-        print('  N1 %2d  N2 %2d  (N2 cx x%.2f)  min margin/required %.2f  Zw N1 %.2f-%.2f  N2 %.2f-%.2f' % (
-            r['n1'], r['n2'], r['cx2_scale'], r['ratio_cyclic'], *r['zw1'], *r['zw2']))
+                key=lambda r: (round(r['ko_sec_N2'] + r['ko_sec_N1'], 2), -r['ratio_cyclic']))
+    print('feasible on solved cyclic data (all orders known, all margins met), least secondary loss first:')
+    for r in ok[:12]:
+        worst = min((m for m in r['checks'] if m['cyclic']), key=lambda m: abs(m['cyclic'][0]) / m['req'])
+        print('  N1 %2d (cx %.1f, sec. loss x%.2f)  N2 %2d (cx %.1f, sec. loss x%.2f)  min margin/required %.2f (%s %s)'
+              '  Zw N1 %.2f-%.2f  N2 %.2f-%.2f' % (r['n1'], r['cx1_mm'], r['ko_sec_N1'], r['n2'], r['cx2_mm'], r['ko_sec_N2'],
+                                                 r['ratio_cyclic'], worst['row'], worst['order'], *r['zw1'], *r['zw2']))
     cand = sorted([r for r in res if not r['complete'] and r['ratio_rigid'] >= 1.0 and
                    (r['ratio_cyclic'] != r['ratio_cyclic'] or r['ratio_cyclic'] >= 1.0)],
                   key=lambda r: (len(r['need_nd']), -min(r['ratio_rigid'], 2.0)))
