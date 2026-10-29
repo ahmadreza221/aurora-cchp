@@ -172,7 +172,7 @@ def main():
         weak = ((2 * n1,) + ((2 * n2,) if pf2 >= 0.05 else ())) if row == 'R1' else (n1, 2 * n2)
         # vane-vane interaction (N1 wakes chopped by NGV2): circumferential order |N1 - N2| on both rotors, second-order
         # forcing: no crossing of the first WEAK_MODES families inside the grid band (forced response / tip timing beyond)
-        inter = (abs(n1 - n2),) if abs(n1 - n2) > 5 else ()   # (<= 5: one of the EO 1-5 checks)
+        inter = (abs(n1 - n2),) if abs(n1 - n2) > 5 and abs(n1 - n2) not in (n1, n2) else ()   # (<= 5: EO 1-5; = N2: NPF)
         key = 'margin_band' if 'margin_band' in b['interference'][0] else 'margin'
         mg = lambda eos, nm=None: min((abs(r[key]) for r in b['interference'] if r['eo'] in eos and (nm is None or r['mode'] <= nm)),
                                       default=float('nan'))

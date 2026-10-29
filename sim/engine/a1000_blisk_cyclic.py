@@ -44,7 +44,7 @@ ND_ADD = [tuple(int(v) for v in g.split(':')) for g in os.environ.get('A1000_ND'
 ROWS = dict(R1=dict(T=870.0, h_blade=1.0, h_disc=5.0), R2=dict(T=735.0, h_blade=1.3, h_disc=6.0))
 NGV = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 Z_N1, Z_N2 = NGV['N1']['Z'], NGV['N2']['Z']
-_DZ = [abs(Z_N1 - Z_N2)] if abs(Z_N1 - Z_N2) > 5 else []     # vane-vane interaction order (rev 5)
+_DZ = [abs(Z_N1 - Z_N2)] if abs(Z_N1 - Z_N2) > 5 and abs(Z_N1 - Z_N2) not in (Z_N1, Z_N2) else []   # vane-vane order
 EO = dict(R1=[1, 2, 3, 4, 5, Z_N1, Z_N2, 2 * Z_N1, 2 * Z_N2] + _DZ, R2=[1, 2, 3, 4, 5, Z_N2, Z_N1, 2 * Z_N2] + _DZ)
 
 

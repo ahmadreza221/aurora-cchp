@@ -43,20 +43,21 @@ GAP1, GAP2, GAP3 = 8.0, 9.0, 11.0
 CX_ROW = dict(N1=S1['cx_ngv'] * 1e3, R1=S1['cx_rot'] * 1e3, N2=S2['cx_ngv'] * 1e3, R2=S2['cx_rot'] * 1e3)
 # rev 3 (blade FEA): NGV2 33 -> 47 vanes with the NGV1 axial chord (26 mm instead of 37): EO33 hit the R2 3rd mode
 # (8,282 Hz at 15k: +0.4 %) and the R1 2nd mode (-7.7 %) of the rigid-hub blades
-# rev 5 (coupled blade-disc ZZENF, sim/engine/a1000_blisk_cyclic.py): the disc changes the picture. No NGV2 count in 40-55
-# clears R2: its families 5 / 6 / 7 at ND 7-18 (9.9 / 10.7-13.2 / 16-17.5 kHz) leave no 10 % window for EO 40-55 (47:
-# +6.7 % to ND11 F6, 48: +5.8 % to ND12 F6), and EO47 sat 3.5 % from the R1 ND12 F3. 29 vanes (prime): EO29 = 7,250 Hz
-# lies between R2 ND7 F3 / F4 (-19 / +10.4 % over the grid band) and between R1 ND29 F1 / F2 (+13 %); 2 x 29 = EO58 is
-# 7.7 % from R2 ND14 F6. The axial chord grows 26 -> 40.5 mm for the same Zweifel (<= 1.12, throat unchanged): h/c 1.19 ->
-# 0.76, Kacker-Okapuu secondary loss x 1.44 (~ -0.4 pt turbine efficiency), turbine 14.5 mm longer. 24 vanes also clear
-# (larger margins) but need a 48 mm chord (h/c 0.63, secondary loss x 1.7) and 24 / 36 = 2 / 3 puts 3 x NPF on ND0.
-CX_ROW['N2'] = 40.5
-# rev 5: NGV1 43 -> 39 vanes (EO43 sat on R2 ND7 F6 at 0.0 % and 2 x 43 = EO86 2.9 % from R1 ND27 F6); 39 keeps the
-# Zweifel at <= 1.10 with a 27 mm axial chord (+1 mm). Margins (coupled, grid band): R1 EO39 -12.6 %, R1 EO78 -6.5 %,
-# R2 EO39 (N1 wakes through two rows) -13.6 %. The vane-vane interaction order |39 - 29| = EO10 lies 0.7 % beyond the band
-# edge from the R2 ND10 F1 (2,568 Hz, +2.7 % at 15,000 rpm): a second-order forcing, accepted with the forced-response
-# estimate of docs/08 section 12 and the tip-timing test (fallback: NGV1 29 vanes, no interaction order, NGV1 cx 36 mm)
-CX_ROW['N1'] = 27.0
+# rev 5 (coupled blade-disc ZZENF, sim/engine/a1000_blisk_cyclic.py, R1 ND 0-29, R2 ND 0-14): the disc changes the picture.
+# - NGV2: no count in 40-55 clears R2 (families 5 / 6 / 7 at ND 7-18: 9.9 / 10.7-13.2 / 16-17.5 kHz leave no 10 % window;
+#   47: +6.7 % to ND11 F6) and EO47 sat 3.5 % from R1 ND12 F3. 24 vanes: EO24 between R2 ND12 F2 / F3 (-23 / +18.2 %)
+#   and R1 ND24 F1 / F2 (-16.5 / +36 %); 2 x 24 = EO48 +5.8 % from R2 ND12 F6, -12.1 % from R1 ND11 F3 (potential field
+#   of the large pitch: exp(-4 pi g / s) = 0.16). 29 vanes failed 2 x 29 = EO58 on R1 ND1 F9 (14,814 Hz, +0.2 %).
+#   Axial chord 26 -> 49 mm for the same Zweifel (<= 1.11, same throat): h/c 1.19 -> 0.62, Kacker-Okapuu secondary loss
+#   x 1.75 (~ -0.8 pt turbine efficiency).
+# - NGV1: R2 carries a flat blade family at 9.87-9.92 kHz on every ND >= 3 (ND3 F7, ND5 F6, ND7-14 F5): the N1 wakes
+#   reaching R2 through two rows put EO 37-42 within 5 % of it (39: 0.0 % at ND3 F7, 40: -1.9 %, 42: -2.7 %); EO43-47
+#   failed on R1 (43: 2 x 43 2.9 %, 44-47: R1 NPF <= 6 %). 48 vanes: R1 EO48 -12.1 % (ND11 F3), R2 EO48 +5.8 %, R1 2 x 48
+#   = EO96 -4.9 % from R1 ND22 F6 (the one point at the 5 % limit); 48 = 2 x 24, so each NGV2 passage takes two NGV1
+#   wakes (clocking can be set). The axial chord drops 26 -> 22 mm for the same Zweifel (h/c 0.69 -> 0.83: secondary loss
+#   x 0.85, ~ +0.3 pt), the turbine is 19 mm longer than rev 4 in all. Rev 5 work-in-progress 39 / 29 is superseded.
+CX_ROW['N2'] = 49.0
+CX_ROW['N1'] = 22.0
 X_LE = dict(N1=0.0)
 X_LE['R1'] = X_LE['N1'] + CX_ROW['N1'] + GAP1
 X_LE['N2'] = X_LE['R1'] + CX_ROW['R1'] + GAP2
@@ -68,10 +69,10 @@ H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'], S1['h_ngv_out'] * 1e3),
         (X_TE['R1'] + GAP2 / 2, S1['h_rot_out'] * 1e3), (X_TE['N2'], S2['h_ngv_out'] * 1e3),
         (X_TE['R2'], S2['h_rot_out'] * 1e3)]
 Z = dict(N1=S1['Z_ngv'], R1=S1['Z_rot'], N2=S2['Z_ngv'], R2=S2['Z_rot'])
-# rev 2: NGV1 47 -> 43 vanes (rigid-hub blades: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm); rev 5: 39 (coupled blisks,
-# see CX_ROW above)
-Z['N1'] = 39
-Z['N2'] = 29
+# rev 2: NGV1 47 -> 43 vanes (rigid-hub blades: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm); rev 5: 48 / 24 (coupled
+# blisks, see CX_ROW above)
+Z['N1'] = 48
+Z['N2'] = 24
 SPANS = [0.0, 0.25, 0.50, 0.75, 1.0]
 ROW_T0 = dict(N1=S1['T0_in'], R1=S1['T0_in'], N2=S2['T0_in'], R2=S2['T0_in'])
 

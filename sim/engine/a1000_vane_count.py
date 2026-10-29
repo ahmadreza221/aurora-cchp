@@ -121,7 +121,7 @@ def main():
                       ('R2', 'N2', n2, 0.10), ('R2', 'N1', n1, 0.05), ('R2', '2N2', 2 * n2, 0.05)]
             pf2 = math.exp(-4 * math.pi * GAP_R1_N2 / (2 * math.pi * RM / n2))
             if pf2 >= 0.05: checks.insert(3, ('R1', '2N2', 2 * n2, 0.05))
-            if abs(n1 - n2) > 5: checks += [('R1', 'N1-N2', abs(n1 - n2), REQ_INT), ('R2', 'N1-N2', abs(n1 - n2), REQ_INT)]
+            if abs(n1 - n2) > 5 and abs(n1 - n2) not in (n1, n2): checks += [('R1', 'N1-N2', abs(n1 - n2), REQ_INT), ('R2', 'N1-N2', abs(n1 - n2), REQ_INT)]
             ms, need = [], set()
             for row, lab, k, req in checks:
                 tab, rig, nd = src[row]
