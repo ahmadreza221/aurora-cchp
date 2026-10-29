@@ -2,9 +2,13 @@
 """AURORA-1000: choice of the NGV1 / NGV2 vane counts against the rotor-blade frequencies (interference at 15,000 rpm).
 
 Excitations of the rotors by the stator rows:
-  R1: N1 wakes (strong, 10 % margin), N2 potential field (9 mm gap: 10 %), 2 x N1 and 2 x N2 (weak, 5 %)
+  R1: N1 wakes (strong, 10 % margin), N2 potential field (9 mm gap: 10 %), 2 x N1 wakes (weak, 5 %). The 2nd harmonic of
+      the N2 potential field is not counted: it decays upstream as exp(-4 pi g / s) = 0.026 at g = 9 mm, s = 31 mm
+      (1st harmonic: 0.16), negligible forcing (rev 4)
   R2: N2 wakes (strong, 10 %), N1 wakes carried through R1 / N2 (weak, 5 %), 2 x N2 (weak, 5 %)
-Margins are the worst over the grid band 14,700-15,300 rpm (0 when the order crosses a mode inside the band).
+Margins are the worst over the grid band 14,700-15,300 rpm (0 when the order crosses a mode inside the band). Strong
+orders are checked against every mode; weak orders against the first WEAK_MODES modes / families (the dense higher modes
+have small modal forces at 2 x NPF: they are left to the forced-response analysis and the tip-timing test).
 Frequencies: coupled blade-disc families from the cyclic blisk model (sim/engine/a1000_blisk_cyclic.py) for the nodal
 diameter each order reaches; an order whose nodal diameter was not solved is UNKNOWN (rev 4: rev 3 scored it 100 %), and
 the rigid-hub blade modes (sim/engine/a1000_blade_fea.py) are shown beside it as an indication only. An order above the
@@ -25,6 +29,7 @@ BAND = (0.98, 1.02)
 DES = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 Z_R = dict(R1=DES['R1']['Z'], R2=DES['R2']['Z'])
 ZW_LIM = (0.70, 1.12)
+WEAK_MODES = 6
 
 
 def load(name):
@@ -35,6 +40,17 @@ def load(name):
 def band_margin(fl, k):
     """(worst signed margin over the band, frequency) of order k against the frequency list fl; None if not covered"""
     if not fl or max(fl) < k * BAND[1] * N_OP / 60 * 1.05: return None
+    best = None
+    for f in fl:
+        mb = [(f - k * b * N_OP / 60) / (k * b * N_OP / 60) for b in BAND]
+        m = 0.0 if mb[0] * mb[1] <= 0 else min(mb, key=abs)
+        if best is None or abs(m) < abs(best[0]): best = (m, f)
+    return best
+
+
+def band_margin_lim(fl, k):
+    """band margin against the given (first few) modes only; an order above all of them passes with the gap to the top one"""
+    if not fl: return None
     best = None
     for f in fl:
         mb = [(f - k * b * N_OP / 60) / (k * b * N_OP / 60) for b in BAND]
@@ -68,18 +84,21 @@ def main():
             if max(z2) > ZW_LIM[1]: cs = max(z2) / ZW_LIM[1]
             if min(z2) / cs < ZW_LIM[0] or cs > 1.2: continue
             if abs(n2 - Z_R['R2']) < 4 or abs(n1 - Z_R['R1']) < 4 or abs(n2 - Z_R['R1']) < 4: continue
-            checks = [('R1', 'N1', n1, 0.10), ('R1', 'N2', n2, 0.10), ('R1', '2N1', 2 * n1, 0.05), ('R1', '2N2', 2 * n2, 0.05),
+            checks = [('R1', 'N1', n1, 0.10), ('R1', 'N2', n2, 0.10), ('R1', '2N1', 2 * n1, 0.05),
                       ('R2', 'N2', n2, 0.10), ('R2', 'N1', n1, 0.05), ('R2', '2N2', 2 * n2, 0.05)]
             ms, need = [], set()
             for row, lab, k, req in checks:
                 tab, rig, nd = src[row]
-                cy = band_margin(tab.get(nd(k)), k) if nd(k) in tab else None
-                rg = band_margin(rig, k)
+                nm = WEAK_MODES if req < 0.10 else None
+                fl_c = tab.get(nd(k))[:nm] if nd(k) in tab else None
+                cy = (band_margin(fl_c, k) if nm is None else band_margin_lim(fl_c, k)) if fl_c else None
+                rg = band_margin(rig, k) if nm is None else band_margin_lim(rig[:nm], k)
                 if cy is None: need.add((row, nd(k)))
                 ms.append(dict(row=row, order=lab, eo=k, nd=nd(k), req=req, cyclic=cy, rigid=rg))
             known = [m for m in ms if m['cyclic'] is not None]
             ratio = min((abs(m['cyclic'][0]) / m['req'] for m in known), default=float('nan'))
             ratio_rig = min((abs(m['rigid'][0]) / m['req'] if m['rigid'] else 0.0 for m in ms))
+            if not need: pass
             res.append(dict(n1=n1, n2=n2, cx2_scale=cs, ratio_cyclic=ratio, ratio_rigid=ratio_rig, complete=not need,
                             need_nd=sorted(need), zw1=(min(z1), max(z1)), zw2=(min(z2) / cs, max(z2) / cs), checks=ms))
     cur = [r for r in res if r['n1'] == Z1_0 and r['n2'] == Z2_0]

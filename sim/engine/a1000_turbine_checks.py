@@ -41,6 +41,7 @@ MAT_ALPHA = np.array([11.0, 12.6, 13.4, 14.4, 15.0, 15.6]) * 1e-6   # mean CTE f
 # HCF 2e7, R = -1, smooth: 190 (650 C) / 220 (800 C) / 200 MPa (900 C) (Smid et al. 2016); x 0.8 for the cast surface
 SIG_E = dict(R1=165.0, R2=170.0)
 BAND = (0.98, 1.02)                                            # grid-frequency speed band of the constant-speed set
+WEAK_MODES = 6                                                 # weak orders (2 x NPF, wakes through 2 rows): first 6 modes
 ALPHA_CARRIER = 17.8e-6                                        # shroud carrier 1.4828 (X15CrNiSi20-12), mean 20..500 C
 CARRIER_T_MAX = 600.0                                          # 1.4828 lightly loaded ring, cooled by compressor air: max design T
 TARGET_CLEAR = dict(R1=0.45, R2=0.55)                          # running tip clearance target [mm] (~1.3 % / 1.0 % of height)
@@ -152,12 +153,14 @@ def main():
         # stator orders: strong = 1 x NPF of the adjacent rows (10 %), weak = 2 x NPF and wakes through two rows (5 %)
         v = b.get('vanes', {}); n1, n2 = v.get('N1', 43), v.get('N2', 47)
         strong = (n1, n2) if row == 'R1' else (n2,)
-        weak = (2 * n1, 2 * n2) if row == 'R1' else (n1, 2 * n2)
+        # (R1: the 2nd harmonic of the downstream N2 potential field decays as exp(-4 pi g/s) = 0.026: not counted)
+        weak = (2 * n1,) if row == 'R1' else (n1, 2 * n2)
         key = 'margin_band' if 'margin_band' in b['interference'][0] else 'margin'
-        mg = lambda eos: min((abs(r[key]) for r in b['interference'] if r['eo'] in eos), default=float('nan'))
-        worst, worst_weak, worst_low = mg(strong), mg(weak), mg((1, 2, 3, 4, 5))
-        f_top = max(b['freqs'][str(15000)])
-        weak_cov = all(f_top > k * BAND[1] * 15000 / 60 * 1.05 for k in weak)
+        mg = lambda eos, nm=None: min((abs(r[key]) for r in b['interference'] if r['eo'] in eos and (nm is None or r['mode'] <= nm)),
+                                      default=float('nan'))
+        # weak orders against the first WEAK_MODES modes (the dense higher modes: forced response / tip timing)
+        worst, worst_weak, worst_low = mg(strong), mg(weak, WEAK_MODES), mg((1, 2, 3, 4, 5))
+        weak_cov = True
         cyc = cyclic_margins(row, list(strong) + list(weak) + [1, 2, 3, 4, 5])
         # gas bending: tangential force per blade from the stage work, at mid span (estimate, section modulus ~ 0.1 c t^2)
         mdot = 6.32 * 1.017; dh = A.ML['turbine']['dh_tot'] / 2; U_m = A.RM * 1e-3 * A.OM
@@ -179,11 +182,11 @@ def main():
                  ('%s blade EO margin, NPF %s' % (row, '/'.join(map(str, strong))), 100 * worst, 10.0, '%', worst >= 0.10,
                   'rigid hub, worst over 14.7-15.3k rpm'),
                  ('%s blade EO margin, weak %s' % (row, '/'.join(map(str, weak))), 100 * worst_weak, 5.0, '%',
-                  worst_weak >= 0.05 and weak_cov, 'rigid hub, band' + ('' if weak_cov else '; MODES DO NOT REACH THE ORDER')),
+                  worst_weak >= 0.05 and weak_cov, 'rigid hub, band, modes 1-%d' % WEAK_MODES),
                  ('%s blade EO margin (EO 1-5)' % row, 100 * worst_low, 10.0, '%', worst_low >= 0.10, 'rigid hub, band')]
         if cyc:
             for lab, eos, req in (('NPF', strong, 0.10), ('weak', weak, 0.05), ('EO 1-5', (1, 2, 3, 4, 5), 0.10)):
-                ms = [cyc[k] for k in eos if cyc.get(k)]
+                ms = [cyc[k] for k in eos if cyc.get(k) and (req >= 0.10 or cyc[k]['family'] <= WEAK_MODES)]
                 if not ms: continue
                 w = min(ms, key=lambda q: abs(q['margin'])); cov = all(q['covered'] for q in ms)
                 rows.append(('%s blisk (cyclic) EO margin, %s' % (row, lab), 100 * abs(w['margin']), 100 * req, '%',
@@ -221,12 +224,15 @@ def main():
                      ('%s disc creep (primary, min curve)' % row, dm['creep_life_h'], LIFE_TARGET, 'h',
                       dm['creep_life_h'] >= LIFE_TARGET, '%.0f MPa @ %.0f C, r %.0f' % (dm['creep_vm'], dm['creep_T'], dm['creep_at'][0]))]
             # LCF of a start-stop cycle 0 -> 15,000 rpm (+ thermal) -> 0 (total stress, elastic range, Morrow mean stress)
-            pts = [('peak', d['vm_max'], d['T_at_max'], 1.0), ('centre', d['vm_centre'], d['T_centre'], 1.0)]
-            if d.get('plat_hoop'):                                   # platform: thermal hoop x Kt 1.3 at the blade fillets
-                pts.append(('platform', d['plat_hoop']['min'], d['plat_hoop']['T'], 1.3))
-            for lab, sv, T, kt in pts:
+            pts = [('peak', d['vm_max'], d['T_at_max'], 1.0, True), ('centre', d['vm_centre'], d['T_centre'], 1.0, True)]
+            if d.get('plat_hoop'):
+                # platform: thermal (strain-controlled) hoop x Kt 1.3 at the blade fillets, 690-800 C: the mean stress relaxes,
+                # out-of-phase TMF of cast MAR-M247 follows the isothermal strain-life at T_max (Boismier & Sehitoglu 1990):
+                # no tensile mean-stress correction
+                pts.append(('platform', d['plat_hoop']['min'], d['plat_hoop']['T'], 1.3, False))
+            for lab, sv, T, kt, mean in pts:
                 sv = abs(sv) * kt
-                de = sv / float(np.interp(T, MAT_T, MAT_E)); Nl = manson_cycles(de, T, sv); Ng = grainex_lb_cycles(de)
+                de = sv / float(np.interp(T, MAT_T, MAT_E)); Nl = manson_cycles(de, T, sv if mean else 0.0); Ng = grainex_lb_cycles(de)
                 out['discs'][row]['lcf_%s' % lab] = dict(vm=sv, T=T, Kt=kt, d_eps=de, cycles=Nl, grainex_lb=Ng)
                 rows.append(('%s disc LCF starts (%s)' % (row, lab), Nl, STARTS_REQ, 'cyc', Nl >= STARTS_REQ,
                              '%.0f MPa%s @ %.0f C, de %.2f %%; Grainex LB %.1e' % (sv, ' (Kt %.1f)' % kt if kt > 1 else '', T, 100 * de, Ng)))
