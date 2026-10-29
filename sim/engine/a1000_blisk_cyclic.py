@@ -29,7 +29,11 @@ from a1000_disc_fea import TEMP as DISC_TEMP, MAT_T, MAT_E, RHO   # noqa: E402
 CAD = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
 FEA = os.path.join(HERE, 'fea')
 N_OP = 15000.0
-FAM = dict(R1=7, R2=10)                                       # mode families per nodal diameter (R2: up to 2 x NPF)
+FAM = dict(R1=7, R2=11)                                       # most mode families per nodal diameter (plot)
+# nodal-diameter groups solved (nmin, nmax, families): each ND costs ~4 min on this sector, so only the NDs the engine
+# orders reach (+ one high ND for the blade-alone limit), with as many families as reach the order's frequency
+ND_STEPS = dict(R1=[(0, 5, 4), (12, 12, 4), (16, 16, 4), (27, 27, 7), (29, 29, 7)],      # EO1-5, EO47, EO43, EO86
+                R2=[(0, 5, 4), (7, 7, 6), (11, 11, 7), (14, 14, 11), (18, 18, 6)])      # EO1-5, EO43, EO47, EO94
 ROWS = dict(R1=dict(T=870.0, h_blade=1.0, h_disc=5.0), R2=dict(T=735.0, h_blade=1.3, h_disc=6.0))
 NGV = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 Z_N1, Z_N2 = NGV['N1']['Z'], NGV['N2']['Z']
@@ -122,10 +126,11 @@ def run(row, nodes, els, nl, nr, meta, nds, tag):
         f.write('*INITIAL CONDITIONS, TYPE=TEMPERATURE\n' + ''.join('%d, %.1f\n' % (k, temp(p)) for k, p in nodes.items()))
         f.write('*BOUNDARY\nNHUB, 1, 3, 0.\n')
         f.write('*STEP, NLGEOM\n*STATIC\n*DLOAD\nEALL, CENTRIF, %.6e, 0., 0., 0., 1., 0., 0.\n*END STEP\n' % om**2)
-        f.write('*STEP, PERTURBATION\n*FREQUENCY\n%d\n*SELECT CYCLIC SYMMETRY MODES, NMIN=%d, NMAX=%d\n*END STEP\n'
-                % (2 * FAM[row], min(nds), max(nds)))
+        for n0, n1, fam in ND_STEPS[row]:                      # one perturbation step per group (cos / sin copies: 2 x fam)
+            f.write('*STEP, PERTURBATION\n*FREQUENCY\n%d\n*SELECT CYCLIC SYMMETRY MODES, NMIN=%d, NMAX=%d\n*END STEP\n'
+                    % (2 * fam, n0, n1))
     F.run_ccx(job, threads=int(os.environ.get('CCX_THREADS', 4)))
-    return {nd: v[:FAM[row]] for nd, v in C.parse_dat(os.path.join(FEA, job + '.dat')).items() if nd in nds}
+    return {nd: v for nd, v in C.parse_dat(os.path.join(FEA, job + '.dat')).items() if nd in nds}
 
 
 def main():
@@ -138,7 +143,7 @@ def main():
     nodes, els, nl, nr = mesh(os.path.join(CAD, 'A1000_%s_sector.step' % row), meta['theta0_deg'], meta['pitch_deg'],
                               meta['rh'], ROWS[row])
     print('%s sector mesh: %d nodes, %d C3D10, cut faces %d / %d nodes' % (row, len(nodes), len(els), len(nl), len(nr)), flush=True)
-    nd_all = list(range(0, Z // 2 + 1))
+    nd_all = sorted({n for n0, n1, _ in ND_STEPS[row] for n in range(n0, n1 + 1)})
     table = run(row, nodes, els, nl, nr, meta, nd_all, '15k')
     if len(table) < len(nd_all):
         raise RuntimeError('cyclic frequency step returned %d of %d nodal diameters (ccx killed? see the .log)' % (len(table), len(nd_all)))
@@ -162,7 +167,7 @@ def main():
     fig, ax = plt.subplots(figsize=(11, 7), dpi=120)
     for m in range(FAM[row]):
         pts = [(n, table[n][m]) for n in sorted(table) if len(table[n]) > m]
-        ax.plot(*zip(*pts), 'o-', ms=4, lw=1, color='C%d' % m, label='family %d' % (m + 1))
+        if pts: ax.plot(*zip(*pts), 'o', ms=5, color='C%d' % (m % 10), label='family %d' % (m + 1))
     top = max(max(v) for v in table.values()) * 1.05
     for k in EO[row]:
         n = nd_of(k, Z); fk = k * N_OP / 60
@@ -170,7 +175,7 @@ def main():
         ax.plot([n], [fk], 'kx', ms=11, mew=2); ax.annotate(' EO%d' % k, (n, fk), fontsize=9)
         ax.fill_between([n - 0.35, n + 0.35], fk * 0.9, fk * 1.1, color='k', alpha=0.10)
     ax.set_xlabel('nodal diameter'); ax.set_ylabel('frequency at 15,000 rpm [Hz]'); ax.set_ylim(0, top)
-    ax.set_xticks(range(0, Z // 2 + 1, 1 if Z < 40 else 2)); ax.grid(alpha=0.3); ax.legend(fontsize=8, loc='upper left')
+    ax.set_xticks(nd_all); ax.set_xlim(-0.5, Z // 2 + 0.5); ax.grid(alpha=0.3); ax.legend(fontsize=8, loc='upper left')
     ax.set_title('AURORA-1000 %s blisk (%d blades, cyclic symmetry, disc included): ZZENF at 15,000 rpm, x = EO (+-10 %%)'
                  % (row, Z), fontsize=10)
     fig.tight_layout(); png = os.path.join(ROOT, 'docs', 'img', 'a1000_%s_zzenf.png' % row); fig.savefig(png); print('written', png)

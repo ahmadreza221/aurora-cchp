@@ -32,6 +32,7 @@ graphify-out/*.pending.json
 
 # compact parts for Autodesk Fusion (fusion/README.md)
 !fusion/E1/*.step
+!fusion/A1000/*.step
 # Fusion script diagnostics (fusion/GR180_E1_Import writes _e1_verify.json)
 fusion/_*.json
 sim/cfd/e1_stage/ngv/

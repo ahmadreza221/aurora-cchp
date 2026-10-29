@@ -12,7 +12,7 @@ Operating speed 15,000 rpm fixed (grid frequency +-2 %), overspeed trip 16,500 r
 passed in seconds.
 Input:  cad_out/engine/A1000/A1000_R1_blade.step, A1000_R2_blade.step   (cad/engine/a1000_turbine.py --cad)
 Run:    python sim/engine/a1000_blade_fea.py [R1|R2]    (CCX = path to ccx)
-Writes: sim/engine/fea/a1000_blade_<row>.json, cad_out/engine/A1000/A1000_<row>_campbell.png
+Writes: sim/engine/fea/a1000_blade_<row>.json, docs/img/a1000_<row>_campbell.png
 """
 import json
 import math
@@ -179,7 +179,7 @@ def main():
     ax.set_ylim(0, top); ax.set_xlim(0, N_TRIP * 1.1 / 1e3); ax.grid(alpha=0.3); ax.legend(fontsize=8, loc='upper left')
     ax.set_xlabel('speed [k rpm]'); ax.set_ylabel('frequency [Hz]')
     ax.set_title('AURORA-1000 %s blade Campbell diagram (MAR-M247 %.0f C, rigid hub)' % (row, cfg['T']))
-    fig.tight_layout(); fig.savefig(os.path.join(OUT, 'A1000_%s_campbell.png' % row)); print('  written')
+    fig.tight_layout(); fig.savefig(os.path.join(ROOT, 'docs', 'img', 'a1000_%s_campbell.png' % row)); print('  written')
 
 
 if __name__ == '__main__':

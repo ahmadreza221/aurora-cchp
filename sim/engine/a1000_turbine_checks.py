@@ -93,8 +93,12 @@ def main():
         # Goodman: allowable alternating stress at the root mean section and at the peak (local) point
         sa_root = SIG_E[row] * (1 - s_root / uts); sa_peak = SIG_E[row] * max(0.0, 1 - s['vm_max'] / uts)
         crit = b['critical']
-        worst = min((abs(r['margin']) for r in b['interference'] if r['eo'] > 5), default=None)
-        worst_low = min((abs(r['margin']) for r in b['interference'] if r['eo'] <= 5), default=None)
+        # stator orders: strong = 1 x NPF of the adjacent rows (10 %), weak = 2 x NPF and wakes through two rows (5 %)
+        v = b.get('vanes', {}); n1, n2 = v.get('N1', 43), v.get('N2', 47)
+        strong = (n1, n2) if row == 'R1' else (n2,)
+        weak = (2 * n1,) if row == 'R1' else (n1, 2 * n2)
+        mg = lambda eos: min((abs(r['margin']) for r in b['interference'] if r['eo'] in eos), default=None)
+        worst, worst_weak, worst_low = mg(strong), mg(weak), mg((1, 2, 3, 4, 5))
         # gas bending: tangential force per blade from the stage work, at mid span (estimate, section modulus ~ 0.1 c t^2)
         mdot = 6.32 * 1.017; dh = A.ML['turbine']['dh_tot'] / 2; U_m = A.RM * 1e-3 * A.OM
         Ft = mdot * dh / U_m / A.Z[row]                         # N per blade (torque / (r_m Z))
@@ -105,19 +109,22 @@ def main():
         out['blades'][row] = dict(metal_C=T, sigma_root_mean=s_root, sigma_root_max=s['srr_root_max'], vm_max=s['vm_max'],
                                   vm_p99=s['vm_p99'], creep_life_h=life_nom, creep_life_h_x125=life, span_creep_x125=span_life,
                                   yield_margin_peak=y_margin, goodman_allow_root=sa_root, goodman_allow_peak=sa_peak,
-                                  interference_critical=crit, worst_margin_ngv_orders=worst, worst_margin_low_orders=worst_low,
+                                  interference_critical=crit, worst_margin_npf=worst, worst_margin_weak=worst_weak,
+                                  worst_margin_low_orders=worst_low,
                                   gas_force_N=Ft, gas_bending_MPa=s_gas, freqs_15k=b['freqs'][str(15000)])
         rows += [('%s blade creep (root, x1.25 stress)' % row, life, LIFE_TARGET, 'h', life >= LIFE_TARGET, '%.0f MPa @ %.0f C' % (s_root, T)),
                  ('%s blade peak / yield' % row, y_margin, 1.0, '-', y_margin >= 1.0, 'vm %.0f MPa (local, fillet/TE)' % s['vm_max']),
-                 ('%s blade EO margin (NGV orders)' % row, 100 * worst if worst is not None else float('nan'), 10.0, '%',
-                  worst is not None and worst >= 0.10, 'interference |margin| at 15k'),
+                 ('%s blade EO margin, NPF %s' % (row, '/'.join(map(str, strong))), 100 * worst, 10.0, '%', worst >= 0.10,
+                  'NGV wakes / potential field, at 15k (rigid hub)'),
+                 ('%s blade EO margin, weak %s' % (row, '/'.join(map(str, weak))), 100 * worst_weak, 5.0, '%', worst_weak >= 0.05,
+                  '2 x NPF, wakes through 2 rows'),
                  ('%s blade EO margin (EO 1-5)' % row, 100 * worst_low if worst_low is not None else float('nan'), 10.0, '%',
                   worst_low is not None and worst_low >= 0.10, 'low orders')]
         print('%s blade: root net section %.0f MPa (max %.0f) at %.0f C -> creep %.1e h (%.1e h x1.25); peak vm %.0f MPa '
               '(margin %.2f); Goodman allow %.0f MPa (root) / %.0f MPa (peak); gas bending ~%.0f MPa (F %.0f N); '
-              'EO margin NGV orders %.1f %%, EO1-5 %.1f %%' % (
+              'EO margin NPF %.1f %%, weak orders %.1f %%, EO1-5 %.1f %%' % (
                   row, s_root, s['srr_root_max'], T, life_nom, life, s['vm_max'], y_margin, sa_root, sa_peak, s_gas, Ft,
-                  100 * (worst or 0), 100 * (worst_low or 0)))
+                  100 * worst, 100 * worst_weak, 100 * worst_low))
         # tip clearance budget
         if disc:
             d = disc['%s_op' % row]

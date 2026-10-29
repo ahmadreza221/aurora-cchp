@@ -50,7 +50,7 @@ def main():
     for n1 in range(36, 53):
         z1 = [z * Z1_0 / n1 for z in zw1]
         if not (ZW_LIM[0] <= min(z1) and max(z1) <= ZW_LIM[1]): continue
-        for n2 in range(24, 45):
+        for n2 in range(24, 56):
             # N2 axial chord scale to bring the Zweifel band inside the limits (if needed)
             z2 = [z * Z2_0 / n2 for z in zw2]
             cs = 1.0

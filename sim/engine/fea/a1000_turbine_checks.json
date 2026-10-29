@@ -1,0 +1,501 @@
+{
+ "blades": {
+  "R1": {
+   "metal_C": 870.0,
+   "sigma_root_mean": 110.14895230142676,
+   "sigma_root_max": 163.708673792357,
+   "vm_max": 192.7118049762894,
+   "vm_p99": 141.35782335892276,
+   "creep_life_h": 1190611.9181677643,
+   "creep_life_h_x125": 271223.82096925256,
+   "span_creep_x125": {
+    "srr_mean_0.25": 479798.14350034966,
+    "srr_mean_0.50": 5842478.643201238,
+    "srr_mean_0.75": 367540285.6730515
+   },
+   "yield_margin_peak": 4.089007417562992,
+   "goodman_allow_root": 174.69294605366414,
+   "goodman_allow_peak": 155.7238816826446,
+   "interference_critical": [
+    {
+     "mode": 6,
+     "eo": 86,
+     "f_op": 23599.0,
+     "margin": 0.09762790697674419,
+     "crossings": [
+      16472.7068618738
+     ]
+    }
+   ],
+   "worst_margin_npf": 0.19525361702127655,
+   "worst_margin_weak": 0.09762790697674419,
+   "worst_margin_low_orders": 2.6402495999999998,
+   "gas_force_N": 49.562825952942134,
+   "gas_bending_MPa": 6.410234060648408,
+   "freqs_15k": [
+    4550.312,
+    7614.974,
+    14044.23,
+    15825.41,
+    16412.32,
+    23599.0,
+    29158.74,
+    30507.77
+   ]
+  },
+  "R2": {
+   "metal_C": 735.0,
+   "sigma_root_mean": 185.20967478592408,
+   "sigma_root_max": 345.57717005760423,
+   "vm_max": 378.0021695939059,
+   "vm_p99": 280.84463472866065,
+   "creep_life_h": 74316218.12776488,
+   "creep_life_h_x125": 13887133.636574782,
+   "span_creep_x125": {
+    "srr_mean_0.25": 15849267.191283759,
+    "srr_mean_0.50": 579055163.8355207,
+    "srr_mean_0.75": 68972317723.05327
+   },
+   "yield_margin_peak": 2.1871567586191145,
+   "goodman_allow_root": 186.37104063422092,
+   "goodman_allow_peak": 140.95583253709043,
+   "interference_critical": [
+    {
+     "mode": 5,
+     "eo": 43,
+     "f_op": 10109.26,
+     "margin": -0.059603720930232536,
+     "crossings": [
+      14102.877278136888
+     ]
+    }
+   ],
+   "worst_margin_npf": 0.13963744680851062,
+   "worst_margin_weak": 0.059603720930232536,
+   "worst_margin_low_orders": 1.18792,
+   "gas_force_N": 81.22796475621072,
+   "gas_bending_MPa": 4.9690316749839,
+   "freqs_15k": [
+    2734.9,
+    4840.716,
+    8282.169,
+    9579.982,
+    10109.26,
+    14560.01,
+    16941.62,
+    18181.51
+   ]
+  }
+ },
+ "discs": {
+  "R1": {
+   "op": {
+    "row": "R1",
+    "N": 15000.0,
+    "blade_pull_N": 20478.10871907613,
+    "vm_max": 418.7429773230949,
+    "vm_max_at": [
+     192.78000443289358,
+     38.238522459640606
+    ],
+    "T_at_max": 634.8245750442094,
+    "u_rim_mm": 1.61623,
+    "creep_life_h": 817396.7501578154,
+    "creep_life_h_x125": 146467.09543262867,
+    "creep_at": [
+     204.11498581571493,
+     49.60534067084133
+    ],
+    "creep_vm": 409.59073017690076,
+    "creep_T": 710.3977021952204,
+    "ys_at_max": 821.7412287522104,
+    "margin_yield": 1.9624000240084478,
+    "hoop_mean": 223.80055824708,
+    "burst_rpm": 29082.803370169666,
+    "burst_ratio": 1.938853558011311,
+    "vm_centre": 338.25654411107564,
+    "T_centre": 450.0,
+    "disc_mass_kg": 42.35198210164441
+   },
+   "trip": {
+    "row": "R1",
+    "N": 16500.0,
+    "blade_pull_N": 24778.511550082116,
+    "vm_max": 448.18252336934114,
+    "vm_max_at": [
+     192.78000443289358,
+     38.238522459640606
+    ],
+    "T_at_max": 634.8245750442094,
+    "u_rim_mm": 1.65777,
+    "creep_life_h": 1220073.288662653,
+    "creep_life_h_x125": 218621.60666879584,
+    "creep_at": [
+     204.11498581571493,
+     49.60534067084133
+    ],
+    "creep_vm": 388.842310372378,
+    "creep_T": 710.3977021952204,
+    "ys_at_max": 821.7412287522104,
+    "margin_yield": 1.8334968141428947,
+    "hoop_mean": 276.5488728882184,
+    "burst_rpm": 28778.860135837993,
+    "burst_ratio": 1.9185906757225328,
+    "vm_centre": 399.88922415875123,
+    "T_centre": 450.0,
+    "disc_mass_kg": 42.35198210164441
+   },
+   "lcf_peak": {
+    "vm": 418.7429773230949,
+    "T": 634.8245750442094,
+    "d_eps": 0.0024102201438684872,
+    "cycles": 179680.67152159713
+   },
+   "lcf_centre": {
+    "vm": 338.25654411107564,
+    "T": 450.0,
+    "d_eps": 0.0018433599134118563,
+    "cycles": 879195.9981521163
+   }
+  },
+  "R2": {
+   "op": {
+    "row": "R2",
+    "N": 15000.0,
+    "blade_pull_N": 75245.869023126,
+    "vm_max": 519.5845600111978,
+    "vm_max_at": [
+     179.70698869967305,
+     137.39470838858108
+    ],
+    "T_at_max": 630.9160789232506,
+    "u_rim_mm": 1.62147,
+    "creep_life_h": 20161072.80179773,
+    "creep_life_h_x125": 3123381.6750568957,
+    "creep_at": [
+     180.86848532396792,
+     137.7484985884161
+    ],
+    "creep_vm": 510.7356577417814,
+    "creep_T": 633.6513091688964,
+    "ys_at_max": 821.5458039461626,
+    "margin_yield": 1.5811590011998375,
+    "hoop_mean": 249.62795850014453,
+    "burst_rpm": 27543.446010349227,
+    "burst_ratio": 1.8362297340232818,
+    "vm_centre": 434.4447900863289,
+    "T_centre": 420.0,
+    "disc_mass_kg": 46.126573925163136
+   },
+   "trip": {
+    "row": "R2",
+    "N": 16500.0,
+    "blade_pull_N": 91047.50151798245,
+    "vm_max": 592.9868447820829,
+    "vm_max_at": [
+     179.1154613559435,
+     137.2532009528827
+    ],
+    "T_at_max": 629.529852453622,
+    "u_rim_mm": 1.66582,
+    "creep_life_h": 6872117.75651686,
+    "creep_life_h_x125": 1061694.287025873,
+    "creep_at": [
+     180.2985160434026,
+     137.53621582427945
+    ],
+    "creep_vm": 587.3383818926786,
+    "creep_T": 632.306875847494,
+    "ys_at_max": 821.4764926226811,
+    "margin_yield": 1.3853199271639256,
+    "hoop_mean": 305.8929476489303,
+    "burst_rpm": 27369.87664864439,
+    "burst_ratio": 1.8246584432429593,
+    "vm_centre": 499.64107506080904,
+    "T_centre": 420.0,
+    "disc_mass_kg": 46.126573925163136
+   },
+   "lcf_peak": {
+    "vm": 519.5845600111978,
+    "T": 630.9160789232506,
+    "d_eps": 0.002986281979660598,
+    "cycles": 38361.2893450606
+   },
+   "lcf_centre": {
+    "vm": 434.4447900863289,
+    "T": 420.0,
+    "d_eps": 0.002348350216682859,
+    "cycles": 127236.50555301753
+   }
+  }
+ },
+ "rotor": {
+  "selected": "A-SFD",
+  "criticals": [
+   {
+    "mode": 1,
+    "N": 4003.3678058649393,
+    "f_Hz": 66.72279676441566,
+    "logdec": 1.3754684336557674,
+    "AF": 2.2840165406340587,
+    "SM": 71.90619083603552,
+    "SM_req": 0.0,
+    "ok": true
+   },
+   {
+    "mode": 2,
+    "N": 6828.581250796299,
+    "f_Hz": 113.80968751327165,
+    "logdec": 2.5529019137884412,
+    "AF": 1.2305966933636514,
+    "SM": 52.0801315733593,
+    "SM_req": 0.0,
+    "ok": true
+   },
+   {
+    "mode": 3,
+    "N": 24210.69977347845,
+    "f_Hz": 403.5116628913075,
+    "logdec": 0.4127658000641938,
+    "AF": 7.611077887512021,
+    "SM": 53.718728720498085,
+    "SM_req": 24.218166694497633,
+    "ok": true
+   }
+  ],
+  "amp_max_um": 2.5701327884191807,
+  "limit_um": 22.170937647976825
+ },
+ "tips": {
+  "R1": {
+   "disc_rim_growth": 1.61623,
+   "blade_stretch": 0.018297763083311706,
+   "blade_thermal": 0.4353586170478844,
+   "rotor_growth": 2.069886380131196,
+   "cold_clearance": 0.5,
+   "casing_r": 250.30390739807945,
+   "target_running": 0.45,
+   "carrier_T_needed_C": 473.35593881979327
+  },
+  "R2": {
+   "disc_rim_growth": 1.62147,
+   "blade_stretch": 0.0831796709162606,
+   "blade_thermal": 0.571250785679046,
+   "rotor_growth": 2.2759004565953065,
+   "cold_clearance": 0.6,
+   "casing_r": 262.98755373433914,
+   "target_running": 0.55,
+   "carrier_T_needed_C": 495.50002147818844
+  }
+ },
+ "sheet": [
+  {
+   "test": "R1 blade creep (root, x1.25 stress)",
+   "value": 271223.82096925256,
+   "limit": 100000.0,
+   "unit": "h",
+   "ok": true,
+   "note": "110 MPa @ 870 C"
+  },
+  {
+   "test": "R1 blade peak / yield",
+   "value": 4.089007417562992,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "vm 193 MPa (local, fillet/TE)"
+  },
+  {
+   "test": "R1 blade EO margin, NPF 43/47",
+   "value": 19.525361702127654,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": true,
+   "note": "NGV wakes / potential field, at 15k (rigid hub)"
+  },
+  {
+   "test": "R1 blade EO margin, weak 86",
+   "value": 9.762790697674419,
+   "limit": 5.0,
+   "unit": "%",
+   "ok": true,
+   "note": "2 x NPF, wakes through 2 rows"
+  },
+  {
+   "test": "R1 blade EO margin (EO 1-5)",
+   "value": 264.02495999999996,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": true,
+   "note": "low orders"
+  },
+  {
+   "test": "R1 tip carrier temperature",
+   "value": 473.35593881979327,
+   "limit": 520.0,
+   "unit": "C",
+   "ok": true,
+   "note": "needed for 0.45 mm running"
+  },
+  {
+   "test": "R2 blade creep (root, x1.25 stress)",
+   "value": 13887133.636574782,
+   "limit": 100000.0,
+   "unit": "h",
+   "ok": true,
+   "note": "185 MPa @ 735 C"
+  },
+  {
+   "test": "R2 blade peak / yield",
+   "value": 2.1871567586191145,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "vm 378 MPa (local, fillet/TE)"
+  },
+  {
+   "test": "R2 blade EO margin, NPF 47",
+   "value": 13.963744680851061,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": true,
+   "note": "NGV wakes / potential field, at 15k (rigid hub)"
+  },
+  {
+   "test": "R2 blade EO margin, weak 43/94",
+   "value": 5.9603720930232535,
+   "limit": 5.0,
+   "unit": "%",
+   "ok": true,
+   "note": "2 x NPF, wakes through 2 rows"
+  },
+  {
+   "test": "R2 blade EO margin (EO 1-5)",
+   "value": 118.792,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": true,
+   "note": "low orders"
+  },
+  {
+   "test": "R2 tip carrier temperature",
+   "value": 495.50002147818844,
+   "limit": 520.0,
+   "unit": "C",
+   "ok": true,
+   "note": "needed for 0.55 mm running"
+  },
+  {
+   "test": "R1 disc yield margin (trip)",
+   "value": 1.8334968141428947,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "vm 448 MPa"
+  },
+  {
+   "test": "R1 disc burst / 15k",
+   "value": 1.938853558011311,
+   "limit": 1.342,
+   "unit": "x",
+   "ok": true,
+   "note": ">= 1.22 x trip"
+  },
+  {
+   "test": "R1 disc creep (x1.25 stress)",
+   "value": 146467.09543262867,
+   "limit": 100000.0,
+   "unit": "h",
+   "ok": true,
+   "note": "410 MPa @ 710 C"
+  },
+  {
+   "test": "R1 disc LCF starts (peak)",
+   "value": 179680.67152159713,
+   "limit": 10000,
+   "unit": "cyc",
+   "ok": true,
+   "note": "419 MPa @ 635 C, de 0.24 %, factors 2 / 20"
+  },
+  {
+   "test": "R1 disc LCF starts (centre)",
+   "value": 879195.9981521163,
+   "limit": 10000,
+   "unit": "cyc",
+   "ok": true,
+   "note": "338 MPa @ 450 C, de 0.18 %, factors 2 / 20"
+  },
+  {
+   "test": "R2 disc yield margin (trip)",
+   "value": 1.3853199271639256,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "vm 593 MPa"
+  },
+  {
+   "test": "R2 disc burst / 15k",
+   "value": 1.8362297340232818,
+   "limit": 1.342,
+   "unit": "x",
+   "ok": true,
+   "note": ">= 1.22 x trip"
+  },
+  {
+   "test": "R2 disc creep (x1.25 stress)",
+   "value": 3123381.6750568957,
+   "limit": 100000.0,
+   "unit": "h",
+   "ok": true,
+   "note": "511 MPa @ 634 C"
+  },
+  {
+   "test": "R2 disc LCF starts (peak)",
+   "value": 38361.2893450606,
+   "limit": 10000,
+   "unit": "cyc",
+   "ok": true,
+   "note": "520 MPa @ 631 C, de 0.30 %, factors 2 / 20"
+  },
+  {
+   "test": "R2 disc LCF starts (centre)",
+   "value": 127236.50555301753,
+   "limit": 10000,
+   "unit": "cyc",
+   "ok": true,
+   "note": "434 MPa @ 420 C, de 0.23 %, factors 2 / 20"
+  },
+  {
+   "test": "rotor critical 4003 rpm (AF 2.3)",
+   "value": 71.90619083603552,
+   "limit": 0.0,
+   "unit": "%",
+   "ok": true,
+   "note": "mode 1, log dec 1.38"
+  },
+  {
+   "test": "rotor critical 6829 rpm (AF 1.2)",
+   "value": 52.0801315733593,
+   "limit": 0.0,
+   "unit": "%",
+   "ok": true,
+   "note": "mode 2, log dec 2.55"
+  },
+  {
+   "test": "rotor critical 24211 rpm (AF 7.6)",
+   "value": 53.718728720498085,
+   "limit": 24.218166694497633,
+   "unit": "%",
+   "ok": true,
+   "note": "mode 3, log dec 0.41"
+  },
+  {
+   "test": "rotor unbalance response (API)",
+   "value": 2.5701327884191807,
+   "limit": 22.170937647976825,
+   "unit": "um",
+   "ok": true,
+   "note": "pk-pk at the journals"
+  }
+ ]
+}
