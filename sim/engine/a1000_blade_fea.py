@@ -31,15 +31,16 @@ OUT = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
 FEA = os.path.join(HERE, 'fea')
 N_OP, N_TRIP = 15000.0, 16500.0
 SPEEDS = [0.0, 5000.0, 10000.0, 13000.0, 15000.0, 16500.0]
-N_MODES = 8
+N_MODES = dict(R1=10, R2=16)       # enough modes to pass 2 x NPF at the trip speed (R2: 2 x 47 x 275 Hz = 25.9 kHz)
 # MAR-M247 (cast, equiaxed): typical data; E [MPa] vs T [C]
 MAT_T = np.array([20., 400., 600., 800., 900., 1000.])
 MAT_E = np.array([200e3, 186e3, 176e3, 163e3, 156e3, 148e3])
 MAT_YS = np.array([815., 800., 820., 830., 770., 590.])        # 0.2 % yield, typical
 RHO = 8.54e-9                                                   # t/mm3
 _ZN1, _ZN2 = DES['N1']['Z'], DES['N2']['Z']                    # vane counts of the current design (rev 3: 43 / 47)
-ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, _ZN1, _ZN2, 2 * _ZN1], h=0.8),
+ROWS = dict(R1=dict(T=870.0, EO=[1, 2, 3, 4, 5, _ZN1, _ZN2, 2 * _ZN1, 2 * _ZN2], h=0.8),
             R2=dict(T=735.0, EO=[1, 2, 3, 4, 5, _ZN2, _ZN1, 2 * _ZN2], h=1.1))
+BAND = (0.98, 1.02)                # grid-frequency band of the constant-speed set: margins are checked over 14,700-15,300 rpm
 CURV = 10                                                       # gmsh elements per 2 pi of surface curvature
 
 
@@ -78,16 +79,16 @@ def run(nodes, els, base, N, tag, T, static_out=False):
         if N > 0:
             f.write('*STEP, NLGEOM\n*STATIC\n*DLOAD\nEALL, CENTRIF, %.6e, 0., 0., 0., 1., 0., 0.\n' % om**2)
             f.write('*NODE FILE\nU\n*EL FILE\nS\n*END STEP\n' if static_out else '*END STEP\n')
-        f.write('*STEP%s\n*FREQUENCY\n%d\n*END STEP\n' % ('' if N == 0 else ', PERTURBATION', N_MODES))
+        f.write('*STEP%s\n*FREQUENCY\n%d\n*END STEP\n' % ('' if N == 0 else ', PERTURBATION', N_MODES[ROW_CUR[0]]))
     F.run_ccx(job, threads=4)
     txt = open(os.path.join(FEA, job + '.dat')).read().split('E I G E N V A L U E   O U T P U T')[-1]
     fr = []
     for line in txt.splitlines():
         p = line.split()
         if len(p) == 5 and p[0].isdigit(): fr.append(float(p[3]))
-    if len(fr) < N_MODES:
+    if len(fr) < N_MODES[ROW_CUR[0]]:
         raise RuntimeError('%s: frequency step returned %d modes (ccx killed? see %s.log)' % (job, len(fr), job))
-    res = dict(freqs=fr[:N_MODES])
+    res = dict(freqs=fr[:N_MODES[ROW_CUR[0]]])
     if static_out:
         _, blocks = F.read_frd(os.path.join(FEA, job + '.frd'))
         S = [b for b in blocks if b['name'].startswith('STRESS')][0]['data']
@@ -148,27 +149,31 @@ def main():
     print('  15k: von Mises max %.0f MPa at r %.1f (99th pct %.0f); yield %.0f MPa at %.0f C' % (
         stress['vm_max'], math.hypot(*stress['vm_max_at'][1:]), stress['vm_p99'], ys, cfg['T']))
     sp = np.array(SPEEDS); res = []
-    for m in range(N_MODES):
+    n_m = min(len(table[N]) for N in SPEEDS)
+    for m in range(n_m):
         fm = np.array([table[N][m] for N in SPEEDS])
         f_op = float(np.interp(N_OP, sp, fm))
         for eo in cfg['EO']:
             fe = eo * N_OP / 60
             marg = (f_op - fe) / fe
+            mb = [(float(np.interp(b * N_OP, sp, fm)) - eo * b * N_OP / 60) / (eo * b * N_OP / 60) for b in BAND]
+            marg_band = 0.0 if mb[0] * mb[1] <= 0 else min(mb, key=abs)       # worst over the band, 0 if crossed in it
             g = fm - eo * sp / 60
             cross = [float(sp[i] + (sp[i + 1] - sp[i]) * g[i] / (g[i] - g[i + 1])) for i in range(len(sp) - 1)
                      if g[i] * g[i + 1] < 0]
-            res.append(dict(mode=m + 1, eo=eo, f_op=f_op, margin=marg, crossings=cross))
-    crit = [r for r in res if abs(r['margin']) < 0.10 or any(14000 <= c <= N_TRIP for c in r['crossings'])]
-    print('  interference at 15,000 rpm (|margin| < 10 %% or crossing 14k-16.5k):')
+            res.append(dict(mode=m + 1, eo=eo, f_op=f_op, margin=marg, margin_band=marg_band, crossings=cross))
+    crit = [r for r in res if abs(r['margin_band']) < 0.10 or any(14000 <= c <= N_TRIP for c in r['crossings'])]
+    print('  interference (|margin| < 10 %% over 14,700-15,300 rpm, or crossing 14k-16.5k):')
     for r in crit:
-        print('    F%d x EO%-3d  f %7.0f Hz  margin %+5.1f %%  crossings %s' % (
-            r['mode'], r['eo'], r['f_op'], 100 * r['margin'], ', '.join('%.0f' % c for c in r['crossings']) or '-'))
+        print('    F%d x EO%-3d  f %7.0f Hz  margin %+5.1f %% at 15k, %+5.1f %% worst in band  crossings %s' % (
+            r['mode'], r['eo'], r['f_op'], 100 * r['margin'], 100 * r['margin_band'],
+            ', '.join('%.0f' % c for c in r['crossings']) or '-'))
     json.dump(dict(row=row, speeds=SPEEDS, freqs={str(int(k)): v for k, v in table.items()}, stress=stress, yield_MPa=ys,
                    metal_C=cfg['T'], eo=cfg['EO'], vanes=dict(N1=_ZN1, N2=_ZN2), interference=res, critical=crit), open(os.path.join(FEA, 'a1000_blade_%s.json' % row), 'w'),
               indent=1, default=float)
     import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(10, 7), dpi=120)
-    for m in range(N_MODES):
+    for m in range(n_m):
         ax.plot(sp / 1e3, [table[N][m] for N in SPEEDS], 'o-', lw=1.6, label='F%d' % (m + 1))
     nn = np.linspace(0, N_TRIP * 1.05, 50); top = max(max(v) for v in table.values()) * 1.1
     for eo in cfg['EO']:

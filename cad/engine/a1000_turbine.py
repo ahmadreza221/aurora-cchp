@@ -29,6 +29,10 @@ RM = T['Dm'] / 2 * 1e3                                            # mean radius 
 CX = T['Cx']                                                      # axial velocity [m/s], constant
 CT2_M = CX * math.tan(math.radians(T['alpha2']))                  # NGV exit swirl at the mean radius
 K_SW = CT2_M * RM * 1e-3                                          # r C_theta [m2/s] (free vortex)
+# rotor exit swirl of the meanline repeating stage (rev 4): alpha1 = alpha3, C_theta3 = (1 - R - psi/2) U = -0.075 U at the
+# mean radius (psi 1.25, R 0.45). Rev 1-3 used C_theta3 = 0 with the same alpha2, which delivered psi 1.175 / R 0.41 only.
+CT3_M = RM * 1e-3 * OM - CX * math.tan(math.radians(T['beta3']))   # -27 m/s
+K_SW3 = CT3_M * RM * 1e-3
 CP_G, GAM = 1170.0, 1.33; R_G = CP_G * (GAM - 1) / GAM
 OUT = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
 
@@ -46,8 +50,10 @@ X_LE['R1'] = X_LE['N1'] + CX_ROW['N1'] + GAP1
 X_LE['N2'] = X_LE['R1'] + CX_ROW['R1'] + GAP2
 X_LE['R2'] = X_LE['N2'] + CX_ROW['N2'] + GAP3
 X_TE = {k: X_LE[k] + CX_ROW[k] for k in X_LE}
-H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'] + GAP1 / 2, S1['h_ngv_out'] * 1e3),
-        (X_TE['R1'] + GAP2 / 2, S1['h_rot_out'] * 1e3), (X_TE['N2'] + GAP3 / 2, S2['h_ngv_out'] * 1e3),
+# rev 4: the NGV exit heights sit at the NGV trailing edges (the throat plane), not half a gap downstream: the TE span was
+# 3-3.5 % short of the meanline height and the NGV2 throat ran at Mach 0.98
+H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'], S1['h_ngv_out'] * 1e3),
+        (X_TE['R1'] + GAP2 / 2, S1['h_rot_out'] * 1e3), (X_TE['N2'], S2['h_ngv_out'] * 1e3),
         (X_TE['R2'], S2['h_rot_out'] * 1e3)]
 Z = dict(N1=S1['Z_ngv'], R1=S1['Z_rot'], N2=S2['Z_ngv'], R2=S2['Z_rot'])
 # rev 2: NGV1 47 -> 43 vanes: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm (+2 % at 15k); 43 keeps EO43 / EO86 >= 11 % away
@@ -82,25 +88,31 @@ def alpha_ngv_out(r_mm): return math.degrees(math.atan2(ct2(r_mm), CX))
 def beta_rot_in(r_mm): return math.degrees(math.atan2(ct2(r_mm) - OM * r_mm * 1e-3, CX))
 
 
-def beta_rot_out(r_mm): return math.degrees(math.atan2(-OM * r_mm * 1e-3, CX))   # C_theta3 = 0
+def ct3(r_mm): return K_SW3 / (r_mm * 1e-3)                      # rotor exit swirl (free vortex), = NGV2 inflow
+
+
+def beta_rot_out(r_mm): return math.degrees(math.atan2(ct3(r_mm) - OM * r_mm * 1e-3, CX))
+
+
+def alpha_ngv_in(row, r_mm): return 0.0 if row == 'N1' else math.degrees(math.atan2(ct3(r_mm), CX))
 
 
 def mach(V, T0): T = T0 - V**2 / (2 * CP_G); return V / math.sqrt(GAM * R_G * T)
 
 
 def reaction(r_mm):
-    U = OM * r_mm * 1e-3; return 1 - ct2(r_mm) / (2 * U)            # with C_theta1 = C_theta3 = 0
+    U = OM * r_mm * 1e-3; return 1 - (ct2(r_mm) + ct3(r_mm)) / (2 * U)
 
 
 # ------------------------------------------------------------------------------------------------ section parameters
 def params(row, f):
-    """thickness / LE / TE / camber shape per row and span (cast MAR-M247; TE >= 0.8 mm castable at this size)"""
+    """thickness / LE / TE / camber shape per row and span (cast MAR-M247; TE 1.0 mm on all rows, castable)"""
     if row.startswith('N'):
         c = CX_ROW[row]
         return dict(tau=0.20, rle=0.075 * c, tte=1.0, sig_m=0.30, p=1.9)
     c = CX_ROW[row] * (1 - CX_TAPER[row] * f)
     t0, t1 = ROT_TAU[row]
-    return dict(tau=t0 - (t0 - t1) * f, rle=(0.045 - 0.015 * f) * c, tte=1.0 - 0.25 * f, sig_m=0.32 + 0.06 * f, p=2.0 - 0.4 * f)
+    return dict(tau=t0 - (t0 - t1) * f, rle=(0.045 - 0.015 * f) * c, tte=1.0, sig_m=0.32 + 0.06 * f, p=2.0 - 0.4 * f)
 
 
 # rotor taper for the creep life of the uncooled blades (rev 2, 2026-10-29): root net-section stress R1 129 -> ~105 MPa
@@ -112,19 +124,26 @@ def x_te_of(row, f):
     return X_LE[row] + CX_ROW[row] * (1 - CX_TAPER[row] * f)
 
 
+def dev_ainley(gauging_deg, M):
+    """exit deviation (gauging - flow angle) of Ainley-Mathieson: low speed alpha = 1.154 g - 11.15 deg (g = acos(o/s)),
+    fading linearly to the cosine rule between M 0.5 and 1. Rev 1-3 used Carter's rule, which gave throats 5-7 % below
+    the cosine rule and an NGV1 throat at the sonic area of the design flow."""
+    return max(11.15 - 0.154 * gauging_deg, 0.0) * GG.carter_mach_factor(M)
+
+
 def design_row(row, spans=SPANS):
     secs = {}
     for f in spans:
         r = row_radius(row, f); q = params(row, f); st = GG.Stream(r_const=r)
         x0, x1 = X_LE[row], x_te_of(row, f)
         if row.startswith('N'):
-            flow_out = alpha_ngv_out(r); k1 = 0.0
+            flow_out = alpha_ngv_out(r); k1 = alpha_ngv_in(row, r)
             Mx = mach(math.hypot(CX, ct2(r)), ROW_T0[row])
-            def make(k2, st=st, q=q, x0=x0, x1=x1):
-                s0 = GG.Section(st, x0, x1, 0.0, k2, q['p'], q['tau'], q['rle'], q['tte'], q['sig_m'])
-                return GG.Section(st, x0, x1, 0.0, k2, q['p'], q['tau'], q['rle'], q['tte'], q['sig_m'], -s0.th[-1])
-            sec = GG._solve_section(make, flow_out, Z[row], +1, q['p'], 0.0, +1, Mx)
-            sec.flow_in, sec.flow_out = 0.0, flow_out
+            def make(k2, st=st, q=q, x0=x0, x1=x1, k1=k1):
+                s0 = GG.Section(st, x0, x1, k1, k2, q['p'], q['tau'], q['rle'], q['tte'], q['sig_m'])
+                return GG.Section(st, x0, x1, k1, k2, q['p'], q['tau'], q['rle'], q['tte'], q['sig_m'], -s0.th[-1])
+            sec = GG._solve_section(make, flow_out, Z[row], +1, q['p'], k1, +1, Mx, dev_fn=dev_ainley)
+            sec.flow_in, sec.flow_out = k1, flow_out
         else:
             k1 = beta_rot_in(r); flow_out = beta_rot_out(r)
             W3 = math.hypot(CX, OM * r * 1e-3); Mx = mach(W3, ROW_T0[row] - 70.0)
@@ -132,13 +151,13 @@ def design_row(row, spans=SPANS):
                 s0 = GG.Section(st, x0, x1, k1, k2, q['p'], q['tau'], q['rle'], q['tte'], q['sig_m'])
                 xc, tc, A = s0.centroid()
                 return GG.Section(st, x0, x1, k1, k2, q['p'], q['tau'], q['rle'], q['tte'], q['sig_m'], -tc)
-            sec = GG._solve_section(make, abs(flow_out), Z[row], -1, q['p'], k1, -1, Mx)
+            sec = GG._solve_section(make, abs(flow_out), Z[row], -1, q['p'], k1, -1, Mx, dev_fn=dev_ainley)
             sec.flow_in, sec.flow_out = k1, flow_out
         sec.r, sec.span, sec.M_exit_row = r, f, Mx
         # Zweifel loading coefficient (axial chord based)
-        a_in, a_out = math.radians(sec.flow_in), math.radians(abs(sec.flow_out))
+        a_in, a_out = math.radians(sec.flow_in), math.radians(sec.flow_out)       # signed (+theta = rotation)
         s_pitch = 2 * math.pi * r / Z[row]; cx = x1 - x0
-        sec.zweifel = 2 * (s_pitch / cx) * math.cos(a_out)**2 * abs(math.tan(a_out) + math.tan(a_in))
+        sec.zweifel = 2 * (s_pitch / cx) * math.cos(a_out)**2 * abs(math.tan(a_out) - math.tan(a_in))
         secs[f] = sec
     return secs
 
@@ -162,9 +181,19 @@ def report(rows):
         rr = [secs[f].r for f in rs]; oo = [secs[f].o for f in rs]
         A = Z[row] * np.trapezoid(oo, rr) if hasattr(np, 'trapezoid') else Z[row] * np.trapz(oo, rr)
         xm = 0.5 * (X_LE[row] + X_TE[row]); A *= height(X_TE[row]) / height(xm)
-        print('    throat area %.0f cm2' % (A / 100) + (' (meanline %.0f)' % ((S1 if row == 'N1' else S2)['A_throat_ngv'] * 1e4)
-                                                     if row.startswith('N') else ''))
-        out[row] = dict(Z=Z[row], x_le=X_LE[row], x_te=X_TE[row], throat_cm2=A / 100,
+        Mth = None
+        if row.startswith('N'):                                     # throat Mach: isentropic, 2 % total-pressure loss
+            st_ = S1 if row == 'N1' else S2; mg = ML['ma'] * 1.017
+            ff = mg * math.sqrt(st_['T0_in']) / (0.98 * st_['P0_in'] * A * 1e-6)
+            g_ = GAM; Rg = R_G
+            fm = lambda M: math.sqrt(g_ / Rg) * M * (1 + (g_ - 1) / 2 * M * M) ** (-(g_ + 1) / (2 * (g_ - 1)))
+            lo, hi = 0.05, 1.0
+            for _ in range(60):
+                mid = 0.5 * (lo + hi); lo, hi = (mid, hi) if fm(mid) < ff else (lo, mid)
+            Mth = lo if fm(1.0) > ff else float('nan')
+        print('    throat area %.0f cm2' % (A / 100) + (' (meanline %.0f), throat Mach %.2f' % (
+            (S1 if row == 'N1' else S2)['A_throat_ngv'] * 1e4, Mth) if row.startswith('N') else ''))
+        out[row] = dict(Z=Z[row], x_le=X_LE[row], x_te=X_TE[row], throat_cm2=A / 100, throat_mach=Mth,
                         sections=[dict(span=f, r=secs[f].r, flow_in=secs[f].flow_in, flow_out=secs[f].flow_out,
                                        k1=secs[f].k1, k2=secs[f].k2, gauging=secs[f].gauging, dev=secs[f].dev,
                                        o_s=secs[f].o / secs[f].pitch, chord=secs[f].chord, tmax=secs[f].tmax_mm,

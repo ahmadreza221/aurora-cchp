@@ -7,7 +7,7 @@ plus the CCHP heat balance (exhaust -> hot water -> LiBr absorption chiller -> t
 
 Compressor stages: inducer sized for minimum relative tip Mach, Wiesner slip, 40 deg backsweep, vaned diffuser,
 return channel between the stages. Turbine stages: repeating-stage velocity triangles at the mean radius, constant
-axial velocity, zero exit swirl, Zweifel blade counts, NGV throat areas.
+axial velocity, repeating-stage swirl (alpha1 = alpha3 = -8.5 deg), Zweifel blade counts, NGV throat areas.
 Run:  python3 sim/mw1_meanline.py        writes sim/mw1_meanline.json
 """
 import json
@@ -64,13 +64,14 @@ def compressor_stage(air, T01, P01, m, pr, eta, Z=(13, 13), backsweep=40.0, hub_
 
 
 def turbine_design(gas, T03, P03, P_out, m, eta, z=2, reaction=0.45, zweifel=0.85):
-    """repeating axial stages at the mean radius; constant Cx, zero exit swirl after the last rotor"""
+    """repeating axial stages at the mean radius; constant Cx, alpha1 = alpha3 (-8.5 deg swirl after each rotor)"""
     dh_tot = eta * (gas.h(T03) - gas.h(gas.T_isentropic(T03, P_out / P03)))
     dh = dh_tot / z
     psi = 1.25; Um = math.sqrt(dh / psi); rm = Um / W
     phi = 0.50; Cx = phi * Um
-    # repeating stage: alpha1 = alpha3 (exit swirl ~0 for the last; small for stage 1 to keep repeating)
-    # psi = 2(1 - R) + 2 phi tan(alpha1)... with alpha1 = 0: tan(alpha2) = (psi/2 + 1 - R)/phi
+    # repeating stage, alpha1 = alpha3: C_theta2 = (psi/2 + 1 - R) U, C_theta3 = (1 - R - psi/2) U = -0.075 U for psi 1.25,
+    # R 0.45 (alpha3 = -8.5 deg; the last stage leaves this swirl to the exhaust diffuser). Zero exit swirl would need
+    # R = 1 - psi/2 = 0.375. cad/engine/a1000_turbine.py designs the blades for this C_theta3 (rev 4).
     tan_a2 = (psi / 2 + 1 - reaction) / phi
     tan_b2 = tan_a2 - 1 / phi
     tan_b3 = (psi / 2 + reaction) / phi                       # rotor exit relative angle (magnitude)

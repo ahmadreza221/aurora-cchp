@@ -263,8 +263,9 @@ CARTER_M = 0.19     # Carter's rule for accelerating (turbine) cascades: delta =
 # free-vortex flow angle + Carter deviation. (With 0.45-0.5 mm cast TEs the camber TE angle is then smaller than the flow
 # angle: cos(gauging) ~ cos(kappa2) - (t_TE + t_SS(throat))/s.)
 
-def _solve_section(make, flow_abs, Z, sign, p, k1, kap_sign, M_exit=0.0):
-    """make(k2) -> Section. Find k2 such that acos(o/s) = |flow| + delta_Carter. Returns section and bookkeeping."""
+def _solve_section(make, flow_abs, Z, sign, p, k1, kap_sign, M_exit=0.0, dev_fn=None):
+    """make(k2) -> Section. Find k2 such that acos(o/s) = |flow| + delta (Carter, or dev_fn(gauging_deg, M_exit) when
+    given). Returns section and bookkeeping."""
     dev = 1.0
     k2 = flow_abs * kap_sign
     for outer in range(12):
@@ -282,7 +283,7 @@ def _solve_section(make, flow_abs, Z, sign, p, k1, kap_sign, M_exit=0.0):
         k2 = kb
         th_u = abs(k2 - (k1 + (k2 - k1) * (1 - (1 - xi_t)**p)))
         dev_c = CARTER_M * th_u * (s / sec.chord)
-        dev_new = dev_c * carter_mach_factor(M_exit)
+        dev_new = dev_c * carter_mach_factor(M_exit) if dev_fn is None else dev_fn(flow_abs + dev, M_exit)
         conv = abs(dev_new - dev) < 0.01
         dev = dev_new
         if conv: break

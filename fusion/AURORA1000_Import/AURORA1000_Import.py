@@ -1,4 +1,4 @@
-"""Autodesk Fusion script: build the AURORA-1000 two-stage turbine (rev 3) from the compact STEP parts in fusion/A1000/.
+"""Autodesk Fusion script: build the AURORA-1000 two-stage turbine (rev 4, work in progress) from the compact STEP parts in fusion/A1000/.
 
 Utilities > Scripts and Add-Ins > + (My Scripts) > pick this folder > Run. Imports into a new design, coloured:
   A1000 NGV1   : inner / outer rings + 1 vane, vane patterned 43 x   (MAR-M247 + TBC, orange)
