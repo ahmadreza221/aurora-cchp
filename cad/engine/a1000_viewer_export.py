@@ -35,7 +35,7 @@ sys.argv = _argv
 A = RD.A
 CAD = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
 FUS = os.path.join(ROOT, 'fusion', 'A1000')                        # same pieces as STEP (fusion/export_a1000_parts.py)
-STEP_OUT = os.path.join(ROOT, 'fusion', 'A1000_pkg') if os.environ.get('A1000_STEP') else None
+STEP_OUT = (os.environ.get('A1000_STEP_DIR') or os.path.join(ROOT, 'fusion', 'A1000_pkg')) if os.environ.get('A1000_STEP') else None
 OUT = os.path.join(ROOT, 'viewer', 'a1000'); os.makedirs(OUT, exist_ok=True)
 V = App.Vector
 DES = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
@@ -43,6 +43,10 @@ ML = json.load(open(os.path.join(ROOT, 'sim', 'mw1_meanline.json')))
 PARTS = json.load(open(os.path.join(CAD, 'A1000_parts.json') if os.path.exists(os.path.join(CAD, 'A1000_parts.json'))
                        else os.path.join(FUS, 'parts.json')))
 SRC = {}                                                            # id(shape) -> (STEP path from fusion/A1000_pkg, dx)
+# combustion system rev 1 (cad/engine/a1000_combustor.py --cad) replaces the concept can, scroll and injector when built
+COMB_DIR = os.path.join(ROOT, 'fusion', 'A1000_comb')
+COMB = json.load(open(os.path.join(COMB_DIR, 'parts.json'))) if os.path.exists(os.path.join(COMB_DIR, 'parts.json')) else None
+CGRP = dict(hot='comb', casing='casing', insulation='casing', aux='aux')
 
 GROUPS = {   # name: (rgba, metallic, roughness)
     'turbine': ((0.80, 0.81, 0.84, 1.0), 0.85, 0.30),
@@ -287,17 +291,21 @@ add('Turbine casing + shroud carrier', 'casing', tcas, desc='shroud carrier (1.4
 ins = tube(x_n1 - 20, x_r2 + 10, 400.0, 332.0)
 add('Turbine casing insulation', 'casing', ins, desc='ceramic-fibre blanket, skin <= 60 C', material='insulation')
 xs_ = x_n1 - 72
+if COMB is not None:                                                 # rev 1 parts, referenced as fusion/A1000_comb/<part>.step
+    for name, q in COMB['parts'].items():
+        s = Part.Shape(); s.read(os.path.join(COMB_DIR, q['step'])); SRC[id(s)] = ('../A1000_comb/' + q['step'], 0.0)
+        add(name, CGRP[q['group']], s, material=q['material'], mass_kg=q['mass_kg'])
 scroll = Part.makeTorus(330.0, 65.0, V(xs_, 0, 0), V(1, 0, 0)).cut(Part.makeTorus(330.0, 59.0, V(xs_, 0, 0), V(1, 0, 0)))
 feed = rev([(xs_ + 40, 272), (x_n1 + 1, A.r_hub(0.0) - 2), (x_n1 + 1, A.r_hub(0.0) - 8), (xs_ + 30, 266)]).fuse(
     rev([(xs_ + 40, 388), (x_n1 + 1, A.r_tip(0.0) + 2), (x_n1 + 1, A.r_tip(0.0) + 8), (xs_ + 30, 394)]))
-add('Combustor-to-NGV1 scroll', 'comb', scroll.fuse(feed), desc='hot-gas scroll from the can to the NGV1 annulus (950 C)', material='Haynes 230')
-can_x = xs_; can = shell_cyl(210.0, 200.0, 1000.0, (can_x, 0, 470.0), (0, 0, 1))
+if COMB is None: add('Combustor-to-NGV1 scroll', 'comb', scroll.fuse(feed), desc='hot-gas scroll from the can to the NGV1 annulus (950 C)', material='Haynes 230')
+can_x = xs_ if COMB is None else COMB['x_can']; can = shell_cyl(210.0, 200.0, 1000.0, (xs_, 0, 470.0), (0, 0, 1))
 can = can.fuse(Part.makeSphere(210.0, V(can_x, 0, 1470.0)).cut(Part.makeSphere(200.0, V(can_x, 0, 1470.0))).cut(box(can_x - 300, can_x + 300, -300, 300, 1170, 1470)))
 can = can.fuse(shell_cyl(150.0, 140.0, 80.0, (can_x, 0, 390.0), (0, 0, 1)))
-add('Can combustor (DLE)', 'comb', can, desc='one external vertical can, lean premixed (DLE), NOx < 25 ppm; air 613 C from the recuperator',
+if COMB is None: add('Can combustor (DLE)', 'comb', can, desc='one external vertical can, lean premixed (DLE), NOx < 25 ppm; air 613 C from the recuperator',
     material='casing 1.4828, liner Hastelloy X + TBC')
 inj = cyl(45.0, 160.0, (can_x, 0, 1650.0), (0, 0, 1)).fuse(cyl(18.0, 120.0, (can_x + 120, 0, 1560.0), (0.4, 0, 1)))
-add('Fuel injector + igniter', 'comb', inj, desc='premix injector (city gas 3.5 bar, no booster) and igniter', material='Hastelloy X')
+if COMB is None: add('Fuel injector + igniter', 'comb', inj, desc='premix injector (city gas 3.5 bar, no booster) and igniter', material='Hastelloy X')
 
 # ------------------------------------------------------------------------------------------------ exhaust
 xe0 = x_r2 + 10; xe1 = xe0 + 420
@@ -328,9 +336,17 @@ YR = 1450.0
 rec = box(-900, 1900, YR - 600, YR + 600, -700, 900)
 add('Recuperator (bought in)', 'recup', rec, desc='primary-surface / plate-fin, 3.1 MW, effectiveness 0.90, 347 stainless; about 2.8 x 1.2 x 1.6 m, 2-3 t',
     material='AISI 347')
-ducts = shell_cyl(150.0, 142.0, YR - 600 - r_col, (x_col, r_col, 0), (0, 1, 0))                    # compressor discharge -> recuperator
-hot = shell_cyl(150.0, 142.0, YR - 300, (can_x, 0.0, 1250.0), (0, 1, 0))                            # hot air -> can
-hot = hot.fuse(shell_cyl(150.0, 142.0, 500.0, (can_x, YR - 300, 900.0), (0, 0, 1))).fuse(Part.makeSphere(150.0, V(can_x, YR - 300, 1250.0)).cut(Part.makeSphere(142.0, V(can_x, YR - 300, 1250.0))))
+if COMB is None:
+    ducts = shell_cyl(150.0, 142.0, YR - 600 - r_col, (x_col, r_col, 0), (0, 1, 0))                # compressor discharge -> recuperator
+    hot = shell_cyl(150.0, 142.0, YR - 300, (can_x, 0.0, 1250.0), (0, 1, 0))                        # hot air -> can
+    hot = hot.fuse(shell_cyl(150.0, 142.0, 500.0, (can_x, YR - 300, 900.0), (0, 0, 1))).fuse(Part.makeSphere(150.0, V(can_x, YR - 300, 1250.0)).cut(Part.makeSphere(142.0, V(can_x, YR - 300, 1250.0))))
+else:
+    # rev 1: the compressor air crosses the scroll casing and the hot-section channels and leaves at the exhaust end
+    # (docs/08 sec. 14 / 16: rear manifold, not designed yet) -> recuperator; hot air DN450 from the recuperator to the can
+    ducts = shell_cyl(150.0, 142.0, YR - 600 - 480.0, (1080.0, 480.0, -350.0), (0, 1, 0))
+    nz = COMB['nozzle']; rr = nz['D'] / 2 + 8.0
+    hot = shell_cyl(rr, rr - 8.0, YR - 300 + rr - nz['y'], (nz['x'], nz['y'], nz['z']), (0, 1, 0))
+    hot = hot.fuse(shell_cyl(rr, rr - 8.0, nz['z'] + rr - 900.0, (nz['x'], YR - 300, 900.0), (0, 0, 1)))
 ducts = ducts.fuse(hot).fuse(shell_cyl(300.0, 290.0, 900.0, (-400, YR, 900.0), (0, 0, 1)))          # exhaust stack -> CCHP
 add('Recuperator ducts', 'recup', ducts, desc='compressor air DN300 in, hot air DN300 to the can, exhaust DN600 in, outlet DN600 to the hot-water / chiller heat exchanger',
     material='321 stainless, insulated')

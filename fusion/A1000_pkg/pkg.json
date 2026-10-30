@@ -583,36 +583,179 @@
    "dx": 0.0
   },
   {
-   "name": "Combustor-to-NGV1 scroll",
+   "name": "CB-330 Hot-gas casing upper half (Haynes 230)",
    "group": "comb",
    "inst": [
     0.0
    ],
-   "desc": "hot-gas scroll from the can to the NGV1 annulus (950 C)",
    "material": "Haynes 230",
-   "step": "Combustor_to_NGV1_scroll.step",
+   "mass_kg": 87.79,
+   "step": "../A1000_comb/CB_330_Hot_gas_casing_upper_half__Haynes_230.step",
    "dx": 0.0
   },
   {
-   "name": "Can combustor (DLE)",
+   "name": "CB-331 Hot-gas casing lower half (Haynes 230)",
    "group": "comb",
    "inst": [
     0.0
    ],
-   "desc": "one external vertical can, lean premixed (DLE), NOx < 25 ppm; air 613 C from the recuperator",
-   "material": "casing 1.4828, liner Hastelloy X + TBC",
-   "step": "Can_combustor__DLE.step",
+   "material": "Haynes 230",
+   "mass_kg": 61.69,
+   "step": "../A1000_comb/CB_331_Hot_gas_casing_lower_half__Haynes_230.step",
    "dx": 0.0
   },
   {
-   "name": "Fuel injector + igniter",
+   "name": "CB-332 Deswirl vanes x22 (Haynes 230)",
    "group": "comb",
    "inst": [
     0.0
    ],
-   "desc": "premix injector (city gas 3.5 bar, no booster) and igniter",
+   "material": "Haynes 230",
+   "mass_kg": 9.54,
+   "step": "../A1000_comb/CB_332_Deswirl_vanes_x22__Haynes_230.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-333 Scroll insulation cassettes",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "microporous + foil",
+   "mass_kg": 13.01,
+   "step": "../A1000_comb/CB_333_Scroll_insulation_cassettes.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-301 Can casing (1.4948)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4948",
+   "mass_kg": 231.03,
+   "step": "../A1000_comb/CB_301_Can_casing__1_4948.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-302 Can base plate (1.4948)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4948",
+   "mass_kg": 42.5,
+   "step": "../A1000_comb/CB_302_Can_base_plate__1_4948.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-303 Head cover (1.4948)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4948",
+   "mass_kg": 163.22,
+   "step": "../A1000_comb/CB_303_Head_cover__1_4948.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-310 Premixers x7 (pilot + 6 mains, IN625)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "IN625",
+   "mass_kg": 12.98,
+   "step": "../A1000_comb/CB_310_Premixers_x7__pilot___6_mains__IN625.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-320 Liner (Hastelloy X + TBC)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
    "material": "Hastelloy X",
-   "step": "Fuel_injector___igniter.step",
+   "mass_kg": 18.29,
+   "step": "../A1000_comb/CB_320_Liner__Hastelloy_X___TBC.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-321 Impingement sleeve (Hastelloy X)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "mass_kg": 13.71,
+   "step": "../A1000_comb/CB_321_Impingement_sleeve__Hastelloy_X.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-340 Scroll pressure casing upper half (P355NH)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "P355NH",
+   "mass_kg": 348.83,
+   "step": "../A1000_comb/CB_340_Scroll_pressure_casing_upper_half__P355NH.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-341 Scroll pressure casing lower half (P355NH)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "P355NH",
+   "mass_kg": 206.7,
+   "step": "../A1000_comb/CB_341_Scroll_pressure_casing_lower_half__P355NH.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-350 NGV1 interface leaf seals",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Haynes 25",
+   "mass_kg": 0.09,
+   "step": "../A1000_comb/CB_350_NGV1_interface_leaf_seals.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-360 Scroll support pins x4 (1.4980)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4980 (A286)",
+   "mass_kg": 1.68,
+   "step": "../A1000_comb/CB_360_Scroll_support_pins_x4__1_4980.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-370 Fuel manifolds P / A / B + lances",
+   "group": "aux",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "mass_kg": 8.33,
+   "step": "../A1000_comb/CB_370_Fuel_manifolds_P___A___B___lances.step",
+   "dx": 0.0
+  },
+  {
+   "name": "CB-371 Igniter + 2 UV flame scanners",
+   "group": "aux",
+   "inst": [
+    0.0
+   ],
+   "material": "bought in",
+   "mass_kg": 0.81,
+   "step": "../A1000_comb/CB_371_Igniter___2_UV_flame_scanners.step",
    "dx": 0.0
   },
   {
