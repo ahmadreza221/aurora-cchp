@@ -81,6 +81,18 @@ def states():
         p3 = st['P0_out'] / (1 + 0.5 * (gg - 1) * M3 ** 2) ** (gg / (gg - 1))
         out[k] = dict(p_ngv=p_ngv, p3=p3, P=out['m_gas'] * cp * (st['T0_in'] - st['T0_out']), T0_in=st['T0_in'])
     out['p_cd'] = c2['P02']                                     # compressor delivery (total)
+    # impeller detail design (sim/a1000_impeller_design.json, compressor rev 1) replaces the meanline radii and pressures
+    det = os.path.join(ROOT, 'sim', 'a1000_impeller_design.json')
+    if os.path.exists(det):
+        D = json.load(open(det))
+        for k, key in (('c1', 'C1'), ('c2', 'C2')):
+            g, pf = D['stages'][key]['geometry'], D['stages'][key]['performance']; im = pf['impeller']
+            P01 = pf['P01']; c1v = D['stages'][key]['inducer']['c1']
+            rho1 = P01 / (287.0 * pf['T01'])
+            out[k].update(p_eye=P01 - 0.5 * rho1 * c1v ** 2, p2=im['P2'], T2=im['T2'], rho2=im['P2'] / (287.0 * im['T2']), r1h=g['r1h'],
+                          r1t=g['r1t'], r2=g['r2'], c1=c1v, P=m * (im['dh0'] if 'dh0' in im else out[k]['P'] / m))
+        out['p_cd'] = D['stages']['C2']['performance']['diffuser']['P04'] * (1 - D['overall'].get('collector_dP0', 0.0))
+        out['detail'] = True
     return out
 
 
@@ -305,8 +317,9 @@ def detailed_rotor(sup):
     xi1, xi2 = G.X_I1, G.X_I2; xj = G.X_J; b1, b2 = G.HUB['R1'], G.HUB['R2']
     D, L = G.JOURNAL['D'], G.JOURNAL['L']; xb1, xb2 = G.X_BRG; c1, c2 = ML['compressor']
     af, fl = 2 * G.ARM['ro'], 2 * G.ARM['rf']
-    seg = [(0.0, 14.0, 160.0, 70.0, 'steel', True), (14.0, 40.0, 90.0, 70.0, 'steel', True),
-           (40.0, xb1 - L / 2 - 6, 94.0, 46.0, 'steel', True), (xb1 - L / 2 - 6, xb1 + L / 2 + 6, D, 46.0, 'steel', True),
+    xn = G.TIE['x_nut'][1]                                       # end of the nut pocket (bore 70 in front of it)
+    seg = [(0.0, 14.0, 160.0, 70.0, 'steel', True), (14.0, xb1 - L / 2 - 6, 94.0, 70.0, 'steel', True),
+           (xb1 - L / 2 - 6, xn, D, 70.0, 'steel', True), (xn, xb1 + L / 2 + 6, D, 46.0, 'steel', True),
            (xb1 + L / 2 + 6, G.COLLAR['x0'], 104.0, 46.0, 'steel', True), (G.COLLAR['x0'], G.COLLAR['x1'], 104.0, 46.0, 'steel', True),
            (G.COLLAR['x1'], xi1[0], 98.0, 46.0, 'steel', True),
            (xi1[0], xi1[1], 2 * 0.5 * (c1['r1h'] * 1e3 + 60.0), 46.0, 'al2618', False),
@@ -499,10 +512,14 @@ def main():
     lim_al, lim_ti = 0.6 * mp('Al2618', 'Sy', T_SS['imp1']), 0.6 * mp('Ti64', 'Sy', T_SS['imp1'])
     p_f, p_r = cpres['stub_I1'], cpres['I1_spc']
     res['curvic_compressor']['impeller1'] = dict(front=p_f, rear=p_r, limit_Al2618=lim_al, limit_Ti64=lim_ti)
-    check('impeller 1 front curvic, Al 2618 (as meanline) / 0.6 Sy', p_f / lim_al, 1.0, '-', p_f <= lim_al,
-          '%.0f MPa on r %.0f-%.0f (inducer hub r %.0f limits it)' % (p_f, G.CURVIC_C['stub_I1']['ri'], G.CURVIC_C['stub_I1']['ro'], G.R_HUB_IN[0]))
-    check('impeller 1 front curvic, Ti-6Al-4V / 0.6 Sy', p_f / lim_ti, 1.0, '-', p_f <= lim_ti, 'alternative with margin')
-    check('impeller 1 rear curvic, Al 2618 / 0.6 Sy', p_r / lim_al, 1.0, '-', p_r <= lim_al, '%.0f MPa' % p_r)
+    det = os.path.join(ROOT, 'sim', 'a1000_impeller_design.json')
+    mat1 = json.load(open(det))['stages']['C1']['material'] if os.path.exists(det) else 'Al 2618'
+    lim1 = lim_ti if mat1.startswith('Ti') else lim_al
+    res['curvic_compressor']['impeller1']['material'] = mat1
+    check('impeller 1 front curvic (%s) / 0.6 Sy' % mat1, p_f / lim1, 1.0, '-', p_f <= lim1,
+          '%.0f MPa on r %.0f-%.0f%s' % (p_f, G.CURVIC_C['stub_I1']['ri'], G.CURVIC_C['stub_I1']['ro'], '' if mat1.startswith('Ti') else
+                                        '; Al 2618 would need Ti-6Al-4V (%.2f)' % (p_f / lim_ti)))
+    check('impeller 1 rear curvic (%s) / 0.6 Sy' % mat1, p_r / lim1, 1.0, '-', p_r <= lim1, '%.0f MPa' % p_r)
     p_o = max(cpres['spc_I2'], cpres['I2_drum'])
     check('impeller 2 curvics, Ti-6Al-4V / 0.6 Sy', p_o / (0.6 * mp('Ti64', 'Sy', T_SS['imp2'])), 1.0, '-', p_o <= 0.6 * mp('Ti64', 'Sy', T_SS['imp2']),
           '%.0f MPa' % p_o)

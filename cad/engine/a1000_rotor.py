@@ -86,7 +86,7 @@ CURVIC_C = dict(stub_I1=dict(ri=44.0, ro=58.0, N=36), I1_spc=dict(ri=50.0, ro=70
                 spc_I2=dict(ri=52.0, ro=72.0, N=36), I2_drum=dict(ri=55.0, ro=75.0, N=36))
 R_HUB_IN = (60.0, 80.0)                                           # impeller inducer hub radii (flow-path hub at the faces)
 JOURNAL = dict(D=100.0, L=45.0)                                 # tilting-pad journals (sim/engine/a1000_rotor_stack.py)
-COLLAR = dict(x0=146.0, x1=166.0, ro=82.0)                       # integral thrust collar
+COLLAR = dict(x0=116.0, x1=136.0, ro=82.0)                       # integral thrust collar
 THRUST = dict(ri=56.0, ro=78.0, n=8, t=12.0)                     # thrust pads per side (inner / outer radius, thickness)
 BACKFACE = dict(r_seal=200.0, r_feed=120.0)                      # impeller 2 back face: labyrinth at r 200, compressor-delivery
                                                                  # air fed at r 120 (pressurised back-face cavity, thrust balance)
@@ -94,13 +94,18 @@ BAL_SEAL_R = 85.0                                               # drum balance-p
 SFD = dict(R=80.0, L=35.0, c=0.13)                               # squeeze-film damper land radius, length, radial clearance
 ISFD = dict(n=8, l=43.0, t=4.2, ri=74.0, ro=92.0, span=30.0)      # integral S-spring damper ring (wire EDM): springs, beam
                                                                  # length / radial thickness, ring radii, spring arc [deg]
-X_BRG = (95.0, RD.rotor('A')['brg'][1])                          # journal 1 moved 15 mm forward (thrust bearing behind it)
+X_BRG = (65.0, RD.rotor('A')['brg'][1])                          # journal 1 at x 65: the thrust bearing behind it ends at
+                                                                 # x 156, so the stage-1 radial inlet has x 156-205 to turn
+# inlet hub fairing (rear of the thrust housing = hub wall of the stage-1 radial inlet bend): (x, r) points from the
+# radial wall at x 157 to the inducer hub r 60 at the impeller face; the shroud side (bellmouth) is the compressor design
+INLET_HUB = [(157.0, 150.0), (160.0, 132.0), (165.0, 112.0), (172.0, 94.0), (181.0, 79.0), (191.0, 68.0), (201.0, 61.5)]
 
 
 def stub_profile():
     """front stub shaft 34CrNiMo6: coupling flange, seal, journal 1, integral thrust collar, inlet seal, front curvic"""
     D, L = JOURNAL['D'], JOURNAL['L']; xb = X_BRG[0]; c0, c1, cro = COLLAR['x0'], COLLAR['x1'], COLLAR['ro']
-    return [(0.0, 35.0), (0.0, 80.0), (14.0, 80.0), (14.0, 45.0), (40.0, 45.0), (40.0, 47.0),
+    assert xb - L / 2 - 6 > 22.0
+    return [(0.0, 35.0), (0.0, 80.0), (14.0, 80.0), (14.0, 45.0), (22.0, 45.0), (22.0, 47.0),
             (xb - L / 2 - 6, 47.0), (xb - L / 2 - 6, D / 2), (xb + L / 2 + 6, D / 2), (xb + L / 2 + 6, 52.0),
             (c0, 52.0), (c0, cro), (c1, cro), (c1, 52.0), (c1 + 6, 52.0), (c1 + 6, 48.0), (X_I1[0] - 4, 48.0),
             (X_I1[0] - 1.5, R_HUB_IN[0]), (X_I1[0], R_HUB_IN[0]),
@@ -410,16 +415,19 @@ def thrust_bearing():
     tc = 8.0
     car = tube(c0 - e - t - tc, c0 - e - t, ro + 6, ri - 3).fuse(tube(c1 + e + t, c1 + e + t + tc, ro + 6, ri - 3))
     out['TB carrier rings (split)'] = (car, 'steel', 'carrier')
-    xb = X_BRG[0]; xf = xb + JOURNAL['L'] / 2 + 6; xr = c1 + e + t + tc + 14
-    hs = tube(xf, xr, ISFD['ro'] + 38.0, ro + 6.05)
+    xb = X_BRG[0]; xf = xb + JOURNAL['L'] / 2 + 6; xw = c1 + e + t + tc          # front of the rear wall
+    hs = tube(xf, xw, ISFD['ro'] + 38.0, ro + 6.05)
     hs = hs.fuse(tube(xf, xf + 2, ISFD['ro'] + 38.0, JOURNAL['D'] / 2 + 3.5))
-    hs = hs.fuse(tube(xr - 12, xr, ISFD['ro'] + 38.0, 49.0))
-    for k in range(4):
-        xk = xr - 10 + 3 * k
+    # rear wall + inlet hub fairing: solid of revolution from the wall (x xw, bore r 49) along INLET_HUB to the nose
+    x_n = INLET_HUB[-1][0]
+    fair = [(xw, 49.0), (xw, ISFD['ro'] + 38.0), (INLET_HUB[0][0], ISFD['ro'] + 38.0)] + INLET_HUB + [(x_n, 49.0)]
+    hs = hs.fuse(revolve(fair))
+    for k in range(5):                                                      # labyrinth + windback in the fairing bore
+        xk = x_n - 4 - 6 * k
         hs = hs.fuse(revolve([(xk - 0.7, 49.0), (xk + 0.7, 49.0), (xk + 0.2, 48.25), (xk - 0.2, 48.25)]))
     hs = hs.fuse(Part.makeCylinder(10.0, 40.0, V(0.5 * (c0 + c1), 0, ISFD['ro'] + 33.0), V(0, 0, 1)))
     hs = hs.fuse(Part.makeCylinder(16.0, 40.0, V(0.5 * (c0 + c1), 0, -ISFD['ro'] - 33.0), V(0, 0, -1)))
-    out['TB thrust housing + inlet seal'] = (hs.removeSplitter(), 'EN-GJS-400-18', 'housing')
+    out['TB thrust housing + inlet hub fairing'] = (hs.removeSplitter(), 'EN-GJS-400-18', 'housing')
     return out
 
 
