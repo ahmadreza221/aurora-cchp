@@ -134,3 +134,17 @@ Design record: `docs/08_aurora1000_1MW_concept.md` §12. Geometry: `cad/engine/a
    **"AURORA-1000 Package rev5"**. Runtime is about 20 s.
 
 Copies of both designs are in `~/Desktop/GR180-Designs/11_AURORA-1000_1MW` (f3d, screenshots, POWER.md).
+
+## AURORA-1000 rotor rev 1: stack, joints, bearings (2026-10-30)
+Design record: `docs/08_aurora1000_1MW_concept.md` §13. Geometry: `cad/engine/a1000_rotor.py`. Checks:
+`sim/engine/a1000_rotor_stack.py` (32 of 33 pass; the one fail is the impeller 1 front curvic in Al 2618, Ti-6Al-4V passes).
+1. `freecadcmd -c "import sys; sys.argv=['a1000_rotor.py','--cad']; exec(open('cad/engine/a1000_rotor.py').read())"` writes
+   `fusion/A1000_rotor/*.step` + `parts.json`. These are the shafts, tie bolt, drum, studs, the blisk discs with cast arms,
+   and the bearings (pads, carrier, ISFD ring, housings, thrust bearing).
+2. `fusion/AURORA1000_Rotor/AURORA1000_Rotor.py` builds "AURORA-1000 Rotor and Bearings rev1".
+   - `SECTION = True` gives the half-section design.
+   - It takes about 1 min.
+3. `A1000_STEP=1 ... a1000_viewer_export.py` puts the rotor rev 1 parts into `fusion/A1000_pkg/pkg.json`. Then
+   `AURORA1000_Package.py` rebuilds the whole package.
+4. The blisk arms are not yet in `cad/engine/a1000_turbine.py`. The `fusion/A1000` disc pieces are still the bore-less rev 5
+   discs.

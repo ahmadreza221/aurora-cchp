@@ -500,8 +500,8 @@ def main():
     p_f, p_r = cpres['stub_I1'], cpres['I1_spc']
     res['curvic_compressor']['impeller1'] = dict(front=p_f, rear=p_r, limit_Al2618=lim_al, limit_Ti64=lim_ti)
     check('impeller 1 front curvic, Al 2618 (as meanline) / 0.6 Sy', p_f / lim_al, 1.0, '-', p_f <= lim_al,
-          '%.0f MPa on r %.0f-%.0f (inducer hub r 48.6 limits it)' % (p_f, G.CURVIC_C['stub_I1']['ri'], G.CURVIC_C['stub_I1']['ro']))
-    check('impeller 1 front curvic, Ti-6Al-4V / 0.6 Sy', p_f / lim_ti, 1.0, '-', p_f <= lim_ti, 'recommended: impeller 1 in Ti-6Al-4V')
+          '%.0f MPa on r %.0f-%.0f (inducer hub r %.0f limits it)' % (p_f, G.CURVIC_C['stub_I1']['ri'], G.CURVIC_C['stub_I1']['ro'], G.R_HUB_IN[0]))
+    check('impeller 1 front curvic, Ti-6Al-4V / 0.6 Sy', p_f / lim_ti, 1.0, '-', p_f <= lim_ti, 'alternative with margin')
     check('impeller 1 rear curvic, Al 2618 / 0.6 Sy', p_r / lim_al, 1.0, '-', p_r <= lim_al, '%.0f MPa' % p_r)
     p_o = max(cpres['spc_I2'], cpres['I2_drum'])
     check('impeller 2 curvics, Ti-6Al-4V / 0.6 Sy', p_o / (0.6 * mp('Ti64', 'Sy', T_SS['imp2'])), 1.0, '-', p_o <= 0.6 * mp('Ti64', 'Sy', T_SS['imp2']),

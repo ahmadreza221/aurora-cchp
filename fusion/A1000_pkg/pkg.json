@@ -651,7 +651,7 @@
     0.0
    ],
    "material": "34CrNiMo6 QT",
-   "mass_kg": 11.881,
+   "mass_kg": 11.963,
    "step": "../A1000_rotor/RT_101_Front_stub_shaft___thrust_collar.step",
    "dx": 0.0
   },
@@ -684,7 +684,7 @@
     0.0
    ],
    "material": "17-4PH H1025",
-   "mass_kg": 4.769,
+   "mass_kg": 6.228,
    "step": "../A1000_rotor/RT_104_Compressor_spacer.step",
    "dx": 0.0
   },
@@ -695,7 +695,7 @@
     0.0
    ],
    "material": "IN718",
-   "mass_kg": 13.057,
+   "mass_kg": 13.271,
    "step": "../A1000_rotor/RT_105_Drum_IN718.step",
    "dx": 0.0
   },

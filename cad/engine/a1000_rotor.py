@@ -81,8 +81,10 @@ def disc_profile_arms(row):
 TIE = dict(d=42.0, pitch=3.0, shank=28.0, pre_kN=185.0, land=45.8, x_nut=(18.0, 48.0), x_end=626.0, thread_len=36.0,
            lands=(266.0, 353.0, 446.0))
 BORE_IMP = 46.0
-CURVIC_C = dict(stub_I1=dict(ri=36.0, ro=48.0, N=36), I1_spc=dict(ri=48.0, ro=62.0, N=36),
-                spc_I2=dict(ri=39.0, ro=49.0, N=36), I2_drum=dict(ri=53.0, ro=67.0, N=36))
+# curvic bands after the impeller detail design (inducer hubs r 60 / 80, sim/a1000_impeller_design.json)
+CURVIC_C = dict(stub_I1=dict(ri=44.0, ro=58.0, N=36), I1_spc=dict(ri=50.0, ro=70.0, N=36),
+                spc_I2=dict(ri=52.0, ro=72.0, N=36), I2_drum=dict(ri=55.0, ro=75.0, N=36))
+R_HUB_IN = (60.0, 80.0)                                           # impeller inducer hub radii (flow-path hub at the faces)
 JOURNAL = dict(D=100.0, L=45.0)                                 # tilting-pad journals (sim/engine/a1000_rotor_stack.py)
 COLLAR = dict(x0=146.0, x1=166.0, ro=82.0)                       # integral thrust collar
 THRUST = dict(ri=56.0, ro=78.0, n=8, t=12.0)                     # thrust pads per side (inner / outer radius, thickness)
@@ -100,22 +102,24 @@ def stub_profile():
     D, L = JOURNAL['D'], JOURNAL['L']; xb = X_BRG[0]; c0, c1, cro = COLLAR['x0'], COLLAR['x1'], COLLAR['ro']
     return [(0.0, 35.0), (0.0, 80.0), (14.0, 80.0), (14.0, 45.0), (40.0, 45.0), (40.0, 47.0),
             (xb - L / 2 - 6, 47.0), (xb - L / 2 - 6, D / 2), (xb + L / 2 + 6, D / 2), (xb + L / 2 + 6, 52.0),
-            (c0, 52.0), (c0, cro), (c1, cro), (c1, 52.0), (c1 + 6, 52.0), (c1 + 6, 48.0), (X_I1[0], 48.0),
+            (c0, 52.0), (c0, cro), (c1, cro), (c1, 52.0), (c1 + 6, 52.0), (c1 + 6, 48.0), (X_I1[0] - 4, 48.0),
+            (X_I1[0] - 1.5, R_HUB_IN[0]), (X_I1[0], R_HUB_IN[0]),
             (X_I1[0], BORE_IMP / 2), (TIE['x_nut'][1], BORE_IMP / 2), (TIE['x_nut'][1], 35.0)]
 
 
 def spacer_profile():
-    """compressor interstage spacer 17-4PH H1025: curvics r 48-62 (front) / 39-49 (rear), labyrinth land r 75"""
+    """compressor interstage spacer 17-4PH H1025: curvics r 50-70 (front) / 52-72 (rear), labyrinth land r 75, rear end on
+    the r 80 flow-path hub of impeller 2"""
     x0, x1 = X_I1[1], X_I2[0]
-    return [(x0, BORE_IMP / 2), (x0, 62.0), (x0 + 4, 62.0), (x0 + 4, 75.0), (x0 + 30, 75.0), (x0 + 30, 62.0),
-            (x1 - 12, 52.0), (x1 - 8, 49.0), (x1, 49.0), (x1, BORE_IMP / 2)]
+    return [(x0, BORE_IMP / 2), (x0, 72.0), (x0 + 4, 72.0), (x0 + 4, 75.0), (x0 + 30, 75.0), (x0 + 36, 70.0),
+            (x1 - 10, 70.0), (x1 - 4, R_HUB_IN[1]), (x1, R_HUB_IN[1]), (x1, BORE_IMP / 2)]
 
 
 def drum_profile():
-    """IN718 drum: front curvic r 53-67, balance-piston land, tube r 70-85, bulkhead with the M42 tie-bolt thread
+    """IN718 drum: front curvic r 55-75, balance-piston land, tube r 70-85, bulkhead with the M42 tie-bolt thread
     (x 590-628), neck r 50-60, flange r 50-92 with the 16 studs to R1"""
     x0, xj = X_I2[1], X_J['drum_R1']; tf = ARM['tf']; xbh = TIE['x_end'] + 2
-    return [(x0, 50.0), (x0, 67.0), (x0 + 6, 67.0), (x0 + 6, BAL_SEAL_R), (xj - 75, BAL_SEAL_R), (xj - 55, 72.0),
+    return [(x0, 50.0), (x0, 77.0), (x0 + 6, 77.0), (x0 + 6, BAL_SEAL_R), (xj - 75, BAL_SEAL_R), (xj - 55, 72.0),
             (xj - 30, 62.0), (xj - tf - 12, 60.0), (xj - tf, 60.0), (xj - tf, ARM['rf']), (xj, ARM['rf']), (xj, 50.0),
             (xj - tf - 6, 50.0), (xbh, 46.0), (xbh, TIE['d'] / 2), (xbh - 40, TIE['d'] / 2), (xbh - 40, 66.0),
             (xbh - 46, 70.0), (x0 + 20, 70.0), (x0 + 14, 50.0)]
