@@ -10,8 +10,10 @@
   6. tilting-pad journals and thrust bearing: film, temperature rise, oil flow, power loss; squeeze-film dampers and
      integral S-spring damper rings; rotor dynamics of the detailed stack (sim/engine/a1000_rotordynamics.py solver)
   7. bearing losses against the cycle's mechanical-loss allowance
-Run:    python sim/engine/a1000_rotor_stack.py [--bore-study]    (numpy, matplotlib; CCX = ccx path, gmsh for the FEA)
-Writes: sim/engine/fea/a1000_rotor_stack.json, docs/img/a1000_rotor_stack.png
+  8. transient axial thrust through trips, surge, start and stop (sim/engine/a1000_thrust_transient.py, run from here
+     after the steady results are written): its checks join this list
+Run:    python sim/engine/a1000_rotor_stack.py [--bore-study]    (numpy, scipy, matplotlib; CCX = ccx path, gmsh for the FEA)
+Writes: sim/engine/fea/a1000_rotor_stack.json, docs/img/a1000_rotor_stack.png (+ the transient JSON and plot)
 """
 import json
 import math
@@ -653,6 +655,14 @@ def main():
         tie_bolt='M42x3 IN718, shank %.0f mm, lands %.1f mm at x %s' % (G.TIE['shank'], G.TIE['land'], list(G.TIE['lands'])),
         blisk_arms=dict(ri=G.ARM['ri'], ro=G.ARM['ro'], flange_od=2 * G.ARM['rf'], flange_t=G.ARM['tf'], cavity=G.ARM['cav'], joints_x=G.X_J,
                         studs='16 x MJ10x1.25 IN718 on PCD %.0f' % (2 * G.STUD['r'])))
+    json.dump(res, open(os.path.join(HERE, 'fea', 'a1000_rotor_stack.json'), 'w'), indent=1, default=float)   # read by the transient
+    # ------------------------------------------------------------------ transient thrust
+    print('8. transient axial thrust (sim/engine/a1000_thrust_transient.py)')
+    import a1000_thrust_transient as TT                      # noqa: E402
+    tr = TT.main()
+    for c in tr['checks']:
+        check(c['test'], c['value'], c['limit'], c['unit'], c['ok'], c['note'])
+    res['thrust_transient'] = dict(worst=tr['worst'], bound=tr['bound'], bov=tr['bov'], results='sim/engine/fea/a1000_thrust_transient.json')
     n_ok = sum(c['ok'] for c in chk)
     print('checks: %d of %d pass' % (n_ok, len(chk)))
     json.dump(res, open(os.path.join(HERE, 'fea', 'a1000_rotor_stack.json'), 'w'), indent=1, default=float)
@@ -711,8 +721,8 @@ def plot(res, Rd):
     ax3.set_title('Tie bolt through the transients', fontsize=9)
     ax4 = fig.add_axes([0.69, 0.03, 0.30, 0.40]); ax4.axis('off')
     rows = [(c['test'][:46], '%.3g %s' % (c['value'], c['unit']), 'OK' if c['ok'] else 'FAIL') for c in res['checks']]
-    tbl = ax4.table(cellText=rows, colLabels=['check', 'value', ''], loc='upper center', cellLoc='left', colWidths=[0.70, 0.20, 0.10])
-    tbl.auto_set_font_size(False); tbl.set_fontsize(6.2); tbl.scale(1, 1.05)
+    tbl = ax4.table(cellText=rows, colLabels=['check', 'value', ''], cellLoc='left', colWidths=[0.70, 0.20, 0.10], bbox=[0, 0, 1, 1])
+    tbl.auto_set_font_size(False); tbl.set_fontsize(min(6.2, 6.2 * 36 / len(rows)))
     for (i, j), cell in tbl.get_celld().items():
         if i > 0 and j == 2: cell.set_facecolor('#c8e6c9' if rows[i - 1][2] == 'OK' else '#ffcdd2')
     ax4.set_title('Checks: %d of %d pass' % (sum(c['ok'] for c in res['checks']), len(res['checks'])), fontsize=9)
