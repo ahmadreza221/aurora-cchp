@@ -42,3 +42,4 @@ sim/cfd/e1_stage/geometry/*.stl
 # web viewer meshes (regenerate: cad/engine/engine_viewer_export.py)
 viewer/engine/engine.glb
 viewer/engine/engine.json
+viewer/a1000/a1000.json
