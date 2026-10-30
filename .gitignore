@@ -45,3 +45,7 @@ sim/cfd/e1_stage/geometry/*.stl
 viewer/engine/engine.glb
 viewer/engine/engine.json
 viewer/a1000/a1000.json
+
+# AURORA-1000 R1 forced response: mode shapes (regenerate with a1000_r1_forced_response.py --modes)
+sim/engine/fea/*.npz
+sim/cfd/a1000_r1_forcing/case/

@@ -5,6 +5,8 @@ Inputs (run first):  sim/engine/a1000_blade_fea.py R1 / R2   -> fea/a1000_blade_
                      sim/engine/a1000_blisk_cyclic.py R1 / R2 -> fea/a1000_blisk_R?_cyclic.json (coupled blade-disc modes)
                      sim/engine/a1000_disc_fea.py           -> fea/a1000_disc.json (total and mechanical-only solutions)
                      sim/engine/a1000_rotordynamics.py      -> fea/a1000_rotordynamics.json
+                     sim/engine/a1000_r1_forced_response.py -> fea/a1000_R1_forced_response.json (CFD forcing on the
+                                                               cyclic modes; R1 EO96 is judged on it, not on its margin)
 Checks (rev 4, after the adversarial review):
   blades  creep rupture of the net section above the fillet on the design MINIMUM Larson-Miller curve, at the hub
           rotor-relative total temperature; net-section stress = max(FE band mean, P/A from the design sections);
@@ -12,7 +14,10 @@ Checks (rev 4, after the adversarial review):
           strong 1 x NPF 10 % against all modes, weak orders 5 % against the modes below 1.05 x blade mode 6, the
           vane-vane interaction |N1 - N2| outside the band + forced-response estimate (rev 5; rigid-hub margins shown
           for reference only); allowable vibratory stress (Goodman, mean-stress intercept = 1e5 h minimum rupture
-          strength in the creep range)
+          strength in the creep range); forced response of R1 at EO24 / 48 / 96 (CFD forcing, design point, x1.5
+          mistuning, damping 0.05-0.3 % + aero): resonant root stress <= Goodman / 2, PASS at the lower-bound damping,
+          FAIL above it even at the upper one, else marginal; R1 EO96 (2 x NGV1, 4.9 % from ND22 F6) is judged on it
+          (FR_CRITERION), its frequency margin is shown for reference only
   discs   yield margin at trip (total stress), burst (area-mean hoop, 85 % UTS), creep on the PRIMARY (mechanical)
           stress, LCF of the start-stop cycle (total stress; Manson universal slopes + Morrow mean stress, factors 2 on
           strain / 20 on life; NASA Grainex MAR-M247 disk data at 649 C as a cross-check)
@@ -51,6 +56,9 @@ REQ_INT = 0.001                                                # vane-vane inter
 # left after two rows ~10 % of the N2 wake, clocking modulation <= 10 % of it; N2 wake unsteady load ~10 % of the steady),
 # blisk damping ZETA (material + aero, lower bound), mistuning amplification MISTUNE; limit = Goodman allowable / 2
 A_INT, ZETA, MISTUNE = 0.01, 0.002, 1.5
+# orders judged by the forced response of a1000_r1_forced_response.py (CFD forcing on the cyclic modes) instead of the
+# frequency margin (rev 5); its other orders are listed for reference
+FR_CRITERION = dict(R1=(96,))
 ALPHA_CARRIER = 17.8e-6                                        # shroud carrier 1.4828 (X15CrNiSi20-12), mean 20..500 C
 CARRIER_T_MAX = 600.0                                          # 1.4828 lightly loaded ring, cooled by compressor air: max design T
 TARGET_CLEAR = dict(R1=0.45, R2=0.55)                          # running tip clearance target [mm] (~1.3 % / 1.0 % of height)
@@ -148,7 +156,7 @@ def blade_tip_stretch(row):
 def main():
     out = dict(blades={}, discs={}, rotor={}, tips={})
     rows = []                                                  # (test, value, limit, unit, ok, note) for the sheet / plot
-    disc = load('a1000_disc.json'); rd = load('a1000_rotordynamics.json')
+    disc = load('a1000_disc.json'); rd = load('a1000_rotordynamics.json'); prev = load('a1000_turbine_checks.json')
     for row in ('R1', 'R2'):
         b = load('a1000_blade_%s.json' % row)
         if b is None: print('%s: blade FEA results missing' % row); continue
@@ -207,9 +215,19 @@ def main():
                  ('%s blade EO margin, weak %s' % (row, '/'.join(map(str, weak))), 100 * worst_weak, 5.0, '%',
                   info(worst_weak >= 0.05 and weak_cov), 'rigid hub, band, modes 1-%d' % WEAK_MODES),
                  ('%s blade EO margin (EO 1-5)' % row, 100 * worst_low, 10.0, '%', info(worst_low >= 0.10), 'rigid hub, band')]
+        # orders closed by the forced-response analysis (a1000_r1_forced_response.py): the frequency margin is shown for
+        # reference, the criterion is the resonant root stress (rev 5: R1 EO96, 2 x NGV1 at 4.9 % from ND22 F6)
+        fr = load('a1000_%s_forced_response.json' % row) or {}
+        fr_eos = tuple(int(k) for k in FR_CRITERION.get(row, ()) if str(k) in fr.get('orders', {}))
         if cyc:
             for lab, eos, req, src in (('NPF', strong, 0.10, cyc), ('weak', weak, 0.05, cyc_w), ('N1-N2', inter, REQ_INT, cyc_w),
                                        ('EO 1-5', (1, 2, 3, 4, 5), 0.10, cyc)):
+                if lab == 'weak' and fr_eos:                       # forced-response orders: margin for reference only
+                    for k in fr_eos:
+                        q = (src or {}).get(k)
+                        if q: rows.append(('%s blisk (cyclic) EO margin, EO%d' % (row, k), 100 * abs(q['margin']), 100 * req, '%',
+                                           None, 'ND %d family %d %.0f Hz; criterion: forced response' % (q['nd'], q['family'], q['f'])))
+                    eos = tuple(k for k in eos if k not in fr_eos)
                 if not eos: continue
                 missing = [k for k in eos if not src.get(k)]
                 ms = [src[k] for k in eos if src.get(k)]
@@ -234,6 +252,22 @@ def main():
             rows.append(('%s EO%d (N1-N2) forced response, estimate' % (row, k), s_band, sa_root / 2, 'MPa', s_band <= sa_root / 2,
                          'worst in band (15k %.1f, resonance %.1f MPa); %.0f %% load, zeta %.3f, x%.1f mistuning; Goodman/2' % (
                              s_op, s_res, 100 * A_INT, ZETA, MISTUNE)))
+        # forced response from the CFD forcing on the cyclic modes: resonant root stress (design-point forcing, x mistuning)
+        # vs Goodman / 2 over the damping range: PASS if it passes at the lower-bound damping, FAIL if it fails even at the
+        # upper one, otherwise marginal (shown as reference: tip-timing decides)
+        for k in sorted((int(q) for q in fr.get('orders', {})), key=lambda q: -q):
+            q = fr['orders'][str(k)]; st = q['stress']; lim = fr['limit']
+            out['blades'][row].setdefault('forced_response', {})[str(k)] = q
+            ok = True if st[0]['root_res_mist'] <= lim else (False if st[-1]['root_res_mist'] > lim else None)
+            v = st[0] if ok else (st[-1] if ok is False else st[1])
+            rows.append(('%s EO%d resonance, %s (root)' % (row, k, 'band' if BAND[0] * 15000 <= q['n_res_rpm'] <= BAND[1] * 15000
+                                                         else 'crossed at %.0f rpm' % q['n_res_rpm']),
+                         v['root_res_mist'], lim, 'MPa', ok,
+                         'ND%d F%d %.0f Hz; zeta %s %% + aero: %s MPa; x%.1f mistuning; in band %.2f MPa; Goodman/2%s' % (
+                             q['nd'], q['family'], q['f_mode'], '/'.join('%.2g' % (100 * r['zeta_mech']) for r in st),
+                             '/'.join('%.0f' % r['root_res_mist'] if r['root_res_mist'] >= 10 else '%.1f' % r['root_res_mist']
+                                      for r in st), fr['mistune'], st[0]['root_band_mist'],
+                             '' if ok is not None else '; MARGINAL')))
         print('%s blade: net section %.0f MPa (FE %.0f, P/A %.0f) at %.0f C (hub T0rel) -> min-curve life %.1e h (typ %.1e), '
               'allowable 1e5 h %.0f MPa; peak vm %.0f (margin %.2f); Goodman allow %.0f MPa root / %.0f peak; gas bending ~%.0f MPa; '
               'EO band margins NPF %.1f %%, weak %.1f %%, EO1-5 %.1f %%' % (
@@ -243,6 +277,8 @@ def main():
         if disc:
             d = disc['%s_op' % row]
             stretch = blade_tip_stretch(row)
+            if stretch is None:                                # .frd not kept (not in git): the stretch of the last run
+                stretch = ((prev or {}).get('tips', {}).get(row) or {}).get('blade_stretch')
             rh, rt = A.row_radius(row, 0.0), A.row_radius(row, 1.0)
             a_b = float(np.interp(T, MAT_T, MAT_ALPHA)); th = a_b * (T - 20) * (rt - rh)
             rotor = d['u_rim_mm'] + (stretch or 0.0) + th
