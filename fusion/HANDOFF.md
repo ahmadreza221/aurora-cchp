@@ -193,5 +193,29 @@ further aft (`a1000_turbine.DGAP2`); NGV1, R1 and the combustor are unchanged.
    (were 26). R2, the rear stub and JB2 moved 25 mm aft.
 3. Hot section: casing x 678-903, C2 to x 875; new parts `HS-222` (outer gap liner) and `HS-234` (inner gap ring).
 4. Combustor: only the scroll pressure casing halves changed (rear plate x 903 -> 928).
-5. Package: `fusion/A1000_pkg` re-exported (82 parts in `pkg.json`). **The Fusion designs ("Turbine rev5", "Rotor and
-   Bearings rev1", "Package rev5" v11) are not rebuilt yet** with these files.
+5. Package: `fusion/A1000_pkg` re-exported (82 parts in `pkg.json`). **The Fusion designs "Turbine rev5" and "Rotor and
+   Bearings rev1" are not rebuilt yet** with these files; "Package rev5" is, as v12 (next section).
+
+## AURORA-1000 package v12 and the animation add-in (2026-10-31)
+1. **"AURORA-1000 Package rev5" v12**, rebuilt in place like v11 from `fusion/A1000_pkg/pkg.json`:
+   - Contents: rotor rev 1.3, hot section and turbine rev 6, combustion rev 1.
+   - Result: 82 parts, 526 bodies, bbox x −3500..2400, y −1250..2100, z −1000..2049 mm. The run took 5 min.
+   - Read back: all 23 rotor and bearing volumes match `fusion/A1000_rotor/parts.json` within 0.02 %. The impeller hubs
+     are 17.78 / 25.71 kg at 4.43 g/cc.
+2. **Add-in `fusion/AURORA1000_Animate/`**: a panel **AURORA-1000** in the Design workspace (Solid tab) with three buttons
+   for the package design.
+   - Installed in `~/Library/Application Support/Autodesk/Autodesk Fusion 360/API/AddIns/` with runOnStartup.
+   - **Assembly sequence** (about 55 s): all parts are hidden, then they fly in by the build order of docs/08 §13 (5 steps,
+     41 moves), with a label at the top left of the view.
+   - **Spin rotor** (20 s, 2 turns): the rotor shaft group, the blisks and the impellers turn about the X axis
+     (y = z = 0). The low-speed coupling turns at −1/10.
+   - **Reset**: stops an animation and restores the transforms and light bulbs the animation started from. Each
+     animation also restores them itself at the end; this was checked bit-exact against `pkg.json`.
+   - Clicking any of the three buttons during an animation stops it.
+3. Fusion API lessons:
+   - Start an add-in from the MCP with `app.scripts.itemByPath(folder).run()`. Handlers made by an MCP script get no
+     events after that script ends.
+   - Inside a command, a nested occurrence takes `transform2` only through its root-context proxy
+     (`createForAssemblyContext`).
+   - A smooth camera transition drops `viewExtents`. Set the extents after the new eye has been applied.
+   - Custom-graphics text needs `viewPlacement`, `viewScale` and `billBoarding` to lie flat on the screen.
