@@ -1,7 +1,7 @@
 {
  "A1000_C1_hub": {
-  "mass_kg": 17.7887,
-  "vol_cm3": 4015.514,
+  "mass_kg": 17.7757,
+  "vol_cm3": 4012.563,
   "valid": true,
   "solids": 1,
   "density_g_cc": 4.43
@@ -21,8 +21,8 @@
   "density_g_cc": 4.43
  },
  "A1000_C2_hub": {
-  "mass_kg": 25.7273,
-  "vol_cm3": 5807.522,
+  "mass_kg": 25.7071,
+  "vol_cm3": 5802.962,
   "valid": true,
   "solids": 1,
   "density_g_cc": 4.43
@@ -61,24 +61,24 @@
   "note": "blade and splitter at their own angular positions, both patterned 13 x 360/13 deg from 0"
  },
  "expected": {
-  "impeller1_kg": 22.182,
-  "impeller2_kg": 28.37
+  "impeller1_kg": 22.169,
+  "impeller2_kg": 28.35
  },
  "rotor": {
   "C1": {
-   "m": 22.182,
-   "x_cg": 294.36,
-   "Ip": 0.30691,
-   "Id": 0.17506,
+   "m": 22.169,
+   "x_cg": 294.37,
+   "Ip": 0.30687,
+   "Id": 0.17499,
    "x0": 205.0,
    "L": 123.75848686294636,
    "r2": 213.0
   },
   "C2": {
-   "m": 28.37,
-   "x_cg": 473.74,
-   "Ip": 0.41353,
-   "Id": 0.24453,
+   "m": 28.35,
+   "x_cg": 473.76,
+   "Ip": 0.41344,
+   "Id": 0.24439,
    "x0": 378.75848686294637,
    "L": 134.5095552574006,
    "r2": 238.0

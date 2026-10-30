@@ -586,6 +586,7 @@ def design():
                           eta_el_meanline=cyc0['eta_el'], eta_el_detail=cyc1['eta_el'],
                           P_net_ratio=cyc1['P_net'] / cyc0['P_net'])
     out['return_channel'] = return_channel(imps, perf)
+    out['inlet'] = inlet(imps['C1'])
     with open(JSON + '.tmp', 'w') as f:
         json.dump(out, f, indent=1, default=float)
     os.replace(JSON + '.tmp', JSON)
@@ -614,6 +615,42 @@ def return_channel(imps, perf):
                 Zr=ST['C1']['Zr'], vane=RET['vane'],
                 static_hub_end=(i2.xle - 7.0, i2.r1h + 2.0),             # static hub lip over the rotating nose (2 mm gap)
                 nose_front=(i2.x0 - 2.0, i2.r1h + 2.0))                  # diaphragm face ahead of impeller 2
+
+
+def rotor_constants(*names):
+    """constants of the rotor stack (cad/engine/a1000_rotor.py) read from its source (no import: that module builds its
+    own CAD when run with --cad)"""
+    import ast
+    tree = ast.parse(open(os.path.join(HERE, 'a1000_rotor.py')).read()); out = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name) and node.targets[0].id in names:
+            out[node.targets[0].id] = ast.literal_eval(node.value)
+    return out
+
+
+# stage-1 radial inlet, shroud side [mm]: the channel is as wide as the inducer LE allows (the bend must turn axial ahead of
+# x_le); the hub fairing's steep part (r 95-130) still leaves a 9 % area dip (min 0.91 of the inducer annulus, rotor side)
+INLET = dict(x_shroud_wall=204.0, R_bend=10.0, r_entry=260.0, lip=12.0)
+
+
+def inlet(imp):
+    """stage-1 radial-to-axial inlet: hub side = the bearing-housing fairing of the rotor stack (INLET_HUB, a radial face
+    at x 157 above it), shroud side = radial wall at x_shroud_wall, bend of radius R_bend into the inducer casing.
+    Passage area along the hub line (normal distance to the shroud wall) against the inducer annulus"""
+    hub = [tuple(q) for q in rotor_constants('INLET_HUB')['INLET_HUB']] + [(imp.x0, imp.r1h)]
+    xs, R = INLET['x_shroud_wall'], INLET['R_bend']; rc = imp.r1t + imp.p['clr']; cx, cr = xs + R, rc + R
+    arc = [(cx - R * math.cos(a), cr - R * math.sin(a)) for a in np.linspace(0, math.pi / 2, 16)]
+    shroud = [(xs, INLET['r_entry'])] + arc + [(imp.xle, rc)]
+    # area: distance from each hub point to the shroud polyline x 2 pi r_mean
+    S = np.array(shroud); A1 = math.pi * (rc ** 2 - imp.r1h ** 2)
+    seg = lambda p, a, b: np.linalg.norm(p - (a + np.clip(np.dot(p - a, b - a) / np.dot(b - a, b - a), 0, 1) * (b - a)))
+    stations = []
+    for hp in [np.array(h) for h in hub] + [np.array((hub[0][0], r)) for r in (200.0, INLET['r_entry'])]:
+        d = min(seg(hp, S[i], S[i + 1]) for i in range(len(S) - 1))
+        stations.append(dict(x=float(hp[0]), r=float(hp[1]), width=d, area_ratio=2 * math.pi * (hp[1] + d / 2) * d / A1))
+    A_entry = 2 * math.pi * INLET['r_entry'] * (xs - hub[0][0])
+    return dict(hub=hub, shroud=shroud, x_hub_wall=hub[0][0], A1_mm2=A1, entry_area_ratio=A_entry / A1,
+                min_area_ratio=min(q['area_ratio'] for q in stations), stations=stations, **INLET)
 
 
 def report(imps, out):
@@ -647,6 +684,9 @@ def report(imps, out):
           'collector %.2f %%; cycle eta_el %.2f %% (meanline %.2f %%), net power per kg air x %.3f' % (
               o['PR'], o['meanline_PR'], o['eta'], o['meanline_eta'], 100 * o['return_channel_dP0'], 100 * o['collector_dP0'],
               100 * o['eta_el_detail'], 100 * o['eta_el_meanline'], o['P_net_ratio']))
+    il = out['inlet']
+    print('inlet (radial, hub = rotor fairing): channel x %.0f..%.0f, entry r %.0f (area %.2f x inducer), min area ratio along the '
+          'bend %.2f' % (il['x_hub_wall'], il['x_shroud_wall'], il['r_entry'], il['entry_area_ratio'], il['min_area_ratio']))
     rc = out['return_channel']
     print('return channel: diffuser x %.1f..%.1f, diaphragm %.1f..%.1f, channel %.1f..%.1f, r5 %.0f -> r6 %.0f, alpha5 %.1f deg, '
           'cm5 %.0f cm6 %.0f m/s' % (*rc['x_diffuser'], *rc['x_diaphragm'], *rc['x_channel'], rc['r5'], rc['r6'], rc['alpha5'],
@@ -839,7 +879,7 @@ def build_cad(full=False):
                                                                        s.Volume * rho * 1e-9), flush=True)
     for k, imp in imps.items():
         rho = imp.p['rho']; R = FILLET[k]
-        hub = fc_hub(imp); save('A1000_%s_hub' % k, hub, rho)
+        hub = curvics(k, fc_hub(imp)); save('A1000_%s_hub' % k, hub, rho)
         bl = imp.blades()
         pieces = {}
         for nm, tag in (('main', 'blade'), ('split', 'splitter')):
@@ -863,6 +903,25 @@ def build_cad(full=False):
                 w = w.fuse([GG_rot(pieces[nm], 360.0 * j / Z_MAIN) for j in range(Z_MAIN)])
             save('A1000_%s_impeller' % k, w.removeSplitter(), rho)
     json.dump(info, open(os.path.join(OUT, 'A1000_C_parts.json'), 'w'), indent=1, default=float)
+
+
+# curvic couplings on the hub faces: (rotor-stack band, face, side of the impeller, tooth height, phase); the rotor parts
+# (cad/engine/a1000_rotor.py) carry the other half with the opposite side and phase, so the teeth mesh
+CURVIC_FACES = dict(C1=[('stub_I1', 'front', +1, 2.4, 0.5), ('I1_spc', 'rear', -1, 3.0, 0.0)],
+                    C2=[('spc_I2', 'front', +1, 2.6, 0.5), ('I2_drum', 'rear', -1, 3.2, 0.0)])
+
+
+def curvics(key, hub):
+    _a = list(sys.argv); sys.argv = [sys.argv[0]]                   # (a1000_rotor builds its own CAD with --cad)
+    if HERE not in sys.path: sys.path.insert(0, HERE)
+    import a1000_rotor as RT
+    sys.argv = _a
+    imp = Impeller(key)
+    for band, face, side, h, phase in CURVIC_FACES[key]:
+        c = RT.CURVIC_C[band]; xj = imp.x0 if face == 'front' else imp.x0 + imp.L
+        hub = RT.curvic_face(hub, xj, side, c['ri'], c['ro'], c['N'], h, phase)
+    hub = hub.removeSplitter()
+    return hub.Solids[0] if len(hub.Solids) == 1 else hub
 
 
 def GG_rot(sh, deg):

@@ -159,15 +159,14 @@ Design record: `docs/08_aurora1000_1MW_concept.md` §15. Geometry: `cad/engine/a
    blade and one splitter, with blade and splitter patterned 13×. Both pieces sit at their own angular position, so both
    patterns start at 0.
    - Both impellers are Ti-6Al-4V (4.43 g/cc).
-   - Expected masses: impeller 1 22.18 kg, impeller 2 28.37 kg.
+   - Expected masses: impeller 1 22.17 kg, impeller 2 28.35 kg.
+   - The hub faces carry the mating curvic teeth of rotor rev 1.1.
 3. Package:
    - `A1000_STEP=1 ... a1000_viewer_export.py` takes the impellers from `fusion/A1000C`.
    - It builds the compressor casing from the flow path: shroud walls, vaned diffusers, crossover, diaphragm, return channel
      and collector.
    - The diffuser and return-channel vanes are separate parts in a new group `diff`.
    - The rotor rev 1 and hot-section blocks still replace their own parts after that.
-   - Those STEP folders (`fusion/A1000_rotor`, `fusion/A1000_hot`) are not in git (`.gitignore`). Regenerate them with
-     their `--cad` scripts before the package import.
 4. **Done 2026-10-30 (Fusion MCP)**, both rebuilt in place with a new version of the same file:
-   - "AURORA-1000 Compressor rev1" v3: Fusion masses 22.16 / 28.31 kg.
-   - "AURORA-1000 Package rev5" v9: 66 parts.
+   - "AURORA-1000 Compressor rev1" v4: Fusion masses 22.15 / 28.29 kg, with curvic teeth.
+   - "AURORA-1000 Package rev5" v10: radial inlet on the rotor hub fairing.

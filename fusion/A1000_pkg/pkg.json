@@ -363,7 +363,7 @@
    ],
    "desc": "Impeller 1: D2 426 mm, U2 335 m/s, b2 33.5 mm, PR 2.012, eta 0.872; turned hub, flat back face, bore D46 (tie bolt), curvic both faces; impeller 22.2 kg",
    "material": "Ti-6Al-4V forging, 5-axis flank milled",
-   "mass_kg": 17.79,
+   "mass_kg": 17.78,
    "step": "../A1000C/A1000_C1_hub.step",
    "dx": 0.0
   },
@@ -423,7 +423,7 @@
    ],
    "desc": "Impeller 2: D2 476 mm, U2 374 m/s, b2 16.5 mm, PR 1.991, eta 0.854; turned hub, flat back face, bore D46 (tie bolt), curvic both faces; impeller 28.4 kg",
    "material": "Ti-6Al-4V forging, 5-axis flank milled",
-   "mass_kg": 25.73,
+   "mass_kg": 25.71,
    "step": "../A1000C/A1000_C2_hub.step",
    "dx": 0.0
   },
@@ -577,7 +577,7 @@
    "inst": [
     0.0
    ],
-   "desc": "radial-to-axial inlet; duct up to the filter house and the absorption-chiller inlet-air cooler",
+   "desc": "radial inlet: plenum round the front bearing housings, front wall at x 157 over the rotor hub fairing, shroud wall at x 204 with an R10 bend into the inducer; entry r 260 (area 1.60 x inducer); duct up to the filter house and the absorption-chiller inlet-air cooler",
    "material": "steel sheet, acoustic lining",
    "step": "Air_inlet_plenum___bellmouth.step",
    "dx": 0.0

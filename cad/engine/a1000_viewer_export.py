@@ -220,7 +220,9 @@ xb1, xb2 = g1['x0'] + g1['L'], g2['x0'] + g2['L']
 cas1 = [tuple(q) for q in g1['casing']]; cas2 = [tuple(q) for q in g2['casing']]
 xc_u, Ro_u = RC['bend_centre_x'], RC['R_bend_out']; cx, cr = RC['inlet_bend_centre']; Rin = RC['R_inlet_bend_in']
 x_rc0, x_rc1 = RC['x_channel']
-parts_w = [wall([(g1['x0'] - 40.0, cas1[0][1]), cas1[0]], T_W), wall(cas1, T_W),
+IL = IDES['inlet']                                                  # stage-1 radial inlet (hub side: rotor fairing)
+il_shroud = [(IL['x_shroud_wall'] - IL['lip'], IL['r_entry'] + IL['lip'])] + [tuple(q) for q in IL['shroud'][:-1]] + [cas1[0]]
+parts_w = [wall(il_shroud, T_W), wall(cas1, T_W),
            wall([(xsd1, g1['r2'] + 2.0), (xsd1, d1['r4'])], T_W),                             # diffuser 1 shroud-side wall
            wall(arc((xc_u, d1['r4']), Ro_u, 180.0, 0.0), T_W),                                 # U-bend (crossover) outer wall
            wall([(x_rc1, d1['r4']), (x_rc1, cr)], T_W),                                         # return channel, rear wall
@@ -262,13 +264,18 @@ rv = vane(RC['r5'] - 12.0, RC['r6'], RC['alpha5'] - 4.0, 0.0, tuple(RC['vane']),
 add('Return-channel vane x%d' % zr, 'diff', rv, inst=[360.0 * j / zr for j in range(zr)],
     desc='%d deswirl vanes, r %.0f -> %.0f mm, %.0f -> 0 deg, axial inflow to impeller 2' % (zr, RC['r5'] - 12.0, RC['r6'], RC['alpha5']),
     material='steel, machined with the diaphragm')
-# inlet: bellmouth + plenum box with the filter-house duct on top
-x_i1 = g1['x0']; r1t_ = g1['r1t'] + g1['clearance']
-bell = rev([(x_i1 - 40, r1t_), (x_i1 - 40, r1t_ + 10), (x_i1 - 95, r1t_ + 70), (x_i1 - 105, r1t_ + 70), (x_i1 - 50, r1t_)])
-plen = box(30, x_i1 - 40, -380, 380, -380, 380).cut(box(42, x_i1 - 40, -368, 368, -368, 368))
-plen = plen.cut(cyl(r1t_ + 70, 30, (x_i1 - 60, 0, 0), (1, 0, 0)))
-duct = box(-10, x_i1 - 10, -300, 300, 380, 1350).cut(box(2, x_i1 - 22, -288, 288, 370, 1351))
-add('Air inlet plenum + bellmouth', 'casing', plen.fuse(bell).fuse(duct), desc='radial-to-axial inlet; duct up to the filter house and the absorption-chiller inlet-air cooler',
+# inlet: radial-inlet front wall above the rotor's hub fairing (x_hub_wall, r 150 -> entry + lip), plenum box round the
+# front bearing housings, filter-house duct on top
+xw, re_, lp = IL['x_hub_wall'], IL['r_entry'], IL['lip']
+front = wall([(xw, IL['hub'][0][1]), (xw, re_), (xw - lp, re_ + lp)], T_W)                # material on x < x_hub_wall
+plen = box(30, xw - 2 * lp, -400, 400, -400, 400).cut(box(42, xw - 2 * lp, -388, 388, -388, 388))
+plen = plen.fuse(box(xw - 2 * lp, IL['x_shroud_wall'] + 12, -400, 400, -400, 400).cut(
+    box(xw - 2 * lp - 1, IL['x_shroud_wall'] + 1, -388, 388, -388, 388)).cut(cyl(re_ - 30, 40, (IL['x_shroud_wall'] - 10, 0, 0), (1, 0, 0))))
+duct = box(-10, xw - 2 * lp, -300, 300, 400, 1350).cut(box(2, xw - 2 * lp - 12, -288, 288, 390, 1351))
+add('Air inlet plenum + bellmouth', 'casing', plen.fuse(front).fuse(duct),
+    desc='radial inlet: plenum round the front bearing housings, front wall at x %.0f over the rotor hub fairing, shroud wall at '
+         'x %.0f with an R%.0f bend into the inducer; entry r %.0f (area %.2f x inducer); duct up to the filter house and the '
+         'absorption-chiller inlet-air cooler' % (xw, IL['x_shroud_wall'], IL['R_bend'], re_, IL['entry_area_ratio']),
     material='steel sheet, acoustic lining')
 xd2 = xh2_                                                          # compressor discharge (recuperator duct start)
 
