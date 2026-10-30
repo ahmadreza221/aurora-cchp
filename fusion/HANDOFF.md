@@ -170,3 +170,16 @@ Design record: `docs/08_aurora1000_1MW_concept.md` §15. Geometry: `cad/engine/a
 4. **Done 2026-10-30 (Fusion MCP)**, both rebuilt in place with a new version of the same file:
    - "AURORA-1000 Compressor rev1" v4: Fusion masses 22.15 / 28.29 kg, with curvic teeth.
    - "AURORA-1000 Package rev5" v10: radial inlet on the rotor hub fairing.
+
+## AURORA-1000 combustion system rev 1: DLE can, scroll, scroll pressure casing (2026-10-30)
+Design record: `docs/08_aurora1000_1MW_concept.md` §16. Checks: `sim/engine/a1000_combustor.py` (30 of 30 pass; the chemistry
+is in `sim/engine/a1000_combustor_chem.py`, which needs Cantera; its results are cached in `sim/engine/fea/`).
+1. CAD: `freecadcmd -c "import sys; sys.argv=['a1000_combustor.py','--cad']; exec(open('cad/engine/a1000_combustor.py').read())"`
+   writes `fusion/A1000_comb/*.step` + `parts.json` (16 parts, ~1.2 t). `--section` draws `docs/img/a1000_combustor_section.png`.
+2. Package: `a1000_viewer_export.py` reads `fusion/A1000_comb` in place of the concept can, scroll and injector (group
+   `comb` for the hot parts, `casing` for the pressure casings and insulation, `aux` for the manifolds). `A1000_STEP_DIR`
+   writes the STEP set to another folder, so only `pkg.json` and the changed parts need to be copied.
+3. **Done 2026-10-30 (Fusion MCP)**: "AURORA-1000 Package rev5" **v11**, rebuilt in place by running `fill()` of
+   `AURORA1000_Package.py` into the opened document after deleting its root occurrences: 79 parts, 527 bodies, bbox
+   x −3500..2400, y −1250..2100, z −1000..2049 mm. The combustor volumes match the CAD masses. With the machine loaded the
+   rebuild took ~6 min (the MCP call times out after 60 s; the script keeps running: log to a file and poll it).
