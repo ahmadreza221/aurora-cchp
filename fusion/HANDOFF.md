@@ -148,3 +148,26 @@ Design record: `docs/08_aurora1000_1MW_concept.md` §13. Geometry: `cad/engine/a
    `AURORA1000_Package.py` rebuilds the whole package.
 4. The blisk arms are not yet in `cad/engine/a1000_turbine.py`. The `fusion/A1000` disc pieces are still the bore-less rev 5
    discs.
+## AURORA-1000 compressor impellers, rev 1 (2026-10-30)
+Design record: `docs/08_aurora1000_1MW_concept.md` §15. Geometry: `cad/engine/a1000_impeller.py`. Checks:
+`sim/engine/a1000_impeller_fea.py`.
+1. CAD: `freecadcmd -c "import sys; sys.argv=['x','--cad']; exec(open('cad/engine/a1000_impeller.py').read())"`, then
+   `python3 fusion/export_a1000_impellers.py "rev 1"`. This copies the six pieces (hub, blade and splitter per stage, in the
+   rotor frame) to `fusion/A1000C/`. It also writes `parts.json` with the materials, the expected masses and the
+   rotor-dynamics lumps.
+2. Run `fusion/AURORA1000_Compressor/AURORA1000_Compressor.py`. It builds two coloured components. Each has the hub, one
+   blade and one splitter, with blade and splitter patterned 13×. Both pieces sit at their own angular position, so both
+   patterns start at 0.
+   - Both impellers are Ti-6Al-4V (4.43 g/cc).
+   - Expected masses: impeller 1 22.18 kg, impeller 2 28.37 kg.
+3. Package:
+   - `A1000_STEP=1 ... a1000_viewer_export.py` takes the impellers from `fusion/A1000C`.
+   - It builds the compressor casing from the flow path: shroud walls, vaned diffusers, crossover, diaphragm, return channel
+     and collector.
+   - The diffuser and return-channel vanes are separate parts in a new group `diff`.
+   - The rotor rev 1 and hot-section blocks still replace their own parts after that.
+   - Those STEP folders (`fusion/A1000_rotor`, `fusion/A1000_hot`) are not in git (`.gitignore`). Regenerate them with
+     their `--cad` scripts before the package import.
+4. **Done 2026-10-30 (Fusion MCP)**, both rebuilt in place with a new version of the same file:
+   - "AURORA-1000 Compressor rev1" v3: Fusion masses 22.16 / 28.31 kg.
+   - "AURORA-1000 Package rev5" v9: 66 parts.

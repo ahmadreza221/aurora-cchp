@@ -6,7 +6,11 @@ generator, lube module, skid) and one sub-component per part, coloured as the we
 recuperator are see-through so the rotor stays visible.
   turbine rows : the rev 5 pieces from fusion/A1000 (same files as AURORA1000_Import), moved by x_offset_turbine and
                  patterned (NGV1 48, blisk 1 59, NGV2 24, blisk 2 36)
-  the rest     : the rotor-dynamics shaft segments, the meanline impellers and the concept envelopes of docs/08
+  impellers    : the detail-design pieces from fusion/A1000C (hub + 1 ruled blade + 1 splitter per stage, instanced 13 x),
+                 the same files as AURORA1000_Compressor
+  compressor   : casing from the impeller flow path (shroud walls, vaned diffusers, crossover, return channel, collector),
+                 diffuser and return-channel vanes instanced
+  the rest     : the rotor-dynamics shaft segments and the concept envelopes of docs/08
 Frame: rotor frame of sim/engine/a1000_rotordynamics.py, mm, X = engine axis from the gearbox coupling face (x = 0) to
 the exhaust, Z up. Regenerate the parts with
   A1000_STEP=1 freecadcmd -c "exec(open('cad/engine/a1000_viewer_export.py').read())"
@@ -23,9 +27,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PKG = os.path.normpath(os.path.join(HERE, '..', 'A1000_pkg'))
 VERIFY = os.path.normpath(os.path.join(HERE, '..', '_a1000_pkg_verify.json'))
 LABEL = {'turbine': 'Turbine blisks', 'ngv': 'Turbine NGVs', 'rotor': 'Rotor shaft', 'comp': 'Compressor impellers',
-         'casing': 'Casings and inlet', 'comb': 'Combustor', 'exhaust': 'Exhaust', 'bearing': 'Bearings',
-         'recup': 'Recuperator', 'gearbox': 'Gearbox', 'gen': 'Generator', 'aux': 'Lube oil', 'skid': 'Skid',
-         'hot': 'Turbine hot section'}
+         'diff': 'Diffuser and return vanes', 'casing': 'Casings and inlet', 'comb': 'Combustor', 'exhaust': 'Exhaust',
+         'bearing': 'Bearings', 'recup': 'Recuperator', 'gearbox': 'Gearbox', 'gen': 'Generator', 'aux': 'Lube oil',
+         'skid': 'Skid', 'hot': 'Turbine hot section'}
 OPACITY = {'casing': 0.22, 'exhaust': 0.30, 'recup': 0.30, 'comb': 0.45}       # by group, 1.0 otherwise
 OPACITY_PART = {'Turbine casing insulation': 0.10, 'Air inlet plenum + bellmouth': 0.15}
 

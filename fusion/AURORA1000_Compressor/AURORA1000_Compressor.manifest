@@ -1,0 +1,10 @@
+{
+	"autodeskProduct": "Fusion",
+	"type": "script",
+	"author": "GR180-CCHP",
+	"description": {
+		"": "Build the AURORA-1000 compressor impellers (13 + 13 ruled blades each, Al 2618 / Ti-6Al-4V) from fusion/A1000C STEP parts"
+	},
+	"supportedOS": "windows|mac",
+	"editEnabled": true
+}

@@ -42,7 +42,7 @@ DES = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 ML = json.load(open(os.path.join(ROOT, 'sim', 'mw1_meanline.json')))
 PARTS = json.load(open(os.path.join(CAD, 'A1000_parts.json') if os.path.exists(os.path.join(CAD, 'A1000_parts.json'))
                        else os.path.join(FUS, 'parts.json')))
-SRC = {}                                                            # id(shape) -> turbine piece name (STEP export)
+SRC = {}                                                            # id(shape) -> (STEP path from fusion/A1000_pkg, dx)
 
 GROUPS = {   # name: (rgba, metallic, roughness)
     'turbine': ((0.80, 0.81, 0.84, 1.0), 0.85, 0.30),
@@ -50,6 +50,7 @@ GROUPS = {   # name: (rgba, metallic, roughness)
     'rotor':   ((0.55, 0.58, 0.63, 1.0), 0.85, 0.30),
     'comp':    ((0.70, 0.78, 0.86, 1.0), 0.80, 0.30),
     'casing':  ((0.42, 0.45, 0.49, 1.0), 0.50, 0.55),
+    'diff':    ((0.80, 0.62, 0.32, 1.0), 0.60, 0.45),
     'comb':    ((0.78, 0.45, 0.22, 1.0), 0.60, 0.45),
     'exhaust': ((0.60, 0.56, 0.52, 1.0), 0.60, 0.50),
     'bearing': ((0.85, 0.70, 0.25, 1.0), 0.80, 0.35),
@@ -96,7 +97,7 @@ def shell_cyl(ro, ri, h, p, d):
 def read(name, dx=0.0):
     p = os.path.join(CAD, name + '.brep')
     s = Part.Shape(); s.read(p if os.path.exists(p) else os.path.join(FUS, name + '.step'))
-    s.translate(V(dx, 0, 0)); SRC[id(s)] = name; return s
+    s.translate(V(dx, 0, 0)); SRC[id(s)] = ('../A1000/%s.step' % name, dx); return s
 
 
 def mass(shape, rho):                                               # kg, rho in kg/m3, volume in mm3
@@ -150,74 +151,126 @@ s = tube(-190.0, 0.0, 110.0, 40.0).fuse(tube(-120.0, -70.0, 125.0, 40.0))
 add('High-speed coupling', 'rotor', s, desc='diaphragm coupling turbine -> gearbox, 15,000 rpm', material='steel, disc packs')
 
 
-# ------------------------------------------------------------------------------------------------ impellers
-def impeller(name, st, x0, mat, rho):
-    r2 = st['D2'] / 2 * 1e3; r1h = st['r1h'] * 1e3; r1t = st['r1t'] * 1e3; b2 = st['b2'] * 1e3
-    L = 0.30 * 2 * r2; tb = 7.0; bore = 24.0
-    hub = [(x0 + (L - tb) * math.sin(p), r1h + (r2 - r1h) * (1 - math.cos(p))) for p in np.linspace(0, math.pi / 2, 24)]
-    s = rev([(x0, bore)] + hub + [(x0 + L, r2), (x0 + L, bore)])
-    add(name + ' hub', 'comp', s, desc='%s, D2 %.0f mm, U2 %.0f m/s, PR %.2f' % (st['name'], 2 * r2, st['U2'], st['pr']), material=mat,
-        mass_kg=mass(s, rho))
-    # blades: hub curve -> shroud curve stations, wrapped; 13 full + 13 splitters (thin lofted plates)
-    Lh = L - tb; Ls = L - tb - b2
-    def station(p, th, t=2.8):
-        hx, hr = x0 + Lh * math.sin(p), r1h + (r2 - r1h) * (1 - math.cos(p))
-        sx, sr = x0 + Ls * math.sin(p), r1t + (r2 - r1t) * (1 - math.cos(p))
-        pts = []
-        for (x, r, sg) in ((hx, hr + 0.5, -1), (sx, sr - 0.6, -1), (sx, sr - 0.6, 1), (hx, hr + 0.5, 1)):
-            a = th + sg * t / 2 / r
-            pts.append(V(x, r * math.sin(a), r * math.cos(a)))
-        return Part.makePolygon(pts + [pts[0]])
-    def blade(p0):
-        ps = np.linspace(p0, math.pi / 2 * 0.995, 10)
-        wires = [station(p, 1.05 * (p / (math.pi / 2)) ** 1.6 - 0.25 * (p / (math.pi / 2)) ** 6) for p in ps]
-        return Part.makeLoft(wires, True, False)
-    nb = 13
-    add(name + ' blade x%d' % nb, 'comp', blade(0.02), inst=[360.0 * k / nb for k in range(nb)], desc='full blades, backsweep 40 deg',
-        material=mat)
-    add(name + ' splitter x%d' % nb, 'comp', blade(0.55), inst=[360.0 * (k + 0.5) / nb for k in range(nb)], desc='splitter blades',
-        material=mat)
-    return dict(r2=r2, r1t=r1t, r1h=r1h, b2=b2, L=L, x0=x0, Ls=Ls)
+# ------------------------------------------------------------------------------------------------ impellers (detail design)
+# cad/engine/a1000_impeller.py: turned hub + 1 ruled (flank-milled) main blade + 1 splitter per stage, each piece at its own
+# angular position (the splitter half a pitch ahead), instanced 13 x; fusion/A1000C stands in for cad_out when not built
+IDES = json.load(open(os.path.join(ROOT, 'sim', 'a1000_impeller_design.json')))
+CFUS = os.path.join(ROOT, 'fusion', 'A1000C')
+CPARTS = json.load(open(os.path.join(CAD, 'A1000_C_parts.json') if os.path.exists(os.path.join(CAD, 'A1000_C_parts.json'))
+                        else os.path.join(CFUS, 'parts.json')))
 
 
-c1, c2 = ML['compressor']
-x_i1 = R['seg'][2][0]; x_i2 = R['seg'][4][0]
-I1 = impeller('Impeller 1', c1, x_i1, 'Al 2618-T61, 5-axis milled', 2760)
-I2 = impeller('Impeller 2', c2, x_i2, 'Ti-6Al-4V, 5-axis milled', 4430)
+def readc(name):
+    p = os.path.join(CAD, name + '.brep')
+    s = Part.Shape(); s.read(p if os.path.exists(p) else os.path.join(CFUS, name + '.step'))
+    SRC[id(s)] = ('../A1000C/%s.step' % name, 0.0); return s
+
+
+IMPS = {}
+for k in ('C1', 'C2'):
+    st_ = IDES['stages'][k]; mat = '%s forging, 5-axis flank milled' % st_['material']; g_ = st_['geometry']; pf_ = st_['performance']; n_ = 'Impeller %s' % k[1]
+    m_ = lambda q: CPARTS['A1000_%s_%s' % (k, q)]['mass_kg']
+    add(n_ + ' hub', 'comp', readc('A1000_%s_hub' % k),
+        desc='%s: D2 %.0f mm, U2 %.0f m/s, b2 %.1f mm, PR %.3f, eta %.3f; turned hub, flat back face, bore D%.0f (tie bolt), '
+             'curvic both faces; impeller %.1f kg' % (st_['name'], 2 * g_['r2'], 15000 * math.pi / 30 * g_['r2'] * 1e-3,
+                                                      g_['b2'], pf_['PR_tt'], pf_['eta_tt'], 2 * g_['r_bore'],
+                                                      m_('hub') + 13 * (m_('blade') + m_('splitter'))),
+        material=mat, mass_kg=round(m_('hub'), 2))
+    add(n_ + ' blade x13', 'comp', readc('A1000_%s_blade' % k), inst=[360.0 * j / 13 for j in range(13)],
+        desc='13 ruled main blades (5-axis flank milling), 40 deg backsweep, wrap %.0f deg, root fillet = cutter ball' % abs(g_['wrap_deg']),
+        material=mat, mass_kg=round(13 * m_('blade'), 2))
+    add(n_ + ' splitter x13', 'comp', readc('A1000_%s_splitter' % k), inst=[360.0 * j / 13 for j in range(13)],
+        desc='13 ruled splitters from %.0f %% of the meridional length, mid-pitch' % (100 * g_['u_split']),
+        material=mat, mass_kg=round(13 * m_('splitter'), 2))
+    IMPS[k] = dict(g=g_, d=pf_['diffuser'])
+
 
 # ------------------------------------------------------------------------------------------------ compressor casing
-def shroud_shell(I, t=10.0, gap=0.6):
-    """casing wall following the shroud line from the inducer to the exit, then the diffuser front wall to 1.6 r2"""
-    pin = [(I['x0'] + I['Ls'] * math.sin(p), I['r1t'] + gap + (I['r2'] - I['r1t']) * (1 - math.cos(p))) for p in np.linspace(0, math.pi / 2, 20)]
-    xe = pin[-1][0]
-    inner = [(I['x0'] - 40.0, I['r1t'] + gap)] + pin + [(xe, 1.6 * I['r2'])]
-    outer = [(x - t, r + t) for x, r in inner[::-1]]
-    return rev(inner + outer)
+def wall(path, t):
+    """revolved wall of thickness t on the left of an (x, r) path (the flow is on its right)"""
+    P = np.asarray(path, float); d = np.gradient(P, axis=0); d /= np.linalg.norm(d, axis=1)[:, None]
+    Q = P + t * np.c_[-d[:, 1], d[:, 0]]
+    return rev([tuple(q) for q in P] + [tuple(q) for q in Q[::-1]])
 
 
-xd1 = I1['x0'] + I1['Ls']; xd2 = I2['x0'] + I2['Ls']
-cas = shroud_shell(I1).fuse(shroud_shell(I2))
-# diffuser rear walls (behind the impeller exit), return channel bend and the stage-2 discharge collector
-cas = cas.fuse(tube(xd1 + I1['b2'] + 6, xd1 + I1['b2'] + 18, 1.6 * I1['r2'], I1['r2'] + 6))
-bend = rev([(xd1 - 10, 1.6 * I1['r2'] + 10), (xd1 + I1['b2'] + 18, 1.6 * I1['r2'] + 10), (xd1 + I1['b2'] + 50, 1.6 * I1['r2'] - 20),
-            (xd1 + I1['b2'] + 50, 1.6 * I1['r2'] - 40), (xd1 + I1['b2'] + 30, 1.6 * I1['r2'] - 40), (xd1 + I1['b2'] + 30, 1.6 * I1['r2'] - 5),
-            (xd1 - 10, 1.6 * I1['r2'] - 5)])
-cas = cas.fuse(bend).fuse(tube(I2['x0'] - 45, I2['x0'] - 30, 1.6 * I1['r2'] - 20, I2['r1t'] + 5))
-cas = cas.fuse(tube(xd2 + I2['b2'] + 6, xd2 + I2['b2'] + 18, 1.6 * I2['r2'], I2['r2'] + 6))
-col = Part.makeTorus(1.75 * I2['r2'], 0.20 * I2['r2'], V(xd2 - 5, 0, 0), V(1, 0, 0))
-col = col.cut(Part.makeTorus(1.75 * I2['r2'], 0.20 * I2['r2'] - 8, V(xd2 - 5, 0, 0), V(1, 0, 0)))
-cas = cas.fuse(col)
-barrel = tube(x_i1 - 40, xd2 + 40, 1.75 * I2['r2'] + 0.20 * I2['r2'] + 20, 1.75 * I2['r2'] + 0.20 * I2['r2'] + 5)
-add('Compressor casing', 'casing', cas.fuse(barrel), desc='shroud walls, vaned diffusers, return channel, discharge collector (concept)',
-    material='ductile iron EN-GJS-400 / Ti diffuser vanes')
+def arc(c, R, a0, a1, n=24):
+    return [(c[0] + R * math.cos(a), c[1] + R * math.sin(a)) for a in np.linspace(math.radians(a0), math.radians(a1), n)]
+
+
+def vane(r_a, r_b, a_a, a_b, thick, x0, w, inward=False, n=60):
+    """2.5-axis machined vane: camber d(theta)/dr = +-tan(alpha) / r (alpha from radial, outward diffuser / inward return
+    channel), thickness LE -> max at 30 % -> TE, extruded across the channel width w from x0"""
+    tle, tmx, tte = thick
+    rs = np.linspace(r_a, r_b, n); al = np.radians(np.interp(np.arange(n), [0, n - 1], [a_a, a_b]))
+    f = np.tan(al) / rs * (-1 if inward else 1)
+    th = np.r_[0.0, np.cumsum(0.5 * (f[1:] + f[:-1]) * np.diff(rs))]
+    u = np.linspace(0, 1, n); t = np.where(u < 0.3, tle + (tmx - tle) * np.sin(np.pi / 2 * u / 0.3), tmx + (tte - tmx) * (u - 0.3) / 0.7)
+    Y, Zc = rs * np.cos(th), rs * np.sin(th); dY, dZ = np.gradient(Y), np.gradient(Zc); L = np.hypot(dY, dZ)
+    nY, nZ = -dZ / L, dY / L
+    pts = [V(x0, y, z) for y, z in zip(Y + t / 2 * nY, Zc + t / 2 * nZ)] + \
+          [V(x0, y, z) for y, z in zip((Y - t / 2 * nY)[::-1], (Zc - t / 2 * nZ)[::-1])]
+    return Part.Face(Part.makePolygon(pts + [pts[0]])).extrude(V(w, 0, 0))
+
+
+g1, g2, d1, d2 = IMPS['C1']['g'], IMPS['C2']['g'], IMPS['C1']['d'], IMPS['C2']['d']
+RC = IDES['return_channel']
+T_W = 10.0
+xsd1 = g1['x_s2'] + (g1['b2'] - d1['b3']); xsd2 = g2['x_s2'] + (g2['b2'] - d2['b3'])     # diffuser shroud walls (pinched)
+xb1, xb2 = g1['x0'] + g1['L'], g2['x0'] + g2['L']
+cas1 = [tuple(q) for q in g1['casing']]; cas2 = [tuple(q) for q in g2['casing']]
+xc_u, Ro_u = RC['bend_centre_x'], RC['R_bend_out']; cx, cr = RC['inlet_bend_centre']; Rin = RC['R_inlet_bend_in']
+x_rc0, x_rc1 = RC['x_channel']
+parts_w = [wall([(g1['x0'] - 40.0, cas1[0][1]), cas1[0]], T_W), wall(cas1, T_W),
+           wall([(xsd1, g1['r2'] + 2.0), (xsd1, d1['r4'])], T_W),                             # diffuser 1 shroud-side wall
+           wall(arc((xc_u, d1['r4']), Ro_u, 180.0, 0.0), T_W),                                 # U-bend (crossover) outer wall
+           wall([(x_rc1, d1['r4']), (x_rc1, cr)], T_W),                                         # return channel, rear wall
+           wall(arc((cx, cr), Rin, 180.0, 270.0), T_W),                                         # 90 deg bend into stage 2
+           wall([(cx, g2['r1t'] + g2['clearance']), cas2[0]], T_W), wall(cas2, T_W),
+           wall([(xsd2, g2['r2'] + 2.0), (xsd2, d2['r4'])], T_W)]                               # diffuser 2 shroud-side wall
+# diaphragm between diffuser 1 and the return channel: front face behind impeller 1 and the diffuser hub wall, rounded top
+# (U-bend inner wall), rear face = return-channel front wall, 90 deg hub-side bend into impeller 2, seal on the spacer (D150)
+xh1 = g1['x_h2']; Rui = 0.5 * (x_rc0 - xh1); Rbo = Rin + (x_rc1 - x_rc0)
+dia = [(xb1 + 2.5, 77.0), (xb1 + 2.5, g1['r2'] + 1.5), (xh1, g1['r2'] + 1.5), (xh1, d1['r4'])] + \
+      arc((xh1 + Rui, d1['r4']), Rui, 180.0, 0.0) + arc((cx, cr), Rbo, 180.0, 270.0) + \
+      [tuple(RC['static_hub_end']), tuple(RC['nose_front']), (RC['nose_front'][0], 77.0)]
+diaph = rev(dia)
+xh2_ = g2['x_h2']
+dw2 = rev([(xb2 + 2.5, 88.0), (xb2 + 2.5, g2['r2'] + 1.5), (xh2_, g2['r2'] + 1.5), (xh2_, d2['r4'] + 30.0),
+           (xb2 + 16.0, d2['r4'] + 30.0), (xb2 + 16.0, 88.0)])
+r_col = d2['r4'] + 45.0; R_col = 38.0; x_col = 0.5 * (xsd2 + xh2_)
+col = Part.makeTorus(r_col, R_col, V(x_col, 0, 0), V(1, 0, 0)).cut(Part.makeTorus(r_col, R_col - 8.0, V(x_col, 0, 0), V(1, 0, 0)))
+col = col.cut(tube(xsd2 + 1.0, xh2_ - 1.0, r_col, d2['r4'] - 5.0))                            # opening from the diffuser
+R_out = max(d1['r4'] + Ro_u + 25.0, r_col + R_col + 12.0)
+barrel = tube(g1['x0'] - 40.0, xb2 + 30.0, R_out + 12.0, R_out)
+cas = barrel
+for w_ in parts_w + [diaph, dw2, col]:
+    cas = cas.fuse(w_)
+cas = cas.removeSplitter()
+add('Compressor casing', 'casing', cas,
+    desc='shroud walls (tip clearance %.2f / %.2f mm), vaned-diffuser walls (pinch %.0f %%), crossover bend, return channel, '
+         'diaphragm, discharge collector' % (g1['clearance'], g2['clearance'], 100 * (1 - d1['b3'] / g1['b2'])),
+    material='ductile iron EN-GJS-400-18 (casing), steel diaphragm')
+for k, g_, d_, xs_ in (('1', g1, d1, xsd1), ('2', g2, d2, xsd2)):
+    vn = vane(d_['r3'], d_['r4'], d_['alpha3b'], d_['alpha4b'], tuple(d_['vane']), xs_ - 0.5, g_['x_h2'] - xs_ + 1.0)
+    add('Diffuser %s vane x%d' % (k, d_['Zd']), 'diff', vn, inst=[360.0 * j / d_['Zd'] for j in range(d_['Zd'])],
+        desc='%d vanes, r %.0f -> %.0f mm, %.0f -> %.0f deg, throat %.1f mm, AR %.2f, 2theta %.1f deg, Cp %.2f; machined '
+             'integral with the diffuser plate (2.5 axis)' % (d_['Zd'], d_['r3'], d_['r4'], d_['alpha3b'], d_['alpha4b'],
+                                                            d_['w_throat'], d_['AR'], d_['two_theta'], d_['Cp']),
+        material='as the casing / 1.4057 plate')
+zr = RC['Zr']
+rv = vane(RC['r5'] - 12.0, RC['r6'], RC['alpha5'] - 4.0, 0.0, tuple(RC['vane']), x_rc0 - 0.5, x_rc1 - x_rc0 + 1.0, inward=True)
+add('Return-channel vane x%d' % zr, 'diff', rv, inst=[360.0 * j / zr for j in range(zr)],
+    desc='%d deswirl vanes, r %.0f -> %.0f mm, %.0f -> 0 deg, axial inflow to impeller 2' % (zr, RC['r5'] - 12.0, RC['r6'], RC['alpha5']),
+    material='steel, machined with the diaphragm')
 # inlet: bellmouth + plenum box with the filter-house duct on top
-bell = rev([(x_i1 - 40, I1['r1t'] + 0.6), (x_i1 - 40, I1['r1t'] + 10), (x_i1 - 95, I1['r1t'] + 70), (x_i1 - 105, I1['r1t'] + 70),
-            (x_i1 - 50, I1['r1t'] + 0.6)])
+x_i1 = g1['x0']; r1t_ = g1['r1t'] + g1['clearance']
+bell = rev([(x_i1 - 40, r1t_), (x_i1 - 40, r1t_ + 10), (x_i1 - 95, r1t_ + 70), (x_i1 - 105, r1t_ + 70), (x_i1 - 50, r1t_)])
 plen = box(30, x_i1 - 40, -380, 380, -380, 380).cut(box(42, x_i1 - 40, -368, 368, -368, 368))
-plen = plen.cut(cyl(I1['r1t'] + 70, 30, (x_i1 - 60, 0, 0), (1, 0, 0)))
+plen = plen.cut(cyl(r1t_ + 70, 30, (x_i1 - 60, 0, 0), (1, 0, 0)))
 duct = box(-10, x_i1 - 10, -300, 300, 380, 1350).cut(box(2, x_i1 - 22, -288, 288, 370, 1351))
 add('Air inlet plenum + bellmouth', 'casing', plen.fuse(bell).fuse(duct), desc='radial-to-axial inlet; duct up to the filter house and the absorption-chiller inlet-air cooler',
     material='steel sheet, acoustic lining')
+xd2 = xh2_                                                          # compressor discharge (recuperator duct start)
 
 # ------------------------------------------------------------------------------------------------ turbine casing, scroll, combustor
 rt_tip = A.r_tip(A.X_LE['R2']) + 8
@@ -268,7 +321,7 @@ YR = 1450.0
 rec = box(-900, 1900, YR - 600, YR + 600, -700, 900)
 add('Recuperator (bought in)', 'recup', rec, desc='primary-surface / plate-fin, 3.1 MW, effectiveness 0.90, 347 stainless; about 2.8 x 1.2 x 1.6 m, 2-3 t',
     material='AISI 347')
-ducts = shell_cyl(150.0, 142.0, YR - 600 - 300, (xd2 + 8, 300.0, 0), (0, 1, 0))                     # compressor discharge -> recuperator
+ducts = shell_cyl(150.0, 142.0, YR - 600 - r_col, (x_col, r_col, 0), (0, 1, 0))                    # compressor discharge -> recuperator
 hot = shell_cyl(150.0, 142.0, YR - 300, (can_x, 0.0, 1250.0), (0, 1, 0))                            # hot air -> can
 hot = hot.fuse(shell_cyl(150.0, 142.0, 500.0, (can_x, YR - 300, 900.0), (0, 0, 1))).fuse(Part.makeSphere(150.0, V(can_x, YR - 300, 1250.0)).cut(Part.makeSphere(142.0, V(can_x, YR - 300, 1250.0))))
 ducts = ducts.fuse(hot).fuse(shell_cyl(300.0, 290.0, 900.0, (-400, YR, 900.0), (0, 0, 1)))          # exhaust stack -> CCHP
@@ -308,8 +361,8 @@ if STEP_OUT:
     for p in parts:
         e = dict(name=p['name'], group=p['group'], inst=p['inst'] or [0.0],
                  **{k: v for k, v in p['meta'].items() if v not in (None, '')})
-        if id(p['shape']) in SRC:                                   # turbine piece: fusion/A1000/<piece>.step shifted by X_OFF
-            e.update(step='../A1000/%s.step' % SRC[id(p['shape'])], dx=X_OFF)
+        if id(p['shape']) in SRC:                                   # turbine / impeller piece: fusion/A1000(C)/<piece>.step
+            e.update(step=SRC[id(p['shape'])][0], dx=SRC[id(p['shape'])][1])
         else:
             fn = ''.join(c if c.isalnum() else '_' for c in p['name']).strip('_') + '.step'
             p['shape'].exportStep(os.path.join(STEP_OUT, fn)); e.update(step=fn, dx=0.0)

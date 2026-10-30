@@ -73,10 +73,13 @@ def blisk(row, x_off):
     """cast blisk: disc profile from cad/engine/a1000_turbine.py + blades (mass from the CAD export) as a ring"""
     poly = [(x + x_off, r) for x, r in A.disc_profile(row)]
     m, xc, Ip, Id = axisym(poly, MAT['marm247'][0])
-    try:
-        mb1 = json.load(open(PARTS))['A1000_%s_blade' % row]['mass_kg']
-    except (OSError, KeyError):
-        mb1 = dict(R1=0.034, R2=0.135)[row]
+    mb1 = None
+    for src in (PARTS, os.path.join(ROOT, 'fusion', 'A1000', 'parts.json')):    # CAD output, else the committed copy
+        try:
+            mb1 = json.load(open(src))['A1000_%s_blade' % row]['mass_kg']; break
+        except (OSError, KeyError):
+            pass
+    mb1 = mb1 if mb1 is not None else dict(R1=0.034, R2=0.135)[row]
     rh, rt = A.row_radius(row, 0.0), A.row_radius(row, 1.0); mb = A.Z[row] * mb1
     ip, idd = ring(mb, rh + 0.42 * (rt - rh))
     hw = A.DISC[row]['hub_w']; xm = 0.5 * (A.X_LE[row] + A.X_TE[row]) + x_off
@@ -84,12 +87,38 @@ def blisk(row, x_off):
                 m_blades=mb)
 
 
+IMP_CAD = [os.path.join(ROOT, 'cad_out', 'engine', 'A1000', 'A1000_C_parts.json'), os.path.join(ROOT, 'fusion', 'A1000C', 'parts.json')]
+IMP_DES = os.path.join(ROOT, 'sim', 'a1000_impeller_design.json')
+
+
+def impeller_detail():
+    """detail-design impellers (cad/engine/a1000_impeller.py): mass, x_cg, Ip, Id of hub + 13 blades + 13 splitters from the
+    CAD, position, inducer hub radius and bore from sim/a1000_impeller_design.json; None without them (concept profiles)"""
+    src = next((p for p in IMP_CAD if os.path.exists(p)), None)
+    if src is None or not os.path.exists(IMP_DES): return None
+    d = json.load(open(src)); des = json.load(open(IMP_DES))['stages']; out = {}
+    for k in ('C1', 'C2'):
+        r = d['A1000_%s_rotor' % k] if 'A1000_%s_rotor' % k in d else d['rotor'][k]; gm = des[k]['geometry']
+        out[k] = dict(m=r['m'], x=r['x_cg'], Ip=r['Ip'], Id=r['Id'], L=gm['L'], x0=gm['x0'], r1h=gm['r1h'], r_bore=gm['r_bore'],
+                      poly=[tuple(q) for q in gm['hub_profile']],
+                      mat={'Al 2618-T61': 'al2618', 'Ti-6Al-4V': 'ti64'}[des[k]['material']])
+    return out
+
+
 # ------------------------------------------------------------------------------------------------ rotor layout [mm]
 def rotor(layout='A'):
     c1, c2 = ML['compressor']
-    i1 = impeller(c1, 205.0, MAT['al2618'][0]); x_i1 = (205.0, 205.0 + i1['L'])
-    x0_2 = x_i1[1] + 50.0                                        # return channel / interstage seal
-    i2 = impeller(c2, x0_2, MAT['ti64'][0]); x_i2 = (x0_2, x0_2 + i2['L'])
+    det = impeller_detail()
+    if det:                                                      # detail design (impeller 2 shorter, spacer longer; the
+        i1, i2 = det['C1'], det['C2']                            # rear face of impeller 2 and the turbine unchanged)
+        x_i1 = (i1['x0'], i1['x0'] + i1['L']); x_i2 = (i2['x0'], i2['x0'] + i2['L'])
+    else:
+        i1 = impeller(c1, 205.0, MAT['al2618'][0]); x_i1 = (205.0, 205.0 + i1['L'])
+        x0_2 = x_i1[1] + 50.0                                    # return channel / interstage seal
+        i2 = impeller(c2, x0_2, MAT['ti64'][0]); x_i2 = (x0_2, x0_2 + i2['L'])
+    # impeller bodies in the beam model: detail = nose diameter 2 r1h over the tie-bolt bore; concept = mean of r1h, 60 mm
+    od1, id1 = (2 * i1['r1h'], 2 * i1['r_bore']) if det else (2 * 0.5 * (c1['r1h'] * 1e3 + 60.0), 48.0)
+    od2, id2 = (2 * i2['r1h'], 2 * i2['r_bore']) if det else (2 * 0.5 * (c2['r1h'] * 1e3 + 65.0), 48.0)
     # turbine: R1 disc hub front face 175 mm behind impeller 2 (diffuser, combustor-to-NGV1 scroll, drum seals)
     hw1 = A.DISC['R1']['hub_w']; xm1 = 0.5 * (A.X_LE['R1'] + A.X_TE['R1'])
     x_off = x_i2[1] + 175.0 - (xm1 - hw1 / 2)
@@ -101,9 +130,9 @@ def rotor(layout='A'):
     # shaft segments: (x0, x1, OD, ID, material, carries mass)
     seg = [(0.0, 100.0, 80.0, 0.0, 'steel', True),
            (100.0, 205.0, 110.0, 0.0, 'steel', True),
-           (x_i1[0], x_i1[1], 2 * 0.5 * (c1['r1h'] * 1e3 + 60.0), 48.0, 'al2618', False),
+           (x_i1[0], x_i1[1], od1, id1, i1['mat'] if det else 'al2618', False),
            (x_i1[1], x_i2[0], 150.0, 48.0, 'steel', True),          # interstage spacer (curvic both ends)
-           (x_i2[0], x_i2[1], 2 * 0.5 * (c2['r1h'] * 1e3 + 65.0), 48.0, 'ti64', False),
+           (x_i2[0], x_i2[1], od2, id2, i2['mat'] if det else 'ti64', False),
            (x_i2[1], b1['hub'][0], 170.0, 120.0, 'in718', True),     # compressor-turbine drum, tie bolt inside
            (b1['hub'][0], b1['hub'][1], 2 * b1['r_boss'], 0.0, 'marm247', False),
            (b1['hub'][1], b2['hub'][0], 180.0, 120.0, 'in718', True),  # interstage spacer under NGV2

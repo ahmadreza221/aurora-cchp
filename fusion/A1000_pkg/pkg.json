@@ -37,6 +37,13 @@
     125
    ]
   },
+  "diff": {
+   "rgb": [
+    204,
+    158,
+    82
+   ]
+  },
   "comb": {
    "rgb": [
     199,
@@ -354,10 +361,10 @@
    "inst": [
     0.0
    ],
-   "desc": "stage 1 (Al 2618), D2 413 mm, U2 324 m/s, PR 2.01",
-   "material": "Al 2618-T61, 5-axis milled",
-   "mass_kg": 10.1,
-   "step": "Impeller_1_hub.step",
+   "desc": "Impeller 1: D2 426 mm, U2 335 m/s, b2 33.5 mm, PR 2.012, eta 0.872; turned hub, flat back face, bore D46 (tie bolt), curvic both faces; impeller 22.2 kg",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 17.79,
+   "step": "../A1000C/A1000_C1_hub.step",
    "dx": 0.0
   },
   {
@@ -378,32 +385,34 @@
     304.61538461538464,
     332.3076923076923
    ],
-   "desc": "full blades, backsweep 40 deg",
-   "material": "Al 2618-T61, 5-axis milled",
-   "step": "Impeller_1_blade_x13.step",
+   "desc": "13 ruled main blades (5-axis flank milling), 40 deg backsweep, wrap 51 deg, root fillet = cutter ball",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 2.56,
+   "step": "../A1000C/A1000_C1_blade.step",
    "dx": 0.0
   },
   {
    "name": "Impeller 1 splitter x13",
    "group": "comp",
    "inst": [
-    13.846153846153847,
-    41.53846153846154,
-    69.23076923076923,
-    96.92307692307692,
-    124.61538461538461,
-    152.30769230769232,
-    180.0,
-    207.69230769230768,
-    235.3846153846154,
-    263.0769230769231,
-    290.7692307692308,
-    318.46153846153845,
-    346.15384615384613
+    0.0,
+    27.692307692307693,
+    55.38461538461539,
+    83.07692307692308,
+    110.76923076923077,
+    138.46153846153845,
+    166.15384615384616,
+    193.84615384615384,
+    221.53846153846155,
+    249.23076923076923,
+    276.9230769230769,
+    304.61538461538464,
+    332.3076923076923
    ],
-   "desc": "splitter blades",
-   "material": "Al 2618-T61, 5-axis milled",
-   "step": "Impeller_1_splitter_x13.step",
+   "desc": "13 ruled splitters from 30 % of the meridional length, mid-pitch",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 1.84,
+   "step": "../A1000C/A1000_C1_splitter.step",
    "dx": 0.0
   },
   {
@@ -412,10 +421,10 @@
    "inst": [
     0.0
    ],
-   "desc": "stage 2 (Ti-6Al-4V), D2 448 mm, U2 352 m/s, PR 1.92",
-   "material": "Ti-6Al-4V, 5-axis milled",
-   "mass_kg": 20.0,
-   "step": "Impeller_2_hub.step",
+   "desc": "Impeller 2: D2 476 mm, U2 374 m/s, b2 16.5 mm, PR 1.991, eta 0.854; turned hub, flat back face, bore D46 (tie bolt), curvic both faces; impeller 28.4 kg",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 25.73,
+   "step": "../A1000C/A1000_C2_hub.step",
    "dx": 0.0
   },
   {
@@ -436,32 +445,34 @@
     304.61538461538464,
     332.3076923076923
    ],
-   "desc": "full blades, backsweep 40 deg",
-   "material": "Ti-6Al-4V, 5-axis milled",
-   "step": "Impeller_2_blade_x13.step",
+   "desc": "13 ruled main blades (5-axis flank milling), 40 deg backsweep, wrap 65 deg, root fillet = cutter ball",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 1.57,
+   "step": "../A1000C/A1000_C2_blade.step",
    "dx": 0.0
   },
   {
    "name": "Impeller 2 splitter x13",
    "group": "comp",
    "inst": [
-    13.846153846153847,
-    41.53846153846154,
-    69.23076923076923,
-    96.92307692307692,
-    124.61538461538461,
-    152.30769230769232,
-    180.0,
-    207.69230769230768,
-    235.3846153846154,
-    263.0769230769231,
-    290.7692307692308,
-    318.46153846153845,
-    346.15384615384613
+    0.0,
+    27.692307692307693,
+    55.38461538461539,
+    83.07692307692308,
+    110.76923076923077,
+    138.46153846153845,
+    166.15384615384616,
+    193.84615384615384,
+    221.53846153846155,
+    249.23076923076923,
+    276.9230769230769,
+    304.61538461538464,
+    332.3076923076923
    ],
-   "desc": "splitter blades",
-   "material": "Ti-6Al-4V, 5-axis milled",
-   "step": "Impeller_2_splitter_x13.step",
+   "desc": "13 ruled splitters from 30 % of the meridional length, mid-pitch",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 1.08,
+   "step": "../A1000C/A1000_C2_splitter.step",
    "dx": 0.0
   },
   {
@@ -470,9 +481,94 @@
    "inst": [
     0.0
    ],
-   "desc": "shroud walls, vaned diffusers, return channel, discharge collector (concept)",
-   "material": "ductile iron EN-GJS-400 / Ti diffuser vanes",
+   "desc": "shroud walls (tip clearance 0.50 / 0.40 mm), vaned-diffuser walls (pinch 8 %), crossover bend, return channel, diaphragm, discharge collector",
+   "material": "ductile iron EN-GJS-400-18 (casing), steel diaphragm",
    "step": "Compressor_casing.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Diffuser 1 vane x19",
+   "group": "diff",
+   "inst": [
+    0.0,
+    18.94736842105263,
+    37.89473684210526,
+    56.8421052631579,
+    75.78947368421052,
+    94.73684210526316,
+    113.6842105263158,
+    132.6315789473684,
+    151.57894736842104,
+    170.52631578947367,
+    189.47368421052633,
+    208.42105263157896,
+    227.3684210526316,
+    246.31578947368422,
+    265.2631578947368,
+    284.2105263157895,
+    303.1578947368421,
+    322.10526315789474,
+    341.05263157894734
+   ],
+   "desc": "19 vanes, r 234 -> 337 mm, 68 -> 53 deg, throat 28.6 mm, AR 2.26, 2theta 10.2 deg, Cp 0.62; machined integral with the diffuser plate (2.5 axis)",
+   "material": "as the casing / 1.4057 plate",
+   "step": "Diffuser_1_vane_x19.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Diffuser 2 vane x19",
+   "group": "diff",
+   "inst": [
+    0.0,
+    18.94736842105263,
+    37.89473684210526,
+    56.8421052631579,
+    75.78947368421052,
+    94.73684210526316,
+    113.6842105263158,
+    132.6315789473684,
+    151.57894736842104,
+    170.52631578947367,
+    189.47368421052633,
+    208.42105263157896,
+    227.3684210526316,
+    246.31578947368422,
+    265.2631578947368,
+    284.2105263157895,
+    303.1578947368421,
+    322.10526315789474,
+    341.05263157894734
+   ],
+   "desc": "19 vanes, r 262 -> 369 mm, 67 -> 53 deg, throat 33.9 mm, AR 2.11, 2theta 10.3 deg, Cp 0.60; machined integral with the diffuser plate (2.5 axis)",
+   "material": "as the casing / 1.4057 plate",
+   "step": "Diffuser_2_vane_x19.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Return-channel vane x17",
+   "group": "diff",
+   "inst": [
+    0.0,
+    21.176470588235293,
+    42.35294117647059,
+    63.529411764705884,
+    84.70588235294117,
+    105.88235294117646,
+    127.05882352941177,
+    148.23529411764707,
+    169.41176470588235,
+    190.58823529411765,
+    211.76470588235293,
+    232.94117647058823,
+    254.11764705882354,
+    275.29411764705884,
+    296.47058823529414,
+    317.6470588235294,
+    338.8235294117647
+   ],
+   "desc": "17 deswirl vanes, r 325 -> 157 mm, 63 -> 0 deg, axial inflow to impeller 2",
+   "material": "steel, machined with the diaphragm",
+   "step": "Return_channel_vane_x17.step",
    "dx": 0.0
   },
   {
