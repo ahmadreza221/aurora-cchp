@@ -24,12 +24,21 @@ Aero limits: Zweifel of the vane rows scaled from the design (Zw ~ pitch / cx): 
 scaled up to keep Zw <= 1.12 (N1 up to x1.1, N2 up to x1.7: the low counts with long chords pay a secondary loss, reported
 as the Kacker-Okapuu aspect-ratio factor f(h/c) relative to the design); vane count differs from the downstream blade
 count by >= 4 (low-ND disc excitation, noise).
-Run:    python3 sim/engine/a1000_vane_count.py
-Writes: sim/engine/fea/a1000_vane_count.json
+Rev 6 (R1 EO24 start-up crossing, sim/engine/a1000_r1_eo24_options.py): --n1 48 keeps NGV1 and scans NGV2 12-40 (the
+NGV2 axial chord may then also shrink to x0.8 to keep Zw >= 0.70 above 27 vanes); R1 2 x N1 = EO96 is closed by the
+forced response for 48 vanes (sec. 12.4.1); the strong stator orders that cross blade families on the start line (40 % of
+N_OP up to the band) are listed, and the R1 flap (family 1) crossings by the NGV2 potential field (1st and, when counted,
+2nd harmonic) get a resonant-stress estimate scaled from the start-line CFD of N2 = 24: dynamic head of NGV2 at the
+crossing speed (a1000_startup.py) x potential-field decay over the R1 surface exp(-(k - k24) d), k = n / r_m, d = distance
+to the NGV2 LE (EO24 pressure distribution of the CFD as the weight; 2nd harmonic: x0.5 at the LE plane, decay 2k),
+against the start-up allowable (Goodman / 2 of the cold blade, a1000_R1_eo24_options.json).
+Run:    python3 sim/engine/a1000_vane_count.py [--n1 48]
+Writes: sim/engine/fea/a1000_vane_count.json (--n1 48: a1000_vane_count_n1_48.json)
 """
 import json
 import math
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -45,6 +54,10 @@ F_LIM = {}
 REQ_INT = 0.001                          # interaction order |N1 - N2|: outside the grid band (no crossing in 14.7-15.3k)
 GAP_R1_N2 = 9.0                          # R1 TE - NGV2 LE [mm] (potential-field decay)
 RM = DES['annulus']['rm']
+N_START = 0.40                           # rev 6: start-line crossings from 40 % speed up to the band
+CS_MIN = dict(N1=1.0, N2=0.8)            # rev 6, --n1 only: shortest NGV axial chord (high counts, Zw >= 0.70)
+FR_CLOSED = {48: (('R1', '2N1'),)}       # orders closed by the forced response for that NGV1 count (EO96, sec. 12.4.1)
+CFD = os.path.join(ROOT, 'sim', 'cfd', 'a1000_r1_forcing')
 
 
 def ko_far(hc):
@@ -99,8 +112,36 @@ def sources(row):
     return tab, rig, nd
 
 
-def main():
+def startup_model():
+    """rev 6: resonant root stress [MPa] of an R1 flap crossing on the start line by the h-th harmonic of an N2-vane
+    potential field at rpm, scaled from the start-line CFD of 24 vanes (a1000_R1_eo24_options.json); None if missing"""
+    opt = load('a1000_R1_eo24_options.json')
+    if not opt: return None
+    import numpy as np
+    sys.path.insert(0, HERE); import a1000_startup as SU
+    fc = json.load(open(os.path.join(CFD, 'forcing.json'))); g = json.load(open(os.path.join(CFD, 'geometry.json')))['rows']
+    x = np.array(g['R1']['x']); tau = np.array(fc['tau']); h = fc['harmonics']['24']
+    xt = np.interp(tau, np.arange(len(x) + 1) / len(x), np.r_[x, x[:1]]); d = g['N2']['x_le'] - xt
+    w = np.hypot(h['re'], h['im'])
+    F = opt['forcing'].get('st') or opt['forcing']['design']
+    s24 = F['resonant_root_mist']; rpm24 = (F.get('state') or {}).get('rpm', 12270.0)
+    lim = min(q['limit'] for q in opt['option1']['criteria'])
+    tit = opt['start_line']['cfd_state']['tit']; cache = {}; SU.design()          # (calibrates the turbine meanline)
+    def q(rpm):
+        k = round(rpm, -1)
+        if k not in cache:                                  # low speeds: the schedule TIT falls (no match at the CFD TIT)
+            st = next(m for m in (SU.match(k / N_OP, t) for t in (tit, tit - 100, tit - 200, tit - 300)) if m)
+            cache[k] = SU.q_ngv2(st)
+        return cache[k]
+    def sigma(n2, harm, rpm):
+        D = float(np.sum(w * np.exp(-(harm * n2 - 24) / RM * d)) / np.sum(w)) * (0.5 if harm == 2 else 1.0)
+        return [v * q(rpm) / q(rpm24) * D for v in s24], D
+    return dict(sigma=sigma, limit=lim, zeta=opt['zeta'])
+
+
+def main(n1_fix=None):
     src = {r: sources(r) for r in ('R1', 'R2')}
+    smod = startup_model() if n1_fix else None
     print('cyclic NDs solved: R1 %s, R2 %s' % (sorted(src['R1'][0]), sorted(src['R2'][0])))
     zw1 = [s['zweifel'] for s in DES['N1']['sections']]; zw2 = [s['zweifel'] for s in DES['N2']['sections']]
     Z1_0, Z2_0 = DES['N1']['Z'], DES['N2']['Z']
@@ -109,11 +150,13 @@ def main():
     hc1_0, hc2_0 = hc_of('N1'), hc_of('N2')
     def scale(zw, n, n0, row):
         z = [v * n0 / n for v in zw]; cs = max(1.0, max(z) / ZW_LIM[1])
-        return (cs, (min(z) / cs, max(z) / cs)) if min(z) / cs >= ZW_LIM[0] and cs <= CS_MAX[row] else (None, None)
-    for n1 in range(20, 56):
+        if n1_fix and min(z) < ZW_LIM[0]: cs = max(CS_MIN[row], min(z) / ZW_LIM[0])     # rev 6: shorter chord
+        return (cs, (min(z) / cs, max(z) / cs)) if (min(z) / cs >= ZW_LIM[0] - 1e-9 and max(z) / cs <= ZW_LIM[1] + 1e-9
+                                                    and CS_MIN[row] <= cs <= CS_MAX[row]) else (None, None)
+    for n1 in ([n1_fix] if n1_fix else range(20, 56)):
         cs1, z1 = scale(zw1, n1, Z1_0, 'N1')
         if cs1 is None: continue
-        for n2 in range(20, 56):
+        for n2 in (range(12, 41) if n1_fix else range(20, 56)):
             cs, z2 = scale(zw2, n2, Z2_0, 'N2')
             if cs is None: continue
             if abs(n2 - Z_R['R2']) < 4 or abs(n1 - Z_R['R1']) < 4 or abs(n2 - Z_R['R1']) < 4: continue
@@ -133,15 +176,29 @@ def main():
                     cy = None                                        # the computed families stop short: unknown
                 rg = band_margin(rig, k) if nm is None else band_margin_lim(rig[:nm], k)
                 if cy is None: need.add((row, nd(k)))
-                ms.append(dict(row=row, order=lab, eo=k, nd=nd(k), req=req, cyclic=cy, rigid=rg))
-            known = [m for m in ms if m['cyclic'] is not None]
+                ms.append(dict(row=row, order=lab, eo=k, nd=nd(k), req=req, cyclic=cy, rigid=rg,
+                               closed_by_forced_response=(row, lab) in (FR_CLOSED.get(n1, ()) if n1_fix else ())))
+            # rev 6: start-line crossings of the strong orders (+ the 2nd potential harmonic on R1)
+            su = []
+            for row, lab, k, req in (checks if n1_fix else ()):
+                if req < 0.10 and (row, lab) != ('R1', '2N2'): continue
+                tab, rig, nd = src[row]
+                for fam, f in enumerate(tab.get(nd(k)) or [], 1):
+                    rpm = 60 * f / k
+                    if not N_START * N_OP <= rpm < BAND[0] * N_OP: continue
+                    c = dict(row=row, order=lab, eo=k, nd=nd(k), family=fam, f=f, rpm=rpm)
+                    if smod and row == 'R1' and lab in ('N2', '2N2') and fam == 1:
+                        sg, D = smod['sigma'](n2, 2 if lab == '2N2' else 1, rpm)
+                        c.update(sigma=sg, decay=D, ok=sg[0] <= smod['limit'], fail=sg[-1] > smod['limit'])
+                    su.append(c)
+            known = [m for m in ms if m['cyclic'] is not None and not m['closed_by_forced_response']]
             ratio = min((abs(m['cyclic'][0]) / m['req'] for m in known), default=float('nan'))
             ratio_rig = min((abs(m['rigid'][0]) / m['req'] if m['rigid'] else 0.0 for m in ms))
             if not need: pass
             res.append(dict(n1=n1, n2=n2, cx1_scale=cs1, cx2_scale=cs, cx1_mm=cx1_0 * cs1, cx2_mm=cx2_0 * cs,
                             ko_sec_N1=ko_far(hc1_0 / cs1) / ko_far(hc1_0), ko_sec_N2=ko_far(hc2_0 / cs) / ko_far(hc2_0),
                             ratio_cyclic=ratio, ratio_rigid=ratio_rig, complete=not need,
-                            need_nd=sorted(need), zw1=z1, zw2=z2, checks=ms))
+                            need_nd=sorted(need), zw1=z1, zw2=z2, checks=ms, startup=su))
     cur = [r for r in res if r['n1'] == Z1_0 and r['n2'] == Z2_0]
     print('current N1 %d / N2 %d:' % (Z1_0, Z2_0))
     for r in cur:
@@ -154,7 +211,8 @@ def main():
                 key=lambda r: (round(r['ko_sec_N2'] + r['ko_sec_N1'], 2), -r['ratio_cyclic']))
     print('feasible on solved cyclic data (all orders known, all margins met), least secondary loss first:')
     for r in ok[:12]:
-        worst = min((m for m in r['checks'] if m['cyclic']), key=lambda m: abs(m['cyclic'][0]) / m['req'])
+        worst = min((m for m in r['checks'] if m['cyclic'] and not m.get('closed_by_forced_response')),
+                    key=lambda m: abs(m['cyclic'][0]) / m['req'])
         print('  N1 %2d (cx %.1f, sec. loss x%.2f)  N2 %2d (cx %.1f, sec. loss x%.2f)  min margin/required %.2f (%s %s)'
               '  Zw N1 %.2f-%.2f  N2 %.2f-%.2f' % (r['n1'], r['cx1_mm'], r['ko_sec_N1'], r['n2'], r['cx2_mm'], r['ko_sec_N2'],
                                                  r['ratio_cyclic'], worst['row'], worst['order'], *r['zw1'], *r['zw2']))
@@ -166,9 +224,31 @@ def main():
         print('  N1 %2d  N2 %2d  rigid ratio %.2f, cyclic ratio (solved) %s, need %s' % (
             r['n1'], r['n2'], r['ratio_rigid'], '%.2f' % r['ratio_cyclic'] if r['ratio_cyclic'] == r['ratio_cyclic'] else '-',
             ', '.join('%s ND%d' % q for q in r['need_nd'])))
+    if n1_fix:
+        lim = smod['limit'] if smod else float('nan')
+        print('NGV1 = %d kept, NGV2 scan: in-band rules (R1 + R2, EO96 closed by forced response); start-line crossings of the '
+              'strong orders (%.0f %% speed to the band); R1 flap by the N2 potential field: resonant root stress x1.5 '
+              'mistuning at zeta %s %% vs start-up Goodman/2 %.0f MPa' % (
+                  n1_fix, 100 * N_START, '/'.join('%.2g' % (100 * z) for z in (smod['zeta'] if smod else ())), lim))
+        for r in sorted(res, key=lambda r: r['n2']):
+            bad = [m for m in r['checks'] if m['cyclic'] and not m['closed_by_forced_response'] and abs(m['cyclic'][0]) < m['req']]
+            band = ('ok (min margin / required %.2f)' % r['ratio_cyclic'] if r['complete'] and not bad else
+                    'FAIL ' + ', '.join('%s %s EO%d %+.1f %%' % (m['row'], m['order'], m['eo'], 100 * m['cyclic'][0]) for m in bad[:3])
+                    if bad else 'UNKNOWN (%s)' % ', '.join('%s ND%d' % q for q in r['need_nd']))
+            f1 = [c for c in r['startup'] if 'sigma' in c]
+            f1s = '; '.join('%s EO%d at %.0f rpm: %s MPa%s' % (c['order'], c['eo'], c['rpm'], '/'.join('%.0f' % v for v in c['sigma']),
+                                                             ' ok' if c['ok'] else (' FAIL' if c['fail'] else ' marginal')) for c in f1) or 'no R1 flap crossing'
+            other = ['%s %s F%d %.0f' % (c['row'], c['order'], c['family'], c['rpm']) for c in r['startup'] if 'sigma' not in c]
+            r['band_verdict'] = band
+            print('  N2 %2d (cx %4.1f mm x%.2f, Zw %.2f-%.2f, sec. loss x%.2f): band %s\n        R1 flap: %s\n        other '
+                  'crossings (rpm): %s' % (r['n2'], r['cx2_mm'], r['cx2_scale'], *r['zw2'], r['ko_sec_N2'], band, f1s,
+                                           ', '.join(other) or '-'))
+        json.dump(dict(band=BAND, n1=n1_fix, start_limit=lim, scan=sorted(res, key=lambda r: r['n2'])),
+                  open(os.path.join(FEA, 'a1000_vane_count_n1_%d.json' % n1_fix), 'w'), indent=1, default=float)
+        return res
     json.dump(dict(band=BAND, current=cur, feasible=ok, candidates=cand[:20]),
               open(os.path.join(FEA, 'a1000_vane_count.json'), 'w'), indent=1, default=float)
 
 
 if __name__ == '__main__':
-    main()
+    main(int(sys.argv[sys.argv.index('--n1') + 1]) if '--n1' in sys.argv else None)

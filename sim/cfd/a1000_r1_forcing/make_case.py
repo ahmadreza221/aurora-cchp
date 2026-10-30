@@ -15,6 +15,11 @@ three blocks joined by two cyclicPeriodicAMI interfaces (x 26 and 58.5 mm); the 
 Gas: perfect gas, cp 1170, gamma 1.33 (R 290), mu 4.7e-5 Pa s, Pr 0.7; kOmegaSST, Spalding wall function.
 BCs: inlet total p 3.547 bar / total T 1223.15 K axial (950 C, meanline P0_in), outlet mean static p set for the
 meanline NGV2 exit (P_OUT); walls adiabatic.
+Variants (rev 6, R1 EO24 options, sim/engine/a1000_r1_eo24_options.py): A1000_CFD_TAG (case_<tag>/, forcing_<tag>.json,
+geometry_<tag>.json), A1000_CFD_RPM (shaft speed), A1000_CFD_P0 / _T0 (inlet total state), A1000_CFD_POUT (outlet mean
+static p), A1000_CFD_MDOT (meanline turbine flow of that state, for the flow check), A1000_CFD_DGAP (extra R1 TE - NGV2 LE
+axial gap [mm]: NGV2 and the outlet moved aft, annulus height stretched over the gap). The initial field is the design
+one scaled to the variant's inlet / outlet pressures, temperature and blade speed.
 Run:  ~/micromamba/envs/gr180/bin/python sim/cfd/a1000_r1_forcing/make_case.py [--mesh-only] [--run] [--post]
       A1000_CFD_NP (processors, default 6), A1000_CFD_T1 (startup end time [s]), A1000_CFD_T2 (sampling length [s]).
 Writes: sim/cfd/a1000_r1_forcing/case/ (not in git), forcing.json (harmonics of the R1 blade pressure), docs/img plot.
@@ -31,7 +36,9 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
-CASE = os.path.join(HERE, 'case')
+TAG = os.environ.get('A1000_CFD_TAG', '')
+SFX = '_' + TAG if TAG else ''
+CASE = os.path.join(HERE, 'case' + SFX)
 OF = os.environ.get('OF', '/Applications/OpenFOAM-v2606.app/Contents/Resources/etc/openfoam')
 NP = int(os.environ.get('A1000_CFD_NP', 6))
 sys.path.insert(0, os.path.join(ROOT, 'cad', 'engine'))
@@ -43,12 +50,17 @@ RM = A.RM                                                      # mm
 N_SECT = 12                                                    # 30 deg sector
 P_SECT = 2 * math.pi * RM / N_SECT                             # mm
 ROWS = dict(N1=dict(n=4), R1=dict(n=5), N2=dict(n=2))          # blades per sector (R1: 60 equivalent, scaled pitch)
-U_ROT = A.OM * RM * 1e-3                                       # m/s
-X_IN, X_I1, X_I2 = -35.0, A.X_TE['N1'] + A.GAP1 / 2, 0.5 * (A.x_te_of('R1', 0.5) + A.X_LE['N2'])
-X_OUT = A.X_TE['N2'] + 50.0
+RPM = float(os.environ.get('A1000_CFD_RPM', A.N_RPM))
+OM = A.OM * RPM / A.N_RPM                                      # rad/s (A.OM stays the design speed of the sections)
+DGAP = float(os.environ.get('A1000_CFD_DGAP', 0.0))            # mm, extra R1 - NGV2 axial gap
+U_ROT = OM * RM * 1e-3                                         # m/s
+XN2_LE, XN2_TE = A.X_LE['N2'] + DGAP, A.X_TE['N2'] + DGAP
+X_IN, X_I1, X_I2 = -35.0, A.X_TE['N1'] + A.GAP1 / 2, 0.5 * (A.x_te_of('R1', 0.5) + XN2_LE)
+X_OUT = XN2_TE + 50.0
 ZSCALE = 0.25
 ST1, ST2 = A.T['stages']
-P0_IN, T0_IN = ST1['P0_in'], ST1['T0_in']
+P0_D, T0_D = ST1['P0_in'], ST1['T0_in']
+P0_IN = float(os.environ.get('A1000_CFD_P0', P0_D)); T0_IN = float(os.environ.get('A1000_CFD_T0', T0_D))
 CP, GAM = A.CP_G, A.GAM; RG = CP * (GAM - 1) / GAM
 
 
@@ -60,11 +72,22 @@ T2_, P2_ = _static(ST1['T0_in'], ST1['P0_in'], ST1['C2'], 0.02)               # 
 T3_, P3_ = _static(ST2['T0_in'], ST2['P0_in'], math.hypot(A.CX, A.CT3_M))      # R1 exit
 T4_, P4_ = _static(ST2['T0_in'], ST2['P0_in'], ST2['C2'], 0.03)               # NGV2 exit
 P_OUT = float(os.environ.get('A1000_CFD_POUT', P4_))
+# initial field of a variant: design stations scaled to its inlet / outlet pressures, inlet temperature and blade speed
+KP, KT, KU = (P0_IN - P_OUT) / (P0_D - P4_), T0_IN / T0_D, RPM / A.N_RPM
+def _ps(p): return P_OUT + (p - P4_) * KP
+
+
+def x_annulus(x):
+    """x of the design annulus at the variant's x: the extra gap DGAP stretches the R1 TE - NGV2 LE height ramp"""
+    xa = A.x_te_of('R1', 0.5)
+    if not DGAP or x <= xa: return x
+    if x < XN2_LE: return xa + (x - xa) * (A.X_LE['N2'] - xa) / (XN2_LE - xa)
+    return x - DGAP
 
 
 def zthick(x):
     """z thickness [mm] of the quasi-3-D stream tube: ZSCALE x annulus height, constant behind NGV2"""
-    return ZSCALE * A.height(min(max(x, A.X_LE['N1']), A.X_TE['N2']))
+    return ZSCALE * A.height(min(max(x_annulus(x), A.X_LE['N1']), A.X_TE['N2']))
 
 
 def sections():
@@ -72,9 +95,10 @@ def sections():
     for row in ROWS:
         s = A.design_row(row, [0.5])[0.5]
         pts, side, xis = s.outline(140, 21)
-        x = pts[:, 0]; y = RM * np.arctan2(pts[:, 2], pts[:, 1])
+        dx = DGAP if row == 'N2' else 0.0
+        x = pts[:, 0] + dx; y = RM * np.arctan2(pts[:, 2], pts[:, 1])
         Zs = 60 if row == 'R1' else A.Z[row]
-        out[row] = dict(x=x, y=y, side=side, xc=s.xc, yc=RM * s.th, k1=s.k1, k2=s.k2, pitch=2 * math.pi * RM / Zs,
+        out[row] = dict(x=x, y=y, side=side, xc=s.xc + dx, yc=RM * s.th, k1=s.k1, k2=s.k2, pitch=2 * math.pi * RM / Zs,
                         x_le=float(x.min()), x_te=float(x.max()), chord=s.chord)
     return out
 
@@ -125,8 +149,8 @@ def mesh(path):
     ft = fl.add('Threshold'); fl.setNumber(ft, 'InField', fd)
     for k, v in (('SizeMin', 0.12), ('SizeMax', 1.6), ('DistMin', 0.3), ('DistMax', 8.0)): fl.setNumber(ft, k, v)
     boxes = []
-    for (xa, xb, h) in ((X_IN - 1, -6.0, 1.2), (-6.0, 14.0, 0.40), (14.0, X_I2 + 2, 0.25), (X_I2 - 2, A.X_TE['N2'] + 6, 0.45),
-                        (A.X_TE['N2'] + 6, X_OUT + 1, 0.9)):
+    for (xa, xb, h) in ((X_IN - 1, -6.0, 1.2), (-6.0, 14.0, 0.40), (14.0, X_I2 + 2, 0.25), (X_I2 - 2, XN2_TE + 6, 0.45),
+                        (XN2_TE + 6, X_OUT + 1, 0.9)):
         b = fl.add('Box')
         for k, v in (('VIn', h), ('VOut', 5.0), ('XMin', xa), ('XMax', xb), ('YMin', -400.0), ('YMax', 400.0),
                      ('ZMin', -1.0), ('ZMax', 1.0)): fl.setNumber(b, k, v)
@@ -167,11 +191,11 @@ def mesh(path):
     gmsh.write(path)
     n3 = sum(len(t) for t in gmsh.model.mesh.getElements(3)[1])
     gmsh.finalize()
-    json.dump(dict(rm=RM, p_sect=P_SECT, u_rot=U_ROT, x=[X_IN, X_I1, X_I2, X_OUT],
+    json.dump(dict(rm=RM, p_sect=P_SECT, u_rot=U_ROT, rpm=RPM, dgap=DGAP, x=[X_IN, X_I1, X_I2, X_OUT],
                    rows={r: dict(n=ROWS[r]['n'], pitch=S[r]['pitch'], x_le=S[r]['x_le'], x_te=S[r]['x_te'], chord=S[r]['chord'],
                                  k1=S[r]['k1'], k2=S[r]['k2'], x=S[r]['x'].tolist(), y=S[r]['y'].tolist(), side=S[r]['side'].tolist())
                          for r in ROWS}),
-              open(os.path.join(HERE, 'geometry.json'), 'w'), indent=0)
+              open(os.path.join(HERE, 'geometry%s.json' % SFX), 'w'), indent=0)
     print('gmsh: %d cells, blocks x %.1f / %.1f / %.1f / %.1f mm, sector %.2f mm, U_rot %.1f m/s' % (
         n3, X_IN, X_I1, X_I2, X_OUT, P_SECT, U_ROT), flush=True)
 
@@ -344,17 +368,18 @@ solidBodyCoeffs
 def fields():
     """initial fields from the meanline stations (x [mm]): static p, T and the absolute swirl, Cx = 182 m/s"""
     C = read_vectors(os.path.join(CASE, '0', 'C')) * 1e3
-    xs = [X_IN, 0.0, A.X_TE['N1'], A.X_LE['R1'], A.x_te_of('R1', 0.5), A.X_LE['N2'], A.X_TE['N2'], X_OUT]
-    pp = [P0_IN * 0.975, P0_IN * 0.975, P2_, P2_, P3_, P3_, P4_, P4_]
-    TT = [T0_IN - A.CX ** 2 / (2 * CP)] * 2 + [T2_, T2_, T3_, T3_, T4_, T4_]
-    ct = [0.0, 0.0, A.CT2_M, A.CT2_M, A.CT3_M, A.CT3_M, A.CT2_M, A.CT2_M]
+    xs = [X_IN, 0.0, A.X_TE['N1'], A.X_LE['R1'], A.x_te_of('R1', 0.5), XN2_LE, XN2_TE, X_OUT]
+    pp = [P0_IN * 0.975, P0_IN * 0.975] + [_ps(q) for q in (P2_, P2_, P3_, P3_, P4_, P4_)]
+    TT = [T0_IN - (KU * A.CX) ** 2 / (2 * CP)] * 2 + [KT * q for q in (T2_, T2_, T3_, T3_, T4_, T4_)]
+    ct = [KU * q for q in (0.0, 0.0, A.CT2_M, A.CT2_M, A.CT3_M, A.CT3_M, A.CT2_M, A.CT2_M)]
     x = C[:, 0]; p = np.interp(x, xs, pp); T = np.interp(x, xs, TT); uy = np.interp(x, xs, ct)
     def sc(v): return 'nonuniform List<scalar>\n%d\n(\n%s)' % (len(v), ''.join('%.6g\n' % q for q in v))
     def vc(v): return 'nonuniform List<vector>\n%d\n(\n%s)' % (len(v), ''.join('(%.5g %.5g 0)\n' % tuple(q) for q in v))
     nb = ROWS['R1']['n']
     common = '    "per.*" { type cyclic; }\n    "ami.*" { type cyclicAMI; }\n    "(front|back)" { type symmetry; }\n'
     walls = '"(N1_wall|N2_wall|R1_b.*)"'
-    k_in = 1.5 * (0.05 * A.CX) ** 2
+    CXV = KU * A.CX
+    k_in = 1.5 * (0.05 * CXV) ** 2
     w('0/p', 'volScalarField', '''dimensions [1 -1 -2 0 0 0 0];
 internalField %s;
 boundaryField
@@ -372,7 +397,7 @@ boundaryField
     outlet { type inletOutlet; inletValue uniform %.1f; value uniform %.1f; }
     %s { type zeroGradient; }
 %s}
-''' % (sc(T), T0_IN, GAM, T0_IN, T4_, T4_, walls, common))
+''' % (sc(T), T0_IN, GAM, T0_IN, KT * T4_, KT * T4_, walls, common))
     w('0/U', 'volVectorField', '''dimensions [0 1 -1 0 0 0 0];
 internalField %s;
 boundaryField
@@ -382,7 +407,7 @@ boundaryField
     "(N1_wall|N2_wall)" { type noSlip; }
     "R1_b.*" { type movingWallVelocity; value uniform (0 0 0); }
 %s}
-''' % (vc(np.c_[np.full_like(x, A.CX), uy]), A.CX, A.CX, A.CT2_M, common))
+''' % (vc(np.c_[np.full_like(x, CXV), uy]), CXV, CXV, KU * A.CT2_M, common))
     for name, dim, val, inl, wall in (
             ('k', '[0 2 -2 0 0 0 0]', k_in, 'turbulentIntensityKineticEnergyInlet; intensity 0.05', 'kqRWallFunction'),
             ('omega', '[0 0 -1 0 0 0 0]', math.sqrt(k_in) / (0.09 ** 0.25 * 0.003), 'turbulentMixingLengthFrequencyInlet; mixingLength 0.003', 'omegaWallFunction'),
@@ -448,7 +473,7 @@ def _dat(name, fname='surfaceFieldValue.dat'):
 def harmonic_fit(t, y, eos, base_eo=EO_BASE, nh=16):
     """least-squares fit of mean + linear drift + the harmonics n x base_eo (n = 1..nh) of the shaft frequency; returns
     {eo: complex amplitude} with y = Re(sum A exp(i w t)) (non-integer windows are fine)"""
-    om = A.OM; cols = [np.ones_like(t), (t - t.mean()) / (np.ptp(t) or 1)]
+    om = OM; cols = [np.ones_like(t), (t - t.mean()) / (np.ptp(t) or 1)]
     for n in range(1, nh + 1):
         w_ = n * base_eo * om; cols += [np.cos(w_ * t), np.sin(w_ * t)]
     M = np.array(cols).T; c, *_ = np.linalg.lstsq(M, y, rcond=None)
@@ -466,7 +491,7 @@ def outline_param(P, q):
 
 
 def post():
-    geo = json.load(open(os.path.join(HERE, 'geometry.json'))); g = geo['rows']['R1']
+    geo = json.load(open(os.path.join(HERE, 'geometry%s.json' % SFX))); g = geo['rows']['R1']
     P0 = np.c_[g['x'], g['y']]; pitch = g['pitch']; U = geo['u_rot']
     sdir = os.path.join(CASE, 'postProcessing', 'blade_p')
     times = sorted((float(t), t) for t in os.listdir(sdir))
@@ -522,9 +547,11 @@ def post():
     mi = _dat('mdot_in'); mi = -mi[mi[:, 0] >= t[0], 1].mean() * N_SECT / ZSCALE        # annulus equivalent [kg/s]
     flow = dict(ngv1_exit_p=pS, ngv1_exit_T=TS, ngv1_exit_alpha=math.degrees(math.atan2(uy, ux)),
                 ngv1_exit_mach=math.hypot(ux, uy) / a_, r1_beta_in=math.degrees(math.atan2(uy - U, ux)),
-                r1_beta_in_design=geo['rows']['R1']['k1'], mdot_annulus_equiv=mi, mdot_meanline=A.ML['ma'] * 1.017)
+                r1_beta_in_design=geo['rows']['R1']['k1'], mdot_annulus_equiv=mi,
+                mdot_meanline=float(os.environ.get('A1000_CFD_MDOT', A.ML['ma'] * 1.017)))
     out['flow'] = flow; out['rho_a_mid'] = rho * a_
-    json.dump(out, open(os.path.join(HERE, 'forcing.json'), 'w'), indent=0)
+    out['state'] = dict(rpm=RPM, P0_in=P0_IN, T0_in=T0_IN, p_out=P_OUT, dgap_mm=DGAP, u_rot=U_ROT)
+    json.dump(out, open(os.path.join(HERE, 'forcing%s.json' % SFX), 'w'), indent=0)
     print('flow: NGV1 exit p %.0f Pa, T %.0f K, alpha %.1f deg, Mach %.3f; R1 relative inlet %.1f deg (metal %.1f); mass flow '
           '(annulus equivalent) %.2f kg/s (meanline %.2f)' % (pS, TS, flow['ngv1_exit_alpha'], flow['ngv1_exit_mach'],
                                                            flow['r1_beta_in'], flow['r1_beta_in_design'], mi, flow['mdot_meanline']))
@@ -533,7 +560,7 @@ def post():
               'periods %.0f %%; tangential force %.1f N/m (steady %.0f N/m)' % (k, rm_ / 1e3, mx / 1e3, lo / 1e3, hi / 1e3,
                                                                                  100 * cv, out['force_per_span']['y'][str(k)],
                                                                                  out['force_per_span']['y']['mean']))
-    print('fit residual (max over faces, rms) %.0f Pa; written %s' % (rms_res, os.path.join(HERE, 'forcing.json')))
+    print('fit residual (max over faces, rms) %.0f Pa; written %s' % (rms_res, os.path.join(HERE, 'forcing%s.json' % SFX)))
 
 
 def _internal(path, vector=False):
@@ -559,7 +586,7 @@ def plot_field():
     t = float(tl); y = C[:, 1].copy(); y[r1] += U_ROT * t; Ur = U.copy(); Ur[r1, 1] -= U_ROT
     y = (y - (-P_SECT * 1e-3 / 2)) % (P_SECT * 1e-3) - P_SECT * 1e-3 / 2              # wrap into one sector
     Ma = np.hypot(Ur[:, 0], Ur[:, 1]) / np.sqrt(GAM * RG * T)
-    fc = json.load(open(os.path.join(HERE, 'forcing.json')))
+    fc = json.load(open(os.path.join(HERE, 'forcing%s.json' % SFX)))
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 6.2), dpi=110, gridspec_kw=dict(width_ratios=[1.25, 1]))
     for k in (-1, 0, 1):
         sc = a1.scatter(C[:, 0] * 1e3, (y + k * P_SECT * 1e-3) * 1e3, c=Ma, s=0.4, cmap='viridis', vmin=0, vmax=1.0, lw=0, rasterized=True)
@@ -575,7 +602,7 @@ def plot_field():
     a2.set_xlabel('R1 surface: TE 0 -> +theta (suction) side -> LE 0.5 -> -theta (pressure) side -> TE 1')
     a2.set_ylabel('harmonic amplitude of the blade pressure [kPa]'); a2.grid(alpha=0.3); a2.legend(fontsize=8)
     a2.set_title('R1 unsteady pressure (mid-span, mean of 5 blades)', fontsize=9)
-    fig.tight_layout(); png = os.path.join(ROOT, 'docs', 'img', 'a1000_r1_forcing_cfd.png'); fig.savefig(png); print('written', png)
+    fig.tight_layout(); png = os.path.join(ROOT, 'docs', 'img', 'a1000_r1_forcing_cfd%s.png' % SFX); fig.savefig(png); print('written', png)
 
 
 if __name__ == '__main__':

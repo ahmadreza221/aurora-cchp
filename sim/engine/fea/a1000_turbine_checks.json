@@ -747,36 +747,26 @@
   "criticals": [
    {
     "mode": 1,
-    "N": 3963.9887176976126,
-    "f_Hz": 66.06647862829354,
-    "logdec": 1.352828162689992,
-    "AF": 2.322240725195271,
-    "SM": 72.18253531440273,
+    "N": 3895.713279670641,
+    "f_Hz": 64.92855466117734,
+    "logdec": 1.38399859246736,
+    "AF": 2.269939196967705,
+    "SM": 72.66166119529375,
     "SM_req": 0.0,
     "ok": true
    },
    {
     "mode": 2,
-    "N": 6779.857042772202,
-    "f_Hz": 112.99761737953669,
-    "logdec": 2.5388166732713273,
-    "AF": 1.2374239883739908,
-    "SM": 52.42205584019508,
+    "N": 6525.221437051638,
+    "f_Hz": 108.7536906175273,
+    "logdec": 2.3923920706051818,
+    "AF": 1.3131596163479562,
+    "SM": 54.208972371567455,
     "SM_req": 0.0,
-    "ok": true
-   },
-   {
-    "mode": 3,
-    "N": 23190.508602501057,
-    "f_Hz": 386.50847670835094,
-    "logdec": 0.44460695104357195,
-    "AF": 7.065999859462192,
-    "SM": 47.24132446032417,
-    "SM_req": 23.94574192791255,
     "ok": true
    }
   ],
-  "amp_max_um": 2.515619919811754,
+  "amp_max_um": 2.0341602527402487,
   "limit_um": 22.170937647976825
  },
  "tips": {
@@ -875,28 +865,60 @@
    "note": "ND 3 family 1 1779 Hz"
   },
   {
-   "test": "R1 EO96 resonance, crossed at 13982 rpm (root)",
+   "test": "R1 EO96 start-line crossing, 13926-15663 rpm (root)",
+   "value": 12.913602524615513,
+   "limit": 67.40483930236931,
+   "unit": "MPa",
+   "ok": true,
+   "note": "start-line CFD forcing; zeta 0.05/0.1/0.3 % + aero: 13/6.7/2.3 MPa (blade 20 C); x1.5 mistuning; start-up Goodman/2"
+  },
+  {
+   "test": "R1 EO96 resonance, crossed at 13982 rpm (root), design forcing",
    "value": 10.081272867643994,
    "limit": 15.780363851024491,
    "unit": "MPa",
-   "ok": true,
-   "note": "ND22 F6 22372 Hz; zeta 0.05/0.1/0.3 % + aero: 10/5.3/1.8 MPa; x1.5 mistuning; in band 0.11 MPa; Goodman/2"
+   "ok": null,
+   "note": "ND22 F6 22372 Hz; zeta 0.05/0.1/0.3 % + aero: 10/5.3/1.8 MPa; x1.5 mistuning; in band 0.11 MPa; Goodman/2; not met at this forcing (start line)"
   },
   {
-   "test": "R1 EO48 resonance, crossed at 12927 rpm (root)",
+   "test": "R1 EO48 start-line crossing, 12875-14481 rpm (root)",
+   "value": 56.66857365594732,
+   "limit": 68.65332693947703,
+   "unit": "MPa",
+   "ok": true,
+   "note": "start-line CFD forcing; zeta 0.05/0.1/0.3 % + aero: 57/29/9.6 MPa (blade 20 C); x1.5 mistuning; start-up Goodman/2"
+  },
+  {
+   "test": "R1 EO48 resonance, crossed at 12927 rpm (root), design forcing",
    "value": 29.228939138941826,
    "limit": 15.780363851024491,
    "unit": "MPa",
    "ok": null,
-   "note": "ND11 F3 10342 Hz; zeta 0.05/0.1/0.3 % + aero: 58/29/9.8 MPa; x1.5 mistuning; in band 0.20 MPa; Goodman/2; MARGINAL"
+   "note": "ND11 F3 10342 Hz; zeta 0.05/0.1/0.3 % + aero: 58/29/9.8 MPa; x1.5 mistuning; in band 0.20 MPa; Goodman/2; not met at this forcing (start line)"
   },
   {
-   "test": "R1 EO24 resonance, crossed at 12270 rpm (root)",
+   "test": "R1 EO24 start-line crossing, 12221-13746 rpm (root)",
+   "value": 142.49751340886368,
+   "limit": 69.38075031630612,
+   "unit": "MPa",
+   "ok": false,
+   "note": "start-line CFD forcing; zeta 0.05/0.1/0.3 % + aero: 591/363/142 MPa (blade 20 C); x1.5 mistuning; start-up Goodman/2"
+  },
+  {
+   "test": "R1 EO24 resonance, crossed at 12270 rpm (root), design forcing",
    "value": 164.6301436966397,
    "limit": 15.780363851024491,
    "unit": "MPa",
-   "ok": false,
-   "note": "ND24 F1 4908 Hz; zeta 0.05/0.1/0.3 % + aero: 644/407/165 MPa; x1.5 mistuning; in band 2.54 MPa; Goodman/2"
+   "ok": null,
+   "note": "ND24 F1 4908 Hz; zeta 0.05/0.1/0.3 % + aero: 644/407/165 MPa; x1.5 mistuning; in band 2.54 MPa; Goodman/2; not met at this forcing (start line)"
+  },
+  {
+   "test": "R1 EO24 start crossing, R1-NGV2 gap +25 mm (recommended)",
+   "value": 40.81365137693208,
+   "limit": 69.38075031630612,
+   "unit": "MPa",
+   "ok": null,
+   "note": "zeta 0.05/0.10/0.30 % + aero: 40.8/25.0/9.8 MPa (start-up limit 69; design limit 15.8); CFD decay 0.107 / mm; not yet in the CAD"
   },
   {
    "test": "R1 tip carrier temperature",
@@ -1075,32 +1097,24 @@
    "note": "328 MPa (Kt 1.3) @ 690 C, de 0.19 %; Grainex LB 9.1e+06"
   },
   {
-   "test": "rotor critical 3964 rpm (AF 2.3)",
-   "value": 72.18253531440273,
+   "test": "rotor critical 3896 rpm (AF 2.3)",
+   "value": 72.66166119529375,
    "limit": 0.0,
    "unit": "%",
    "ok": true,
-   "note": "mode 1, log dec 1.35"
+   "note": "mode 1, log dec 1.38"
   },
   {
-   "test": "rotor critical 6780 rpm (AF 1.2)",
-   "value": 52.42205584019508,
+   "test": "rotor critical 6525 rpm (AF 1.3)",
+   "value": 54.208972371567455,
    "limit": 0.0,
    "unit": "%",
    "ok": true,
-   "note": "mode 2, log dec 2.54"
-  },
-  {
-   "test": "rotor critical 23191 rpm (AF 7.1)",
-   "value": 47.24132446032417,
-   "limit": 23.94574192791255,
-   "unit": "%",
-   "ok": true,
-   "note": "mode 3, log dec 0.44"
+   "note": "mode 2, log dec 2.39"
   },
   {
    "test": "rotor unbalance response (API)",
-   "value": 2.515619919811754,
+   "value": 2.0341602527402487,
    "limit": 22.170937647976825,
    "unit": "um",
    "ok": true,

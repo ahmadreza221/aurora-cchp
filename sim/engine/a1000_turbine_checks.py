@@ -255,19 +255,43 @@ def main():
         # forced response from the CFD forcing on the cyclic modes: resonant root stress (design-point forcing, x mistuning)
         # vs Goodman / 2 over the damping range: PASS if it passes at the lower-bound damping, FAIL if it fails even at the
         # upper one, otherwise marginal (shown as reference: tip-timing decides)
+        # rev 6: a resonance below the band is met only on the start line (start, stop, trip), never at the design-point
+        # forcing: judged on the start-line CFD forcing against the start-up Goodman / 2 of the blade (cold 20 C and hot
+        # 870 C, UTS intercept, mean stress ~ N^2; a1000_r1_eo24_options.py); the design-forcing row stays for reference
+        opts = load('a1000_%s_eo24_options.json' % row) or {}; so = opts.get('orders_start', {})
         for k in sorted((int(q) for q in fr.get('orders', {})), key=lambda q: -q):
             q = fr['orders'][str(k)]; st = q['stress']; lim = fr['limit']
             out['blades'][row].setdefault('forced_response', {})[str(k)] = q
             ok = True if st[0]['root_res_mist'] <= lim else (False if st[-1]['root_res_mist'] > lim else None)
             v = st[0] if ok else (st[-1] if ok is False else st[1])
-            rows.append(('%s EO%d resonance, %s (root)' % (row, k, 'band' if BAND[0] * 15000 <= q['n_res_rpm'] <= BAND[1] * 15000
-                                                         else 'crossed at %.0f rpm' % q['n_res_rpm']),
+            below = q['n_res_rpm'] < BAND[0] * 15000
+            if below and so.get(str(k)):
+                w = max(so[str(k)]['rows'], key=lambda r: r['root_res_mist'][0] / r['limit']); ss = w['root_res_mist']
+                ok_s = True if ss[0] <= w['limit'] else (False if ss[-1] > w['limit'] else None)
+                rows.append(('%s EO%d start-line crossing, %.0f-%.0f rpm (root)' % (
+                    row, k, min(r['rpm'] for r in so[str(k)]['rows']), max(r['rpm'] for r in so[str(k)]['rows'])),
+                    ss[0] if ok_s else (ss[-1] if ok_s is False else ss[1]), w['limit'], 'MPa', ok_s,
+                    'start-line CFD forcing; zeta %s %% + aero: %s MPa (blade %.0f C); x%.1f mistuning; start-up Goodman/2%s' % (
+                        '/'.join('%.2g' % (100 * r['zeta_mech']) for r in st), '/'.join('%.0f' % x if x >= 10 else '%.1f' % x for x in ss),
+                        w['T_metal'], fr['mistune'], '' if ok_s is not None else '; MARGINAL')))
+                ok = None                                          # design-point forcing: reference only
+            rows.append(('%s EO%d resonance, %s (root)%s' % (row, k, 'band' if BAND[0] * 15000 <= q['n_res_rpm'] <= BAND[1] * 15000
+                                                           else 'crossed at %.0f rpm' % q['n_res_rpm'],
+                                                           ', design forcing' if below and so.get(str(k)) else ''),
                          v['root_res_mist'], lim, 'MPa', ok,
                          'ND%d F%d %.0f Hz; zeta %s %% + aero: %s MPa; x%.1f mistuning; in band %.2f MPa; Goodman/2%s' % (
                              q['nd'], q['family'], q['f_mode'], '/'.join('%.2g' % (100 * r['zeta_mech']) for r in st),
                              '/'.join('%.0f' % r['root_res_mist'] if r['root_res_mist'] >= 10 else '%.1f' % r['root_res_mist']
                                       for r in st), fr['mistune'], st[0]['root_band_mist'],
-                             '' if ok is not None else '; MARGINAL')))
+                             '; not met at this forcing (start line)' if below and so.get(str(k)) else
+                             ('' if ok is not None else '; MARGINAL'))))
+        o4 = opts.get('option4', {})
+        if o4.get('with_recommended') and not o4.get('from_theory'):
+            wr = list(o4['with_recommended'].values())
+            rows.append(('%s EO24 start crossing, R1-NGV2 gap +%.0f mm (recommended)' % (row, o4['recommended_mm']), wr[0]['steady'],
+                         wr[0]['limit'], 'MPa', None, 'zeta %s %% + aero: %s MPa (start-up limit %.0f; design limit %.1f); CFD decay '
+                         '%.3f / mm; not yet in the CAD' % ('/'.join(o4['with_recommended']), '/'.join('%.1f' % v['steady'] for v in wr),
+                                                           wr[0]['limit'], wr[0]['design_limit'], o4['k_per_mm'])))
         print('%s blade: net section %.0f MPa (FE %.0f, P/A %.0f) at %.0f C (hub T0rel) -> min-curve life %.1e h (typ %.1e), '
               'allowable 1e5 h %.0f MPa; peak vm %.0f (margin %.2f); Goodman allow %.0f MPa root / %.0f peak; gas bending ~%.0f MPa; '
               'EO band margins NPF %.1f %%, weak %.1f %%, EO1-5 %.1f %%' % (
