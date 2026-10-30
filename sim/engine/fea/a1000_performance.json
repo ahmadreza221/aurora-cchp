@@ -126,7 +126,7 @@
   "allowance_pct": 1.5,
   "labyrinths_bypassing_turbine_pct": 0.8449544373030995,
   "left_for_joints_pct": 0.6550455626969005,
-  "backface_recirculation_pct": 1.3697269887496812
+  "backface_recirculation_pct": 1.2557306389439908
  },
  "open": [
   "compressor inlet plenum and radial-inlet bend loss (cycle dp_inlet 1.0 % kept)",
