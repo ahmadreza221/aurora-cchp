@@ -17,6 +17,9 @@
 Criterion as in a1000_r1_forced_response.py: resonant root stress x1.5 mistuning at the lower-bound damping (0.05 % +
 half the piston aero damping) <= allowable / 2; the allowable is the Goodman amplitude at the state where the resonance
 is met (design point: 31.6 MPa; start-up: cold blade, below).
+Rev 6: option 4 (+25 mm) is in the CAD (a1000_turbine.DGAP2). The options stay compared at the rev 5 gap (9 mm at the hub);
+the start-line crossings of the check sheet (orders_start) use the start-line CFD at the CAD gap (variant st_g25, the CAD
+annulus), which is also compared with the decay-rate prediction of option 4.
 Run:    python sim/engine/a1000_r1_eo24_options.py   (needs fea/a1000_R1_modes.npz, the CFD forcing files of the variants)
 Writes: sim/engine/fea/a1000_R1_eo24_options.json, docs/img/a1000_R1_eo24_options.png
 """
@@ -150,9 +153,10 @@ def main():
     # ---- forcing: design (existing CFD), start line (variant st), start line + 20 mm gap (st_g20)
     des = M.eo24(FR.FORCING)
     var = {}
-    for tag in ('st', 'st_g20'):
+    g_cad = M.A.DGAP2; tag_cad = 'st_g%.0f' % g_cad if g_cad else 'st'
+    for tag in ('st', 'st_g20', tag_cad):
         fn = os.path.join(CFD, 'forcing_%s.json' % tag)
-        if os.path.exists(fn): var[tag] = M.eo24(fn)
+        if os.path.exists(fn) and tag not in var: var[tag] = M.eo24(fn)
     def stress(F, z): return MISTUNE * F['root1'] / (2 * (z + F['zeta_aero'] / 2))
     print('EO24 root stress per 1/(2 zeta): design %.4f MPa (p_rms %.2f kPa, zeta_a %.3f %%)%s' % (
         des['root1'], des['p_rms_kPa'], 100 * des['zeta_aero'],
@@ -270,7 +274,9 @@ def main():
     out['option4'] = o4 = dict(ratio_20mm=ratio, k_per_mm=k, k_theory=24 / M.A.RM, from_theory=theory, gap_needed_mm=need,
                                recommended_mm=rec, with_recommended={z_: dict(steady=v['steady'] * math.exp(-k * rec), limit=v['limit'],
                                                                               design_limit=g_des / 2) for z_, v in need.items()},
-                               gap_now_mm=dict(hub=9.0, mid=float(M.A.X_LE['N2'] - M.A.x_te_of('R1', 0.5)),
+                               gap_now_mm=dict(hub=float(M.A.X_LE5['N2'] - M.A.X_TE['R1']), mid=float(M.A.X_LE5['N2'] - M.A.x_te_of('R1', 0.5)),
+                                               tip=float(M.A.X_LE5['N2'] - M.A.x_te_of('R1', 1.0))),
+                               gap_cad_mm=dict(hub=float(M.A.X_LE['N2'] - M.A.X_TE['R1']), mid=float(M.A.X_LE['N2'] - M.A.x_te_of('R1', 0.5)),
                                                tip=float(M.A.X_LE['N2'] - M.A.x_te_of('R1', 1.0))))
     print('option 4 (gap): forcing x%.3f at +20 mm -> decay %.4f /mm (potential theory 2 pi / s = %.4f)%s; extra gap needed '
           '(start allowable / design allowable): %s' % (ratio, k, 24 / M.A.RM, ' [theory: CFD pair missing]' if theory else '',
@@ -279,6 +285,16 @@ def main():
     print('   recommended: +%.0f mm -> worst resonant root stress %s MPa (zeta %s %%) vs start-up limit %.0f / design limit %.1f MPa' % (
         rec, '/'.join('%.1f' % v['steady'] for v in o4['with_recommended'].values()), '/'.join(o4['with_recommended']),
         lim_st, g_des / 2))
+    # rev 6: the CAD gap, start-line CFD on the CAD annulus against the prediction (decay rate from the 0 / +20 mm pair)
+    if g_cad and tag_cad in var and 'st' in var:
+        rc = var[tag_cad]['root1'] / var['st']['root1']
+        o4['cad'] = dict(dgap_mm=g_cad, ratio_cfd=rc, ratio_pred=math.exp(-k * g_cad), k_eff_per_mm=-math.log(rc) / g_cad,
+                         zeta_aero=var[tag_cad]['zeta_aero'],
+                         steady={z_: v['steady'] * rc * (var['st']['zeta_aero'] / 2 + float(z_) / 100) / (var[tag_cad]['zeta_aero'] / 2 + float(z_) / 100)
+                                 for z_, v in need.items()})
+        print('   CAD gap +%.0f mm (CFD %s): EO24 forcing x%.4f of +0 (predicted x%.4f, effective decay %.4f / mm) -> worst resonant root '
+              'stress %s MPa (zeta %s %%)' % (g_cad, tag_cad, rc, math.exp(-k * g_cad), o4['cad']['k_eff_per_mm'],
+                                              '/'.join('%.1f' % v for v in o4['cad']['steady'].values()), '/'.join(o4['cad']['steady'])))
     if '--rotor' in sys.argv:
         o4['rotor'] = rotor_gap(sorted({0.0, 10.0, 20.0, 30.0, rec}))
         for dg, v in o4['rotor'].items():
@@ -303,10 +319,14 @@ def main():
                           u_rim / u_max, 100 * zeta_damper_max))
 
     # ---- all R1 orders of the forced-response analysis at the start-line forcing (check sheet: crossings below the band)
+    # (rev 6: at the CAD gap, variant st_g25; the rev 5 start-line forcing 'st' when that CFD is missing)
     out['orders_start'] = {}
+    tag_os = tag_cad if tag_cad in var else 'st'
+    out['orders_start_forcing'] = 'forcing_%s.json' % tag_os
+    if tag_os != tag_cad: print('   WARNING: start-line CFD at the CAD gap (%s) missing: orders_start on the rev 5 forcing' % tag_cad)
     for eo, nd, _, fam in FR.ORDERS:
-        if not var.get('st'): break
-        R = M.order(os.path.join(CFD, 'forcing_st.json'), eo, nd)
+        if not var.get(tag_os): break
+        R = M.order(os.path.join(CFD, 'forcing_%s.json' % tag_os), eo, nd)
         n_x = R['f_mode'] * 60 / eo
         rows = []
         for T_m in (20.0, 870.0):
@@ -316,7 +336,7 @@ def main():
             rows.append(dict(T_metal=T_m, rpm=n_T, q_ratio=q_r, limit=goodman_start(T_m, s_root_des * (n_T / N_OP) ** 2) / 2,
                              root_res_mist=[MISTUNE * R['root1'] * q_r / (2 * (z + R['zeta_aero'] / 2)) for z in ZETA]))
         out['orders_start'][str(eo)] = dict(eo=eo, nd=nd, family=fam, f_mode=R['f_mode'], zeta_aero=R['zeta_aero'], rows=rows)
-        print('   start-line forcing EO%-2d ND%-2d F%d (%.0f Hz, zeta_a %.3f %%): %s' % (eo, nd, fam, R['f_mode'], 100 * R['zeta_aero'],
+        print('   start-line forcing (%s) EO%-2d ND%-2d F%d (%.0f Hz, zeta_a %.3f %%): %s' % (tag_os, eo, nd, fam, R['f_mode'], 100 * R['zeta_aero'],
               '; '.join('blade %.0f C %.0f rpm: %s MPa vs %.0f' % (r['T_metal'], r['rpm'], '/'.join('%.1f' % v for v in r['root_res_mist']),
                                                                     r['limit']) for r in rows)))
 
@@ -344,15 +364,15 @@ def main():
 
 
 def rotor_gap(dgs):
-    """rotor dynamics (a1000_rotordynamics.py, layout A + SFD) with NGV2 / R2 moved aft by dg (longer R1 - R2 spacer and
-    rear stub position): damped criticals, separation margin of the bending mode (the beam model of the rev 5 study: use the
-    relative change on the detailed stack of a1000_rotor_stack.py)"""
+    """rotor dynamics (a1000_rotordynamics.py, layout A + SFD) with NGV2 / R2 moved aft by dg from rev 5 (longer R1 - R2
+    spacer and rear stub position): damped criticals, separation margin of the bending mode (the beam model of the rev 5
+    study: use the relative change on the detailed stack of a1000_rotor_stack.py)"""
     import a1000_rotordynamics as RD
     A = RD.A; keys = [('X_LE', 'N2'), ('X_TE', 'N2'), ('X_LE', 'R2'), ('X_TE', 'R2')]
     old = {k: getattr(A, k[0])[k[1]] for k in keys}; res = {}
     try:
         for dg in dgs:
-            for k in keys: getattr(A, k[0])[k[1]] = old[k] + dg
+            for k in keys: getattr(A, k[0])[k[1]] = old[k] - A.DGAP2 + dg                  # dg over rev 5
             R = RD.rotor('A'); dc = RD.damped_criticals(R, RD.SUP[RD.CONF[RD.SEL][1]], nmax=34000.0)
             b = max(dc, key=lambda c: c['N'])
             res['%.0f' % dg] = dict(N=[c['N'] for c in dc], SM_bend=b['SM'], SM_req_bend=b['SM_req'], ok=all(c['ok'] for c in dc),
@@ -385,6 +405,9 @@ def plot(out):
     for i, z in enumerate(ZETA):
         n = o4['gap_needed_mm']['%.2f' % (100 * z)]
         a2.semilogy(g, n['steady'] * np.exp(-o4['k_per_mm'] * g), color='C%d' % i, label='zeta %.2f %%' % (100 * z))
+        if o4.get('cad'):
+            a2.semilogy([o4['cad']['dgap_mm']], [o4['cad']['steady']['%.2f' % (100 * z)]], 'o', color='C%d' % i, ms=6, mec='k',
+                        label='CFD at the CAD gap' if i == 0 else None)
     a2.axhline(lim, color='k', lw=1.2); a2.text(1, lim * 1.07, 'start-up limit (cold blade Goodman / 2) %.0f MPa' % lim, fontsize=8)
     a2.axhline(out['goodman_design'] / 2, color='k', ls='--', lw=1)
     a2.text(1, out['goodman_design'] / 2 * 1.07, 'design-point limit %.1f MPa' % (out['goodman_design'] / 2), fontsize=8)
@@ -392,8 +415,10 @@ def plot(out):
         a2.axvline(out['recommended_gap_mm'], color='0.3', lw=6, alpha=0.25)
         a2.text(out['recommended_gap_mm'] + 0.7, a2.get_ylim()[1] * 0.5, 'recommended +%.0f mm' % out['recommended_gap_mm'], fontsize=8)
     a2.grid(alpha=0.3, which='both'); a2.legend(fontsize=8)
-    a2.set_xlabel('extra R1 TE - NGV2 LE axial gap [mm] (now %.0f / %.0f / %.0f mm hub / mid / tip)' % (
-        o4['gap_now_mm']['hub'], o4['gap_now_mm']['mid'], o4['gap_now_mm']['tip']))
+    gc = o4.get('gap_cad_mm')
+    a2.set_xlabel('extra R1 TE - NGV2 LE axial gap [mm] (rev 5 %.0f / %.0f / %.0f mm hub / mid / tip%s)' % (
+        o4['gap_now_mm']['hub'], o4['gap_now_mm']['mid'], o4['gap_now_mm']['tip'],
+        '; CAD rev 6 %.0f / %.0f / %.0f' % (gc['hub'], gc['mid'], gc['tip']) if gc else ''))
     a2.set_ylabel('R1 root stress at resonance, x%.1f mistuning [MPa]' % MISTUNE)
     a2.set_title('4. Larger gap: start-line CFD forcing, decay %.3f / mm%s' % (o4['k_per_mm'], ' (theory)' if o4['from_theory'] else
                                                                               ' (CFD 0 / +20 mm)'), fontsize=10)

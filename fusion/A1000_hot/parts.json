@@ -8,10 +8,10 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 52.94,
+   "mass_kg": 57.51,
    "x": [
     678.0,
-    878.0
+    903.0
    ],
    "r": 392.0
   },
@@ -21,10 +21,10 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 52.94,
+   "mass_kg": 57.51,
    "x": [
     678.0,
-    878.0
+    903.0
    ],
    "r": 392.0
   },
@@ -47,12 +47,25 @@
    "group": "carrier",
    "valid": true,
    "solids": 1,
-   "mass_kg": 22.85,
+   "mass_kg": 26.99,
    "x": [
     733.7,
-    850.0
+    875.0
    ],
    "r": 300.0
+  },
+  "HS-222 Gap liner R1 - NGV2, outer (Hastelloy X)": {
+   "step": "HS_222_Gap_liner_R1___NGV2__outer__Hastelloy_X.step",
+   "material": "Hastelloy X",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1.99,
+   "x": [
+    732.7,
+    758.7
+   ],
+   "r": 271.7
   },
   "HS-211 Honeycomb shroud R1 (Hastelloy X)": {
    "step": "HS_211_Honeycomb_shroud_R1__Hastelloy_X.step",
@@ -88,8 +101,8 @@
    "solids": 1,
    "mass_kg": 0.21,
    "x": [
-    795.2,
-    843.3
+    820.2,
+    868.3
    ],
    "r": 267.6
   },
@@ -101,8 +114,8 @@
    "solids": 1,
    "mass_kg": 1.98,
    "x": [
-    795.2,
-    843.3
+    820.2,
+    868.3
    ],
    "r": 270.6
   },
@@ -138,10 +151,10 @@
    "group": "diaphragm",
    "valid": true,
    "solids": 1,
-   "mass_kg": 2.68,
+   "mass_kg": 2.47,
    "x": [
-    752.3,
-    780.3
+    768.3,
+    789.2
    ],
    "r": 202.6
   },
@@ -151,12 +164,25 @@
    "group": "honeycomb",
    "valid": true,
    "solids": 1,
-   "mass_kg": 0.04,
+   "mass_kg": 0.03,
    "x": [
-    752.3,
-    780.3
+    768.3,
+    789.2
    ],
    "r": 96.0
+  },
+  "HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)": {
+   "step": "HS_234_Gap_ring_R1___NGV2__inner__Hastelloy_X.step",
+   "material": "Hastelloy X",
+   "group": "diaphragm",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1.07,
+   "x": [
+    735.2,
+    758.7
+   ],
+   "r": 212.7
   },
   "HS-240 Radial centring pins x8 (1.4980)": {
    "step": "HS_240_Radial_centring_pins_x8__1_4980.step",

@@ -119,7 +119,7 @@ def thrust(S, r_bp, scale=1.0):
     (part load ~ (load)^1 on the pressure ratios, rough)"""
     c1, c2, t1, t2 = S['c1'], S['c2'], S['t1'], S['t2']
     r_seal_in, r_spc = 48.0, 75.0                              # inlet seal on the stub, interstage seal on the spacer
-    r_s2 = G.ARM['rf'] + 1.0                                     # interstage (under NGV2) labyrinth on the R1 aft flange
+    r_s2 = G.ARM['rf'] + 1.0                                     # interstage (under NGV2) labyrinth: rev 6 fins on the R1 - R2 spacer
     r_rear = 56.0                                               # rear oil/air seal on the rear stub
     rh1, rt1 = A.row_radius('R1', 0.0), A.row_radius('R1', 1.0); rh2, rt2 = A.row_radius('R2', 0.0), A.row_radius('R2', 1.0)
     p_cf = t1['p_ngv'] * 1.04                                   # turbine front cavity: purge 4 % above the NGV1 exit static
@@ -330,8 +330,9 @@ def detailed_rotor(sup):
            (xj['drum_R1'] - 9, xj['drum_R1'], fl, 100.0, 'in718', True),
            (xj['drum_R1'], xj['drum_R1'] + 9, fl, 116.0, 'marm247', True), (xj['drum_R1'] + 9, b1[0], af, 116.0, 'marm247', True),
            (b1[0], b1[1], 170.0, 0.0, 'marm247', False),
-           (b1[1], b1[1] + 13, af, 116.0, 'marm247', True), (b1[1] + 13, b2[0] - 13, fl, 116.0, 'marm247', True),
-           (b2[0] - 13, b2[0], af, 116.0, 'marm247', True),
+           (b1[1], b1[1] + 13, af, 116.0, 'marm247', True), (b1[1] + 13, xj['R1_spc'], fl, 116.0, 'marm247', True),
+           (xj['R1_spc'], xj['spc_R2'], 2 * G.TSPC['ro'], 2 * G.TSPC['ri'], 'in718', True),       # rev 6 spacer ring (waist)
+           (xj['spc_R2'], b2[0] - 13, fl, 116.0, 'marm247', True), (b2[0] - 13, b2[0], af, 116.0, 'marm247', True),
            (b2[0], b2[1], 170.0, 0.0, 'marm247', False),
            (b2[1], b2[1] + 13, af, 116.0, 'marm247', True), (b2[1] + 13, xj['R2_stub'] + 9, fl, 100.0, 'in718', True),
            (xj['R2_stub'] + 9, xj['R2_stub'] + 14, 120.0, 50.0, 'in718', True), (xj['R2_stub'] + 14, xb2 - L / 2 - 6, 99.0, 50.0, 'in718', True),
@@ -341,9 +342,9 @@ def detailed_rotor(sup):
     mc = 7850 * math.pi * ((G.COLLAR['ro'] * 1e-3) ** 2 - 0.052 ** 2) * (G.COLLAR['x1'] - G.COLLAR['x0']) * 1e-3
     ro_, ri_ = G.COLLAR['ro'] * 1e-3, 0.052
     discs['collar'] = dict(m=mc, x=0.5 * (G.COLLAR['x0'] + G.COLLAR['x1']), Ip=mc * (ro_ ** 2 + ri_ ** 2) / 2, Id=mc * (ro_ ** 2 + ri_ ** 2) / 4)
-    for k, x in xj.items():
-        ms = 16 * 0.045; r = G.STUD['r'] * 1e-3
-        discs['studs ' + k] = dict(m=ms, x=x, Ip=ms * r * r, Id=ms * r * r / 2)
+    for k, (x0, x1, xn, dn) in G.STUD_SETS.items():                # 16 studs + nuts, 0.045 kg each at the rev 1 length 26 mm
+        ms = 16 * (0.045 + 8190 * math.pi / 4 * (G.STUD['d'] * 1e-3) ** 2 * (x1 - x0 - 26.0) * 1e-3); r = G.STUD['r'] * 1e-3
+        discs['studs ' + k] = dict(m=ms, x=0.5 * (x0 + x1), Ip=ms * r * r, Id=ms * r * r / 2)
     tie = (G.TIE['x_nut'][0], G.TIE['x_end'], G.TIE['shank'])
     return dict(seg=seg, discs=discs, brg=list(G.X_BRG), tie=tie, layout='A-detailed')
 
@@ -444,7 +445,7 @@ def main():
     def ip_aft(x): return sum(ip for m, xx, ip, n in it if xx > x)
     dT_sc = 5.0 * tq['stub_I1']
     xjoint = dict(stub_I1=G.X_I1[0], I1_spc=G.X_I1[1], spc_I2=G.X_I2[0], I2_drum=G.X_I2[1], drum_R1=G.X_J['drum_R1'],
-                  R1_R2=G.X_J['R1_R2'], R2_stub=G.X_J['R2_stub'])
+                  R1_R2=G.X_J['R1_spc'], R2_stub=G.X_J['R2_stub'])            # R1 - R2: the front curvic of the spacer (more aft inertia)
     tq_max = {k: tq.get(k, 0.0) + dT_sc * ip_aft(x) / Ip_tot for k, x in xjoint.items()}
     res['torque_Nm'] = dict(rated=tq, max_short_circuit=tq_max, P_kW=dict(c1=P_c1 / 1e3, c2=P_c2 / 1e3, t1=P_t1 / 1e3, t2=P_t2 / 1e3,
                                                                            shaft=(P_t1 + P_t2 - P_c1 - P_c2) / 1e3))
@@ -527,24 +528,28 @@ def main():
     print('4. hot joints, 16 x M10 IN718 studs')
     st = G.STUD; As = 61.2                                     # MJ10x1.25 stress area [mm2]
     Fs = st['pre_kN'] * 1e3; F_hot = st['n'] * Fs
-    Lg = 2 * G.ARM['tf']; Lst = Lg + 0.8 * st['d']; ks = mp('IN718', 'E', 500) * As / Lst
-    kf = 3.0 * ks
     hot = {}
     for j, T_j in (('drum_R1', 480.0), ('R1_R2', 500.0), ('R2_stub', 460.0)):
+        # grip: the two flanges; R1 - R2 (rev 6) also the IN718 spacer ring (no mismatch with the IN718 studs over its length)
+        L_spc = G.L_TSPC if j == 'R1_R2' else 0.0
+        Lg = 2 * G.ARM['tf'] + L_spc; Lst = Lg + 0.8 * st['d']; ks = mp('IN718', 'E', 500) * As / Lst
+        kf = 3.0 * ks
         dmis = (mp('IN718', 'a', T_j) - 0.5 * (mp('IN718', 'a', T_j) + mp('MAR-M247', 'a', T_j))) * (T_j - 20) * Lg
-        if j == 'R1_R2': dmis = (mp('IN718', 'a', T_j) - mp('MAR-M247', 'a', T_j)) * (T_j - 20) * Lg
+        if j == 'R1_R2': dmis = (mp('IN718', 'a', T_j) - mp('MAR-M247', 'a', T_j)) * (T_j - 20) * (Lg - L_spc)
         dF_ss = -dmis / (1 / ks + 1 / kf)
         dF_tr = -(mp('IN718', 'a', T_j) * 60.0 * Lg) / (1 / ks + 1 / kf)            # studs 60 K hotter than the flanges
         relax = 0.10 * Fs                                         # IN718 stress relaxation at ~500 C over 30,000 h (re-torque at HSI)
         F_min_s = Fs + min(0.0, dF_ss) + dF_tr - relax
-        M = gravity_moment(xjoint[j])
+        M = max(gravity_moment(x) for x in ((G.X_J['R1_spc'], G.X_J['spc_R2']) if j == 'R1_R2' else (xjoint[j],)))
         F_r, br = curvic_ring_clamp(G.CURVIC_HOT['ri'], G.CURVIC_HOT['ro'], M, tq_max[j], max(0.0, fax[j]))
-        hot[j] = dict(T=T_j, dF_steady_N=dF_ss, dF_transient_N=dF_tr, F_min_total=F_min_s * st['n'], required=F_r, parts=br,
+        x0s, x1s = G.STUD_SETS[dict(drum_R1='drum - R1', R1_R2='R1 - R2', R2_stub='R2 - rear stub')[j]][:2]
+        hot[j] = dict(T=T_j, grip_mm=Lg, stud_mm=x1s - x0s,
+                      dF_steady_N=dF_ss, dF_transient_N=dF_tr, F_min_total=F_min_s * st['n'], required=F_r, parts=br,
                       stud_stress=(Fs + max(0.0, dF_ss)) / As, flank=curvic_flank_pressure(F_hot, tq_max[j], G.CURVIC_HOT['ri'], G.CURVIC_HOT['ro'],
                                                                                          G.CURVIC_HOT['N']))
-        print('   %-8s %3.0f C: stud preload %.0f kN, thermal %+.1f / transient %+.1f kN per stud; min clamp %.0f kN vs required %.0f kN; '
-              'stud %.0f MPa; flank %.0f MPa' % (j, T_j, Fs / 1e3, dF_ss / 1e3, dF_tr / 1e3, F_min_s * st['n'] / 1e3, F_r / 1e3,
-                                                  hot[j]['stud_stress'], hot[j]['flank']))
+        print('   %-8s %3.0f C: stud %.0f mm (grip %.0f), preload %.0f kN, thermal %+.1f / transient %+.1f kN per stud; min clamp %.0f kN '
+              'vs required %.0f kN; stud %.0f MPa; flank %.0f MPa' % (j, T_j, x1s - x0s, Lg, Fs / 1e3, dF_ss / 1e3, dF_tr / 1e3,
+                                                                     F_min_s * st['n'] / 1e3, F_r / 1e3, hot[j]['stud_stress'], hot[j]['flank']))
         check('hot joint %s: min clamp / required' % j, F_min_s * st['n'] / F_r, 1.25, '-', F_min_s * st['n'] / F_r >= 1.25,
               'after 10 % relaxation and a 60 K stud lag')
     check('hot studs: stress / 0.7 Sy(500 C)', max(v['stud_stress'] for v in hot.values()) / (0.7 * mp('IN718', 'Sy', 500)), 1.0, '-',
@@ -643,7 +648,8 @@ def plot(res, Rd):
     from matplotlib.patches import Polygon, Rectangle
     fig = plt.figure(figsize=(16, 11), dpi=110)
     ax = fig.add_axes([0.04, 0.47, 0.92, 0.48])
-    col = {'RT-101': '#9aa4b2', 'RT-102': '#c9a227', 'RT-103': '#c9a227', 'RT-104': '#9aa4b2', 'RT-105': '#b07aa1', 'RT-106': '#9aa4b2'}
+    col = {'RT-101': '#9aa4b2', 'RT-102': '#c9a227', 'RT-103': '#c9a227', 'RT-104': '#9aa4b2', 'RT-105': '#b07aa1', 'RT-106': '#9aa4b2',
+           'RT-107': '#b07aa1'}
     for name, f, mat, rho in G.ROTOR_PARTS:
         p = f(); c = col[name[:6]]
         for sg in (1, -1):

@@ -176,7 +176,7 @@ def main():
         strong = (n1, n2) if row == 'R1' else (n2,)
         # R1: the 2nd harmonic of the downstream N2 potential field decays as exp(-4 pi g / s) (47 vanes: 0.026, not
         # counted); the 29 long-chord vanes of rev 5 (s = 50 mm): 0.105 -> 2 x N2 is a weak order on R1
-        pf2 = math.exp(-4 * math.pi * A.GAP2 / (2 * math.pi * A.RM / n2))
+        pf2 = math.exp(-4 * math.pi * (A.GAP2 + A.DGAP2) / (2 * math.pi * A.RM / n2))      # hub gap (rev 6: 9 + 25 mm)
         weak = ((2 * n1,) + ((2 * n2,) if pf2 >= 0.05 else ())) if row == 'R1' else (n1, 2 * n2)
         # vane-vane interaction (N1 wakes chopped by NGV2): circumferential order |N1 - N2| on both rotors, second-order
         # forcing: no crossing of the first WEAK_MODES families inside the grid band (forced response / tip timing beyond)
@@ -271,7 +271,8 @@ def main():
                 rows.append(('%s EO%d start-line crossing, %.0f-%.0f rpm (root)' % (
                     row, k, min(r['rpm'] for r in so[str(k)]['rows']), max(r['rpm'] for r in so[str(k)]['rows'])),
                     ss[0] if ok_s else (ss[-1] if ok_s is False else ss[1]), w['limit'], 'MPa', ok_s,
-                    'start-line CFD forcing; zeta %s %% + aero: %s MPa (blade %.0f C); x%.1f mistuning; start-up Goodman/2%s' % (
+                    'start-line CFD forcing (%s); zeta %s %% + aero: %s MPa (blade %.0f C); x%.1f mistuning; start-up Goodman/2%s' % (
+                        opts.get('orders_start_forcing', 'forcing_st.json').replace('forcing_', '').replace('.json', ''),
                         '/'.join('%.2g' % (100 * r['zeta_mech']) for r in st), '/'.join('%.0f' % x if x >= 10 else '%.1f' % x for x in ss),
                         w['T_metal'], fr['mistune'], '' if ok_s is not None else '; MARGINAL')))
                 ok = None                                          # design-point forcing: reference only
@@ -286,7 +287,7 @@ def main():
                              '; not met at this forcing (start line)' if below and so.get(str(k)) else
                              ('' if ok is not None else '; MARGINAL'))))
         o4 = opts.get('option4', {})
-        if o4.get('with_recommended') and not o4.get('from_theory'):
+        if o4.get('with_recommended') and not o4.get('from_theory') and abs(A.DGAP2 - o4['recommended_mm']) > 0.5:   # not in the CAD yet
             wr = list(o4['with_recommended'].values())
             rows.append(('%s EO24 start crossing, R1-NGV2 gap +%.0f mm (recommended)' % (row, o4['recommended_mm']), wr[0]['steady'],
                          wr[0]['limit'], 'MPa', None, 'zeta %s %% + aero: %s MPa (start-up limit %.0f; design limit %.1f); CFD decay '

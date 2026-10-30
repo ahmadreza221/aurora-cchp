@@ -13,6 +13,13 @@ through the turbine. The stack is therefore built in two parts:
                nuts are run down in the 13 mm cavity behind each flange with radial access between the blade rows, so the
                rotor is built and balanced outside the engine and the NGV rings are split in two halves (horizontally split
                turbine casing)
+               rev 6 (R1 - NGV2 gap +25 mm, docs/08 sec. 12.4.2): the blisks sit 25 mm further apart. The cast arms stay as
+               rev 1 and an IN718 spacer ring (RT-107) with a curvic on each face fills the R1 - R2 joint; the 16 studs of
+               that joint pass through it (25 mm longer). The ring carries the 4 knife edges of the interstage seal under
+               NGV2. Chosen over 12.5 mm longer cast arms: the blisk castings, their disc FEA and the cyclic / forced-response
+               models stay as they are; the ring section (r 60-88) is ~5 x stiffer in bending than the thin arm tube
+               (r 58-66) it replaces; the seal fins are on a wrought, replaceable part; and over the added length studs
+               and ring are both IN718 (no expansion mismatch). Cost: one more curvic interface and ~1.7 kg more than arms.
 Bearings: tilting-pad journals (5 pads, load between pads) in integral S-spring squeeze-film damper rings (ISFD),
 double-acting tilting-pad thrust bearing on the integral collar, at the cold end.
 
@@ -51,7 +58,15 @@ def arm_x(row, side):
     return xa, xa + ARM['cav'] + ARM['tf']
 
 
-X_J = dict(drum_R1=arm_x('R1', 'f')[1], R1_R2=0.5 * (arm_x('R1', 'a')[1] + arm_x('R2', 'f')[1]), R2_stub=arm_x('R2', 'a')[1])
+X_J = dict(drum_R1=arm_x('R1', 'f')[1], R1_spc=arm_x('R1', 'a')[1], spc_R2=arm_x('R2', 'f')[1], R2_stub=arm_x('R2', 'a')[1])
+# rev 6: R1 - R2 spacer ring between the R1 aft and the R2 forward arm flanges (IN718, curvic both faces, 4 seal fins)
+TSPC = dict(ri=60.0, ro=88.0, land=5.0, n_fin=4, fin_pitch=3.0, r_fin=92.3, mat='IN718')
+L_TSPC = X_J['spc_R2'] - X_J['R1_spc']
+# stud sets of the hot joints: (stud x0, x1, nut face x, nut direction); R1 - R2: from the Heli-Coil inserts in the R2
+# flange forward through the spacer and the R1 flange, nut in the R1 aft cavity
+STUD_SETS = {'drum - R1': (X_J['drum_R1'] - ARM['tf'], X_J['drum_R1'] + ARM['tf'] + STUD['nut_h'] + 2, X_J['drum_R1'] + ARM['tf'], +1),
+             'R1 - R2': (X_J['R1_spc'] - ARM['tf'] - STUD['nut_h'] - 2, X_J['spc_R2'] + ARM['tf'], X_J['R1_spc'] - ARM['tf'], -1),
+             'R2 - rear stub': (X_J['R2_stub'] - ARM['tf'] - STUD['nut_h'] - 2, X_J['R2_stub'] + ARM['tf'], X_J['R2_stub'] - ARM['tf'], -1)}
 
 
 def disc_profile_arms(row):
@@ -61,8 +76,8 @@ def disc_profile_arms(row):
     r_rim = rh - q['rim_d']; tr, th, hw = q['t_rim'] / 2, q['t_hub'] / 2, q['hub_w'] / 2
     o = X_OFF; ri, ro, rf, c, t = ARM['ri'], ARM['ro'], ARM['rf'], ARM['cav'], ARM['tf']
     xa, xf = xm + hw + o, xm - hw + o
-    xj_a = X_J['R1_R2'] if row == 'R1' else X_J['R2_stub']
-    xj_f = X_J['drum_R1'] if row == 'R1' else X_J['R1_R2']
+    xj_a = X_J['R1_spc'] if row == 'R1' else X_J['R2_stub']
+    xj_f = X_J['drum_R1'] if row == 'R1' else X_J['spc_R2']
     poly = [(x0 + o, rh), (x1 + o, rh), (x1 + o, r_rim + 6), (xm + tr + o, r_rim - 4), (xm + th + o, q['r_web_in']),
             (xa, q['r_boss']),
             (xa, ro), (xa + c, ro), (xa + c, rf), (xj_a, rf), (xj_a, ri), (xa, ri),            # aft arm + flange
@@ -138,6 +153,18 @@ def rear_stub_profile():
             (xb + L / 2 + 30, 46.0), (xb + L / 2 + 30, 25.0)]
 
 
+def turbine_spacer_profile():
+    """IN718 R1 - R2 spacer ring (rev 6): curvic lands r 60-92 at both faces, waist r 60-88 with 4 knife edges to r 92.3
+    (interstage seal, 0.3 mm cold to the r 92.6 honeycomb of the NGV2 diaphragm)"""
+    q = TSPC; x0, x1 = X_J['R1_spc'], X_J['spc_R2']; rf = ARM['rf']
+    p = [(x0, q['ri']), (x0, rf), (x0 + q['land'], rf), (x0 + q['land'] + 1.0, q['ro'])]
+    xm = 0.5 * (x0 + x1)
+    for k in range(q['n_fin']):
+        xk = xm + (k - (q['n_fin'] - 1) / 2) * q['fin_pitch']
+        p += [(xk - 0.9, q['ro']), (xk - 0.15, q['r_fin']), (xk + 0.15, q['r_fin']), (xk + 0.9, q['ro'])]
+    return p + [(x1 - q['land'] - 1.0, q['ro']), (x1 - q['land'], rf), (x1, rf), (x1, q['ri'])]
+
+
 def tie_profile():
     x0 = TIE['x_nut'][0] + 2; x1 = TIE['x_end']; d, s = TIE['d'], TIE['shank']
     p = [(x0, 0.0), (x0, d / 2), (TIE['x_nut'][1] + 4, d / 2), (TIE['x_nut'][1] + 10, s / 2)]
@@ -159,6 +186,7 @@ ROTOR_PARTS = [  # name, profile function, material, density kg/m3, colour group
     ('RT-104 Compressor spacer', spacer_profile, '17-4PH H1025', 7800),
     ('RT-105 Drum IN718', drum_profile, 'IN718', 8190),
     ('RT-106 Rear stub shaft', rear_stub_profile, 'IN718', 8190),
+    ('RT-107 Turbine spacer ring R1 - R2', turbine_spacer_profile, 'IN718', 8190),
 ]
 
 
@@ -299,15 +327,16 @@ def build_rotor():
     ch = CURVIC_HOT; rs = curvic_face(rs, xj, +1, ch['ri'], ch['ro'], ch['N'], ch['h'], 0.5)
     rs = rs.cut(holes(xj - ch['h'], xj + ARM['tf'] + 1, STUD['r'], STUD['hole'], STUD['n']))
     out['RT-106 Rear stub shaft'] = (rs.removeSplitter(), 'IN718', 'shaft')
-    # studs + nuts of the three hot joints (nuts in the cavity behind the cast flange)
-    for tag, xj_, side in (('drum - R1', X_J['drum_R1'], 'R1f'), ('R1 - R2', X_J['R1_R2'], 'R1a'), ('R2 - rear stub', X_J['R2_stub'], 'R2a')):
-        tf = ARM['tf']
-        if side == 'R1f':      # stud from the drum flange (front) through the R1 flange, nut aft of it
-            st, nu = stud_set(xj_ - tf, xj_ + tf + STUD['nut_h'] + 2, xj_ + tf, +1, STUD['n'], STUD['r'])
-        elif side == 'R1a':    # stud in the R2 flange insert, through the R1 flange, nut in front of it
-            st, nu = stud_set(xj_ - tf - STUD['nut_h'] - 2, xj_ + tf, xj_ - tf, -1, STUD['n'], STUD['r'])
-        else:                  # stud from the rear-stub flange forward through the R2 flange, nut in front of it
-            st, nu = stud_set(xj_ - tf - STUD['nut_h'] - 2, xj_ + tf, xj_ - tf, -1, STUD['n'], STUD['r'])
+    sp = revolve(turbine_spacer_profile())                                                    # rev 6: R1 - R2 spacer ring
+    sp = curvic_face(sp, X_J['R1_spc'], +1, ch['ri'], ch['ro'], ch['N'], ch['h'], 0.5)       # mates the R1 aft face
+    sp = curvic_face(sp, X_J['spc_R2'], -1, ch['ri'], ch['ro'], ch['N'], ch['h'], 0.0)       # mates the R2 forward face
+    sp = sp.cut(holes(X_J['R1_spc'] - ch['h'], X_J['spc_R2'] + ch['h'], STUD['r'], STUD['hole'], STUD['n']))
+    out['RT-107 Turbine spacer ring R1 - R2'] = (sp.removeSplitter(), 'IN718', 'shaft')
+    # studs + nuts of the three hot joints (nuts in the cavity behind the cast flange): drum - R1 from the drum flange through
+    # the R1 flange, nut aft of it; R1 - R2 from the R2 flange inserts through the spacer and the R1 flange, nut in front;
+    # R2 - rear stub from the rear-stub flange through the R2 flange, nut in front
+    for tag, (x0_, x1_, xn_, dn_) in STUD_SETS.items():
+        st, nu = stud_set(x0_, x1_, xn_, dn_, STUD['n'], STUD['r'])
         out['RT-11%d Studs + nuts %s (16 x M10)' % (len([k for k in out if 'Studs' in k]) + 1, tag)] = (
             Part.makeCompound(st + nu), 'IN718 / Waspaloy nuts', 'studs')
     return out
@@ -319,8 +348,8 @@ def build_blisk_arms(row):
     App, Part, V = _fc()
     s = revolve(disc_profile_arms(row))
     # the rev 5 disc seam is rotated by half a blade pitch: irrelevant for a solid of revolution
-    xa = X_J['R1_R2'] if row == 'R1' else X_J['R2_stub']
-    xf = X_J['drum_R1'] if row == 'R1' else X_J['R1_R2']
+    xa = X_J['R1_spc'] if row == 'R1' else X_J['R2_stub']
+    xf = X_J['drum_R1'] if row == 'R1' else X_J['spc_R2']
     ch = CURVIC_HOT
     s = curvic_face(s, xf, +1, ch['ri'], ch['ro'], ch['N'], ch['h'], 0.5)          # forward face: mates the part in front
     s = curvic_face(s, xa, -1, ch['ri'], ch['ro'], ch['N'], ch['h'], 0.0)          # aft face: mates the part behind

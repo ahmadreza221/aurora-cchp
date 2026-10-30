@@ -135,14 +135,15 @@ def rotor(layout='A'):
            (x_i2[0], x_i2[1], od2, id2, i2['mat'] if det else 'ti64', False),
            (x_i2[1], b1['hub'][0], 170.0, 120.0, 'in718', True),     # compressor-turbine drum, tie bolt inside
            (b1['hub'][0], b1['hub'][1], 2 * b1['r_boss'], 0.0, 'marm247', False),
-           (b1['hub'][1], b2['hub'][0], 180.0, 120.0, 'in718', True),  # interstage spacer under NGV2
+           (b1['hub'][1], b2['hub'][0], 180.0, 120.0, 'in718', True),  # interstage spacer under NGV2 (rev 6: +25 mm, the
+                                                                        # R1 - NGV2 gap of a1000_turbine.DGAP2 moves R2 aft)
            (b2['hub'][0], b2['hub'][1], 2 * b2['r_boss'], 0.0, 'marm247', False)]
     x_end = b2['hub'][1]
     # tie bolt: 48 mm, preloaded, from the collar to a nut in the blisk-1 hub (mass only; stiffness in the drums)
     tie = (160.0, b1['hub'][0] + 20.0, 48.0)
     if layout == 'A':
         seg += [(x_end, x_end + 115.0, 110.0, 50.0, 'in718', True)]   # rear stub shaft to the exhaust-hub bearing
-        brg = [110.0, x_end + 80.0]
+        brg = [110.0, x_end + 80.0]                                   # rev 6: x 930.2 -> 955.2 with R2
     else:
         brg = [110.0, x_i2[1] + 60.0]                                 # bearing 2 between compressor and turbine
     return dict(seg=seg, discs=discs, brg=brg, tie=tie, layout=layout)

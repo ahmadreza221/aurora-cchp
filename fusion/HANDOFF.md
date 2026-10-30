@@ -183,3 +183,15 @@ is in `sim/engine/a1000_combustor_chem.py`, which needs Cantera; its results are
    `AURORA1000_Package.py` into the opened document after deleting its root occurrences: 79 parts, 527 bodies, bbox
    x −3500..2400, y −1250..2100, z −1000..2049 mm. The combustor volumes match the CAD masses. With the machine loaded the
    rebuild took ~6 min (the MCP call times out after 60 s; the script keeps running: log to a file and poll it).
+
+## AURORA-1000 rev 6: R1 - NGV2 gap +25 mm (2026-10-30)
+Design record: `docs/08_aurora1000_1MW_concept.md` §12.4.3, §13.9, §14.1. NGV2, R2 and everything behind them sit 25 mm
+further aft (`a1000_turbine.DGAP2`); NGV1, R1 and the combustor are unchanged.
+1. Turbine pieces: `a1000_turbine.py --cad`, then `python3 fusion/export_a1000_parts.py "rev 6 (R1 - NGV2 gap +25 mm)"`.
+   Only the N2 and R2 pieces changed (same shapes, moved 25 mm); `parts.json` has the new row positions.
+2. Rotor: new part `RT-107 Turbine spacer ring R1 - R2` (IN718, curvic both faces, 4 seal fins); the R1 - R2 studs are 51 mm
+   (were 26). R2, the rear stub and JB2 moved 25 mm aft.
+3. Hot section: casing x 678-903, C2 to x 875; new parts `HS-222` (outer gap liner) and `HS-234` (inner gap ring).
+4. Combustor: only the scroll pressure casing halves changed (rear plate x 903 -> 928).
+5. Package: `fusion/A1000_pkg` re-exported (82 parts in `pkg.json`). **The Fusion designs ("Turbine rev5", "Rotor and
+   Bearings rev1", "Package rev5" v11) are not rebuilt yet** with these files.

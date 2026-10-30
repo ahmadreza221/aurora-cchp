@@ -75,7 +75,7 @@
   },
   {
    "test": "split-flange bolts: clamp / (2.5 x pressure load)",
-   "value": 4.710565746306389,
+   "value": 4.187169552272347,
    "limit": 1.0,
    "unit": "-",
    "ok": true,
@@ -83,11 +83,11 @@
   },
   {
    "test": "centring pin shear / allowable (A286, 240 MPa)",
-   "value": 0.031236628546308216,
+   "value": 0.031692010627229907,
    "limit": 1.0,
    "unit": "-",
    "ok": true,
-   "note": "7 MPa, 8 pins \u00d820"
+   "note": "8 MPa, 8 pins \u00d820"
   },
   {
    "test": "turbine purge + interstage leakage",
@@ -1149,13 +1149,13 @@
   "N2_torque_Nm": 665.6087944263654
  },
  "pins": {
-  "shear_MPa": 7.496790851113972,
+  "shear_MPa": 7.606082550535177,
   "radial_slide_mm": 2.2124277278797972
  },
  "casing": {
   "hoop_MPa": 4.072238131818183,
   "bolts_per_side": 3,
-  "F_side_N": 17917.847780000004
+  "F_side_N": 20157.5787525
  },
  "secondary_air": {
   "drum_balance_seal": {
@@ -1163,8 +1163,8 @@
    "pct": 0.5785416324254056
   },
   "backface_seal_r200": {
-   "kg_s": 0.08652409140458246,
-   "pct": 1.3697269887496812
+   "kg_s": 0.07932307202525353,
+   "pct": 1.2557306389439908
   },
   "interstage_seal": {
    "kg_s": 0.01682899298175499,

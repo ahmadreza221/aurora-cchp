@@ -38,7 +38,8 @@ import a1000_blisk_cyclic as BC                               # noqa: E402  (sec
 
 FEA = os.path.join(HERE, 'fea')
 CAD = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
-FORCING = os.path.join(ROOT, 'sim', 'cfd', 'a1000_r1_forcing', 'forcing.json')
+FORCING = os.path.join(ROOT, 'sim', 'cfd', 'a1000_r1_forcing', 'forcing.json')   # design point at the CAD gap (rev 6: +25 mm);
+                                                                                    # forcing_rev5.json: the rev 5 gap (9 mm)
 NPZ = os.path.join(FEA, 'a1000_R1_modes.npz')
 N_OP, Z = 15000.0, 59
 BAND = (14700.0, 15300.0)

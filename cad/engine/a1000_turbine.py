@@ -58,16 +58,42 @@ CX_ROW = dict(N1=S1['cx_ngv'] * 1e3, R1=S1['cx_rot'] * 1e3, N2=S2['cx_ngv'] * 1e
 #   x 0.85, ~ +0.3 pt), the turbine is 19 mm longer than rev 4 in all. Rev 5 work-in-progress 39 / 29 is superseded.
 CX_ROW['N2'] = 49.0
 CX_ROW['N1'] = 22.0
+# rev 6 (docs/08 sec. 12.4.2): R1 TE - NGV2 LE axial gap +25 mm, 34 / 38 / 42 mm at hub / mid / tip (rev 5: 9 / 13 / 17).
+# The NGV2 potential field (24 vanes, pitch 61 mm) drove R1 ND24 F1 through the EO24 start-up crossing at 12,270 rpm
+# (591 MPa, cold blade); the start-line CFD decay 0.107 / mm brings it to ~41 MPa against the start-up limit of 67-75 MPa
+# (sim/engine/a1000_r1_eo24_options.py). NGV2, R2 and everything behind them move 25 mm downstream.
+DGAP2 = 25.0
 X_LE = dict(N1=0.0)
 X_LE['R1'] = X_LE['N1'] + CX_ROW['N1'] + GAP1
-X_LE['N2'] = X_LE['R1'] + CX_ROW['R1'] + GAP2
+X_LE['N2'] = X_LE['R1'] + CX_ROW['R1'] + GAP2 + DGAP2
 X_LE['R2'] = X_LE['N2'] + CX_ROW['N2'] + GAP3
 X_TE = {k: X_LE[k] + CX_ROW[k] for k in X_LE}
+X_LE5 = dict(X_LE, N2=X_LE['N2'] - DGAP2, R2=X_LE['R2'] - DGAP2)   # rev 5 rows (CFD variants of make_case.py)
+X_TE5 = {k: X_LE5[k] + CX_ROW[k] for k in X_LE5}
 # rev 4: the NGV exit heights sit at the NGV trailing edges (the throat plane), not half a gap downstream: the TE span was
 # 3-3.5 % short of the meanline height and the NGV2 throat ran at Mach 0.98
-H_ST = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'], S1['h_ngv_out'] * 1e3),
-        (X_TE['R1'] + GAP2 / 2, S1['h_rot_out'] * 1e3), (X_TE['N2'], S2['h_ngv_out'] * 1e3),
-        (X_TE['R2'], S2['h_rot_out'] * 1e3)]
+H_ST5 = [(X_LE['N1'], S1['h_ngv_in'] * 1e3), (X_TE['N1'], S1['h_ngv_out'] * 1e3),
+         (X_TE['R1'] + GAP2 / 2, S1['h_rot_out'] * 1e3), (X_TE5['N2'], S2['h_ngv_out'] * 1e3),
+         (X_TE5['R2'], S2['h_rot_out'] * 1e3)]
+
+
+# the gap is stretched only where it is open: from the R1 exit station (aft end of the R1 platform, X_TE + 4.5) to the
+# front of the NGV2 rings (LE - 4, ngv_rings ext); the R1 blade, its tip trim and shroud and the NGV2 rings and vanes keep
+# the rev 5 annulus (moved 25 mm with NGV2). The CFD variants (sim/cfd/a1000_r1_forcing/make_case.py, DGAP) stretch from
+# the mid-span R1 TE to the NGV2 LE: done here, that lowers the R1 tip trim cone by up to 0.33 mm and tilts the NGV2 ring
+# ends by 0.34 mm. The two differ by <= 0.6 mm (1.5 %) of the annulus height in the gap.
+X_RAMP5 = (X_TE['R1'] + GAP2 / 2, X_LE5['N2'] - 4.0)
+
+
+def x_rev6(x):
+    """rev 5 annulus x -> rev 6 x: linear stretch of X_RAMP5 by DGAP2, shift by DGAP2 behind it"""
+    x0, x1 = X_RAMP5
+    if x <= x0: return x
+    if x <= x1: return x0 + (x - x0) * (x1 + DGAP2 - x0) / (x1 - x0)
+    return x + DGAP2
+
+
+H_ST = sorted([(x_rev6(x), h) for x, h in H_ST5] + [(X_RAMP5[1] + DGAP2, float(np.interp(X_RAMP5[1], *zip(*H_ST5))))])
 Z = dict(N1=S1['Z_ngv'], R1=S1['Z_rot'], N2=S2['Z_ngv'], R2=S2['Z_rot'])
 # rev 2: NGV1 47 -> 43 vanes (rigid-hub blades: 2 x 47 = EO94 crossed R1 F6 at 15,300 rpm); rev 5: 48 / 24 (coupled
 # blisks, see CX_ROW above)
@@ -79,6 +105,11 @@ ROW_T0 = dict(N1=S1['T0_in'], R1=S1['T0_in'], N2=S2['T0_in'], R2=S2['T0_in'])
 
 def height(x):
     xs, hs = zip(*H_ST); return float(np.interp(x, xs, hs))
+
+
+def height5(x):
+    """rev 5 annulus (R1 - NGV2 gap 9 mm at the hub)"""
+    xs, hs = zip(*H_ST5); return float(np.interp(x, xs, hs))
 
 
 def r_hub(x): return RM - height(x) / 2

@@ -18,8 +18,12 @@ meanline NGV2 exit (P_OUT); walls adiabatic.
 Variants (rev 6, R1 EO24 options, sim/engine/a1000_r1_eo24_options.py): A1000_CFD_TAG (case_<tag>/, forcing_<tag>.json,
 geometry_<tag>.json), A1000_CFD_RPM (shaft speed), A1000_CFD_P0 / _T0 (inlet total state), A1000_CFD_POUT (outlet mean
 static p), A1000_CFD_MDOT (meanline turbine flow of that state, for the flow check), A1000_CFD_DGAP (extra R1 TE - NGV2 LE
-axial gap [mm]: NGV2 and the outlet moved aft, annulus height stretched over the gap). The initial field is the design
-one scaled to the variant's inlet / outlet pressures, temperature and blade speed.
+axial gap over rev 5 (9 mm at the hub) [mm]: NGV2 and the outlet moved aft, rev 5 annulus height stretched over the gap
+from the mid-span R1 TE to the NGV2 LE; default: the CAD gap of rev 6, a1000_turbine.DGAP2 = 25 mm, which uses the CAD
+annulus as it is: stretched only from the R1 platform end to the NGV2 ring front, <= 1.5 % of the height off the mapping).
+The initial field is the design one scaled to the variant's inlet / outlet pressures, temperature and blade speed.
+Cases of rev 5 / 6: forcing_rev5.json (design point, gap +0), forcing_st.json (start line, +0), forcing_st_g20.json (+20);
+rev 6 CAD (+25): forcing.json (design point), forcing_st_g25.json (start line).
 Run:  ~/micromamba/envs/gr180/bin/python sim/cfd/a1000_r1_forcing/make_case.py [--mesh-only] [--run] [--post]
       A1000_CFD_NP (processors, default 6), A1000_CFD_T1 (startup end time [s]), A1000_CFD_T2 (sampling length [s]).
 Writes: sim/cfd/a1000_r1_forcing/case/ (not in git), forcing.json (harmonics of the R1 blade pressure), docs/img plot.
@@ -52,9 +56,10 @@ P_SECT = 2 * math.pi * RM / N_SECT                             # mm
 ROWS = dict(N1=dict(n=4), R1=dict(n=5), N2=dict(n=2))          # blades per sector (R1: 60 equivalent, scaled pitch)
 RPM = float(os.environ.get('A1000_CFD_RPM', A.N_RPM))
 OM = A.OM * RPM / A.N_RPM                                      # rad/s (A.OM stays the design speed of the sections)
-DGAP = float(os.environ.get('A1000_CFD_DGAP', 0.0))            # mm, extra R1 - NGV2 axial gap
+DGAP = float(os.environ.get('A1000_CFD_DGAP', A.DGAP2))       # mm, extra R1 - NGV2 axial gap over rev 5
+CAD_GAP = abs(DGAP - A.DGAP2) < 1e-6                           # the rev 6 CAD gap: annulus of a1000_turbine as it is
 U_ROT = OM * RM * 1e-3                                         # m/s
-XN2_LE, XN2_TE = A.X_LE['N2'] + DGAP, A.X_TE['N2'] + DGAP
+XN2_LE, XN2_TE = A.X_LE5['N2'] + DGAP, A.X_TE5['N2'] + DGAP
 X_IN, X_I1, X_I2 = -35.0, A.X_TE['N1'] + A.GAP1 / 2, 0.5 * (A.x_te_of('R1', 0.5) + XN2_LE)
 X_OUT = XN2_TE + 50.0
 ZSCALE = 0.25
@@ -78,16 +83,17 @@ def _ps(p): return P_OUT + (p - P4_) * KP
 
 
 def x_annulus(x):
-    """x of the design annulus at the variant's x: the extra gap DGAP stretches the R1 TE - NGV2 LE height ramp"""
+    """x of the rev 5 annulus at the variant's x: the extra gap DGAP stretches the R1 TE - NGV2 LE height ramp"""
     xa = A.x_te_of('R1', 0.5)
     if not DGAP or x <= xa: return x
-    if x < XN2_LE: return xa + (x - xa) * (A.X_LE['N2'] - xa) / (XN2_LE - xa)
+    if x < XN2_LE: return xa + (x - xa) * (A.X_LE5['N2'] - xa) / (XN2_LE - xa)
     return x - DGAP
 
 
 def zthick(x):
     """z thickness [mm] of the quasi-3-D stream tube: ZSCALE x annulus height, constant behind NGV2"""
-    return ZSCALE * A.height(min(max(x_annulus(x), A.X_LE['N1']), A.X_TE['N2']))
+    if CAD_GAP: return ZSCALE * A.height(min(max(x, A.X_LE['N1']), A.X_TE['N2']))
+    return ZSCALE * A.height5(min(max(x_annulus(x), A.X_LE['N1']), A.X_TE5['N2']))
 
 
 def sections():
@@ -95,7 +101,7 @@ def sections():
     for row in ROWS:
         s = A.design_row(row, [0.5])[0.5]
         pts, side, xis = s.outline(140, 21)
-        dx = DGAP if row == 'N2' else 0.0
+        dx = XN2_LE - A.X_LE['N2'] if row == 'N2' else 0.0             # design_row places NGV2 at the rev 6 CAD position
         x = pts[:, 0] + dx; y = RM * np.arctan2(pts[:, 2], pts[:, 1])
         Zs = 60 if row == 'R1' else A.Z[row]
         out[row] = dict(x=x, y=y, side=side, xc=s.xc + dx, yc=RM * s.th, k1=s.k1, k2=s.k2, pitch=2 * math.pi * RM / Zs,

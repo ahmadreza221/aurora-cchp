@@ -52,7 +52,8 @@ CS_MAX = dict(N1=1.10, N2=1.70)          # largest axial-chord scale of the vane
 WEAK_MODES = 6                           # weak orders: coupled modes below 1.05 x the rigid-hub blade mode 6 (F_LIM)
 F_LIM = {}
 REQ_INT = 0.001                          # interaction order |N1 - N2|: outside the grid band (no crossing in 14.7-15.3k)
-GAP_R1_N2 = 9.0                          # R1 TE - NGV2 LE [mm] (potential-field decay)
+GAP_R1_N2 = 9.0                          # R1 TE - NGV2 LE [mm] (potential-field decay); rev 5: the NGV2-count study is the
+                                         # option to the +25 mm gap of rev 6, so it stays at this gap
 RM = DES['annulus']['rm']
 N_START = 0.40                           # rev 6: start-line crossings from 40 % speed up to the band
 CS_MIN = dict(N1=1.0, N2=0.8)            # rev 6, --n1 only: shortest NGV axial chord (high counts, Zw >= 0.70)
@@ -119,7 +120,8 @@ def startup_model():
     if not opt: return None
     import numpy as np
     sys.path.insert(0, HERE); import a1000_startup as SU
-    fc = json.load(open(os.path.join(CFD, 'forcing.json'))); g = json.load(open(os.path.join(CFD, 'geometry.json')))['rows']
+    # the design-point CFD of rev 5 (gap 9 mm): the NGV2-count option is compared at the gap it would replace
+    fc = json.load(open(os.path.join(CFD, 'forcing_rev5.json'))); g = json.load(open(os.path.join(CFD, 'geometry_rev5.json')))['rows']
     x = np.array(g['R1']['x']); tau = np.array(fc['tau']); h = fc['harmonics']['24']
     xt = np.interp(tau, np.arange(len(x) + 1) / len(x), np.r_[x, x[:1]]); d = g['N2']['x_le'] - xt
     w = np.hypot(h['re'], h['im'])

@@ -1,7 +1,7 @@
 {
  "A1000_R1_blade": {
   "mass_kg": 0.0346,
-  "vol_cm3": 4.049,
+  "vol_cm3": 4.05,
   "valid": true,
   "solids": 1
  },
@@ -13,7 +13,7 @@
  },
  "A1000_R2_blade": {
   "mass_kg": 0.1393,
-  "vol_cm3": 16.315,
+  "vol_cm3": 16.316,
   "valid": true,
   "solids": 1
  },
@@ -58,7 +58,7 @@
   "units": "mm",
   "density_g_cc": 8.54,
   "alloy": "MAR-M247",
-  "revision": "rev 5",
+  "revision": "rev 6 (R1 - NGV2 gap +25 mm)",
   "rows": {
    "N1": {
     "x_le": 0.0,
@@ -69,12 +69,12 @@
     "x_te": 55.96
    },
    "N2": {
-    "x_le": 64.96,
-    "x_te": 113.96
+    "x_le": 89.96,
+    "x_te": 138.96
    },
    "R2": {
-    "x_le": 124.96,
-    "x_te": 166.96
+    "x_le": 149.96,
+    "x_te": 191.96
    }
   },
   "note": "blade / vane pieces at 0 deg; disc seam and NGV rings rotated by half a pitch (cad/engine/a1000_turbine.py)"

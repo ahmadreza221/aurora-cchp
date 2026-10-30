@@ -343,7 +343,7 @@ if COMB is None:
 else:
     # rev 1: the compressor air crosses the scroll casing and the hot-section channels and leaves at the exhaust end
     # (docs/08 sec. 14 / 16: rear manifold, not designed yet) -> recuperator; hot air DN450 from the recuperator to the can
-    ducts = shell_cyl(150.0, 142.0, YR - 600 - 480.0, (1080.0, 480.0, -350.0), (0, 1, 0))
+    ducts = shell_cyl(150.0, 142.0, YR - 600 - 480.0, (1080.0 + A.DGAP2, 480.0, -350.0), (0, 1, 0))   # rev 6: +25 with the casing
     nz = COMB['nozzle']; rr = nz['D'] / 2 + 8.0
     hot = shell_cyl(rr, rr - 8.0, YR - 300 + rr - nz['y'], (nz['x'], nz['y'], nz['z']), (0, 1, 0))
     hot = hot.fuse(shell_cyl(rr, rr - 8.0, nz['z'] + rr - 900.0, (nz['x'], YR - 300, 900.0), (0, 0, 1)))

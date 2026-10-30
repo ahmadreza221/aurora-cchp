@@ -7,7 +7,9 @@
      a shutdown -> pinch (rub into the abradable honeycomb) and the restart inhibit time
   3. outer casing (EN-GJS-400-18LT at compressor delivery): pressure stress, split-flange bolts, centring pins, NGV gas loads
   4. secondary air: labyrinth leakage (Martin, with carry-over) of the drum balance seal, the back-face seal and the
-     interstage seal -> purge fractions
+     interstage seal (rev 6: 4 knife edges on the rotor's R1 - R2 spacer ring) -> purge fractions
+Rev 6 (R1 - NGV2 gap +25 mm): casing x 678-903 (split-line force and bolts over the longer flange), C2 to x 875, pins in
+the rev 1 plane behind R1.
 Run:    python sim/engine/a1000_hot_section_calc.py           (numpy, matplotlib)
 Writes: sim/engine/fea/a1000_hot_section.json, docs/img/a1000_hot_section.png
 """
@@ -157,7 +159,7 @@ def main():
     print('   NGV1 axial %.1f kN, torque %.0f Nm; NGV2 axial %.1f kN, torque %.0f Nm (to the carriers, then the pins)' % (Fa1 / 1e3, T1, Fa2 / 1e3, T2))
     # pins: torque + axial + weight of the hot inner structure shared by 8 pins (each takes load in its tangential and axial
     # direction only, radial sliding), single shear, 1.4980 (A286) at ~ 400 C, allowable shear 0.4 x 600 MPa
-    W_hot = 9.81 * 70.0
+    W_hot = 9.81 * 77.0                                          # rev 6: +7 kg (C2 25 mm longer, gap liner, inner gap ring)
     F_t = (T1 + T2) / (H.FLANGE_C['ro'] * 1e-3); F_pin = math.hypot(F_t, Fa1 + Fa2) / (H.PIN['n'] / 2) + W_hot / 2
     tau_pin = F_pin / (math.pi / 4 * (H.PIN['d'] * 1e-3) ** 2) / 1e6
     check('centring pin shear / allowable (A286, 240 MPa)', tau_pin / 240.0, 1.0, '-', tau_pin <= 240.0, '%.0f MPa, %d pins Ø%.0f' % (tau_pin, H.PIN['n'], H.PIN['d']))

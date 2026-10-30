@@ -13,6 +13,10 @@ must open around it):
   diaphragms     front (NGV1 inner ring -> seal r 93-96 over the drum - R1 flanges) and interstage (NGV2 inner ring -> seal
                  r 93-96 over the R1 - R2 flanges), Hastelloy X, honeycomb lands; both in halves with the NGV rings
   NGV rings      cut into two halves at the split plane (EDM), strip seals in the cut faces (not modelled)
+  rev 6          R1 - NGV2 axial gap +25 mm (docs/08 sec. 12.4.2): NGV2, R2 and C2 move 25 mm aft, the casing is 25 mm longer
+                 (x 678-903), the pin plane and C1 stay behind R1; the open gap gets an outer liner (HS-222, in C2) and an
+                 inner gap ring (HS-234, on the NGV2 inner ring) on the annulus lines; the interstage seal runs on the four
+                 knife edges of the rotor's R1 - R2 spacer ring (RT-107)
 Frame: rotor frame mm (x = engine axis, z up). Run:
   freecadcmd -c "import sys; sys.argv=['a1000_hot_section.py','--cad']; exec(open('cad/engine/a1000_hot_section.py').read())"
   -> cad_out/engine/A1000_hot/*.step, fusion/A1000_hot/*.step + parts.json
@@ -38,10 +42,12 @@ def X(row, edge):
 
 TIP_COLD = dict(R1=0.50, R2=0.60)                               # cold tip clearance (sim/engine/a1000_turbine_checks.py)
 HC = dict(t=4.0, back=3.0)                                       # honeycomb depth, backing thickness [mm]
-CAS = dict(ri=322.0, t=22.0, x0=678.0, x1=878.0, fl_r=392.0, fl_t=24.0, split_w=48.0, split_t=28.0, bolt=16.0, pitch=66.0)
+CAS = dict(ri=322.0, t=22.0, x0=678.0, x1=903.0, fl_r=392.0, fl_t=24.0, split_w=48.0, split_t=28.0, bolt=16.0, pitch=66.0)   # rev 6: x1 878 -> 903
 C1 = dict(x0=676.0, ri=258.0, ro=270.0)                            # NGV1 hook + R1 shroud
-C2 = dict(x1=850.0, ri=272.0, ro=284.0)                            # NGV2 hook + R2 shroud
-X_PIN = 0.5 * (X('R1', 'te') + X('N2', 'le'))                    # C1 - C2 flange / pin plane (between R1 and NGV2)
+C2 = dict(x1=875.0, ri=272.0, ro=284.0)                            # NGV2 hook + R2 shroud (rev 6: x1 850 -> 875)
+X_PIN = X('R1', 'te') + 0.5 * A.GAP2                             # C1 - C2 flange / pin plane (between R1 and NGV2; rev 6: kept
+                                                                 # behind R1, so C1 and the pins stay, C2 takes the 25 mm)
+LINER = dict(t=3.0, ax_cl=0.5, web=4.0)                          # rev 6 gap liners: thickness, axial clearance, support web
 PIN = dict(n=8, d=20.0, r0=286.0, r1=CAS['ri'] + CAS['t'] - 4.0 + 22.0)       # head seats on the casing boss
 FLANGE_C = dict(t=8.0, ro=300.0)                                 # C1 / C2 bolted flange
 SEAL = dict(ri=92.6, ro=96.0, hc=3.4)                            # diaphragm honeycomb seal over the 92 mm rotor flanges
@@ -94,7 +100,7 @@ def carriers():
     c1 = c1.fuse(tube(xf - t, xf, FLANGE_C['ro'], C1['ri']))
     n2_out = A.r_tip(A.X_TE['N2']) + 8.0
     c2 = tube(xf, C2['x1'], C2['ro'], C2['ri']).fuse(tube(xf, xf + t, FLANGE_C['ro'], C2['ri']))
-    c2 = c2.fuse(tube(xf + t, xf + t + 10.0, C2['ri'], n2_out + 0.3))         # NGV2 hook
+    c2 = c2.fuse(tube(X('N2', 'le') + 3.5, X('N2', 'le') + 13.5, C2['ri'], n2_out + 0.3))   # NGV2 hook (over the outer ring)
     c2 = c2.fuse(tube(C2['x1'] - 8.0, C2['x1'], C2['ro'] + 10.0, C2['ri']))   # rear lip (rear pin slots)
     bolts = G.holes(xf - t - 1, xf + t + 1, 0.5 * (FLANGE_C['ro'] + max(C1['ro'], C2['ri'])) + 2.0, 11.0, 24)
     c1 = c1.cut(bolts); c2 = c2.cut(bolts)
@@ -153,6 +159,23 @@ def diaphragm(x_ring, r_ring, x_seal, x_seal_len, t=3.0):
     return cone.fuse(seal_back).removeSplitter(), hc
 
 
+def gap_liners():
+    """rev 6: the open R1 - NGV2 gap. Outer liner on the casing line r_tip(x) from the R1 shroud to the NGV2 outer ring with
+    a web up to the C2 bore at its aft end; inner ring on the hub line r_hub(x) from behind the R1 platform to the NGV2
+    inner ring, with a flange down to the ring's front face (bolted, not modelled)"""
+    q = LINER; xa, xb = X('R1', 'te') + 3.0 + q['ax_cl'], X('N2', 'le') - 4.0 - q['ax_cl']
+    xs = sorted({xa, xb} | {x + o for x, _ in A.H_ST if xa < x + o < xb})
+    rt = [(x, A.r_tip(x - o)) for x in xs]
+    outer = revolve(rt + [(xb, C2['ri'] - 0.3), (xb - q['web'], C2['ri'] - 0.3), (xb - q['web'], A.r_tip(xb - q['web'] - o) + q['t'])] +
+                    [(x, r + q['t']) for x, r in rt[::-1] if x < xb - q['web']])
+    xi = X('R1', 'te') + A.PLAT_OVH + 1.5                                  # 1.5 mm axial gap to the R1 platform (rim seal)
+    xs = sorted({xi, xb} | {x + o for x, _ in A.H_ST if xi < x + o < xb})
+    rh = [(x, A.r_hub(x - o)) for x in xs]
+    inner = revolve(rh + [(xb, A.r_hub(xb - o) - 10.0), (xb - q['web'], A.r_hub(xb - o) - 10.0), (xb - q['web'], A.r_hub(xb - q['web'] - o) - q['t'])] +
+                    [(x, r - q['t']) for x, r in rh[::-1] if x < xb - q['web']])
+    return outer, inner
+
+
 def pins():
     App, Part, V = _fc()
     ps = []
@@ -172,6 +195,8 @@ def build_all():
     c1, c2 = carriers()
     out['HS-210 Shroud carrier C1 (NGV1 + R1, 1.4828)'] = (c1, '1.4828', 'carrier')
     out['HS-220 Shroud carrier C2 (NGV2 + R2, 1.4828)'] = (c2, '1.4828', 'carrier')
+    lo, li = gap_liners()
+    out['HS-222 Gap liner R1 - NGV2, outer (Hastelloy X)'] = (lo, 'Hastelloy X', 'carrier')
     for row, tag in (('R1', 'HS-211'), ('R2', 'HS-221')):
         hc, bk = shroud_ring(row)
         out['%s Honeycomb shroud %s (Hastelloy X)' % (tag, row)] = (hc, 'Hastelloy X honeycomb', 'honeycomb')
@@ -181,9 +206,10 @@ def build_all():
     out['HS-230 Front diaphragm (Hastelloy X)'] = (d1, 'Hastelloy X', 'diaphragm')
     out['HS-231 Front seal honeycomb'] = (h1, 'Hastelloy X honeycomb', 'honeycomb')
     n2_in = A.r_hub(0.5 * (A.X_LE['N2'] + A.X_TE['N2'])) - 6.0
-    d2, h2 = diaphragm(0.5 * (X('N2', 'le') + X('N2', 'te')) - 4.0, n2_in, G.X_J['R1_R2'] - 14.0, 28.0)
+    d2, h2 = diaphragm(0.5 * (X('N2', 'le') + X('N2', 'te')) - 4.0, n2_in, G.X_J['R1_spc'] + 2.0, G.L_TSPC - 4.0)   # over the spacer fins
     out['HS-232 Interstage diaphragm (Hastelloy X)'] = (d2, 'Hastelloy X', 'diaphragm')
     out['HS-233 Interstage seal honeycomb'] = (h2, 'Hastelloy X honeycomb', 'honeycomb')
+    out['HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)'] = (li, 'Hastelloy X', 'diaphragm')
     out['HS-240 Radial centring pins x8 (1.4980)'] = (pins(), '1.4980 (A286)', 'pins')
     return out
 

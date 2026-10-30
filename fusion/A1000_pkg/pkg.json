@@ -699,7 +699,7 @@
     0.0
    ],
    "material": "P355NH",
-   "mass_kg": 348.83,
+   "mass_kg": 354.44,
    "step": "../A1000_comb/CB_340_Scroll_pressure_casing_upper_half__P355NH.step",
    "dx": 0.0
   },
@@ -710,7 +710,7 @@
     0.0
    ],
    "material": "P355NH",
-   "mass_kg": 206.7,
+   "mass_kg": 211.6,
    "step": "../A1000_comb/CB_341_Scroll_pressure_casing_lower_half__P355NH.step",
    "dx": 0.0
   },
@@ -935,6 +935,17 @@
    "dx": 0.0
   },
   {
+   "name": "RT-107 Turbine spacer ring R1 - R2",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "mass_kg": 2.617,
+   "step": "../A1000_rotor/RT_107_Turbine_spacer_ring_R1___R2.step",
+   "dx": 0.0
+  },
+  {
    "name": "RT-111 Studs + nuts drum - R1 (16 x M10)",
    "group": "rotor",
    "inst": [
@@ -952,7 +963,7 @@
     0.0
    ],
    "material": "IN718 / Waspaloy nuts",
-   "mass_kg": 0.325,
+   "mass_kg": 0.572,
    "step": "../A1000_rotor/RT_112_Studs___nuts_R1___R2__16_x_M10.step",
    "dx": 0.0
   },
@@ -974,7 +985,7 @@
     0.0
    ],
    "material": "MAR-M247",
-   "mass_kg": 45.329,
+   "mass_kg": 45.331,
    "step": "../A1000_rotor/A1000_R1_disc_with_arms__cast_MAR_M247.step",
    "dx": 0.0
   },
@@ -985,7 +996,7 @@
     0.0
    ],
    "material": "MAR-M247",
-   "mass_kg": 50.473,
+   "mass_kg": 50.474,
    "step": "../A1000_rotor/A1000_R2_disc_with_arms__cast_MAR_M247.step",
    "dx": 0.0
   },
@@ -1106,7 +1117,7 @@
     0.0
    ],
    "material": "EN-GJS-400-18",
-   "mass_kg": 22.602,
+   "mass_kg": 21.19,
    "step": "../A1000_rotor/TB_thrust_housing___inlet_hub_fairing.step",
    "dx": 0.0
   },
@@ -1117,7 +1128,7 @@
     0.0
    ],
    "material": "EN-GJS-400-18LT",
-   "mass_kg": 52.94,
+   "mass_kg": 57.51,
    "step": "../A1000_hot/HS_201_Outer_casing_upper_half__EN_GJS_400_18LT.step",
    "dx": 0.0
   },
@@ -1128,7 +1139,7 @@
     0.0
    ],
    "material": "EN-GJS-400-18LT",
-   "mass_kg": 52.94,
+   "mass_kg": 57.51,
    "step": "../A1000_hot/HS_202_Outer_casing_lower_half__EN_GJS_400_18LT.step",
    "dx": 0.0
   },
@@ -1150,8 +1161,19 @@
     0.0
    ],
    "material": "1.4828",
-   "mass_kg": 22.85,
+   "mass_kg": 26.99,
    "step": "../A1000_hot/HS_220_Shroud_carrier_C2__NGV2___R2__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-222 Gap liner R1 - NGV2, outer (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "mass_kg": 1.99,
+   "step": "../A1000_hot/HS_222_Gap_liner_R1___NGV2__outer__Hastelloy_X.step",
    "dx": 0.0
   },
   {
@@ -1227,7 +1249,7 @@
     0.0
    ],
    "material": "Hastelloy X",
-   "mass_kg": 2.68,
+   "mass_kg": 2.47,
    "step": "../A1000_hot/HS_232_Interstage_diaphragm__Hastelloy_X.step",
    "dx": 0.0
   },
@@ -1238,8 +1260,19 @@
     0.0
    ],
    "material": "Hastelloy X honeycomb",
-   "mass_kg": 0.04,
+   "mass_kg": 0.03,
    "step": "../A1000_hot/HS_233_Interstage_seal_honeycomb.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "mass_kg": 1.07,
+   "step": "../A1000_hot/HS_234_Gap_ring_R1___NGV2__inner__Hastelloy_X.step",
    "dx": 0.0
   },
   {
