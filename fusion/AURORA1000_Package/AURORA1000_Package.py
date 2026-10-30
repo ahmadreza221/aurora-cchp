@@ -24,7 +24,8 @@ PKG = os.path.normpath(os.path.join(HERE, '..', 'A1000_pkg'))
 VERIFY = os.path.normpath(os.path.join(HERE, '..', '_a1000_pkg_verify.json'))
 LABEL = {'turbine': 'Turbine blisks', 'ngv': 'Turbine NGVs', 'rotor': 'Rotor shaft', 'comp': 'Compressor impellers',
          'casing': 'Casings and inlet', 'comb': 'Combustor', 'exhaust': 'Exhaust', 'bearing': 'Bearings',
-         'recup': 'Recuperator', 'gearbox': 'Gearbox', 'gen': 'Generator', 'aux': 'Lube oil', 'skid': 'Skid'}
+         'recup': 'Recuperator', 'gearbox': 'Gearbox', 'gen': 'Generator', 'aux': 'Lube oil', 'skid': 'Skid',
+         'hot': 'Turbine hot section'}
 OPACITY = {'casing': 0.22, 'exhaust': 0.30, 'recup': 0.30, 'comb': 0.45}       # by group, 1.0 otherwise
 OPACITY_PART = {'Turbine casing insulation': 0.10, 'Air inlet plenum + bellmouth': 0.15}
 

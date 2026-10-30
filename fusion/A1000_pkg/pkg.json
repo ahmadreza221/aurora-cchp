@@ -92,6 +92,13 @@
     69,
     76
    ]
+  },
+  "hot": {
+   "rgb": [
+    184,
+    140,
+    107
+   ]
   }
  },
  "parts": [
@@ -480,28 +487,6 @@
    "dx": 0.0
   },
   {
-   "name": "Turbine casing + shroud carrier",
-   "group": "casing",
-   "inst": [
-    0.0
-   ],
-   "desc": "shroud carrier (1.4828) at ~550 / 500 C for 0.45 / 0.55 mm running tip clearance",
-   "material": "1.4828 + honeycomb shroud (Hastelloy X)",
-   "step": "Turbine_casing___shroud_carrier.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Turbine casing insulation",
-   "group": "casing",
-   "inst": [
-    0.0
-   ],
-   "desc": "ceramic-fibre blanket, skin <= 60 C",
-   "material": "insulation",
-   "step": "Turbine_casing_insulation.step",
-   "dx": 0.0
-  },
-  {
    "name": "Combustor-to-NGV1 scroll",
    "group": "comb",
    "inst": [
@@ -884,6 +869,149 @@
    "material": "EN-GJS-400-18",
    "mass_kg": 20.495,
    "step": "../A1000_rotor/TB_thrust_housing___inlet_seal.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-201 Outer casing upper half (EN-GJS-400-18LT)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18LT",
+   "mass_kg": 52.94,
+   "step": "../A1000_hot/HS_201_Outer_casing_upper_half__EN_GJS_400_18LT.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-202 Outer casing lower half (EN-GJS-400-18LT)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18LT",
+   "mass_kg": 52.94,
+   "step": "../A1000_hot/HS_202_Outer_casing_lower_half__EN_GJS_400_18LT.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-210 Shroud carrier C1 (NGV1 + R1, 1.4828)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4828",
+   "mass_kg": 12.41,
+   "step": "../A1000_hot/HS_210_Shroud_carrier_C1__NGV1___R1__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-220 Shroud carrier C2 (NGV2 + R2, 1.4828)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4828",
+   "mass_kg": 22.85,
+   "step": "../A1000_hot/HS_220_Shroud_carrier_C2__NGV2___R2__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-211 Honeycomb shroud R1 (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "mass_kg": 0.13,
+   "step": "../A1000_hot/HS_211_Honeycomb_shroud_R1__Hastelloy_X.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-211 Shroud backing R1",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "mass_kg": 1.26,
+   "step": "../A1000_hot/HS_211_Shroud_backing_R1.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-221 Honeycomb shroud R2 (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "mass_kg": 0.21,
+   "step": "../A1000_hot/HS_221_Honeycomb_shroud_R2__Hastelloy_X.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-221 Shroud backing R2",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "mass_kg": 1.98,
+   "step": "../A1000_hot/HS_221_Shroud_backing_R2.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-230 Front diaphragm (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "mass_kg": 2.81,
+   "step": "../A1000_hot/HS_230_Front_diaphragm__Hastelloy_X.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-231 Front seal honeycomb",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "mass_kg": 0.03,
+   "step": "../A1000_hot/HS_231_Front_seal_honeycomb.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-232 Interstage diaphragm (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "mass_kg": 2.68,
+   "step": "../A1000_hot/HS_232_Interstage_diaphragm__Hastelloy_X.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-233 Interstage seal honeycomb",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "mass_kg": 0.04,
+   "step": "../A1000_hot/HS_233_Interstage_seal_honeycomb.step",
+   "dx": 0.0
+  },
+  {
+   "name": "HS-240 Radial centring pins x8 (1.4980)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4980 (A286)",
+   "mass_kg": 2.4,
+   "step": "../A1000_hot/HS_240_Radial_centring_pins_x8__1_4980.step",
    "dx": 0.0
   }
  ]

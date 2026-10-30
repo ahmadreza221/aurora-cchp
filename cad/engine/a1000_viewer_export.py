@@ -58,6 +58,7 @@ GROUPS = {   # name: (rgba, metallic, roughness)
     'gen':     ((0.22, 0.36, 0.62, 1.0), 0.40, 0.55),
     'aux':     ((0.86, 0.72, 0.20, 1.0), 0.40, 0.60),
     'skid':    ((0.25, 0.27, 0.30, 1.0), 0.50, 0.60),
+    'hot':     ((0.72, 0.55, 0.42, 1.0), 0.60, 0.45),
 }
 parts = []
 
@@ -325,6 +326,14 @@ if STEP_OUT:
             pkg['parts'].append(dict(name=name, group=gmap[q['group']], inst=[0.0], material=q['material'], mass_kg=q['mass_kg'],
                                      step='../A1000_rotor/' + q['step'], dx=0.0))
         print('rotor rev 1 parts from fusion/A1000_rotor')
+    # hot section rev 1 (cad/engine/a1000_hot_section.py --cad): split outer casing, carriers, shrouds, diaphragms, pins
+    hot_json = os.path.join(ROOT, 'fusion', 'A1000_hot', 'parts.json')
+    if os.path.exists(hot_json):
+        pkg['parts'] = [e for e in pkg['parts'] if e['name'] not in ('Turbine casing + shroud carrier', 'Turbine casing insulation')]
+        for name, q in json.load(open(hot_json))['parts'].items():
+            pkg['parts'].append(dict(name=name, group='casing' if q['group'] == 'casing' else 'hot', inst=[0.0], material=q['material'],
+                                     mass_kg=q['mass_kg'], step='../A1000_hot/' + q['step'], dx=0.0))
+        print('hot section rev 1 parts from fusion/A1000_hot')
     json.dump(pkg, open(os.path.join(STEP_OUT, 'pkg.json'), 'w'), indent=1)
     print('fusion/A1000_pkg: %d parts' % len(pkg['parts']))
     raise SystemExit(0)
