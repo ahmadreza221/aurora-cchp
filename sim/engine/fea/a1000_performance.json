@@ -1,0 +1,138 @@
+{
+ "air_kg_s": 6.316885928017208,
+ "site": "design_chilled",
+ "gap": {
+  "M": 0.28775809313748657,
+  "h_mm": 37.28767162561286,
+  "dp0_frac": 0.0002215147923287621,
+  "d_eta_t": -0.0001921928792544986
+ },
+ "case_asbuilt": {
+  "PR": 3.805352629908913,
+  "eta_c": 0.8119897705256107,
+  "eta_t": 0.8958078071207455,
+  "dp_comb": 0.03900569317942317,
+  "P_mech_kW": 28.550157788948376,
+  "leak": 0.015
+ },
+ "waterfall": [
+  {
+   "step": "meanline (R38: eta_c 0.838, eta_t 0.901, dp_comb 4.0 %, eta_mech 0.994)",
+   "P_grid_kW": 1000.0000000000001,
+   "eta_el": 0.3852825339317049,
+   "eta_el_grid": 0.37772797444284795,
+   "fuel_kW": 2647.4078375450185,
+   "gas_Sm3_h": 276.7424838589337,
+   "T_exh_C": 246.2723539150786,
+   "q_hotwater_kW": 989.8396657352794,
+   "q_cooling_kW": 692.8877660146956,
+   "eta_total": 0.7516181064042207,
+   "P3_bar": 3.546760931999999,
+   "TIT_C": 950.0000000000001
+  },
+  {
+   "step": "compressor detail: PR 3.805, eta 0.812 to the collector",
+   "P_grid_kW": 969.7677071719559,
+   "eta_el": 0.37422053792423277,
+   "eta_el_grid": 0.3666587527657033,
+   "fuel_kW": 2644.8781049327413,
+   "gas_Sm3_h": 276.4780423638636,
+   "T_exh_C": 250.67578507893552,
+   "q_hotwater_kW": 1018.1082708395556,
+   "q_cooling_kW": 712.6757895876889,
+   "eta_total": 0.7515945533762369,
+   "P3_bar": 3.551756852695891,
+   "TIT_C": 950.0000000000001
+  },
+  {
+   "step": "turbine rev 5 chords -0.5 pt, R1-NGV2 gap +25 mm -0.02 pt",
+   "P_grid_kW": 958.2269078939559,
+   "eta_el": 0.37142301924746585,
+   "eta_el_grid": 0.3638292183358326,
+   "fuel_kW": 2633.7271983732335,
+   "gas_Sm3_h": 275.312400434882,
+   "T_exh_C": 250.88712582540336,
+   "q_hotwater_kW": 1019.3571918205544,
+   "q_cooling_kW": 713.5500342743879,
+   "eta_total": 0.7508689969621754,
+   "P3_bar": 3.551756852695891,
+   "TIT_C": 950.0000000000001
+  },
+  {
+   "step": "combustor + scroll to NGV1: dP0 3.90 %",
+   "P_grid_kW": 959.686577375425,
+   "eta_el": 0.37177813657258546,
+   "eta_el_grid": 0.3641884003210472,
+   "fuel_kW": 2635.1376829394385,
+   "gas_Sm3_h": 275.4598431510214,
+   "T_exh_C": 250.860412067183,
+   "q_hotwater_kW": 1019.1993497116192,
+   "q_cooling_kW": 713.4395447981334,
+   "eta_total": 0.7509611129235723,
+   "P3_bar": 3.555435536095543,
+   "TIT_C": 950.0000000000001
+  },
+  {
+   "step": "bearings + seals 28.6 kW (cycle allowance 6.0 kW)",
+   "P_grid_kW": 938.6757037568611,
+   "eta_el": 0.3638047871136203,
+   "eta_el_grid": 0.35621505086208205,
+   "fuel_kW": 2635.1376829394385,
+   "gas_Sm3_h": 275.4598431510214,
+   "T_exh_C": 250.860412067183,
+   "q_hotwater_kW": 1019.1993497116192,
+   "q_cooling_kW": 713.4395447981334,
+   "eta_total": 0.742987763464607,
+   "P3_bar": 3.555435536095543,
+   "TIT_C": 950.0000000000001
+  }
+ ],
+ "tit_for_1MW": {
+  "step": "as built, TIT raised to 986 C for 1,000 kW",
+  "P_grid_kW": 999.9999999999989,
+  "eta_el": 0.37257336717242384,
+  "eta_el_grid": 0.3652680070317881,
+  "fuel_kW": 2737.7158161923885,
+  "gas_Sm3_h": 286.18268191558377,
+  "T_exh_C": 256.0360023240255,
+  "q_hotwater_kW": 1053.526509109852,
+  "q_cooling_kW": 737.4685563768963,
+  "eta_total": 0.7500875353695011,
+  "P3_bar": 3.555435536095543,
+  "TIT_C": 986.1719935869183,
+  "R1_root_C": 899.031189360028,
+  "R1_creep_h_min": 48420.503370548504
+ },
+ "dTIT_K": 36.171993586918234,
+ "tit_life_limit": {
+  "step": "as built, TIT 970 C (R1 creep 1e5 h, min curve)",
+  "P_grid_kW": 973.0876763285156,
+  "eta_el": 0.36882045388096685,
+  "eta_el_grid": 0.36139270177665095,
+  "fuel_kW": 2692.6046695041073,
+  "gas_Sm3_h": 281.4670613726543,
+  "T_exh_C": 253.75306543172928,
+  "q_hotwater_kW": 1038.373439533626,
+  "q_cooling_kW": 726.8614076735381,
+  "eta_total": 0.7470317268047333,
+  "P3_bar": 3.555435536095543,
+  "TIT_C": 970.3060123917822,
+  "R1_root_C": 884.2630801692193,
+  "R1_creep_h_min": 100000.00000000081
+ },
+ "dTIT_life_K": 20.306012391782133,
+ "shortfall_at_life_limit_kW": 26.912323671484387,
+ "secondary_air": {
+  "allowance_pct": 1.5,
+  "labyrinths_bypassing_turbine_pct": 0.8449544373030995,
+  "left_for_joints_pct": 0.6550455626969005,
+  "backface_recirculation_pct": 1.3697269887496812
+ },
+ "open": [
+  "compressor inlet plenum and radial-inlet bend loss (cycle dp_inlet 1.0 % kept)",
+  "exhaust diffuser and recuperator ducting (cycle dp_exh 1.5 %, dp_rec 2.5 / 3.5 % kept)",
+  "turbine tip clearance 0.46 / 0.55 mm against the meanline eta_t (no row-by-row loss model yet)",
+  "disc windage of the turbine cavities",
+  "NGV half-joint strip seal leakage (inside the 1.5 % allowance)"
+ ]
+}
