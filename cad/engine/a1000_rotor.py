@@ -98,7 +98,7 @@ X_BRG = (65.0, RD.rotor('A')['brg'][1])                          # journal 1 at 
                                                                  # x 156, so the stage-1 radial inlet has x 156-205 to turn
 # inlet hub fairing (rear of the thrust housing = hub wall of the stage-1 radial inlet bend): (x, r) points from the
 # radial wall at x 157 to the inducer hub r 60 at the impeller face; the shroud side (bellmouth) is the compressor design
-INLET_HUB = [(157.0, 150.0), (160.0, 132.0), (165.0, 112.0), (172.0, 94.0), (181.0, 79.0), (191.0, 68.0), (201.0, 61.5)]
+INLET_HUB = [(157.0, 150.0), (158.0, 132.0), (160.5, 112.0), (166.5, 94.0), (177.0, 79.0), (189.0, 68.0), (201.0, 61.5)]   # 5 mm fuller at r 95-130 (compressor 1.1: area dip 0.91 removed)
 
 
 def stub_profile():
