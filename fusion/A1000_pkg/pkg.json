@@ -167,18 +167,6 @@
    "dx": 673.2888416633899
   },
   {
-   "name": "Blisk 1 disc",
-   "group": "turbine",
-   "inst": [
-    0.0
-   ],
-   "desc": "stage-1 blisk disc (bore-less, curvic hubs), vacuum cast + HIP",
-   "material": "MAR-M247",
-   "mass_kg": 42.3,
-   "step": "../A1000/A1000_R1_disc.step",
-   "dx": 673.2888416633899
-  },
-  {
    "name": "Blisk 1 blade x59",
    "group": "turbine",
    "inst": [
@@ -296,18 +284,6 @@
    "dx": 673.2888416633899
   },
   {
-   "name": "Blisk 2 disc",
-   "group": "turbine",
-   "inst": [
-    0.0
-   ],
-   "desc": "stage-2 blisk disc",
-   "material": "MAR-M247",
-   "mass_kg": 47.5,
-   "step": "../A1000/A1000_R2_disc.step",
-   "dx": 673.2888416633899
-  },
-  {
    "name": "Blisk 2 blade x36",
    "group": "turbine",
    "inst": [
@@ -353,102 +329,6 @@
    "mass_kg": 5.0,
    "step": "../A1000/A1000_R2_blade.step",
    "dx": 673.2888416633899
-  },
-  {
-   "name": "Coupling shaft",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "output shaft to the gearbox coupling",
-   "material": "42CrMo4",
-   "mass_kg": 3.9,
-   "step": "Coupling_shaft.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Journal / thrust shaft",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "front journal bearing and thrust collar",
-   "material": "42CrMo4",
-   "mass_kg": 7.8,
-   "step": "Journal___thrust_shaft.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Interstage spacer",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "curvic coupling both ends, return-channel seal",
-   "material": "42CrMo4",
-   "mass_kg": 6.2,
-   "step": "Interstage_spacer.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Compressor-turbine drum",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "tie bolt inside, labyrinth seals",
-   "material": "IN718",
-   "mass_kg": 16.3,
-   "step": "Compressor_turbine_drum.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Turbine interstage spacer",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "under NGV2, interstage seal",
-   "material": "IN718",
-   "mass_kg": 5.1,
-   "step": "Turbine_interstage_spacer.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Rear stub shaft",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "rear journal bearing in the exhaust hub",
-   "material": "IN718",
-   "mass_kg": 7.1,
-   "step": "Rear_stub_shaft.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Thrust collar",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "double-acting thrust collar, cold end",
-   "material": "42CrMo4",
-   "mass_kg": 5.6,
-   "step": "Thrust_collar.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Tie bolt",
-   "group": "rotor",
-   "inst": [
-    0.0
-   ],
-   "desc": "preloaded tie bolt, collar to blisk-1 hub (clamps the curvic stack)",
-   "material": "IN718",
-   "mass_kg": 8.1,
-   "step": "Tie_bolt.step",
-   "dx": 0.0
   },
   {
    "name": "High-speed coupling",
@@ -677,39 +557,6 @@
    "dx": 0.0
   },
   {
-   "name": "Journal bearing 1 (tilting pad + SFD)",
-   "group": "bearing",
-   "inst": [
-    0.0
-   ],
-   "desc": "tilting-pad journal D110 x 55, squeeze-film damper D150, cage spring 2.5e7 N/m",
-   "material": "steel / babbitt pads",
-   "step": "Journal_bearing_1__tilting_pad___SFD.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Journal bearing 2 (tilting pad + SFD)",
-   "group": "bearing",
-   "inst": [
-    0.0
-   ],
-   "desc": "tilting-pad journal D110 x 55, squeeze-film damper D150, cage spring 2.5e7 N/m",
-   "material": "steel / babbitt pads",
-   "step": "Journal_bearing_2__tilting_pad___SFD.step",
-   "dx": 0.0
-  },
-  {
-   "name": "Thrust bearing",
-   "group": "bearing",
-   "inst": [
-    0.0
-   ],
-   "desc": "double-acting tilting-pad thrust bearing, shared oil with the gearbox",
-   "material": "steel / babbitt",
-   "step": "Thrust_bearing.step",
-   "dx": 0.0
-  },
-  {
    "name": "Recuperator (bought in)",
    "group": "recup",
    "inst": [
@@ -795,6 +642,248 @@
    "desc": "welded steel base frame, about 5.9 m with the side-mounted recuperator",
    "material": "S355 sections",
    "step": "Base_frame__skid.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-101 Front stub shaft + thrust collar",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "34CrNiMo6 QT",
+   "mass_kg": 11.881,
+   "step": "../A1000_rotor/RT_101_Front_stub_shaft___thrust_collar.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-102 Tie bolt M42 IN718",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "mass_kg": 3.976,
+   "step": "../A1000_rotor/RT_102_Tie_bolt_M42_IN718.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-103 Tie-bolt nut",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "mass_kg": 0.495,
+   "step": "../A1000_rotor/RT_103_Tie_bolt_nut.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-104 Compressor spacer",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "17-4PH H1025",
+   "mass_kg": 4.769,
+   "step": "../A1000_rotor/RT_104_Compressor_spacer.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-105 Drum IN718",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "mass_kg": 13.057,
+   "step": "../A1000_rotor/RT_105_Drum_IN718.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-106 Rear stub shaft",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "mass_kg": 6.465,
+   "step": "../A1000_rotor/RT_106_Rear_stub_shaft.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-111 Studs + nuts drum - R1 (16 x M10)",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718 / Waspaloy nuts",
+   "mass_kg": 0.325,
+   "step": "../A1000_rotor/RT_111_Studs___nuts_drum___R1__16_x_M10.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-112 Studs + nuts R1 - R2 (16 x M10)",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718 / Waspaloy nuts",
+   "mass_kg": 0.325,
+   "step": "../A1000_rotor/RT_112_Studs___nuts_R1___R2__16_x_M10.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-113 Studs + nuts R2 - rear stub (16 x M10)",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718 / Waspaloy nuts",
+   "mass_kg": 0.325,
+   "step": "../A1000_rotor/RT_113_Studs___nuts_R2___rear_stub__16_x_M10.step",
+   "dx": 0.0
+  },
+  {
+   "name": "A1000_R1 disc with arms (cast MAR-M247)",
+   "group": "turbine",
+   "inst": [
+    0.0
+   ],
+   "material": "MAR-M247",
+   "mass_kg": 45.329,
+   "step": "../A1000_rotor/A1000_R1_disc_with_arms__cast_MAR_M247.step",
+   "dx": 0.0
+  },
+  {
+   "name": "A1000_R2 disc with arms (cast MAR-M247)",
+   "group": "turbine",
+   "inst": [
+    0.0
+   ],
+   "material": "MAR-M247",
+   "mass_kg": 50.473,
+   "step": "../A1000_rotor/A1000_R2_disc_with_arms__cast_MAR_M247.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB1 tilting pads x5 (steel + babbitt)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel + babbitt",
+   "mass_kg": 0.883,
+   "step": "../A1000_rotor/JB1_tilting_pads_x5__steel___babbitt.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB1 pad carrier + end plates (split)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel",
+   "mass_kg": 2.321,
+   "step": "../A1000_rotor/JB1_pad_carrier___end_plates__split.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB1 integral S-spring damper ring (ISFD, 8 springs)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "17-4PH H1100",
+   "mass_kg": 2.23,
+   "step": "../A1000_rotor/JB1_integral_S_spring_damper_ring__ISFD__8_springs.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB1 bearing cartridge housing",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
+   "mass_kg": 16.445,
+   "step": "../A1000_rotor/JB1_bearing_cartridge_housing.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB2 tilting pads x5 (steel + babbitt)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel + babbitt",
+   "mass_kg": 0.883,
+   "step": "../A1000_rotor/JB2_tilting_pads_x5__steel___babbitt.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB2 pad carrier + end plates (split)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel",
+   "mass_kg": 2.321,
+   "step": "../A1000_rotor/JB2_pad_carrier___end_plates__split.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB2 integral S-spring damper ring (ISFD, 8 springs)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "17-4PH H1100",
+   "mass_kg": 2.23,
+   "step": "../A1000_rotor/JB2_integral_S_spring_damper_ring__ISFD__8_springs.step",
+   "dx": 0.0
+  },
+  {
+   "name": "JB2 bearing cartridge housing",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
+   "mass_kg": 21.126,
+   "step": "../A1000_rotor/JB2_bearing_cartridge_housing.step",
+   "dx": 0.0
+  },
+  {
+   "name": "TB thrust pads 2 x 8 (steel + babbitt)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel + babbitt",
+   "mass_kg": 1.512,
+   "step": "../A1000_rotor/TB_thrust_pads_2_x_8__steel___babbitt.step",
+   "dx": 0.0
+  },
+  {
+   "name": "TB carrier rings (split)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel",
+   "mass_kg": 1.676,
+   "step": "../A1000_rotor/TB_carrier_rings__split.step",
+   "dx": 0.0
+  },
+  {
+   "name": "TB thrust housing + inlet seal",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18",
+   "mass_kg": 20.495,
+   "step": "../A1000_rotor/TB_thrust_housing___inlet_seal.step",
    "dx": 0.0
   }
  ]

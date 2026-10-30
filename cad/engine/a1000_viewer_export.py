@@ -313,6 +313,18 @@ if STEP_OUT:
             fn = ''.join(c if c.isalnum() else '_' for c in p['name']).strip('_') + '.step'
             p['shape'].exportStep(os.path.join(STEP_OUT, fn)); e.update(step=fn, dx=0.0)
         pkg['parts'].append(e); print('step  %-40s %s' % (p['name'], e['step']), flush=True)
+    # rotor rev 1 (cad/engine/a1000_rotor.py --cad): the detailed stack, blisks with arms and bearings replace the
+    # rotor-dynamics segments, the plain discs and the bearing envelopes
+    rotor_json = os.path.join(ROOT, 'fusion', 'A1000_rotor', 'parts.json')
+    if os.path.exists(rotor_json):
+        old = lambda e: (e['group'] in ('rotor', 'bearing') and e['name'] != 'High-speed coupling') or e['name'] in ('Blisk 1 disc', 'Blisk 2 disc')
+        pkg['parts'] = [e for e in pkg['parts'] if not old(e)]
+        gmap = dict(shaft='rotor', tie='rotor', drum='rotor', studs='rotor', blisk='turbine', pads='bearing', carrier='bearing',
+                    cage='bearing', housing='bearing')
+        for name, q in json.load(open(rotor_json))['parts'].items():
+            pkg['parts'].append(dict(name=name, group=gmap[q['group']], inst=[0.0], material=q['material'], mass_kg=q['mass_kg'],
+                                     step='../A1000_rotor/' + q['step'], dx=0.0))
+        print('rotor rev 1 parts from fusion/A1000_rotor')
     json.dump(pkg, open(os.path.join(STEP_OUT, 'pkg.json'), 'w'), indent=1)
     print('fusion/A1000_pkg: %d parts' % len(pkg['parts']))
     raise SystemExit(0)

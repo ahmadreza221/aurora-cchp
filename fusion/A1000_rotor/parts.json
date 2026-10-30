@@ -1,0 +1,319 @@
+{
+ "frame": "rotor frame mm, x = engine axis from the gearbox coupling face",
+ "x_offset_turbine": 673.2888416633899,
+ "joints": {
+  "drum_R1": 666.268042120347,
+  "R1_R2": 766.2585740448578,
+  "R2_stub": 872.2491059693687
+ },
+ "parts": {
+  "RT-101 Front stub shaft + thrust collar": {
+   "step": "RT_101_Front_stub_shaft___thrust_collar.step",
+   "material": "34CrNiMo6 QT",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 1513.51,
+   "mass_kg": 11.881,
+   "x": [
+    0.0,
+    206.2
+   ],
+   "r": 82.0
+  },
+  "RT-102 Tie bolt M42 IN718": {
+   "step": "RT_102_Tie_bolt_M42_IN718.step",
+   "material": "IN718",
+   "group": "tie",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 485.49,
+   "mass_kg": 3.976,
+   "x": [
+    20.0,
+    626.0
+   ],
+   "r": 22.9
+  },
+  "RT-103 Tie-bolt nut": {
+   "step": "RT_103_Tie_bolt_nut.step",
+   "material": "IN718",
+   "group": "tie",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 60.39,
+   "mass_kg": 0.495,
+   "x": [
+    18.0,
+    48.0
+   ],
+   "r": 33.0
+  },
+  "RT-104 Compressor spacer": {
+   "step": "RT_104_Compressor_spacer.step",
+   "material": "17-4PH H1025",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 611.36,
+   "mass_kg": 4.769,
+   "x": [
+    327.26,
+    380.06
+   ],
+   "r": 79.0
+  },
+  "RT-105 Drum IN718": {
+   "step": "RT_105_Drum_IN718.step",
+   "material": "IN718",
+   "group": "drum",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 1594.29,
+   "mass_kg": 13.057,
+   "x": [
+    511.67,
+    667.57
+   ],
+   "r": 92.0
+  },
+  "RT-106 Rear stub shaft": {
+   "step": "RT_106_Rear_stub_shaft.step",
+   "material": "IN718",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 789.38,
+   "mass_kg": 6.465,
+   "x": [
+    870.95,
+    982.75
+   ],
+   "r": 92.0
+  },
+  "RT-111 Studs + nuts drum - R1 (16 x M10)": {
+   "step": "RT_111_Studs___nuts_drum___R1__16_x_M10.step",
+   "material": "IN718 / Waspaloy nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 41.43,
+   "mass_kg": 0.325,
+   "x": [
+    657.27,
+    683.27
+   ],
+   "r": 82.47
+  },
+  "RT-112 Studs + nuts R1 - R2 (16 x M10)": {
+   "step": "RT_112_Studs___nuts_R1___R2__16_x_M10.step",
+   "material": "IN718 / Waspaloy nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 41.43,
+   "mass_kg": 0.325,
+   "x": [
+    749.26,
+    775.26
+   ],
+   "r": 82.47
+  },
+  "RT-113 Studs + nuts R2 - rear stub (16 x M10)": {
+   "step": "RT_113_Studs___nuts_R2___rear_stub__16_x_M10.step",
+   "material": "IN718 / Waspaloy nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 41.43,
+   "mass_kg": 0.325,
+   "x": [
+    855.25,
+    881.25
+   ],
+   "r": 82.47
+  },
+  "A1000_R1 disc with arms (cast MAR-M247)": {
+   "step": "A1000_R1_disc_with_arms__cast_MAR_M247.step",
+   "material": "MAR-M247",
+   "group": "blisk",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 5307.88,
+   "mass_kg": 45.329,
+   "x": [
+    664.97,
+    767.56
+   ],
+   "r": 214.24
+  },
+  "A1000_R2 disc with arms (cast MAR-M247)": {
+   "step": "A1000_R2_disc_with_arms__cast_MAR_M247.step",
+   "material": "MAR-M247",
+   "group": "blisk",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 5910.2,
+   "mass_kg": 50.473,
+   "x": [
+    764.96,
+    873.55
+   ],
+   "r": 203.02
+  },
+  "JB1 tilting pads x5 (steel + babbitt)": {
+   "step": "JB1_tilting_pads_x5__steel___babbitt.step",
+   "material": "steel + babbitt",
+   "group": "pads",
+   "valid": true,
+   "solids": 5,
+   "vol_cm3": 112.52,
+   "mass_kg": 0.883,
+   "x": [
+    72.5,
+    117.5
+   ],
+   "r": 60.43
+  },
+  "JB1 pad carrier + end plates (split)": {
+   "step": "JB1_pad_carrier___end_plates__split.step",
+   "material": "steel",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 295.64,
+   "mass_kg": 2.321,
+   "x": [
+    66.5,
+    123.5
+   ],
+   "r": 74.0
+  },
+  "JB1 integral S-spring damper ring (ISFD, 8 springs)": {
+   "step": "JB1_integral_S_spring_damper_ring__ISFD__8_springs.step",
+   "material": "17-4PH H1100",
+   "group": "cage",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 285.84,
+   "mass_kg": 2.23,
+   "x": [
+    73.5,
+    116.5
+   ],
+   "r": 92.0
+  },
+  "JB1 bearing cartridge housing": {
+   "step": "JB1_bearing_cartridge_housing.step",
+   "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2094.86,
+   "mass_kg": 16.445,
+   "x": [
+    52.5,
+    123.5
+   ],
+   "r": 165.0
+  },
+  "JB2 tilting pads x5 (steel + babbitt)": {
+   "step": "JB2_tilting_pads_x5__steel___babbitt.step",
+   "material": "steel + babbitt",
+   "group": "pads",
+   "valid": true,
+   "solids": 5,
+   "vol_cm3": 112.52,
+   "mass_kg": 0.883,
+   "x": [
+    907.75,
+    952.75
+   ],
+   "r": 60.43
+  },
+  "JB2 pad carrier + end plates (split)": {
+   "step": "JB2_pad_carrier___end_plates__split.step",
+   "material": "steel",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 295.64,
+   "mass_kg": 2.321,
+   "x": [
+    901.75,
+    958.75
+   ],
+   "r": 74.0
+  },
+  "JB2 integral S-spring damper ring (ISFD, 8 springs)": {
+   "step": "JB2_integral_S_spring_damper_ring__ISFD__8_springs.step",
+   "material": "17-4PH H1100",
+   "group": "cage",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 285.84,
+   "mass_kg": 2.23,
+   "x": [
+    908.75,
+    951.75
+   ],
+   "r": 92.0
+  },
+  "JB2 bearing cartridge housing": {
+   "step": "JB2_bearing_cartridge_housing.step",
+   "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2691.22,
+   "mass_kg": 21.126,
+   "x": [
+    887.75,
+    972.75
+   ],
+   "r": 165.0
+  },
+  "TB thrust pads 2 x 8 (steel + babbitt)": {
+   "step": "TB_thrust_pads_2_x_8__steel___babbitt.step",
+   "material": "steel + babbitt",
+   "group": "pads",
+   "valid": true,
+   "solids": 16,
+   "vol_cm3": 192.64,
+   "mass_kg": 1.512,
+   "x": [
+    133.85,
+    178.15
+   ],
+   "r": 77.89
+  },
+  "TB carrier rings (split)": {
+   "step": "TB_carrier_rings__split.step",
+   "material": "steel",
+   "group": "carrier",
+   "valid": true,
+   "solids": 2,
+   "vol_cm3": 213.48,
+   "mass_kg": 1.676,
+   "x": [
+    125.85,
+    186.15
+   ],
+   "r": 84.0
+  },
+  "TB thrust housing + inlet seal": {
+   "step": "TB_thrust_housing___inlet_seal.step",
+   "material": "EN-GJS-400-18",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2610.85,
+   "mass_kg": 20.495,
+   "x": [
+    123.5,
+    200.15
+   ],
+   "r": 165.0
+  }
+ }
+}
