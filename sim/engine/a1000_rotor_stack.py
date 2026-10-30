@@ -158,7 +158,7 @@ def stack_parts(T):
     c1, c2 = ML['compressor']
     xi1, xi2 = G.X_I1, G.X_I2; xbh = G.TIE['x_end'] - G.TIE['thread_len'] / 2
     P = []
-    P.append(('front stub', 48.0, xi1[0], math.pi * (50 ** 2 - 23 ** 2), '34CrNiMo6', T['stub'], 0.0))
+    P.append(('front stub', 48.0, xi1[0], math.pi * (48 ** 2 - 23 ** 2), '34CrNiMo6', T['stub'], 0.0))   # rev 1.3: journal r 45, shoulders r 48
     s, _ = spin_short('Al2618', 23.0, 0, 42.0, xi1[1] - xi1[0], 0.75 * c1['D2'] / 2 * 1e3)
     P.append(('impeller 1 hub', xi1[0], xi1[1], math.pi * (55 ** 2 - 23 ** 2), 'Al2618', T['imp1'], s))
     P.append(('spacer', xi1[1], xi2[0], math.pi * (58 ** 2 - 23 ** 2), '17-4PH', T['spacer'], 0.0))
@@ -273,10 +273,11 @@ def journal(W, D=None, L=None, m_pre=0.3, cb_ratio=1.4e-3, n_pad=5, arc=52.0, dT
                 K=K, C=K / OM * 0.6, Re=Re, P_kW=P / 1e3, Q_lpm=Q * 6e4, T_babbitt=T_OIL_IN + 2.2 * dT_oil, W=W)
 
 
-def thrust_bearing(W, ri=None, ro=None, n=None, fill=0.80, dT_oil=20.0):
+def thrust_bearing(W, ri=None, ro=None, n=None, n_in=None, fill=0.80, dT_oil=20.0):
     """double-acting tilting-pad thrust bearing: unit load, minimum film of the loaded side (tilting slider, W_bar 0.05),
-    power loss of the loaded side + the inactive side (film ~ 2 x) x turbulence, oil flow"""
-    ri = (ri or G.THRUST['ri']) * 1e-3; ro = (ro or G.THRUST['ro']) * 1e-3; n = n or G.THRUST['n']
+    power loss of the loaded side + the inactive side (n_in pads of the same size in the rest of the 0.30 mm end play)
+    x turbulence, oil flow"""
+    ri = (ri or G.THRUST['ri']) * 1e-3; ro = (ro or G.THRUST['ro']) * 1e-3; n = n or G.THRUST['n']; n_in = n_in or G.THRUST['n_in']
     rm = 0.5 * (ri + ro); U = OM * rm; B = rm * 2 * math.pi / n * fill; Lr = ro - ri
     A_side = n * B * Lr
     T_eff = T_OIL_IN + 0.6 * dT_oil + 12.0; mu = visc(T_eff)
@@ -285,10 +286,11 @@ def thrust_bearing(W, ri=None, ro=None, n=None, fill=0.80, dT_oil=20.0):
     h_m = 1.8 * h_min; Re = RHO_OIL * U * h_m / mu
     P_load = mu * U ** 2 * A_side / h_m * turb_factor(Re)
     h_i = 0.30e-3 - h_min                                         # inactive side: axial end play 0.30 mm
-    P_in = mu * U ** 2 * A_side / h_i * turb_factor(RHO_OIL * U * h_i / mu)
+    P_in = n_in / n * mu * U ** 2 * A_side / h_i * turb_factor(RHO_OIL * U * h_i / mu)
     P = P_load + P_in; Q = P / (RHO_OIL * CP_OIL * dT_oil)
-    return dict(ri=ri * 1e3, ro=ro * 1e3, n=n, U_mean=U, area_mm2=A_side * 1e6, unit_load_MPa=W / A_side / 1e6, h_min_um=h_min * 1e6,
-                Re=Re, P_kW=P / 1e3, P_loaded_kW=P_load / 1e3, Q_lpm=Q * 6e4, W=W, cap_kN=2.0e6 * A_side / 1e3)
+    return dict(ri=ri * 1e3, ro=ro * 1e3, n=n, n_in=n_in, U_mean=U, area_mm2=A_side * 1e6, unit_load_MPa=W / A_side / 1e6, h_min_um=h_min * 1e6,
+                Re=Re, P_kW=P / 1e3, P_loaded_kW=P_load / 1e3, Q_lpm=Q * 6e4, W=W, cap_kN=2.0e6 * A_side / 1e3,
+                cap_reverse_kN=2.0e6 * A_side * n_in / n / 1e3)
 
 
 def sfd_cage():
@@ -318,10 +320,11 @@ def detailed_rotor(sup):
     D, L = G.JOURNAL['D'], G.JOURNAL['L']; xb1, xb2 = G.X_BRG; c1, c2 = ML['compressor']
     af, fl = 2 * G.ARM['ro'], 2 * G.ARM['rf']
     xn = G.TIE['x_nut'][1]                                       # end of the nut pocket (bore 70 in front of it)
-    seg = [(0.0, 14.0, 160.0, 70.0, 'steel', True), (14.0, xb1 - L / 2 - 6, 94.0, 70.0, 'steel', True),
+    dc = 2 * (G.THRUST['ri'] - 4.0)                              # collar shoulders (the collar itself is a lumped disc)
+    seg = [(0.0, 14.0, 160.0, 70.0, 'steel', True), (14.0, xb1 - L / 2 - 6, D - 4, 70.0, 'steel', True),
            (xb1 - L / 2 - 6, xn, D, 70.0, 'steel', True), (xn, xb1 + L / 2 + 6, D, 46.0, 'steel', True),
-           (xb1 + L / 2 + 6, G.COLLAR['x0'], 104.0, 46.0, 'steel', True), (G.COLLAR['x0'], G.COLLAR['x1'], 104.0, 46.0, 'steel', True),
-           (G.COLLAR['x1'], xi1[0], 98.0, 46.0, 'steel', True),
+           (xb1 + L / 2 + 6, G.COLLAR['x0'], dc, 46.0, 'steel', True), (G.COLLAR['x0'], G.COLLAR['x1'], dc, 46.0, 'steel', True),
+           (G.COLLAR['x1'], xi1[0], dc, 46.0, 'steel', True),
            (xi1[0], xi1[1], 2 * 0.5 * (c1['r1h'] * 1e3 + 60.0), 46.0, 'al2618', False),
            (xi1[1], xi2[0], 124.0, 46.0, 'steel', True),
            (xi2[0], xi2[1], 2 * 0.5 * (c2['r1h'] * 1e3 + 65.0), 46.0, 'ti64', False),
@@ -335,12 +338,12 @@ def detailed_rotor(sup):
            (xj['spc_R2'], b2[0] - 13, fl, 116.0, 'marm247', True), (b2[0] - 13, b2[0], af, 116.0, 'marm247', True),
            (b2[0], b2[1], 170.0, 0.0, 'marm247', False),
            (b2[1], b2[1] + 13, af, 116.0, 'marm247', True), (b2[1] + 13, xj['R2_stub'] + 9, fl, 100.0, 'in718', True),
-           (xj['R2_stub'] + 9, xj['R2_stub'] + 14, 120.0, 50.0, 'in718', True), (xj['R2_stub'] + 14, xb2 - L / 2 - 6, 99.0, 50.0, 'in718', True),
-           (xb2 - L / 2 - 6, xb2 + L / 2 + 6, D, 50.0, 'in718', True), (xb2 + L / 2 + 6, xb2 + L / 2 + 30, 92.0, 50.0, 'in718', True)]
+           (xj['R2_stub'] + 9, xj['R2_stub'] + 14, 120.0, 50.0, 'in718', True), (xj['R2_stub'] + 14, xb2 - L / 2 - 6, D - 1, 50.0, 'in718', True),
+           (xb2 - L / 2 - 6, xb2 + L / 2 + 6, D, 50.0, 'in718', True), (xb2 + L / 2 + 6, xb2 + L / 2 + 30, D - 8, 50.0, 'in718', True)]
     if 'marm247' not in RD.MAT: RD.MAT['marm247'] = (8540., 180e9)
     discs = dict(R['discs'])
-    mc = 7850 * math.pi * ((G.COLLAR['ro'] * 1e-3) ** 2 - 0.052 ** 2) * (G.COLLAR['x1'] - G.COLLAR['x0']) * 1e-3
-    ro_, ri_ = G.COLLAR['ro'] * 1e-3, 0.052
+    ro_, ri_ = G.COLLAR['ro'] * 1e-3, dc / 2e3
+    mc = 7850 * math.pi * (ro_ ** 2 - ri_ ** 2) * (G.COLLAR['x1'] - G.COLLAR['x0']) * 1e-3
     discs['collar'] = dict(m=mc, x=0.5 * (G.COLLAR['x0'] + G.COLLAR['x1']), Ip=mc * (ro_ ** 2 + ri_ ** 2) / 2, Id=mc * (ro_ ** 2 + ri_ ** 2) / 4)
     for k, (x0, x1, xn, dn) in G.STUD_SETS.items():                # 16 studs + nuts, 0.045 kg each at the rev 1 length 26 mm
         ms = 16 * (0.045 + 8190 * math.pi / 4 * (G.STUD['d'] * 1e-3) ** 2 * (x1 - x0 - 26.0) * 1e-3); r = G.STUD['r'] * 1e-3
@@ -459,7 +462,13 @@ def main():
     f_parts, F_net, cav = thrust(S, r_bp)
     cases = {'design (100 %)': F_net, 'part load (~60 %)': thrust(S, r_bp, 0.6)[1], 'idle (~15 %)': thrust(S, r_bp, 0.15)[1]}
     W_thr = max(abs(v) for v in cases.values())
-    res['thrust'] = dict(balance_seal_r=r_bp, parts=f_parts, net=F_net, cases=cases, scan=scan, cavities=cav, states=S)
+    # failure case: impeller 2 back-face feed lost (pipe break / blocked feed): the whole back face down to the balance seal
+    # runs as a free vortex cavity
+    c2s = S['c2']
+    F_lost = (F_net - f_parts['imp 2 back face (pressurised)'] - f_parts['imp 2 back face (vortex)']
+              - vortex_force(c2s['p2'], c2s['rho2'], c2s['r2'], r_bp))
+    res['thrust'] = dict(balance_seal_r=r_bp, parts=f_parts, net=F_net, cases=cases, scan=scan, cavities=cav, states=S,
+                         backface_feed_lost=F_lost)
     print('   axial thrust (+ aft) at balance seal r %.0f: %s -> net %.1f kN' % (r_bp, ', '.join('%s %.1f' % (k, v / 1e3) for k, v in f_parts.items()), F_net / 1e3))
     print('   balance-seal scan: ' + ', '.join('r%.0f %.1f kN' % (r, f / 1e3) for r, f in scan))
     # cumulative axial load aft of each compressor joint (the collar holds the rotor at the front): + = joint in tension
@@ -578,6 +587,7 @@ def main():
     jb = [journal(W1 * 9.81 + Fdyn[0]), journal(W2 * 9.81 + Fdyn[1])]
     tb = thrust_bearing(W_thr * 1.5)
     tb_d = thrust_bearing(abs(F_net))
+    tb_f = thrust_bearing(abs(F_lost))
     for i, b in enumerate(jb):
         print('   journal %d: W %.0f N, %.2f MPa, U %.0f m/s, h_min %.0f um, Cb %.0f um, Re %.0f, K %.2e N/m, loss %.1f kW, oil %.0f l/min' % (
             i + 1, b['W'], b['unit_load_MPa'], b['U'], b['h_min_um'], b['Cb_um'], b['Re'], b['K'], b['P_kW'], b['Q_lpm']))
@@ -585,6 +595,11 @@ def main():
         abs(F_net) / 1e3, W_thr * 1.5 / 1e3, tb['unit_load_MPa'], tb['U_mean'], tb['h_min_um'], tb['Re'], tb_d['P_kW'], tb_d['Q_lpm']))
     check('thrust bearing unit load at 1.5 x max thrust', tb['unit_load_MPa'], 2.0, 'MPa', tb['unit_load_MPa'] <= 2.0, '%d pads r %.0f-%.0f' % (tb['n'], tb['ri'], tb['ro']))
     check('thrust bearing min film at 1.5 x max thrust', tb['h_min_um'], 20.0, 'um', tb['h_min_um'] >= 20.0, '')
+    print('   back-face feed lost: %.1f kN -> %.2f MPa, h_min %.0f um; inactive side %d pads, %.1f kN at 2 MPa (reverse)' % (
+        abs(F_lost) / 1e3, tb_f['unit_load_MPa'], tb_f['h_min_um'], tb_f['n_in'], tb_f['cap_reverse_kN']))
+    check('thrust bearing unit load, back-face feed lost', tb_f['unit_load_MPa'], 3.5, 'MPa', tb_f['unit_load_MPa'] <= 3.5,
+          '%.1f kN, failure case (trip, no 1.5 x)' % (abs(F_lost) / 1e3))
+    check('thrust bearing min film, back-face feed lost', tb_f['h_min_um'], 10.0, 'um', tb_f['h_min_um'] >= 10.0, '')
     for i, b in enumerate(jb):
         check('journal %d min film' % (i + 1), b['h_min_um'], 25.0, 'um', b['h_min_um'] >= 25.0, '%.2f MPa' % b['unit_load_MPa'])
     # squeeze-film damper + integral S-springs
@@ -595,7 +610,8 @@ def main():
           'orbit 80 %% of the damper clearance, %d springs t %.1f l %.0f mm' % (G.ISFD['n'], G.ISFD['t'], G.ISFD['l']))
     print('   SFD R %.0f L %.0f c %.2f: C %.2e (full film) / %.2e (pi film) Ns/m; ISFD k %.2e N/m, sag %.0f / %.0f um, spring stress %.0f MPa alt' % (
         G.SFD['R'], G.SFD['L'], G.SFD['c'], sfd['C_full'], sfd['C_pi'], sfd['k'], cs[0]['sag_um'], cs[1]['sag_um'], s_cage))
-    res['bearings'] = dict(journal=jb, thrust_sized=tb, thrust_design=tb_d, sfd=sfd, cage=cs, journal_loads_kg=[W1, W2], U_api_gmm=U_api)
+    res['bearings'] = dict(journal=jb, thrust_sized=tb, thrust_design=tb_d, thrust_feed_lost=tb_f, sfd=sfd, cage=cs, journal_loads_kg=[W1, W2],
+                           U_api_gmm=U_api)
     # ------------------------------------------------------------------ rotor dynamics of the detailed stack
     print('   rotor dynamics (detailed stack, bearing K from the pad model, SFD + cage)')
     sup = dict(kb=0.5 * (jb[0]['K'] + jb[1]['K']), cb=0.5 * (jb[0]['C'] + jb[1]['C']), ks=sfd['k'], cs=sfd['C_full'], mh=6.0)
@@ -670,7 +686,8 @@ def plot(res, Rd):
         for sg in (1, -1): ax.plot([x, x], [sg * 60, sg * 92], color='r', lw=1.0)
     for xb in G.X_BRG:
         for sg in (1, -1):
-            ax.add_patch(Rectangle((xb - G.JOURNAL['L'] / 2, sg * 50 if sg > 0 else -60), G.JOURNAL['L'], 10, fc='#2e7d32', ec='k', lw=0.5))
+            R_j = G.JOURNAL['D'] / 2
+            ax.add_patch(Rectangle((xb - G.JOURNAL['L'] / 2, sg * R_j if sg > 0 else -R_j - 10), G.JOURNAL['L'], 10, fc='#2e7d32', ec='k', lw=0.5))
             ax.add_patch(Rectangle((xb - G.SFD['L'] / 2, sg * 74 if sg > 0 else -80), G.SFD['L'], 6, fc='#f9a825', ec='k', lw=0.5))
     for sg in (1, -1):
         ax.add_patch(Rectangle((G.COLLAR['x0'] - 14, sg * G.THRUST['ri'] if sg > 0 else -G.THRUST['ro']), 14, G.THRUST['ro'] - G.THRUST['ri'], fc='#2e7d32', ec='k', lw=0.5))

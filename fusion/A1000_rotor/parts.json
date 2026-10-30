@@ -14,13 +14,13 @@
    "group": "shaft",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 1543.32,
-   "mass_kg": 12.115,
+   "vol_cm3": 1302.43,
+   "mass_kg": 10.224,
    "x": [
     0.0,
     206.2
    ],
-   "r": 82.0
+   "r": 80.0
   },
   "RT-102 Tie bolt M42 IN718": {
    "step": "RT_102_Tie_bolt_M42_IN718.step",
@@ -84,11 +84,11 @@
    "group": "shaft",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 789.38,
-   "mass_kg": 6.465,
+   "vol_cm3": 627.94,
+   "mass_kg": 5.143,
    "x": [
     895.95,
-    1007.75
+    1003.25
    ],
    "r": 92.0
   },
@@ -182,13 +182,13 @@
    "group": "pads",
    "valid": true,
    "solids": 5,
-   "vol_cm3": 112.52,
-   "mass_kg": 0.883,
+   "vol_cm3": 82.24,
+   "mass_kg": 0.646,
    "x": [
-    42.5,
-    87.5
+    47.0,
+    83.0
    ],
-   "r": 60.43
+   "r": 55.83
   },
   "JB1 pad carrier + end plates (split)": {
    "step": "JB1_pad_carrier___end_plates__split.step",
@@ -196,11 +196,11 @@
    "group": "carrier",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 295.64,
-   "mass_kg": 2.321,
+   "vol_cm3": 344.91,
+   "mass_kg": 2.708,
    "x": [
-    36.5,
-    93.5
+    41.0,
+    89.0
    ],
    "r": 74.0
   },
@@ -224,11 +224,11 @@
    "group": "housing",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 2094.86,
-   "mass_kg": 16.445,
+   "vol_cm3": 1885.73,
+   "mass_kg": 14.803,
    "x": [
-    22.5,
-    93.5
+    27.0,
+    89.0
    ],
    "r": 165.0
   },
@@ -238,13 +238,13 @@
    "group": "pads",
    "valid": true,
    "solids": 5,
-   "vol_cm3": 112.52,
-   "mass_kg": 0.883,
+   "vol_cm3": 82.24,
+   "mass_kg": 0.646,
    "x": [
-    932.75,
-    977.75
+    937.25,
+    973.25
    ],
-   "r": 60.43
+   "r": 55.83
   },
   "JB2 pad carrier + end plates (split)": {
    "step": "JB2_pad_carrier___end_plates__split.step",
@@ -252,11 +252,11 @@
    "group": "carrier",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 295.64,
-   "mass_kg": 2.321,
+   "vol_cm3": 344.91,
+   "mass_kg": 2.708,
    "x": [
-    926.75,
-    983.75
+    931.25,
+    979.25
    ],
    "r": 74.0
   },
@@ -280,27 +280,27 @@
    "group": "housing",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 2691.22,
-   "mass_kg": 21.126,
+   "vol_cm3": 2501.82,
+   "mass_kg": 19.639,
    "x": [
-    912.75,
-    997.75
+    917.25,
+    993.25
    ],
    "r": 165.0
   },
-  "TB thrust pads 2 x 8 (steel + babbitt)": {
-   "step": "TB_thrust_pads_2_x_8__steel___babbitt.step",
+  "TB thrust pads 8 + 4 (steel + babbitt)": {
+   "step": "TB_thrust_pads_8___4__steel___babbitt.step",
    "material": "steel + babbitt",
    "group": "pads",
    "valid": true,
-   "solids": 16,
-   "vol_cm3": 192.64,
-   "mass_kg": 1.512,
+   "solids": 12,
+   "vol_cm3": 94.1,
+   "mass_kg": 0.739,
    "x": [
     103.85,
     148.15
    ],
-   "r": 77.89
+   "r": 67.91
   },
   "TB carrier rings (split)": {
    "step": "TB_carrier_rings__split.step",
@@ -308,13 +308,13 @@
    "group": "carrier",
    "valid": true,
    "solids": 2,
-   "vol_cm3": 213.48,
-   "mass_kg": 1.676,
+   "vol_cm3": 154.57,
+   "mass_kg": 1.213,
    "x": [
     95.85,
     156.15
    ],
-   "r": 84.0
+   "r": 74.0
   },
   "TB thrust housing + inlet hub fairing": {
    "step": "TB_thrust_housing___inlet_hub_fairing.step",
@@ -322,10 +322,10 @@
    "group": "housing",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 2699.34,
-   "mass_kg": 21.19,
+   "vol_cm3": 3164.56,
+   "mass_kg": 24.842,
    "x": [
-    93.5,
+    89.0,
     201.0
    ],
    "r": 165.0

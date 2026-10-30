@@ -22,6 +22,10 @@ through the turbine. The stack is therefore built in two parts:
                and ring are both IN718 (no expansion mismatch). Cost: one more curvic interface and ~1.7 kg more than arms.
 Bearings: tilting-pad journals (5 pads, load between pads) in integral S-spring squeeze-film damper rings (ISFD),
 double-acting tilting-pad thrust bearing on the integral collar, at the cold end.
+               rotor rev 1.3 (bearing losses, docs/08 sec. 13.10): journals D100 x L45 -> D90 x L36, thrust pads r 56-78 -> 52-68 with
+               8 pads on the loaded (aft) side and 4 on the inactive (forward) side, collar r 82 -> 72; the stub and rear-stub
+               lands step down with the journal (front seal r 43, neck r 44.5, seal runner r 41, collar shoulders r 48).
+               Bearing + seal losses 28.6 -> 15.9 kW at the same film and critical-speed margins.
 
 Frame: rotor frame of sim/engine/a1000_rotordynamics.py, mm, x = engine axis from the gearbox coupling face, r = radius.
 Run:   freecadcmd -c "import sys; sys.argv=['a1000_rotor.py','--cad']; exec(open('cad/engine/a1000_rotor.py').read())"
@@ -100,9 +104,10 @@ BORE_IMP = 46.0
 CURVIC_C = dict(stub_I1=dict(ri=44.0, ro=58.0, N=36), I1_spc=dict(ri=50.0, ro=70.0, N=36),
                 spc_I2=dict(ri=52.0, ro=72.0, N=36), I2_drum=dict(ri=55.0, ro=75.0, N=36))
 R_HUB_IN = (60.0, 80.0)                                           # impeller inducer hub radii (flow-path hub at the faces)
-JOURNAL = dict(D=100.0, L=45.0)                                 # tilting-pad journals (sim/engine/a1000_rotor_stack.py)
-COLLAR = dict(x0=116.0, x1=136.0, ro=82.0)                       # integral thrust collar
-THRUST = dict(ri=56.0, ro=78.0, n=8, t=12.0)                     # thrust pads per side (inner / outer radius, thickness)
+JOURNAL = dict(D=90.0, L=36.0)                                  # tilting-pad journals (sim/engine/a1000_rotor_stack.py), rev 1.3
+COLLAR = dict(x0=116.0, x1=136.0, ro=72.0)                       # integral thrust collar (pad ro + 4)
+THRUST = dict(ri=52.0, ro=68.0, n=8, n_in=4, t=12.0)             # thrust pads (inner / outer radius, thickness): n on the loaded
+                                                                 # (aft) side, n_in on the inactive (forward) side
 BACKFACE = dict(r_seal=200.0, r_feed=120.0)                      # impeller 2 back face: labyrinth at r 200, compressor-delivery
                                                                  # air fed at r 120 (pressurised back-face cavity, thrust balance)
 BAL_SEAL_R = 85.0                                               # drum balance-piston labyrinth radius (thrust balance)
@@ -119,10 +124,12 @@ INLET_HUB = [(157.0, 150.0), (158.0, 132.0), (160.5, 112.0), (166.5, 94.0), (177
 def stub_profile():
     """front stub shaft 34CrNiMo6: coupling flange, seal, journal 1, integral thrust collar, inlet seal, front curvic"""
     D, L = JOURNAL['D'], JOURNAL['L']; xb = X_BRG[0]; c0, c1, cro = COLLAR['x0'], COLLAR['x1'], COLLAR['ro']
-    assert xb - L / 2 - 6 > 22.0
-    return [(0.0, 35.0), (0.0, 80.0), (14.0, 80.0), (14.0, 45.0), (22.0, 45.0), (22.0, 47.0),
-            (xb - L / 2 - 6, 47.0), (xb - L / 2 - 6, D / 2), (xb + L / 2 + 6, D / 2), (xb + L / 2 + 6, 52.0),
-            (c0, 52.0), (c0, cro), (c1, cro), (c1, 52.0), (c1 + 6, 52.0), (c1 + 6, 48.0), (X_I1[0] - 4, 48.0),
+    rc = THRUST['ri'] - 4.0                                    # collar shoulders: 4 mm under the pad bore
+    assert xb - L / 2 - 6 > 22.0 and rc >= 48.0
+    aft = [(c1 + 6, rc), (c1 + 6, 48.0)] if rc > 48.0 else []
+    return [(0.0, 35.0), (0.0, 80.0), (14.0, 80.0), (14.0, D / 2 - 3), (22.0, D / 2 - 3), (22.0, D / 2 - 2),
+            (xb - L / 2 - 6, D / 2 - 2), (xb - L / 2 - 6, D / 2), (xb + L / 2 + 8, D / 2), (xb + L / 2 + 8, rc),   # shoulder 2 mm clear of the carrier
+            (c0, rc), (c0, cro), (c1, cro), (c1, rc)] + aft + [(X_I1[0] - 4, 48.0),
             (X_I1[0] - 1.5, R_HUB_IN[0]), (X_I1[0], R_HUB_IN[0]),
             (X_I1[0], BORE_IMP / 2), (TIE['x_nut'][1], BORE_IMP / 2), (TIE['x_nut'][1], 35.0)]
 
@@ -148,9 +155,9 @@ def drum_profile():
 def rear_stub_profile():
     """IN718 rear stub: flange (studs to R2), neck, journal 2, seal runner"""
     xj = X_J['R2_stub']; tf = ARM['tf']; D, L = JOURNAL['D'], JOURNAL['L']; xb = X_BRG[1]
-    return [(xj, 25.0), (xj, ARM['rf']), (xj + tf, ARM['rf']), (xj + tf, 60.0), (xj + tf + 3, 60.0), (xj + tf + 7, 49.5),
-            (xb - L / 2 - 6, 49.5), (xb - L / 2 - 6, D / 2), (xb + L / 2 + 6, D / 2), (xb + L / 2 + 6, 46.0),
-            (xb + L / 2 + 30, 46.0), (xb + L / 2 + 30, 25.0)]
+    return [(xj, 25.0), (xj, ARM['rf']), (xj + tf, ARM['rf']), (xj + tf, 60.0), (xj + tf + 3, 60.0), (xj + tf + 7, D / 2 - 0.5),
+            (xb - L / 2 - 6, D / 2 - 0.5), (xb - L / 2 - 6, D / 2), (xb + L / 2 + 6, D / 2), (xb + L / 2 + 6, D / 2 - 4),
+            (xb + L / 2 + 30, D / 2 - 4), (xb + L / 2 + 30, 25.0)]
 
 
 def turbine_spacer_profile():
@@ -429,24 +436,25 @@ def _sector(xc, r, a0, span, L):
 
 
 def thrust_bearing():
-    """double-acting tilting-pad thrust bearing on the integral collar (2 x 8 pads, leading-edge-groove lube), split carrier
-    rings, a housing that also closes the rear of journal 1 and carries the inlet-side labyrinth + windback seal"""
+    """double-acting tilting-pad thrust bearing on the integral collar (8 pads on the loaded aft side, 4 of the same size on
+    the inactive forward side, leading-edge-groove lube), split carrier rings, a housing that also closes the rear of
+    journal 1 and carries the inlet-side labyrinth + windback seal"""
     App, Part, V = _fc()
     out = {}
     c0, c1 = COLLAR['x0'], COLLAR['x1']; ri, ro, n, t = THRUST['ri'], THRUST['ro'], THRUST['n'], THRUST['t']
     e = 0.15                                                                 # half the axial end play
     pads = []
-    for x0 in (c0 - e - t, c1 + e):
-        for k in range(n):
+    for x0, m in ((c0 - e - t, THRUST['n_in']), (c1 + e, n)):
+        for k in range(m):
             ring = tube(x0, x0 + t, ro, ri)
-            pads.append(ring.common(_sector(x0 + t / 2, ro + 5, 360.0 / n * k + 3.0, 360.0 / n - 6.0, t + 2)))
-    out['TB thrust pads 2 x 8 (steel + babbitt)'] = (Part.makeCompound(pads), 'steel + babbitt', 'pads')
+            pads.append(ring.common(_sector(x0 + t / 2, ro + 5, 360.0 / m * k + 3.0, 360.0 / n - 6.0, t + 2)))
+    out['TB thrust pads %d + %d (steel + babbitt)' % (n, THRUST['n_in'])] = (Part.makeCompound(pads), 'steel + babbitt', 'pads')
     tc = 8.0
     car = tube(c0 - e - t - tc, c0 - e - t, ro + 6, ri - 3).fuse(tube(c1 + e + t, c1 + e + t + tc, ro + 6, ri - 3))
     out['TB carrier rings (split)'] = (car, 'steel', 'carrier')
     xb = X_BRG[0]; xf = xb + JOURNAL['L'] / 2 + 6; xw = c1 + e + t + tc          # front of the rear wall
     hs = tube(xf, xw, ISFD['ro'] + 38.0, ro + 6.05)
-    hs = hs.fuse(tube(xf, xf + 2, ISFD['ro'] + 38.0, JOURNAL['D'] / 2 + 3.5))
+    hs = hs.fuse(tube(xf, xf + 2, ISFD['ro'] + 38.0, ri - 2.5))                   # 1.5 mm over the collar shoulder
     # rear wall + inlet hub fairing: solid of revolution from the wall (x xw, bore r 49) along INLET_HUB to the nose
     x_n = INLET_HUB[-1][0]
     fair = [(xw, 49.0), (xw, ISFD['ro'] + 38.0), (INLET_HUB[0][0], ISFD['ro'] + 38.0)] + INLET_HUB + [(x_n, 49.0)]

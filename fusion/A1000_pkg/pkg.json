@@ -875,7 +875,7 @@
     0.0
    ],
    "material": "34CrNiMo6 QT",
-   "mass_kg": 12.115,
+   "mass_kg": 10.224,
    "step": "../A1000_rotor/RT_101_Front_stub_shaft___thrust_collar.step",
    "dx": 0.0
   },
@@ -930,7 +930,7 @@
     0.0
    ],
    "material": "IN718",
-   "mass_kg": 6.465,
+   "mass_kg": 5.143,
    "step": "../A1000_rotor/RT_106_Rear_stub_shaft.step",
    "dx": 0.0
   },
@@ -1007,7 +1007,7 @@
     0.0
    ],
    "material": "steel + babbitt",
-   "mass_kg": 0.883,
+   "mass_kg": 0.646,
    "step": "../A1000_rotor/JB1_tilting_pads_x5__steel___babbitt.step",
    "dx": 0.0
   },
@@ -1018,7 +1018,7 @@
     0.0
    ],
    "material": "steel",
-   "mass_kg": 2.321,
+   "mass_kg": 2.708,
    "step": "../A1000_rotor/JB1_pad_carrier___end_plates__split.step",
    "dx": 0.0
   },
@@ -1040,7 +1040,7 @@
     0.0
    ],
    "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
-   "mass_kg": 16.445,
+   "mass_kg": 14.803,
    "step": "../A1000_rotor/JB1_bearing_cartridge_housing.step",
    "dx": 0.0
   },
@@ -1051,7 +1051,7 @@
     0.0
    ],
    "material": "steel + babbitt",
-   "mass_kg": 0.883,
+   "mass_kg": 0.646,
    "step": "../A1000_rotor/JB2_tilting_pads_x5__steel___babbitt.step",
    "dx": 0.0
   },
@@ -1062,7 +1062,7 @@
     0.0
    ],
    "material": "steel",
-   "mass_kg": 2.321,
+   "mass_kg": 2.708,
    "step": "../A1000_rotor/JB2_pad_carrier___end_plates__split.step",
    "dx": 0.0
   },
@@ -1084,19 +1084,19 @@
     0.0
    ],
    "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
-   "mass_kg": 21.126,
+   "mass_kg": 19.639,
    "step": "../A1000_rotor/JB2_bearing_cartridge_housing.step",
    "dx": 0.0
   },
   {
-   "name": "TB thrust pads 2 x 8 (steel + babbitt)",
+   "name": "TB thrust pads 8 + 4 (steel + babbitt)",
    "group": "bearing",
    "inst": [
     0.0
    ],
    "material": "steel + babbitt",
-   "mass_kg": 1.512,
-   "step": "../A1000_rotor/TB_thrust_pads_2_x_8__steel___babbitt.step",
+   "mass_kg": 0.739,
+   "step": "../A1000_rotor/TB_thrust_pads_8___4__steel___babbitt.step",
    "dx": 0.0
   },
   {
@@ -1106,7 +1106,7 @@
     0.0
    ],
    "material": "steel",
-   "mass_kg": 1.676,
+   "mass_kg": 1.213,
    "step": "../A1000_rotor/TB_carrier_rings__split.step",
    "dx": 0.0
   },
@@ -1117,7 +1117,7 @@
     0.0
    ],
    "material": "EN-GJS-400-18",
-   "mass_kg": 21.19,
+   "mass_kg": 24.842,
    "step": "../A1000_rotor/TB_thrust_housing___inlet_hub_fairing.step",
    "dx": 0.0
   },
