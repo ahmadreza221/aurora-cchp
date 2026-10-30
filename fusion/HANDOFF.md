@@ -119,3 +119,18 @@ Design record: `docs/08_aurora1000_1MW_concept.md` §12. Geometry: `cad/engine/a
 3. Verify against `parts.json` → `expected`: blisk 1 44.4 kg, blisk 2 52.5 kg, NGV1 7.2 kg, NGV2 17.1 kg, at MAR-M247 8.54 g/cc.
    Fix any Fusion-API problem in the script in the repo.
 4. Save the design as **"AURORA-1000 Turbine rev5"**, take a screenshot for the user, then commit and push.
+
+**Done 2026-10-30 (local Mac, Fusion 2706):** "AURORA-1000 Turbine rev5" saved in Default Project. Imported with
+`JOIN = False`, 55 s. Fusion masses: NGV1 7.237, blisk 1 44.393, NGV2 17.067, blisk 2 52.515 kg (expected 7.24 / 44.38 /
+17.06 / 52.50).
+
+### Whole package in Fusion
+1. `A1000_STEP=1 GR180_ROOT=$PWD freecadcmd -c "exec(open('cad/engine/a1000_viewer_export.py').read())"` writes
+   `fusion/A1000_pkg/*.step` + `pkg.json`. These are the same parts as the web viewer. The turbine rows are referenced
+   from `fusion/A1000`.
+2. Run `fusion/AURORA1000_Package/AURORA1000_Package.py`. It builds a direct-modelling design with one component per
+   group and one sub-component per part. Casings, ducts and the recuperator are see-through.
+3. Result: 43 parts, 264 bodies. Bounding box: x −3500..2400, y −1250..2100, z −1000..1810 mm. Saved as
+   **"AURORA-1000 Package rev5"**. Runtime is about 20 s.
+
+Copies of both designs are in `~/Desktop/GR180-Designs/11_AURORA-1000_1MW` (f3d, screenshots, POWER.md).

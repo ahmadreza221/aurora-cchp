@@ -12,6 +12,9 @@ exhaust, z up, shaft axis at z = 0. Contents:
 Run:   freecadcmd -c "exec(open('cad/engine/a1000_viewer_export.py').read())"     (GR180_ROOT = repo root)
 Writes: viewer/a1000/a1000.json (glTF 2.0, embedded buffer; git-ignored, regenerate), viewer/a1000/a1000_parts.json
 Viewer: viewer/a1000/index.html (published as a claude.ai artifact with a1000.json beside it)
+Fusion: A1000_STEP=1 writes fusion/A1000_pkg/*.step + pkg.json instead of the glTF (turbine pieces are referenced from
+        fusion/A1000, which also stands in for cad_out/engine/A1000 when that is not built); import with
+        fusion/AURORA1000_Package/AURORA1000_Package.py
 """
 import base64
 import json
@@ -31,11 +34,15 @@ import a1000_rotordynamics as RD                                   # noqa: E402 
 sys.argv = _argv
 A = RD.A
 CAD = os.path.join(ROOT, 'cad_out', 'engine', 'A1000')
+FUS = os.path.join(ROOT, 'fusion', 'A1000')                        # same pieces as STEP (fusion/export_a1000_parts.py)
+STEP_OUT = os.path.join(ROOT, 'fusion', 'A1000_pkg') if os.environ.get('A1000_STEP') else None
 OUT = os.path.join(ROOT, 'viewer', 'a1000'); os.makedirs(OUT, exist_ok=True)
 V = App.Vector
 DES = json.load(open(os.path.join(ROOT, 'sim', 'a1000_turbine_design.json')))
 ML = json.load(open(os.path.join(ROOT, 'sim', 'mw1_meanline.json')))
-PARTS = json.load(open(os.path.join(CAD, 'A1000_parts.json')))
+PARTS = json.load(open(os.path.join(CAD, 'A1000_parts.json') if os.path.exists(os.path.join(CAD, 'A1000_parts.json'))
+                       else os.path.join(FUS, 'parts.json')))
+SRC = {}                                                            # id(shape) -> turbine piece name (STEP export)
 
 GROUPS = {   # name: (rgba, metallic, roughness)
     'turbine': ((0.80, 0.81, 0.84, 1.0), 0.85, 0.30),
@@ -86,8 +93,9 @@ def shell_cyl(ro, ri, h, p, d):
 
 
 def read(name, dx=0.0):
-    s = Part.Shape(); s.read(os.path.join(CAD, name + '.brep'))
-    s.translate(V(dx, 0, 0)); return s
+    p = os.path.join(CAD, name + '.brep')
+    s = Part.Shape(); s.read(p if os.path.exists(p) else os.path.join(FUS, name + '.step'))
+    s.translate(V(dx, 0, 0)); SRC[id(s)] = name; return s
 
 
 def mass(shape, rho):                                               # kg, rho in kg/m3, volume in mm3
@@ -290,6 +298,25 @@ for x in np.arange(-3400.0, 2400.0, 900.0):
     sk = sk.fuse(box(x, x + 160, -1100, 1050, -985, -715))
 sk = sk.fuse(box(-900, 1900, YR - 650, YR + 650, -1000, -700).cut(box(-890, 1890, YR - 640, YR + 640, -1001, -699)))
 add('Base frame (skid)', 'skid', sk, desc='welded steel base frame, about 5.9 m with the side-mounted recuperator', material='S355 sections')
+
+# ------------------------------------------------------------------------------------------------ STEP for Fusion
+if STEP_OUT:
+    os.makedirs(STEP_OUT, exist_ok=True)
+    pkg = dict(frame='rotor frame, mm, x = engine axis from the gearbox coupling face, z up', x_offset_turbine=X_OFF,
+               groups={g: dict(rgb=[round(255 * c) for c in rgba[:3]]) for g, (rgba, _, _) in GROUPS.items()}, parts=[])
+    for p in parts:
+        e = dict(name=p['name'], group=p['group'], inst=p['inst'] or [0.0],
+                 **{k: v for k, v in p['meta'].items() if v not in (None, '')})
+        if id(p['shape']) in SRC:                                   # turbine piece: fusion/A1000/<piece>.step shifted by X_OFF
+            e.update(step='../A1000/%s.step' % SRC[id(p['shape'])], dx=X_OFF)
+        else:
+            fn = ''.join(c if c.isalnum() else '_' for c in p['name']).strip('_') + '.step'
+            p['shape'].exportStep(os.path.join(STEP_OUT, fn)); e.update(step=fn, dx=0.0)
+        pkg['parts'].append(e); print('step  %-40s %s' % (p['name'], e['step']), flush=True)
+    json.dump(pkg, open(os.path.join(STEP_OUT, 'pkg.json'), 'w'), indent=1)
+    print('fusion/A1000_pkg: %d parts' % len(pkg['parts']))
+    raise SystemExit(0)
+
 
 # ------------------------------------------------------------------------------------------------ tessellate -> glTF
 def tess(shape):
