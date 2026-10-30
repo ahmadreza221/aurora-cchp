@@ -629,7 +629,8 @@ def rotor_constants(*names):
 
 
 # stage-1 radial inlet, shroud side [mm]: the channel is as wide as the inducer LE allows (the bend must turn axial ahead of
-# x_le); the hub fairing's steep part (r 95-130) still leaves a 9 % area dip (min 0.91 of the inducer annulus, rotor side)
+# x_le). Against the rotor rev 1.1 fairing the area dipped to 0.91 at r 95-130; with the fairing 5 mm fuller there
+# (rotor d74155c) the passage holds 0.98-1.01 of the inducer annulus through the bend
 INLET = dict(x_shroud_wall=204.0, R_bend=10.0, r_entry=260.0, lip=12.0)
 
 
