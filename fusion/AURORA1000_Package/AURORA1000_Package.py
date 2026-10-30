@@ -105,7 +105,8 @@ def fill(app, doc, pkg, base, log):
             groups[g] = occ.component
         m = adsk.core.Matrix3D.create(); m.translation = adsk.core.Vector3D.create(p['dx'] / 10.0, 0, 0)     # cm
         socc = groups[g].occurrences.addNewComponent(m); sub = socc.component
-        sub.name = clean(p['name']); sub.opacity = OPACITY_PART.get(p['name'], OPACITY.get(g, 1.0))
+        sub.name = clean(p['name'])
+        sub.opacity = OPACITY_PART.get(p['name'], 0.3 if 'housing' in p['name'] else OPACITY.get(g, 1.0))   # bearing housings see-through
         if base:
             socc.appearance = coloured(design, base, 'A1000 ' + g, pkg['groups'][g]['rgb'])
         temps = import_step(app, sub, os.path.normpath(os.path.join(PKG, p['step'])))
