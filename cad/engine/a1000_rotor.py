@@ -590,7 +590,8 @@ def front_bearing_housing():
     hs = hs.cut(Part.makeCylinder(4.0, ro + 20.0 - 80.0, V(xb, -ro - 20.0, z_in), V(0, 1, 0)))
     xm = 0.5 * (c0 + c1); a_g = math.radians(205.0); yg, zg = 100.0 * math.cos(a_g), 100.0 * math.sin(a_g)
     hs = hs.cut(Part.makeCylinder(4.0, ro + 20.0 + yg, V(xm, -ro - 20.0, zg), V(0, 1, 0)))
-    hs = hs.cut(Part.makeCylinder(4.0, xr1 - xf1 - 2.0, V(xf1 + 1.0, yg, zg), V(1, 0, 0)))
+    # (the gallery runs 2 mm past both LEG feed holes: a hole tangent to the gallery end left an invalid face on FB-2)
+    hs = hs.cut(Part.makeCylinder(4.0, xr1 - xf1 + 4.0, V(xf1 - 2.0, yg, zg), V(1, 0, 0)))
     for xg in (xf1 + tc / 2, xr1 - tc / 2):
         hs = hs.cut(_radial_hole(xg, 75.0, 101.0, 205.0, 6.0))
     # JB1 chambers -> thrust chamber: 4 axial holes d 16 at r 82 through the separator (vent + drain paths) and a d 14 drain
@@ -743,14 +744,16 @@ def main_cad():
     rho = {'MAR-M247': 8540, 'IN718': 8190, '34CrNiMo6 QT': 7850, '17-4PH H1025': 7800, '17-4PH H1100': 7800, 'EN-GJS-400-18': 7100,
            '1.4313': 7700, 'ceramic fibre + 1.4828 foil': 700}
     info = {}
+    App, Part, V = _fc()
     for name, (s, mat, grp) in build_all().items():
         fn = ''.join(c if c.isalnum() else '_' for c in name).strip('_') + '.step'
         s.exportStep(os.path.join(out_c, fn)); s.exportStep(os.path.join(out_f, fn))
+        rt = Part.Shape(); rt.read(os.path.join(out_f, fn))          # valid in memory is not enough: read the STEP back
         bb = s.BoundBox
-        info[name] = dict(step=fn, material=mat, group=grp, valid=s.isValid(), solids=len(s.Solids), vol_cm3=round(s.Volume / 1e3, 2),
+        info[name] = dict(step=fn, material=mat, group=grp, valid=s.isValid() and rt.isValid(), solids=len(s.Solids), vol_cm3=round(s.Volume / 1e3, 2),
                           mass_kg=round(s.Volume * 1e-9 * rho.get(mat, 7850), 3), x=[round(bb.XMin, 2), round(bb.XMax, 2)],
                           r=round(max(bb.YMax, bb.ZMax), 2))
-        print('%-50s %-6s solids %3d  %8.2f kg  x %.1f..%.1f  r %.1f' % (name, s.isValid(), len(s.Solids), info[name]['mass_kg'],
+        print('%-50s %-6s solids %3d  %8.2f kg  x %.1f..%.1f  r %.1f' % (name, info[name]['valid'], len(s.Solids), info[name]['mass_kg'],
                                                                            bb.XMin, bb.XMax, info[name]['r']), flush=True)
     json.dump(dict(frame='rotor frame mm, x = engine axis from the gearbox coupling face', x_offset_turbine=X_OFF,
                    joints=X_J, parts=info), open(os.path.join(out_f, 'parts.json'), 'w'), indent=1)

@@ -82,7 +82,8 @@ STEPS = [
       ('Hot-gas scroll lower half, deswirl vanes, insulation; lower scroll pins', ['CB-331', 'CB-332', 'CB-333', 'CB-360'], ZD),
       ('Turbine outer casing, lower half (HS-202, bottom key cast on)', ['HS-202'], ZD),
       ('Compressor casing with vaned diffusers and return channel', ['Compressor casing', 'Diffuser', 'Return-channel'], ZD),
-      ('Front bearing housing, lower half (FB-2)', ['FB-2'], ZD),
+      ('Inlet casing, lower half (IN-502, phase 3): onto the compressor-casing spigot, with the FB-2 foot brackets', ['IN-502'], ZD),
+      ('Front bearing housing, lower half (FB-2), onto the IN-502 brackets', ['FB-2'], ZD),
       ('JB1: split ISFD ring, carrier, 4 pads; thrust bearing: split base rings, 8 + 4 pads', ['JB1', 'TB '], (0, 0, -500)),
       ('Stator half-module: C1 + C2, NGV1 / NGV2, shrouds, gap liners, diaphragms, NGV1 seals, support keys',
        ['NGV1', 'NGV2', 'HS-210', 'HS-211', 'HS-220', 'HS-221', 'HS-222', 'HS-234', 'HS-230', 'HS-231', 'HS-232', 'HS-233',
@@ -94,6 +95,7 @@ STEPS = [
      'Upper halves come straight down. JB2 is a one-piece cartridge that slides on from the rear and can be pulled without '
      'opening the casing.',
      [('Front bearing housing, upper half (FB-1)', ['FB-1'], ZU),
+      ('Inlet casing, upper half (IN-501): hub wall over FB-1', ['IN-501'], ZU),
       ('Turbine outer casing, upper half (HS-201, top key into the carrier slot)', ['HS-201'], ZU),
       ('Hot-gas scroll upper half (CB-330)', ['CB-330'], ZU),
       ('Scroll pressure casing, upper half (CB-340)', ['CB-340'], ZU),
@@ -109,18 +111,23 @@ STEPS = [
      [('Can casing and base plate', ['CB-301', 'CB-302'], (0, 0, 1300)),
       ('Impingement sleeve and liner', ['CB-321', 'CB-320'], (0, 0, 1300)),
       ('Head cover with 7 premixers (pilot + 6 mains)', ['CB-303', 'CB-310'], (0, 0, 1000)),
-      ('Fuel manifolds, igniter + 2 UV flame scanners', ['CB-370', 'CB-371'], (0, 0, 800))]),
+      ('Fuel manifolds P / A / B1 / B2', ['CB-370'], (0, 0, 800)),
+      ('Igniter (along its tilted axis) + 2 UV flame scanners', ['CB-371'], (0, 120, 800))]),
     ('6/6  Package',
-     'The core is set on the base frame. Oil reservoir in the frame, drains fall to it. Bought-in recuperator, 10:1 gearbox, '
-     '1,250 kVA generator.',
-     [('Base frame (skid) with the oil reservoir', ['Base frame', 'LO-100'], (0, 0, -1100)),
+     'The core waits on the crane: the plenum lower half goes on the base frame first and the core is lowered into it. '
+     'FB lines in two spools each (in through the open tunnel mouth, union in front of the plenum). Oil reservoir in the '
+     'frame, drains fall to it. Bought-in recuperator, 10:1 gearbox, 1,250 kVA generator.',
+     [('Base frame (skid) with the oil reservoir, pipe supports', ['Base frame', 'LO-100', 'PL-90'], (0, 0, -1100)),
       ('Lube oil module', ['Lube oil'], (0, -1000, 0)),
-      ('High-speed coupling, epicyclic gearbox 10:1, starter motor', ['High-speed coupling', 'Epicyclic', 'Starter'], (-900, 0, 0)),
-      ('Low-speed coupling and synchronous generator', ['Low-speed coupling', 'Synchronous generator'], (-1300, 0, 0)),
-      ('Air inlet plenum + bellmouth', ['Air inlet'], (0, 0, 1100)),
+      ('Plenum lower half (IN-511, phase 3): the engine core is lowered into it', ['IN-511'], (0, 0, 1100)),
+      ('FB oil block; JB1 / TB oil, FB drain, vent and buffer-air lines through the tunnel', ['PL-01', 'PL-02', 'PL-03', 'PL-05',
+                                                                                               'PL-07', 'PL-09'], (-900, 0, 0)),
+      ('Epicyclic gearbox 10:1, starter motor, synchronous generator', ['Epicyclic', 'Starter', 'Synchronous generator'], (0, 0, 900)),
+      ('Couplings, from above through the open tunnel', ['High-speed coupling', 'Low-speed coupling'], (0, 0, 700)),
+      ('Plenum upper half (IN-510) and filter-house adapter (IN-520)', ['IN-510', 'IN-520', 'Air inlet'], (0, 0, 1100)),
       ('Recuperator (bought in), ducts, BOV, economizer + stack', ['Recuperator', 'EX-44', 'EX-45', 'EX-46', 'EX-47'], (0, 1400, 0)),
-      ('Oil supply, drains, vents, buffer and cooling air', ['PL-0', 'PL-13'], (0, -900, 0)),
-      ('Fuel hoses and gas valve block, combustor drains, pipe supports', ['PL-1', 'PL-9'], (0, -900, 0))]),
+      ('JB2 oil, drain and vent lines (hoses at the struts), gearbox oil feed', ['PL-04', 'PL-06', 'PL-08', 'PL-13'], (0, -900, 0)),
+      ('Gas valve block and fuel hoses, combustor drains', ['PL-10', 'PL-12'], (0, -900, 0))]),
 ]
 VIEW_ENGINE = ((45.0, 0.0, 0.0), 220.0)                            # camera target (cm) and view extents
 VIEW_PACKAGE = ((-55.0, 42.0, 52.0), 520.0)

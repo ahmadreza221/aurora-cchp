@@ -9,12 +9,12 @@
    "valid": true,
    "solids": 1,
    "bbox": [
-    -215.0,
-    -165.0,
-    -455.0,
-    -375.0,
+    -207.5,
+    -172.5,
+    -450.0,
     -425.0,
-    -375.0
+    -417.5,
+    -382.5
    ]
   },
   "PL-02 Oil to JB1 (tube 15 x 1.5, orifice 3.2 mm)": {
@@ -28,7 +28,7 @@
     -217.5,
     77.5,
     -375.0,
-    -138.0,
+    -148.0,
     -407.5,
     -32.5
    ]
@@ -44,7 +44,7 @@
     -194.0,
     140.0,
     -375.0,
-    -138.0,
+    -146.0,
     -409.0,
     -31.0
    ]
@@ -73,7 +73,7 @@
    "valid": true,
    "solids": 1,
    "bbox": [
-    -228.1,
+    -231.1,
     134.2,
     -56.1,
     56.1,
@@ -101,16 +101,16 @@
    "step": "PL_07_FBH_vent_DN25__forward_through_the_tunnel__to_the_reservoir.step",
    "material": "1.4404",
    "group": "pipe",
-   "desc": "union on FB-1 (opened to lift the upper half); high point at the boss, then a continuous fall to the tank",
+   "desc": "union on FB-1 (opened to lift the upper half); high point 19 mm over the boss, then a continuous fall to the tank",
    "valid": true,
    "solids": 1,
    "bbox": [
     -216.8,
     134.8,
     -16.9,
-    146.8,
+    162.8,
     -714.0,
-    198.8
+    189.8
    ]
   },
   "PL-08 JB2 vent DN32 (hose at the -y strut, falls to the reservoir)": {

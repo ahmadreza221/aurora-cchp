@@ -308,8 +308,8 @@
    "group": "housing",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 2424.57,
-   "mass_kg": 17.214,
+   "vol_cm3": 2424.27,
+   "mass_kg": 17.212,
    "x": [
     27.0,
     201.0

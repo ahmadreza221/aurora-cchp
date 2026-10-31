@@ -131,13 +131,28 @@ def unit_of(name):
     return None
 
 
+TUNNEL = (286.0, -146.0, 400.0)       # inlet plenum dry tunnel (phase 3): r, open front x, the lines' FB end lies before x 400
+
+
 def half(sols, which):
-    """solids cut at z = 0: 'L' keeps z <= 0, 'U' z >= 0; 'Sa:b' solids a..b-1"""
+    """solids cut at z = 0: 'L' keeps z <= 0, 'U' z >= 0; 'Sa:b' solids a..b-1; 'T' / 'O' the part inside / outside the plenum
+    tunnel (a line made of a tunnel spool and an outer spool, with a union at the tunnel mouth); 'B:x0:x1:y0:y1:z0:z1' /
+    'N:...' the part inside / outside that box (a line split at a union, e.g. a hose and its rigid spool)"""
     import FreeCAD as App, Part
     V = App.Vector
     if which is None: return list(sols)
     if which.startswith('S'):
         a, b = which[1:].split(':'); return list(sols[int(a):int(b)])
+    if which in ('T', 'O') or which[:2] in ('B:', 'N:'):
+        if which in ('T', 'O'):
+            r, x0, x1 = TUNNEL; tool = Part.makeCylinder(r, x1 - x0, V(x0, 0, 0), V(1, 0, 0))
+        else:
+            x0, x1, y0, y1, z0, z1 = (float(v) for v in which[2:].split(':')); tool = Part.makeBox(x1 - x0, y1 - y0, z1 - z0, V(x0, y0, z0))
+        keep = which in ('T',) or which.startswith('B:')
+        out = []
+        for s in sols:
+            out += [c for c in (s.common(tool) if keep else s.cut(tool)).Solids if c.Volume > 1e-3]
+        return out
     box = Part.makeBox(8000, 8000, 4000, V(-4000, -4000, 0.0 if which == 'U' else -4000.0))
     out = []
     for s in sols:
@@ -166,7 +181,9 @@ class Piece:
             dy = 0.0 if bb.YMin <= 0 <= bb.YMax else min(abs(bb.YMin), abs(bb.YMax))
             dz = 0.0 if bb.ZMin <= 0 <= bb.ZMax else min(abs(bb.ZMin), abs(bb.ZMax))
             self.rmin = math.hypot(dy, dz)
-        c = solid.BoundBox.Center
+        # centre of mass, not of the box: a pin with a head has its box centre off the pin axis (0.4 deg on EX-402 is
+        # already more than the 0.1 mm hole clearance over a 20 mm stroke)
+        c = solid.CenterOfMass
         rr = math.hypot(c.y, c.z)
         self.radial = (0.0, c.y / rr, c.z / rr) if rr > 1e-6 else (0.0, 0.0, 1.0)
         self.unit = unit_of(name)
@@ -213,6 +230,8 @@ def positions(path):
         ds = sorted({L} | {L - s for s in NEAR if s < L} | {i * step for i in range(int(L / step) + 1)})
         for s in ds:
             pts.append(tuple(a[i] + (b[i] - a[i]) * s / L for i in range(4)))
+    if not pts:                                                        # a part only placed (a flexible hose): final check only
+        pts = [tuple(list(path[-1]) + [0.0] * (4 - len(path[-1])))]
     return pts
 
 
@@ -338,7 +357,7 @@ def run_pool(jobs, nproc):
 
 
 # heaviest moves first (rotor or big casings against many installed solids), so the pool ends together
-HEAVY = ('C1 ', 'D3 ', 'D4 ', 'B8 ', 'F5 ', 'B5 ', 'D1 ', 'B7 ', 'A13', 'A9 ', 'A14', 'A10')
+HEAVY = ('C1 ', 'D3 ', 'D4 ', 'B8 ', 'F6 ', 'B5 ', 'D1 ', 'B7 ', 'A13', 'A9 ', 'A14', 'A10')
 
 if '--static' in sys.argv:
     _only = tuple(a[len('--only='):] for a in sys.argv if a.startswith('--only='))

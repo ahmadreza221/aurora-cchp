@@ -1124,7 +1124,7 @@
    "material": "EN-GJS-400-18",
    "step": "../A1000_rotor/FB_2_Front_bearing_housing__lower_half__JB1___thrust__EN_GJS_400_18.step",
    "dx": 0.0,
-   "mass_kg": 17.214
+   "mass_kg": 17.212
   },
   {
    "name": "JB2 bearing cartridge housing (one piece, from the rear)",
@@ -1586,7 +1586,7 @@
    "material": "1.4404",
    "step": "../A1000_pipe/PL_07_FBH_vent_DN25__forward_through_the_tunnel__to_the_reservoir.step",
    "dx": 0.0,
-   "desc": "union on FB-1 (opened to lift the upper half); high point at the boss, then a continuous fall to the tank"
+   "desc": "union on FB-1 (opened to lift the upper half); high point 19 mm over the boss, then a continuous fall to the tank"
   },
   {
    "name": "PL-08 JB2 vent DN32 (hose at the -y strut, falls to the reservoir)",

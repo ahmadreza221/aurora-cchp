@@ -10,14 +10,18 @@ part already home); dr moves every solid along its own radial direction (nuts in
 
 Build stand frame, gravity -z:
   A  rotor stack, balanced as one unit outside the engine
-  B  lower shell on the stand: scroll pressure casing, scroll, turbine casing, compressor casing, front bearing housing,
-     lower bearing halves, lower stator half-module (C1 + C2 with NGV1 / NGV2, shrouds, liners, diaphragms, support keys,
-     pre-assembled on the bench: the carrier hooks are slid over the NGV rings axially there)
+  B  lower shell on the stand: scroll pressure casing, scroll, turbine casing, compressor casing, inlet casing (phase 3),
+     front bearing housing on its brackets, lower bearing halves, lower stator half-module (C1 + C2 with NGV1 / NGV2,
+     shrouds, liners, diaphragms, support keys, pre-assembled on the bench: the carrier hooks are slid over the NGV rings
+     axially there)
   C  rotor lowered in (rear stub on a tail-stock support tool until JB2 is in)
-  D  upper halves, upper scroll pins from outside, exhaust frame from the rear, JB2 seal ring and cartridge from the rear
+  D  upper halves (inlet casing after the compressor casing), upper scroll pins from outside, exhaust frame from the rear,
+     JB2 seal ring and cartridge from the rear
   E  combustor can from above
-  F  package: base frame with the reservoir, lube module, gas valve block, gearbox, generator; core lowered onto the base
-     frame; couplings, inlet plenum, recuperator; piping last
+  F  package (the core waits on the crane, parked 3 m up): base frame with the reservoir, pipe supports, lube module, lower
+     plenum half; core lowered into it; FB oil block, the FB lines in two spools each (tunnel spool in through the open
+     tunnel mouth, outer spool from above, union at the mouth); gearbox, generator, couplings through the open tunnel; upper
+     plenum half; recuperator; the other lines (hoses are flexible: only their final position is checked)
 """
 ROT = [('RT-1', None), ('A1000_R1 disc', None), ('Blisk 1 blade', None), ('A1000_R2 disc', None), ('Blisk 2 blade', None),
        ('Impeller', None)]
@@ -27,7 +31,9 @@ HOT = ['NGV1', 'HS-210', 'HS-211', 'HS-230', 'HS-231', 'CB-350', 'HS-220', 'HS-2
 JB1 = ['JB1 integral', 'JB1 pad carrier', 'JB1 tilting', 'TB carrier', 'TB thrust pads']
 COMP = ['Compressor casing', 'Diffuser', 'Return-channel']
 CORE = (['RT-1', 'A1000_R', 'Blisk', 'Impeller', 'JB', 'TB ', 'FB-', 'HS-', 'NGV', 'Compressor casing', 'Diffuser', 'Return-channel',
-         'CB-', 'Exhaust', 'EX-40', 'EX-41', 'EX-42', 'EX-43'])
+         'CB-', 'Exhaust', 'EX-40', 'EX-41', 'EX-42', 'EX-43', 'IN-50'])
+TUN = ['PL-02', 'PL-03', 'PL-05', 'PL-07', 'PL-09']                 # FB lines: tunnel spool 'T' + outer spool 'O'
+PARK = (0, 0, 3000)                                                # core on the crane while the package is built
 Z0, UP, DOWN = (0, 0, 0), (0, 0, 600), (0, 0, -600)
 ST = (0, 0, 1500)                                                  # rotor stacking position, above the stand
 
@@ -60,7 +66,9 @@ SEQ = [
     ('B3 lower scroll support pins, radially through CB-341', [('CB-360', 'L')], [(0, 0, 0, 250), (0, 0, 0, 0)]),
     ('B4 turbine casing lower half HS-202 (bottom key cast on)', [('HS-202', None)], [UP, Z0]),
     ('B5 compressor casing lower half with its vanes', [(p, 'L') for p in COMP], [UP, Z0]),
-    ('B6 front bearing housing lower half FB-2', [('FB-2', None)], [UP, Z0]),
+    ('B5b inlet casing lower half IN-502 (lowered 15 mm forward, then slid back onto the compressor-casing spigot)',
+     [('IN-502', None)], [(-15, 0, 600), (-15, 0, 0), Z0]),
+    ('B6 front bearing housing lower half FB-2 onto the IN-502 brackets', [('FB-2', None)], [UP, Z0]),
     ('B7 lower halves of JB1 (ISFD, carrier, 2 pads) and of the thrust bearing', [(p, 'L') for p in JB1], [(0, 0, 300), Z0]),
     ('B8 lower stator half-module (C1 + C2, NGV1 / NGV2, shrouds, liners, diaphragms, support keys)',
      [(p, 'L') for p in HOT] + [('HS-240', None)], [UP, Z0]),
@@ -71,6 +79,7 @@ SEQ = [
     ('D2 front bearing housing upper half FB-1', [('FB-1', None)], [UP, Z0]),
     ('D3 upper stator half-module', [(p, 'U') for p in HOT], [UP, Z0]),
     ('D4 compressor casing upper half', [(p, 'U') for p in COMP], [UP, Z0]),
+    ('D4b inlet casing upper half IN-501 from above (hub wall over FB-1, spigot on the compressor casing)', [('IN-501', None)], [UP, Z0]),
     ('D5 turbine casing upper half HS-201 (top key into the carrier slot)', [('HS-201', None)], [UP, Z0]),
     ('D6 hot-gas scroll upper half, deswirl vanes, insulation', [('CB-330', None), ('CB-332', 'U'), ('CB-333', 'U')], [UP, Z0]),
     ('D7 scroll pressure casing upper half CB-340', [('CB-340', None)], [UP, Z0]),
@@ -91,22 +100,47 @@ SEQ = [
     ('E1 can base plate + can casing', [('CB-302', None), ('CB-301', None)], [(0, 0, 1300), Z0]),
     ('E2 liner + impingement sleeve (welded unit)', [('CB-320', None), ('CB-321', None)], [(0, 0, 1300), Z0]),
     ('E3 head cover + premixers', [('CB-303', None), ('CB-310', None)], [(0, 0, 1000), Z0]),
-    ('E4 igniter + UV scanners', [('CB-371', None)], [(0, 0, 500), Z0]),
+    ('E4 igniter along its own axis (15 % tilt toward +y)', [('CB-371', 'S0:1')], [(0, 44.5, 296.7), Z0]),
+    ('E4b UV flame scanners from above', [('CB-371', 'S1:3')], [(0, 0, 500), Z0]),
     ('E5 fuel manifolds, pigtails, bulkhead', [('CB-370', None)], [(0, 0, 500), Z0]),
-    # F package: base frame first, then the core is set down on it
+    # F package: the core waits on the crane; base frame, supports, lube module and the lower plenum half first
+    ('F0 engine core lifted off the build stand (parked 3 m up)', [(p, None) for p in CORE], [Z0, PARK]),
     ('F1 base frame with the oil reservoir', [('Base frame', None), ('LO-100', None)], [(0, 0, -800), Z0]),
-    ('F2 lube module, gas valve block', [('Lube oil module', None)], [(0, -800, 0), Z0]),
-    ('F3 gearbox + starter', [('Epicyclic', None), ('Starter', None)], [(0, 0, 800), Z0]),
-    ('F4 generator', [('Synchronous generator', None)], [(0, 0, 800), Z0]),
-    ('F5 engine core set down on the base frame', [(p, None) for p in CORE], [(0, 0, 800), Z0]),
-    ('F6 high-speed coupling', [('High-speed coupling', None)], [(0, 0, 400), Z0]),
-    ('F7 low-speed coupling', [('Low-speed coupling', None)], [(0, 0, 400), Z0]),
-    ('F8 air inlet plenum', [('Air inlet', None)], [(0, 0, 1100), Z0]),
-    ('F9 recuperator, ducts, BOV, economizer + stack (phase 2)', [('Recuperator', None), ('EX-44', None), ('EX-45', None), ('EX-46', None),
-                                                                  ('EX-47', None)], [(0, 1400, 0), Z0]),
-    ('F10 oil supply header + JB1 / TB lines', [('PL-01', None), ('PL-02', None), ('PL-03', None)], [(0, -500, 0), Z0]),
-    ('F11 drains and vents', [('PL-05', None), ('PL-06', None), ('PL-07', None), ('PL-08', None)], [(0, 0, -100), Z0]),
-    ('F12 JB2 oil line, buffer + cooling air', [('PL-04', None), ('PL-09', None)], [(0, -500, 0), Z0]),
-    ('F13 fuel hoses + gas valve block, gearbox oil feed', [('PL-10', None), ('PL-13', None)], [(0, -500, 0), Z0]),
-    ('F15 combustor drains + pot, pipe supports', [('PL-12', None), ('PL-90', None)], [(0, -500, 0), Z0]),
+    ('F2 pipe supports onto the base frame', [('PL-90', None)], [(0, 0, 600), Z0]),
+    ('F3 JB2 drain: rigid spool onto its supports from above (it lies under the scroll casing and the plenum box)',
+     [('PL-06', 'N:960:1100:-100:100:-700:-500')], [(0, 0, 600), Z0]),
+    ('F4 lube module', [('Lube oil module', None)], [(0, -800, 0), Z0]),
+    ('F5 plenum lower half IN-511 (phase 3)', [('IN-511', None)], [(0, 0, 1200), Z0]),
+    ('F6 engine core lowered into the plenum lower half and onto the base frame', [(p, None) for p in CORE], [PARK, Z0]),
+    ('F7 FB oil block in front of the plenum', [('PL-01', None)], [(0, 0, 600), Z0]),
+    ('F8 tunnel spools of the JB1 / TB oil lines: in through the tunnel mouth and the IN-502 bracket windows',
+     [('PL-02', 'T'), ('PL-03', 'T')], [(-300, 0, 0), Z0]),
+    ('F9 tunnel spool of the FB drain: in through the tunnel mouth, the DN40 ends slide under the socket faces', [('PL-05', 'T')],
+     [(-300, 0, 0), Z0]),
+    ('F10 tunnel spool of the FB vent: in 5 mm high, then down onto the FB-1 boss', [('PL-07', 'T')], [(-300, 0, 5), (0, 0, 5), Z0]),
+    ('F11 tunnel spool of the buffer air: in through the tunnel mouth (its end slides along the FB-2 boss face)', [('PL-09', 'T')],
+     [(-300, 0, 0), Z0]),
+    ('F12 outer spools of the FB oil, drain and vent lines from above (unions at the tunnel mouth and on the oil block)',
+     [(p, 'O') for p in TUN[:4]], [(0, 0, 700), Z0]),
+    ('F13 buffer air: riser spool and the run along the plenum side from above', [('PL-09', 'B:-200:-146:-800:-200:-200:620'),
+                                                                                  ('PL-09', 'B:-146:300:-800:-600:400:620')], [(0, 0, 700), Z0]),
+    ('F14 buffer air: valve block and the tap spool from -y, under the can base plate', [('PL-09', 'B:300:420:-800:50:480:620')],
+     [(0, -700, 0), Z0]),
+    ('F15 gearbox + starter', [('Epicyclic', None), ('Starter', None)], [(0, 0, 800), Z0]),
+    ('F16 generator', [('Synchronous generator', None)], [(0, 0, 800), Z0]),
+    ('F17 high-speed coupling from above through the open tunnel', [('High-speed coupling', None)], [(0, 0, 700), Z0]),
+    ('F18 low-speed coupling', [('Low-speed coupling', None)], [(0, 0, 400), Z0]),
+    ('F19 plenum upper half IN-510 + filter-house adapter IN-520 (phase 3)', [('IN-510', None), ('IN-520', None)], [(0, 0, 1200), Z0]),
+    ('F20 recuperator, ducts, BOV, economizer + stack (phase 2)', [('Recuperator', None), ('EX-44', None), ('EX-45', None),
+                                                                   ('EX-46', None), ('EX-47', None)], [(0, 1400, 0), Z0]),
+    ('F21 JB2 vent: rigid spool from -y, 20 mm high over the deck, then down', [('PL-08', 'N:980:1100:-660:-500:-40:40')],
+     [(0, -400, 20), (0, 0, 20), Z0]),
+    ('F22 JB2 drain and vent hoses at the struts (flexible: final position only)', [('PL-06', 'B:960:1100:-100:100:-700:-500'),
+                                                                                    ('PL-08', 'B:980:1100:-660:-500:-40:40')], [Z0]),
+    ('F23 JB2 oil line: rigid spool along the scroll casing from -y', [('PL-04', 'N:930:1012:-30:30:560:650')], [(0, -500, 0), Z0]),
+    ('F24 JB2 oil hose down to the top strut (flexible: final position only)', [('PL-04', 'B:930:1012:-30:30:560:650')], [Z0]),
+    ('F25 gas valve block from -y (under the exhaust collector)', [('PL-10', 'B:995:1305:-1205:-895:-705:-295')], [(0, -600, 0), Z0]),
+    ('F26 fuel hoses to the CB-370 drops (flexible: final position only)', [('PL-10', 'N:995:1305:-1205:-895:-705:-295')], [Z0]),
+    ('F27 gearbox oil feed from above', [('PL-13', None)], [(0, 0, 600), Z0]),
+    ('F28 combustor drains + drain pot from -y', [('PL-12', None)], [(0, -500, 0), Z0]),
 ]
