@@ -313,7 +313,12 @@
    70.0,
    120.0
   ],
-  "y_hole": 185.0
+  "y_hole": 185.0,
+  "key_x": [
+   87.0,
+   103.0
+  ],
+  "key_d": 6.0
  },
  "parts": {
   "IN-501 Inlet casing, upper half (EN-GJS-400-18)": {
@@ -339,8 +344,8 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 58.95,
-   "desc": "lower half as IN-501 with the struts at 225 / 315 deg and two L brackets for the FB-2 centre-line feet (pad z -20, 2 x M16 each, window for the oil-inlet fittings)",
+   "mass_kg": 58.9,
+   "desc": "lower half as IN-501 with the struts at 225 / 315 deg and two L brackets for the FB-2 centre-line feet (pad z -20, 2 x M16 each, transverse key slot 16 x 6 at x 87-103, window for the oil-inlet fittings)",
    "bbox": [
     55.0,
     222.0,

@@ -34,7 +34,8 @@ T_P = 6.0                                                         # plenum plate
 CAS = dict(x_front=143.0, r_bore=130.5, x_land=97.0, r_land_in=276.0, x_ring=109.0, r_ring_in=250.0,
            x_rear=222.0, r_rim=460.0, r_rim_o=480.0, x_rim=210.0, r_spig=150.0, x_spig=214.0,
            r_bolt_cc=440.0, n_bolt_cc=24, r_bolt_box=470.0, n_bolt_box=24)
-BRK = dict(x=(55.0, 143.0), y=(160.0, 215.0), z_pad=(-36.0, -20.0), web_y=(199.0, 215.0), z_web=-110.0, holes_x=(70.0, 120.0), y_hole=185.0)
+BRK = dict(x=(55.0, 143.0), y=(160.0, 215.0), z_pad=(-36.0, -20.0), web_y=(199.0, 215.0), z_web=-110.0, holes_x=(70.0, 120.0), y_hole=185.0,
+           key_x=(87.0, 103.0), key_d=6.0)                     # transverse key slot under each FB-2 foot (axial location, sec. 19)
 
 
 def _fc():
@@ -150,7 +151,8 @@ def lug_holes():
 
 def brackets():
     """FB-2 foot brackets on the lower half: L section (pad under the foot, outer web), cantilevered from the hub-wall front
-    face; window inside the L for the FB-2 oil-inlet fittings (-y side) leaving forward; 2 x M16 per foot"""
+    face; window inside the L for the FB-2 oil-inlet fittings (-y side) leaving forward; 2 x M16 per foot; a transverse
+    key slot 16 x 6 across each pad matches the slot in the FB-2 foot (loose key, axial location; the feet slide in y)"""
     App, Part, Vv = _fc()
     out = []
     for sy in (1, -1):
@@ -160,6 +162,7 @@ def brackets():
         b = pad.fuse(web)
         for xh in BRK['holes_x']:
             b = b.cut(Part.makeCylinder(7.0, 20.0, Vv(xh, sy * BRK['y_hole'], BRK['z_pad'][0] - 2.0), Vv(0, 0, 1)))
+        b = b.cut(box(BRK['key_x'][0], BRK['key_x'][1], *ys(BRK['y'][0] - 1.0, BRK['web_y'][0]), BRK['z_pad'][1] - BRK['key_d'], BRK['z_pad'][1] + 1.0))
         out.append(b)
     return out
 
@@ -248,7 +251,7 @@ DESC = {
               'inducer shroud r 137.5, spigot recess r 150 on the compressor casing, 24 x M12 from the back; lifts off after '
               'the plenum upper half',
     'IN-502': 'lower half as IN-501 with the struts at 225 / 315 deg and two L brackets for the FB-2 centre-line feet '
-              '(pad z -20, 2 x M16 each, window for the oil-inlet fittings)',
+              '(pad z -20, 2 x M16 each, transverse key slot 16 x 6 at x 87-103, window for the oil-inlet fittings)',
     'IN-510': 'welded box 6 mm: plenum x -140..204, y +-540, z 0..600, filter-house flange 1080 x 344 on top, dry tunnel half '
               'r 290 round FB-1 and the coupling, bolted flush onto the casing rim (24 x M10) and the tunnel ring (16 x M10)',
     'IN-511': 'lower half of the box down to z -620, 4 feet to the skid, washing / condensate drain at the low point; the dry '
