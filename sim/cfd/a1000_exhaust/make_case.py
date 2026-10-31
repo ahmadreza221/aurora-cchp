@@ -15,7 +15,8 @@ Meshes: background cell h0 = 32 / 24 / 18 mm (ratio 1.33); diffuser walls + regi
 level 0. Result: mass-averaged total-pressure drop inlet -> collector outlet flange (y 680) and to the strut exit plane.
 
 Steps:  (local)   ~/micromamba/envs/gr180/bin/python sim/cfd/a1000_exhaust/make_case.py --write   -> case_<mesh>/ + run.sh
-        (MacBook) rsync to ~/gr180_runs/a1000_exh/, ./run.sh <mesh> (gmsh STL, blockMesh, snappy, simpleFoam, post)
+        (MacBook) rsync to ~/gr180_runs/a1000_exh/, ./run.sh <mesh> (gmsh STL, blockMesh, snappy, simpleFoam, post);
+                  the fine mesh ran on a Linux node: OF=openfoam2506 PY=python3 NP=32 ./run.sh fine
         (local)   rsync the small results back, make_case.py --collect   -> results.json (+ docs/img/a1000_exhaust_cfd.png)
 Inside a case directory (MacBook): python make_case.py --geom | --inlet | --post   (reads geometry.json / inlet.json)
 """
@@ -26,7 +27,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MESHES = dict(coarse=0.032, medium=0.024, fine=0.018)
-ITERS = dict(coarse=1500, medium=1200, fine=1000)
+ITERS = dict(coarse=1500, medium=1200, fine=1500)
 NP = 6
 HEADER = 'FoamFile\n{\n    version 2.0;\n    format ascii;\n    class %s;\n    object %s;\n}\n'
 
@@ -269,20 +270,23 @@ surfaces
 
 
 RUN_SH = r'''#!/bin/bash
-# AURORA-1000 exhaust CFD on the MacBook: ./run.sh <coarse|medium|fine> [map_from_case]
+# AURORA-1000 exhaust CFD: ./run.sh <coarse|medium|fine> [map_from_case]
+# MacBook defaults; on a Linux node: OF=openfoam2506 PY=python3 NP=32 ./run.sh fine
 set -e
 M=$1; MAP=$2
 cd "$(dirname "$0")/case_$M"
-OF=~/Applications/OpenFOAM-v2506.app/Contents/Resources/etc/openfoam
-PY=~/micromamba/envs/gr180/bin/python
+OF=${OF:-~/Applications/OpenFOAM-v2506.app/Contents/Resources/etc/openfoam}
+PY=${PY:-~/micromamba/envs/gr180/bin/python}
+NP=${NP:-6}
 of() { $OF -c "$1" > "log.$2" 2>&1; }
+perl -pi -e "s/^numberOfSubdomains .*/numberOfSubdomains $NP;/" system/decomposeParDict
 date > log.start
 if [ ! -f constant/polyMesh/owner ]; then
   $PY make_case.py --geom > log.geom 2>&1
   of "surfaceFeatureExtract" surfaceFeatureExtract
   of "blockMesh" blockMesh
   of "decomposePar -force" decomposePar.mesh
-  of "mpirun -np 6 snappyHexMesh -overwrite -parallel" snappyHexMesh
+  of "mpirun -np $NP snappyHexMesh -overwrite -parallel" snappyHexMesh
   of "reconstructParMesh -constant" reconstructParMesh
   rm -rf processor*
   of "checkMesh -constant" checkMesh
@@ -294,7 +298,7 @@ of "postProcess -func writeCellCentres -time 0" cellCentres
 $PY make_case.py --inlet > log.inlet 2>&1
 of "foamDictionary -entry writeFormat -set binary system/controlDict" fd2
 of "decomposePar -force" decomposePar
-of "mpirun -np 6 simpleFoam -parallel" simpleFoam
+of "mpirun -np $NP simpleFoam -parallel" simpleFoam
 of "reconstructPar -latestTime" reconstructPar
 rm -rf processor*
 of "postProcess -func sampleDict -latestTime" sample
