@@ -11,7 +11,7 @@
   "n": 1984,
   "d": 6.0
  },
- "gas_volume_m3": 0.13227861687217793,
+ "gas_volume_m3": 0.13227861421317025,
  "z_top": 2065.0,
  "parts": {
   "CB-330 Hot-gas casing upper half (Haynes 230)": {
@@ -84,10 +84,10 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 231.03,
+   "mass_kg": 233.03,
    "bbox": [
-    300.0,
-    1030.0,
+    285.0,
+    1045.0,
     -365.0,
     490.0,
     800.0,
@@ -116,7 +116,7 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 163.22,
+   "mass_kg": 163.11,
    "bbox": [
     300.0,
     1030.0,
@@ -180,7 +180,7 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 354.44,
+   "mass_kg": 362.28,
    "bbox": [
     380.0,
     968.0,
@@ -196,7 +196,7 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 211.6,
+   "mass_kg": 211.59,
    "bbox": [
     390.0,
     968.0,
@@ -238,20 +238,20 @@
     493.9
    ]
   },
-  "CB-370 Fuel manifolds P / A / B + lances": {
-   "step": "CB_370_Fuel_manifolds_P___A___B___lances.step",
+  "CB-370 Fuel manifolds P / A / B1 / B2, pigtails, bulkhead (1.4404)": {
+   "step": "CB_370_Fuel_manifolds_P___A___B1___B2__pigtails__bulkhead__1_4404.step",
    "material": "1.4404",
    "group": "aux",
    "valid": true,
-   "solids": 9,
-   "mass_kg": 8.33,
+   "solids": 29,
+   "mass_kg": 37.17,
    "bbox": [
-    487.5,
-    842.5,
-    -177.5,
-    177.5,
-    2005.0,
-    2049.0
+    449.6,
+    880.4,
+    -474.0,
+    215.4,
+    880.0,
+    2195.0
    ]
   },
   "CB-371 Igniter + 2 UV flame scanners": {

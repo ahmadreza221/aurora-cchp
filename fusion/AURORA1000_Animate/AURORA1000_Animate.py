@@ -1,12 +1,17 @@
 """Autodesk Fusion add-in: an "AURORA-1000" panel in the Design workspace (Solid tab) for "AURORA-1000 Package rev5".
 
-  Assembly sequence  every part starts hidden; the parts fly into place in the build order of docs/08 sec. 13, with a
-                     label per step in the top-left corner of the view:
-                       1 front stub + thrust collar, impeller 1, spacer, impeller 2, drum, M42 tie bolt and nut
-                       2 R1 blisk + drum - R1 studs, spacer ring RT-107, R2 blisk, rear stub + studs (balanced outside)
-                       3 thrust and journal bearing cartridges
-                       4 lower halves of the split casings, NGV rings and diaphragms, upper halves
-                       5 scroll and can combustor, inlet, exhaust, recuperator, gearbox, generator, lube module, skid
+  Assembly sequence  every part starts hidden; the parts fly into place in the build order of docs/08 sec. 19 (checked
+                     step by step along each path by cad/engine/a1000_assembly_check.py), with a label per step in the
+                     top-left corner of the view:
+                       1 rotor stack on the build table above the stand, balanced as one unit
+                       2 lower shell on the stand: scroll casing, scroll, turbine and compressor casings, front bearing
+                         housing FB-2 with the lower bearing halves, stator half-module (split parts are shown whole)
+                       3 the balanced rotor is lowered in as one unit
+                       4 upper halves: FB-1, turbine casing, scroll, scroll casing; exhaust frame from the rear, then the
+                         JB2 seal ring and cartridge from the rear
+                       5 combustor can and head from above
+                       6 package: base frame with the oil reservoir, lube module, gearbox, generator, couplings, inlet,
+                         recuperator, piping
   Spin rotor         the rotating groups (rotor shaft group with the high-speed coupling, blisks, impellers) turn slowly
                      about the engine axis (package X axis, y = z = 0, +X right-handed = the CAD +theta); the low-speed
                      coupling turns at -1/10 (star epicyclic 10:1: the output ring turns against the sun). Stationary
@@ -32,7 +37,7 @@ import adsk.fusion
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOG = os.path.join(HERE, '_last_run.log')
 WS_ID, TAB_ID, PANEL_ID = 'FusionSolidEnvironment', 'SolidTab', 'A1000AnimatePanel'
-CMDS = [('A1000AnimAssembly', 'Assembly sequence', 'Parts fly into place in the build order of docs/08 sec. 13 (about 1 min). '
+CMDS = [('A1000AnimAssembly', 'Assembly sequence', 'Parts fly into place in the build order of docs/08 sec. 19 (about 1 min). '
          'Click any AURORA-1000 button to stop.', 'assembly'),
         ('A1000AnimSpin', 'Spin rotor', 'The rotor turns slowly about the engine axis; the generator side turns at 1/10 '
          '(10:1 gearbox). Click any AURORA-1000 button to stop.', 'spin'),
@@ -45,59 +50,77 @@ SPIN_DEG, SPIN_S, SPIN_RAMP = 720.0, 20.0, 3.0                      # two turns 
 MOVE_S, PAUSE_S, TITLE_S = 0.9, 0.15, 1.6
 TITLE, NOTE, PART = (255, 255, 255), (215, 225, 240), (255, 170, 60)    # label colours (Fusion's dark canvas)
 
-# build order: (step title, step note, [(label, part-name prefixes, offset mm the parts fly in from), ...])
+# build order (docs/08 sec. 19, cad/engine/a1000_assembly_seq.py): (step title, step note, [(label, part-name prefixes,
+# offset mm the parts fly in from[, offset they stop at, again]), ...]). A move ends at its stop offset (default home);
+# 'again' moves parts an earlier move already placed (the rotor is stacked above the stand, then lowered in).
 XA, XF, ZD, ZU = (650, 0, 0), (-650, 0, 0), (0, 0, -900), (0, 0, 900)
+HI = (0, 0, 700)                                                    # the rotor is stacked 700 mm above its place
+ROTOR_PARTS = ['RT-1', 'Impeller', 'A1000_R1 disc', 'A1000_R2 disc', 'Blisk 1 blade', 'Blisk 2 blade']
+
+
+def _hi(off):
+    return tuple(a + b for a, b in zip(off, HI))
+
+
 STEPS = [
-    ('1/5  Compressor rotor stack',
-     'Curvic couplings centre every joint. The M42 tie bolt (IN718) clamps the stack with 185 kN.',
-     [('Front stub shaft with the thrust collar (RT-101)', ['RT-101'], XF),
-      ('Impeller 1, Ti-6Al-4V, 13 + 13 blades', ['Impeller 1'], XA),
-      ('Compressor spacer (RT-104)', ['RT-104'], XA),
-      ('Impeller 2, 13 + 13 blades', ['Impeller 2'], XA),
-      ('Drum, IN718 (RT-105)', ['RT-105'], XA),
-      ('Tie bolt M42 (RT-102)', ['RT-102'], (-1100, 0, 0)),
-      ('Tie-bolt nut (RT-103)', ['RT-103'], (-450, 0, 0))]),
-    ('2/5  Turbine rotor stack',
-     'Bolted curvic flanges with 16 x M10 IN718 studs. The rotor is balanced outside the engine.',
-     [('R1 blisk, cast MAR-M247, 59 blades', ['A1000_R1 disc', 'Blisk 1 blade'], XA),
-      ('Studs + nuts drum - R1 (RT-111)', ['RT-111'], (300, 0, 0)),
-      ('Turbine spacer ring R1 - R2 (RT-107)', ['RT-107'], XA),
-      ('R2 blisk, cast MAR-M247, 36 blades', ['A1000_R2 disc', 'Blisk 2 blade'], XA),
-      ('Studs + nuts R1 - R2 (RT-112)', ['RT-112'], (300, 0, 0)),
-      ('Rear stub shaft (RT-106)', ['RT-106'], XA),
-      ('Studs + nuts R2 - rear stub (RT-113)', ['RT-113'], (300, 0, 0))]),
-    ('3/5  Bearing cartridges',
-     'Tilting-pad journal bearings with S-spring damper rings (ISFD); double-acting thrust bearing on the collar.',
-     [('Thrust bearing: 8 + 4 pads, carrier rings, housing + inlet hub fairing', ['TB '], (-600, 0, 0)),
-      ('Journal bearing 1: 5 pads, carrier, ISFD ring, housing', ['JB1'], (-700, 0, 0)),
-      ('Journal bearing 2 in the exhaust hub: 5 pads, carrier, ISFD ring, housing', ['JB2'], (700, 0, 0))]),
-    ('4/5  Split casings: lower halves, NGV rings, upper halves',
-     'The rotor goes into the lower halves. NGV rings, carriers and diaphragms are split too (shown whole in the CAD).',
-     [('Turbine outer casing, lower half (HS-202)', ['HS-202'], ZD),
+    ('1/6  Rotor stack, balanced as one unit',
+     'Curvic couplings centre every joint. M42 tie bolt (IN718) 185 kN; turbine flanges 16 x M10 studs, nuts started on the '
+     'stud tips with the disc 6 mm short, then run down.',
+     [('Front stub shaft with the thrust collar (RT-101)', ['RT-101'], _hi(XF), HI),
+      ('Impeller 1, Ti-6Al-4V, 13 + 13 blades', ['Impeller 1'], _hi(XA), HI),
+      ('Compressor spacer (RT-104)', ['RT-104'], _hi(XA), HI),
+      ('Impeller 2, 13 + 13 blades', ['Impeller 2'], _hi(XA), HI),
+      ('Drum, IN718 (RT-105)', ['RT-105'], _hi(XA), HI),
+      ('Tie bolt M42 (RT-102) and nut (RT-103) from the front', ['RT-102', 'RT-103'], _hi((-1100, 0, 0)), HI),
+      ('R1 blisk with the drum - R1 studs and nuts (RT-111)', ['A1000_R1 disc', 'Blisk 1 blade', 'RT-111'], _hi(XA), HI),
+      ('Turbine spacer ring R1 - R2 (RT-107)', ['RT-107'], _hi(XA), HI),
+      ('R2 blisk with the R1 - R2 studs and nuts (RT-112)', ['A1000_R2 disc', 'Blisk 2 blade', 'RT-112'], _hi(XA), HI),
+      ('Rear stub shaft with the R2 - stub studs and nuts (RT-106, RT-113)', ['RT-106', 'RT-113'], _hi(XA), HI)]),
+    ('2/6  Lower shell on the build stand',
+     'Lower halves first; split rings, carriers and bearing parts are shown whole (in the machine they are halves).',
+     [('Scroll pressure casing, lower half (CB-341)', ['CB-341'], ZD),
+      ('Hot-gas scroll lower half, deswirl vanes, insulation; lower scroll pins', ['CB-331', 'CB-332', 'CB-333', 'CB-360'], ZD),
+      ('Turbine outer casing, lower half (HS-202, bottom key cast on)', ['HS-202'], ZD),
       ('Compressor casing with vaned diffusers and return channel', ['Compressor casing', 'Diffuser', 'Return-channel'], ZD),
-      ('Front diaphragm + seal honeycomb (HS-230, HS-231)', ['HS-230', 'HS-231'], ZD),
-      ('NGV1 ring (48 vanes), shroud carrier C1, R1 honeycomb shroud', ['NGV1', 'HS-210', 'HS-211'], ZD),
-      ('Gap liner and gap ring R1 - NGV2 (HS-222, HS-234)', ['HS-222', 'HS-234'], ZD),
-      ('NGV2 ring (24 vanes), shroud carrier C2, R2 honeycomb shroud', ['NGV2', 'HS-220', 'HS-221'], ZD),
-      ('Interstage diaphragm + seal honeycomb (HS-232, HS-233)', ['HS-232', 'HS-233'], ZD),
-      ('Radial centring pins x 8 (HS-240)', ['HS-240'], (0, 0, 600)),
-      ('Turbine outer casing, upper half (HS-201)', ['HS-201'], ZU)]),
-    ('5/5  Combustor, exhaust, recuperator, gearbox, generator, skid',
-     'DLE can combustor on top, scroll to NGV1; bought-in recuperator, 10:1 gearbox and 1,250 kVA generator.',
-     [('Scroll lower halves: pressure casing CB-341, hot-gas casing CB-331', ['CB-341', 'CB-331'], ZD),
-      ('Deswirl vanes, NGV1 leaf seals, scroll support pins', ['CB-332', 'CB-350', 'CB-360'], (0, 0, 600)),
-      ('Scroll upper halves + insulation cassettes', ['CB-330', 'CB-333', 'CB-340'], ZU),
-      ('Can casing and base plate', ['CB-301', 'CB-302'], (0, 0, 1300)),
+      ('Front bearing housing, lower half (FB-2)', ['FB-2'], ZD),
+      ('JB1: split ISFD ring, carrier, 4 pads; thrust bearing: split base rings, 8 + 4 pads', ['JB1', 'TB '], (0, 0, -500)),
+      ('Stator half-module: C1 + C2, NGV1 / NGV2, shrouds, gap liners, diaphragms, NGV1 seals, support keys',
+       ['NGV1', 'NGV2', 'HS-210', 'HS-211', 'HS-220', 'HS-221', 'HS-222', 'HS-234', 'HS-230', 'HS-231', 'HS-232', 'HS-233',
+        'CB-350', 'HS-240'], ZD)]),
+    ('3/6  The balanced rotor is lowered in',
+     'Front on the JB1 lower pads, rear stub on a tail-stock support tool until JB2 is in.',
+     [('Rotor (balanced unit)', ROTOR_PARTS, HI, (0, 0, 0), True)]),
+    ('4/6  Upper halves, exhaust frame, JB2 from the rear',
+     'Upper halves come straight down. JB2 is a one-piece cartridge that slides on from the rear and can be pulled without '
+     'opening the casing.',
+     [('Front bearing housing, upper half (FB-1)', ['FB-1'], ZU),
+      ('Turbine outer casing, upper half (HS-201, top key into the carrier slot)', ['HS-201'], ZU),
+      ('Hot-gas scroll upper half (CB-330)', ['CB-330'], ZU),
+      ('Scroll pressure casing, upper half (CB-340)', ['CB-340'], ZU),
+      ('Exhaust air manifold and exhaust frame with its struts (from the rear)', ['Exhaust diffuser', 'EX-401', 'EX-402', 'EX-410',
+                                                                                'EX-411', 'EX-413', 'EX-414'], (1000, 0, 0)),
+      ('JB2 split seal ring (labyrinth + buffer + windback)', ['JB2 front seal'], (400, 0, 0)),
+      ('JB2 cartridge: housing, ISFD ring, carrier, 4 pads, heat shield, frame support ring', ['JB2 bearing', 'JB2 integral', 'JB2 pad',
+                                                                                             'JB2 tilting', 'JB2 heat shield', 'EX-412'], (600, 0, 0)),
+      ('JB2 end cover; exhaust collector, hub cover, transition', ['JB2 end cover', 'Exhaust collector', 'EX-420', 'EX-421', 'EX-430'],
+       (800, 0, 0))]),
+    ('5/6  Combustor',
+     'DLE can on top, scroll to NGV1. Fuel circuits P / A / B1 / B2 end in unions at the bulkhead on the head cover.',
+     [('Can casing and base plate', ['CB-301', 'CB-302'], (0, 0, 1300)),
       ('Impingement sleeve and liner', ['CB-321', 'CB-320'], (0, 0, 1300)),
       ('Head cover with 7 premixers (pilot + 6 mains)', ['CB-303', 'CB-310'], (0, 0, 1000)),
-      ('Fuel manifolds, igniter + 2 UV flame scanners', ['CB-370', 'CB-371'], (0, 0, 800)),
-      ('Air inlet plenum + bellmouth', ['Air inlet'], (0, 0, 1100)),
-      ('Exhaust diffuser with 5 struts, exhaust collector', ['Exhaust'], (1000, 0, 0)),
-      ('Recuperator (bought in) and ducts', ['Recuperator'], (0, 1400, 0)),
+      ('Fuel manifolds, igniter + 2 UV flame scanners', ['CB-370', 'CB-371'], (0, 0, 800))]),
+    ('6/6  Package',
+     'The core is set on the base frame. Oil reservoir in the frame, drains fall to it. Bought-in recuperator, 10:1 gearbox, '
+     '1,250 kVA generator.',
+     [('Base frame (skid) with the oil reservoir', ['Base frame', 'LO-100'], (0, 0, -1100)),
+      ('Lube oil module', ['Lube oil'], (0, -1000, 0)),
       ('High-speed coupling, epicyclic gearbox 10:1, starter motor', ['High-speed coupling', 'Epicyclic', 'Starter'], (-900, 0, 0)),
       ('Low-speed coupling and synchronous generator', ['Low-speed coupling', 'Synchronous generator'], (-1300, 0, 0)),
-      ('Lube oil module', ['Lube oil'], (0, -1000, 0)),
-      ('Base frame (skid)', ['Base frame'], (0, 0, -1100))]),
+      ('Air inlet plenum + bellmouth', ['Air inlet'], (0, 0, 1100)),
+      ('Recuperator (bought in), ducts, BOV, economizer + stack', ['Recuperator', 'EX-44', 'EX-45', 'EX-46', 'EX-47'], (0, 1400, 0)),
+      ('Oil supply, drains, vents, buffer and cooling air', ['PL-0', 'PL-13'], (0, -900, 0)),
+      ('Fuel hoses and gas valve block, combustor drains, pipe supports', ['PL-1', 'PL-9'], (0, -900, 0))]),
 ]
 VIEW_ENGINE = ((45.0, 0.0, 0.0), 220.0)                            # camera target (cm) and view extents
 VIEW_PACKAGE = ((-55.0, 42.0, 52.0), 520.0)
@@ -221,21 +244,25 @@ def view(target, extents):
 
 
 def plan(design):
-    """STEPS with the part occurrences matched by name prefix; parts no step names come last."""
+    """STEPS with the part occurrences matched by name prefix: [(title, note, [(label, occs, start, stop)])]; a part goes to
+    the first move that names it, except moves marked 'again' (they take parts already placed); unnamed parts come last."""
     parts = [o for _, subs in occurrences(design) for o in subs]
     free, out = [True] * len(parts), []                             # Occurrence objects are not hashable
     for title, note, moves in STEPS:
         mv = []
-        for label, prefixes, off in moves:
-            idx = [i for i, o in enumerate(parts) if free[i] and o.component.name.startswith(tuple(prefixes))]
+        for m in moves:
+            label, prefixes, off = m[:3]
+            stop = m[3] if len(m) > 3 else (0, 0, 0)
+            again = len(m) > 4 and m[4]
+            idx = [i for i, o in enumerate(parts) if (again or free[i]) and o.component.name.startswith(tuple(prefixes))]
             for i in idx:
                 free[i] = False
             if idx:
-                mv.append((label, [parts[i] for i in idx], off))
+                mv.append((label, [parts[i] for i in idx], off, stop))
         out.append((title, note, mv))
     rest = [o for i, o in enumerate(parts) if free[i]]
     if rest:
-        out.append(('Other parts', '', [('Remaining parts', rest, ZU)]))
+        out.append(('Other parts', '', [('Remaining parts', rest, ZU, (0, 0, 0))]))
     return out
 
 
@@ -266,31 +293,37 @@ def animation(name):
 @animation('assembly')
 def assembly(design):
     steps = plan(design)
-    for _, occs, _ in [m for s in steps for m in s[2]]:
+    for _, occs, _, _ in [m for s in steps for m in s[2]]:
         for o in occs:
             o.isLightBulbOn = False
+    home = {}                                                       # occurrence -> home translation (cm), first sight
     view(*VIEW_ENGINE)
     frames = 0
     for k, (title, note, moves) in enumerate(steps):
-        if title.startswith('5/5'):
+        if title.startswith('6/6'):
             view(*VIEW_PACKAGE)
         hud(design, [('AURORA-1000 assembly sequence   ' + title, 16, TITLE), (note, 12, NOTE)])
         wait(TITLE_S)
-        for label, occs, off in moves:
+        for label, occs, off, stop in moves:
             if _state['stop']:
                 return
             hud(design, [('AURORA-1000 assembly sequence   ' + title, 16, TITLE), (note, 12, NOTE),
                          (label, 14, PART)])
-            base = [o.transform2 for o in occs]
-            vec = [v / 10.0 for v in off]                           # mm -> cm
+            base = []
+            for o in occs:
+                m0 = o.transform2
+                key = o.fullPathName
+                if key not in home:
+                    home[key] = (m0.translation.x, m0.translation.y, m0.translation.z)
+                base.append((m0, home[key]))
+            a = [v / 10.0 for v in off]; b = [v / 10.0 for v in stop]  # mm -> cm
             t0 = time.time()
             while True:
                 f = min(1.0, (time.time() - t0) / MOVE_S)
-                s = 1.0 - ease(f)
-                for o, m0 in zip(occs, base):
+                s = ease(f)
+                for o, (m0, h) in zip(occs, base):
                     m = m0.copy()
-                    m.translation = adsk.core.Vector3D.create(m0.translation.x + vec[0] * s, m0.translation.y + vec[1] * s,
-                                                              m0.translation.z + vec[2] * s)
+                    m.translation = adsk.core.Vector3D.create(*[h[i] + a[i] + (b[i] - a[i]) * s for i in range(3)])
                     o.transform2 = m
                     if not o.isLightBulbOn:
                         o.isLightBulbOn = True
@@ -299,7 +332,7 @@ def assembly(design):
                     break
             log('  %-60s %2d parts' % (label[:60], len(occs)))
             wait(PAUSE_S)
-    hud(design, [('AURORA-1000 assembled: %d parts' % sum(len(m[1]) for s in steps for m in s[2]), 16, TITLE)])
+    hud(design, [('AURORA-1000 assembled: %d parts' % len({o.fullPathName for s in steps for m in s[2] for o in m[1]}), 16, TITLE)])
     wait(TITLE_S)
     log('  %d frames' % frames)
 

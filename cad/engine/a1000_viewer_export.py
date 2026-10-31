@@ -64,6 +64,7 @@ GROUPS = {   # name: (rgba, metallic, roughness)
     'aux':     ((0.86, 0.72, 0.20, 1.0), 0.40, 0.60),
     'skid':    ((0.25, 0.27, 0.30, 1.0), 0.50, 0.60),
     'hot':     ((0.72, 0.55, 0.42, 1.0), 0.60, 0.45),
+    'pipe':    ((0.29, 0.55, 0.77, 1.0), 0.50, 0.50),
 }
 parts = []
 
@@ -365,7 +366,8 @@ gen = gen.fuse(box(-3000, -1700, -450, 450, 450, 800)).fuse(box(-2300, -1900, 52
 gen = gen.fuse(cyl(80.0, 120.0, (-1420.0, 0, 0), (1, 0, 0)))
 add('Synchronous generator', 'gen', gen, desc='4-pole brushless, 1,250 kVA, 400 V, 1,500 rpm, IP54 for Borazjan dust; about 2.1 x 1.05 x 1.3 m, 3-3.5 t',
     material='bought in')
-add('Lube oil module', 'aux', box(-1250, -150, -1250, -450, -700, 0), desc='tank, pumps, cooler, filters; ISO VG 32 shared by the turbine and the gearbox',
+add('Lube oil module', 'aux', box(-1250, -150, -1250, -450, -700, 0), desc='pumps (AC main + standby, DC emergency), duplex filter, air cooler, PCV; '
+    'ISO VG 32 shared by the turbine and the gearbox; the reservoir is in the base frame (LO-100, docs/08 sec. 19)',
     material='bought in')
 sk = None
 for y in (-1100.0, 1050.0):
@@ -410,6 +412,14 @@ if STEP_OUT:
             pkg['parts'].append(dict(name=name, group='casing' if q['group'] == 'casing' else 'hot', inst=[0.0], material=q['material'],
                                      mass_kg=q['mass_kg'], step='../A1000_hot/' + q['step'], dx=0.0))
         print('hot section rev 1 parts from fusion/A1000_hot')
+    # engine piping (cad/engine/a1000_piping.py --cad, docs/08 sec. 19): oil supply / drains / vents, buffer air, fuel hoses
+    # and the gas valve block, combustor drains, the oil reservoir in the base frame, pipe supports
+    pipe_json = os.path.join(ROOT, 'fusion', 'A1000_pipe', 'parts.json')
+    if os.path.exists(pipe_json):
+        for name, q in json.load(open(pipe_json))['parts'].items():
+            pkg['parts'].append(dict(name=name, group='pipe', inst=[0.0], material=q['material'], desc=q['desc'],
+                                     step='../A1000_pipe/' + q['step'], dx=0.0))
+        print('engine piping from fusion/A1000_pipe')
     json.dump(pkg, open(os.path.join(STEP_OUT, 'pkg.json'), 'w'), indent=1)
     print('fusion/A1000_pkg: %d parts' % len(pkg['parts']))
     raise SystemExit(0)

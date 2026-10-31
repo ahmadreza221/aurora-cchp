@@ -104,7 +104,9 @@ BORE_IMP = 46.0
 CURVIC_C = dict(stub_I1=dict(ri=44.0, ro=58.0, N=36), I1_spc=dict(ri=50.0, ro=70.0, N=36),
                 spc_I2=dict(ri=52.0, ro=72.0, N=36), I2_drum=dict(ri=55.0, ro=75.0, N=36))
 R_HUB_IN = (60.0, 80.0)                                           # impeller inducer hub radii (flow-path hub at the faces)
-JOURNAL = dict(D=90.0, L=36.0)                                  # tilting-pad journals (sim/engine/a1000_rotor_stack.py), rev 1.3
+JOURNAL = dict(D=90.0, L=36.0, n_pad=4, arc=65.0)               # tilting-pad journals (sim/engine/a1000_rotor_stack.py), rev 1.3;
+                                                                 # sec. 19: 4 pads x 65 deg load between pads (was 5 x 52): the
+                                                                 # horizontal split of the front bearing housing runs between pads
 COLLAR = dict(x0=116.0, x1=136.0, ro=72.0)                       # integral thrust collar (pad ro + 4)
 THRUST = dict(ri=52.0, ro=68.0, n=8, n_in=4, t=12.0)             # thrust pads (inner / outer radius, thickness): n on the loaded
                                                                  # (aft) side, n_in on the inactive (forward) side
@@ -366,55 +368,300 @@ def build_blisk_arms(row):
 
 
 # ------------------------------------------------------------------------------------------------ bearings (FreeCAD)
-def tilting_pad_journal(xb, tag, walls=(True, True)):
-    """5-pad tilting-pad journal (load between pads, 60 % pivot offset) in a split carrier; the carrier sits in an
-    integral squeeze-film damper ring (ISFD: 8 wire-EDM S-springs between an inner and an outer ring, squeeze-film lands
-    under the springs, radial clearance 0.13 mm, O-ring end seals), the same axial length as the bearing; cartridge
-    housing with labyrinth oil seals. walls: (front, rear) seal walls (the front bearing shares its rear wall with the
-    thrust bearing). Returns {name: (shape, material, group)}"""
+# sec. 19 (assembly, lubrication and piping review): the front stub carries the integral coupling flange (r 80) and the
+# integral thrust collar (r 72) on both sides of journal 1, so no one-piece housing, damper ring or carrier can reach JB1 or
+# the thrust bearing. The front bearings therefore sit in one horizontally split front bearing housing (FB-1 / FB-2,
+# centre-line feet at the split): the lower halves are in place before the balanced rotor is lowered in, the upper halves
+# close over it. The journals have 4 pads (load between pads, sec. 19) so the split runs through the inter-pad gaps; the
+# carriers and the ISFD rings are split too (springs clocked 7.5 deg so the split runs between springs). JB2 stays a
+# one-piece cartridge that slides on from the rear (the rear stub only gets smaller aft of the journal), with a split
+# labyrinth ring on the r 44.5 land in front of the journal and a blind end cover (the shaft ends inside).
+# Lubrication (sim/engine/a1000_lube_piping.py): directed lube - 4 spray bars per journal in the inter-pad gaps, 2 jets each
+# aimed at the leading edge of the next pad; housing groove at line pressure -> 2 transfer tubes (with the flow orifices)
+# -> carrier gallery -> bars; the ISFD land is fed from the same groove through 2 orifices and sealed by piston rings;
+# thrust pads with leading-edge grooves fed from grooves at the base-ring ODs. Drains DN65 (FBH) / DN50 (JB2), vents DN25 /
+# DN32 at the top. Seals: JB1 front - windback + 3 teeth (c 0.20, no buffer); TB rear (compressor eye below ambient) and
+# JB2 front - windback + teeth | buffer annulus | teeth, buffer air from the compressor stage-1 exit.
+LUBE_JSON = os.path.join(ROOT, 'sim', 'engine', 'fea', 'a1000_lube_piping.json')
+PAD = dict(t=10.0, pivot=0.60, stop_deg=12.0)                   # pad thickness, pivot offset (fraction of the arc), stop pin
+SPRAY = dict(w=8.0, r0=46.5, jets=2, d_jet=1.5, aim=15.0)        # spray bar width, inner radius, jets per bar, jet d, inward aim
+ISFD_CLOCK = 7.5                                                 # spring k from 7.5 + 45 k: gaps at 0 / 45 / ... / 180 deg
+SEAL_C = dict(jb1=0.20, tb=0.15, jb2=0.20)                       # radial clearance of the oil / buffer labyrinths
+FBH = dict(x0=27.0, ro=130.0, lug=(125.0, 165.0, 20.0), foot=200.0)   # front bearing housing: front face, OD, split lugs, feet
+JB2C = dict(x0=911.0, x1=1026.0, ro=130.0, cover_t=10.0, seal=(913.5, 930.5), shoulder=(985.0, 990.0, 140.0),
+            x_port=1005.0, shield=(167.0, 181.0), shield_x0=904.0)   # JB2 cartridge (phase 2 mount), shield (fibre + foils)
+# phase 2 exhaust frame (sim/engine/a1000_exhaust.py JB2_MOUNT): ring EX-412 r 130-150 over x 925-985 clamps the housing,
+# 8 radial keys at 22.5 + 45 k deg (16 mm, x 935-975) into the hub bore ring r 185; oil in through the top strut (90 deg)
+JB2_RING = dict(x=(925.0, 985.0), r=(130.0, 150.0), keys=8, key_w=16.0, key_x=(935.0, 975.0))
+
+
+def _lube():
+    try:
+        return json.load(open(LUBE_JSON))
+    except Exception:
+        return {}
+
+
+def journal_pad_angles():
+    """leading-edge angles of the journal pads (deg, rotation +theta): load between the two bottom pads"""
+    n, arc = JOURNAL['n_pad'], JOURNAL['arc']
+    c0 = 270.0 - 180.0 / n                                    # first bottom pad centre
+    return [(c0 + 360.0 / n * k - arc / 2) % 360.0 for k in range(n)]
+
+
+def spray_bar_angles():
+    """inter-pad gaps; the bars of the gaps on the split plane (0 / 180) sit just below it, in the lower half"""
+    out = []
+    for a in journal_pad_angles():
+        g = (a - (360.0 / JOURNAL['n_pad'] - JOURNAL['arc']) / 2) % 360.0
+        half_w = math.degrees(SPRAY['w'] / 2 / 52.0) + 0.3
+        if abs(math.sin(math.radians(g))) < math.sin(math.radians(half_w)):
+            g = g - half_w if math.cos(math.radians(g)) > 0 else g + half_w
+        out.append((g, a))                                     # (bar angle, leading edge it feeds)
+    return out
+
+
+def _clean(shape):
+    """removeSplitter, kept only if the result is valid and has the same volume (it can break a many-feature solid)"""
+    ok = shape.isValid()
+    try:
+        c = shape.copy().removeSplitter()                           # (refines in place in this FreeCAD build)
+        if c.isValid() and (not ok or abs(c.Volume - shape.Volume) <= 1e-4 * abs(shape.Volume)): return c
+    except Exception:
+        pass
+    if not ok:
+        c = shape.copy(); c.fix(1e-6, 1e-6, 1e-6)
+        if c.isValid(): return c
+    return shape
+
+
+def _splitz(shape):
+    """[lower, upper] halves of a shape cut on z = 0"""
     App, Part, V = _fc()
-    D, L = JOURNAL['D'], JOURNAL['L']; R = D / 2
-    r_pad, r_car = R + 10.0, ISFD['ri']
+    lo = shape.common(Part.makeBox(4000, 4000, 2000, V(-1000, -2000, -2000)))
+    up = shape.common(Part.makeBox(4000, 4000, 2000, V(-1000, -2000, 0)))
+    return [_clean(lo), _clean(up)]
+
+
+def _radial_hole(x, r0, r1, deg, d):
+    App, Part, V = _fc()
+    return Part.makeCylinder(d / 2, r1 - r0, _polar(x, r0, deg), _radial(deg))
+
+
+def _teeth(xs, r_body, r_tip):
+    """labyrinth teeth on a stator bore (r_body) pointing in to r_tip"""
+    return [revolve([(xk - 0.8, r_body), (xk + 0.8, r_body), (xk + 0.25, r_tip), (xk - 0.25, r_tip)]) for xk in xs]
+
+
+def _windback(x0, x1, r_bore, pitch=2.5, depth=0.8):
+    """windback thread in a stator bore (shown as grooves; the drawing gives the hand: it pumps toward the oil side)"""
+    g = []; x = x0 + pitch / 2
+    while x < x1 - pitch / 2:
+        g.append(revolve([(x - 0.6, r_bore - 0.01), (x + 0.6, r_bore - 0.01), (x + 0.6, r_bore + depth), (x - 0.6, r_bore + depth)]))
+        x += pitch
+    return g
+
+
+def journal_parts(xb, tag):
+    """4-pad tilting-pad journal (load between pads, 60 % pivot) in a split carrier with 4 spray bars, in a split ISFD ring
+    (8 S-springs, piston-ring land seals, O-rings on the OD, 2 transfer tubes): {name: (shape, material, group)}"""
+    App, Part, V = _fc()
+    D, L, arc = JOURNAL['D'], JOURNAL['L'], JOURNAL['arc']; R = D / 2
+    r_pad, r_car = R + PAD['t'], ISFD['ri']
     out = {}
     pads = []
-    for k in range(5):
-        a0 = 72.0 * k + 36.0 - 26.0                                           # 52 deg pads, load between pads (bottom)
+    for a0 in journal_pad_angles():
         ring = tube(xb - L / 2, xb + L / 2, r_pad, R + 0.12)
-        pad = ring.common(_sector(xb, r_pad + 5, a0, 52.0, L + 2))
-        pad = pad.fuse(Part.makeCylinder(5.0, 4.6, _polar(xb, r_pad - 1.0, a0 + 31.2), _radial(a0 + 31.2))).removeSplitter()
-        pads.append(pad)
-    out['%s tilting pads x5 (steel + babbitt)' % tag] = (Part.makeCompound(pads), 'steel + babbitt', 'pads')
-    carrier = tube(xb - L / 2 - 6, xb + L / 2 + 6, r_car, r_pad + 4.0)
-    carrier = carrier.fuse(tube(xb - L / 2 - 6, xb - L / 2 - 1, r_car, R + 0.4)).fuse(tube(xb + L / 2 + 1, xb + L / 2 + 6, r_car, R + 0.4))
-    for k in range(5):                                                         # oil feed nozzles between the pads
-        carrier = carrier.cut(Part.makeCylinder(1.5, 30.0, _polar(xb, R + 2.0, 72.0 * k), _radial(72.0 * k)))
-    out['%s pad carrier + end plates (split)' % tag] = (carrier.removeSplitter(), 'steel', 'carrier')
+        pad = ring.common(_sector(xb, r_pad + 5, a0, arc, L + 2))
+        ap = a0 + PAD['pivot'] * arc
+        pad = pad.fuse(Part.makeCylinder(5.0, 4.6, _polar(xb, r_pad - 1.0, ap), _radial(ap)))
+        # stop-pin hole 12 deg behind the leading edge on the back: off the pad centre, so a pad turned round does not fit
+        pad = pad.cut(Part.makeCylinder(2.6, 4.0, _polar(xb, r_pad - 3.0, a0 + PAD['stop_deg']), _radial(a0 + PAD['stop_deg'])))
+        pads.append(_clean(pad))
+    out['%s tilting pads x%d (steel + babbitt)' % (tag, JOURNAL['n_pad'])] = (Part.makeCompound(pads), 'steel + babbitt', 'pads')
+    # carrier: ring r 59-74, end plates down to R + 0.4 (evacuated housing), OD gallery 8 x 5, spray bars, stop pins
+    x0c, x1c = xb - L / 2 - 6, xb + L / 2 + 6
+    car = tube(x0c, x1c, r_car, r_pad + 4.0)
+    car = car.fuse(tube(x0c, xb - L / 2 - 1, r_car, R + 0.4)).fuse(tube(xb + L / 2 + 1, x1c, r_car, R + 0.4))
+    for g, le in spray_bar_angles():
+        bar = tube(xb - L / 2 + 2, xb + L / 2 - 2, r_pad + 4.1, SPRAY['r0']).common(
+            _sector(xb, r_pad + 6, g - math.degrees(SPRAY['w'] / 2 / 52.0), math.degrees(SPRAY['w'] / 52.0), L))
+        car = car.fuse(bar)
+    car = car.cut(tube(xb - 4.0, xb + 4.0, r_car + 0.01, r_car - 5.0))                     # gallery groove
+    d_jet = _lube().get('bearings', {}).get(tag, {}).get('jets', {}).get('d_mm', SPRAY['d_jet'])
+    for g, le in spray_bar_angles():
+        car = car.cut(_radial_hole(xb, SPRAY['r0'] + 3.0, r_car - 4.5, g, 4.0))            # feed bore into the bar
+        for j in range(SPRAY['jets']):                                                  # jets toward the next leading edge
+            xj = xb + (j - (SPRAY['jets'] - 1) / 2) * L / 3
+            p0 = _polar(xj, 51.0, g); t = math.radians(g + 90.0)
+            d = V(0, math.cos(t), math.sin(t)) * math.cos(math.radians(SPRAY['aim'])) - _radial(g) * math.sin(math.radians(SPRAY['aim']))
+            car = car.cut(Part.makeCylinder(d_jet / 2, 12.0, p0, d))
+    for a0 in journal_pad_angles():                                                     # stop pins (pressed in the carrier)
+        car = car.fuse(Part.makeCylinder(2.4, 6.0, _polar(xb, r_pad + 4.5, a0 + PAD['stop_deg']), _radial(a0 + PAD['stop_deg']) * -1))
+    # split dowels: d 6 at +y, d 8 at -y (the halves go back only one way)
+    for sy, d in ((1, 6.0), (-1, 8.0)):
+        car = car.cut(Part.makeCylinder(d / 2, 16.0, V(xb + sy * 12.0, sy * 66.5, -8.0), V(0, 0, 1)))
+    car = car.cut(_radial_hole(xb + 10.0, 60.0, r_car + 1, 135.0, 6.0))                  # anti-rotation pin from the ISFD ring
+    out['%s pad carrier + end plates (split)' % tag] = (Part.makeCompound(_splitz(car)), 'steel', 'carrier')
+    # ISFD ring, split: inner ring r 74-78, outer r 86-92, 8 S-springs clocked so the split runs through two spring gaps
     q = ISFD; Lf = SFD['L'] + 8.0; x0, x1 = xb - Lf / 2, xb + Lf / 2
-    r1, r2 = q['ri'] + 4.0, q['ro'] - 6.0                                       # inner ring OD, outer ring ID
+    r1, r2 = q['ri'] + 4.0, q['ro'] - 6.0
     rb0 = 0.5 * (r1 + r2) - q['t'] / 2; rb1 = rb0 + q['t']
     isfd = tube(x0, x1, r1, q['ri']).fuse(tube(x0, x1, q['ro'], r2))
     for k in range(q['n']):
-        a = 360.0 / q['n'] * k
+        a = ISFD_CLOCK + 360.0 / q['n'] * k
         beam = tube(x0, x1, rb1, rb0).common(_sector(xb, r2 + 1, a, q['span'], Lf))
         w_in = tube(x0, x1, rb0 + 0.5, r1 - 0.5).common(_sector(xb, r2 + 1, a, 3.0, Lf))
         w_out = tube(x0, x1, r2 + 0.5, rb1 - 0.5).common(_sector(xb, r2 + 1, a + q['span'] - 3.0, 3.0, Lf))
         isfd = isfd.fuse([beam, w_in, w_out])
-    isfd = isfd.cut(tube(x0 + 2, x0 + 5, q['ro'] + 0.1, q['ro'] - 2.4)).cut(tube(x1 - 5, x1 - 2, q['ro'] + 0.1, q['ro'] - 2.4))
-    out['%s integral S-spring damper ring (ISFD, %d springs)' % (tag, q['n'])] = (isfd.removeSplitter(), '17-4PH H1100', 'cage')
-    ro_h = q['ro'] + 38.0; xf, xr = xb - L / 2 - (20 if walls[0] else 6), xb + L / 2 + (20 if walls[1] else 6)
-    hs = tube(xf, xr, ro_h, q['ro'] + 0.02)
-    if walls[0]: hs = hs.fuse(tube(xf, xb - L / 2 - 7, ro_h, R + 1.0))
-    if walls[1]: hs = hs.fuse(tube(xb + L / 2 + 7, xr, ro_h, R + 1.0))
-    hs = hs.fuse(Part.makeCylinder(12.0, 40.0, V(xb, 0, ro_h - 5), V(0, 0, 1)))            # oil inlet boss (top)
-    hs = hs.fuse(Part.makeCylinder(18.0, 40.0, V(xb + (L / 2 + 2 if walls[1] else 0.0), 0, -ro_h + 5), V(0, 0, -1)))   # drain (bottom)
-    hs = hs.cut(Part.makeCylinder(4.0, 70.0, V(xb, 0, q['ro'] - 2), V(0, 0, 1)))           # pad / damper oil feed
-    hs = hs.cut(holes(xf - 1, xr + 1, ro_h - 14.0, 13.0, 8, 0.0))                          # 8 x M12 cartridge bolts
-    for w, xs in ((walls[0], xf + 5), (walls[1], xr - 5)):                                 # labyrinth oil-seal teeth
-        if not w: continue
-        for k in range(3):
-            xk = xs - 4 + 4 * k
-            hs = hs.fuse(revolve([(xk - 0.8, R + 1.0), (xk + 0.8, R + 1.0), (xk + 0.25, R + 0.25), (xk - 0.25, R + 0.25)]))
-    out['%s bearing cartridge housing' % tag] = (hs.removeSplitter(), 'EN-GJS-400-18 (front) / 1.4313 (rear)', 'housing')
+    isfd = isfd.cut(tube(x0 + 2, x0 + 5, q['ro'] + 0.1, q['ro'] - 2.4)).cut(tube(x1 - 5, x1 - 2, q['ro'] + 0.1, q['ro'] - 2.4))   # O-rings
+    isfd = isfd.cut(tube(x0 + 4, x0 + 6, r2 + 0.01, r2 + 1.6)).cut(tube(x1 - 6, x1 - 4, r2 + 0.01, r2 + 1.6))                   # piston rings
+    for deg in (90.0, 270.0):                                                          # transfer-tube bores (spring gaps)
+        isfd = isfd.cut(_radial_hole(xb, q['ri'] - 1, q['ro'] + 1, deg, 12.2))
+    for deg in (225.0, 315.0):                                                         # land feed orifices d 1.1
+        isfd = isfd.cut(_radial_hole(xb, r2 - 0.5, q['ro'] + 0.5, deg, 1.1))
+    isfd = isfd.cut(_radial_hole(xb + 10.0, q['ri'] - 1, r1 + 0.5, 135.0, 6.0))            # carrier anti-rotation pin
+    isfd = isfd.cut(_radial_hole(xb - 10.0, r2 - 0.5, q['ro'] + 0.5, 45.0, 8.0))            # pin from the housing
+    tubes = []
+    for deg in (90.0, 270.0):
+        tt = Part.makeCylinder(6.0, q['ro'] - 1.0 - q['ri'] - 0.05, _polar(xb, q['ri'] + 0.05, deg), _radial(deg)).cut(
+            Part.makeCylinder(4.0, 21.0, _polar(xb, q['ri'] - 1.0, deg), _radial(deg)))     # seats on the carrier OD (O-ring)
+        tubes.append(tt)
+    isfd_h = _splitz(isfd)
+    out['%s integral S-spring damper ring (ISFD, %d springs, split) + transfer tubes' % (tag, q['n'])] = (
+        Part.makeCompound(isfd_h + tubes), '17-4PH H1100', 'cage')
+    return out
+
+
+def front_bearing_housing():
+    """FB-1 / FB-2: horizontally split front bearing housing for JB1 and the thrust bearing, with the inlet hub fairing,
+    centre-line feet, oil inlets on the lower half (no line is opened to lift the upper half), drain DN65 and vent DN25,
+    buffered rear seal (compressor eye) and plain front seal (coupling side)"""
+    App, Part, V = _fc()
+    xb, L = X_BRG[0], JOURNAL['L']; c0, c1 = COLLAR['x0'], COLLAR['x1']; t = THRUST['t']; e = 0.15; tc = 8.0
+    xr1 = c1 + e + t + tc; xf1 = c0 - e - t - tc                     # aft / forward base-ring outer faces
+    Lf = SFD['L'] + 8.0; xi0, xi1 = xb - Lf / 2, xb + Lf / 2
+    x_n = INLET_HUB[-1][0]; ro = FBH['ro']; rq = ISFD['ro']
+    sep0 = xb + L / 2 + 6.5                                          # separator wall between JB1 and the thrust chamber
+    prof = [(FBH['x0'], 44.0), (FBH['x0'], ro), (INLET_HUB[0][0], ro)] + INLET_HUB + [(x_n, 49.0), (xr1, 49.0), (xr1, 74.05),
+            (xr1 - tc, 74.05), (xr1 - tc, 90.0), (xf1 + tc, 90.0), (xf1 + tc, 74.05), (xf1, 74.05), (xf1, 49.5), (sep0, 49.5),
+            (sep0, rq), (xi1, rq), (xi1, rq + 0.02), (xi0, rq + 0.02), (xi0, rq), (xb - L / 2 - 10.0, rq), (xb - L / 2 - 10.0, 44.0)]
+    hs = revolve(prof)
+    xw1 = xb - L / 2 - 10.0                                           # back face of the front wall
+    c = SEAL_C['jb1']
+    hs = hs.fuse(_teeth([FBH['x0'] + 2.0, FBH['x0'] + 4.5, FBH['x0'] + 7.0], 44.0, 43.0 + c)).cut(_windback(FBH['x0'] + 8.0, xw1, 44.0 - 0.8))
+    c = SEAL_C['tb']                                                  # rear: windback + 3 teeth | buffer annulus | 4 teeth
+    hs = hs.cut(_windback(xr1 + 1.0, xr1 + 13.0, 49.0))
+    hs = hs.fuse(_teeth([xr1 + 15.5, xr1 + 18.0, xr1 + 20.5], 49.0, 48.0 + c))
+    xbuf = xr1 + 24.5
+    hs = hs.cut(tube(xbuf - 2.5, xbuf + 2.5, 53.0, 48.9))
+    hs = hs.fuse(_teeth([xbuf + 4.5, xbuf + 7.5, xbuf + 10.5, xbuf + 13.5], 49.0, 48.0 + c))
+    # oil grooves: ISFD feed groove at the journal centre, LEG grooves at the two base-ring ODs
+    hs = hs.cut(tube(xb - 5.0, xb + 5.0, rq + 6.0, rq - 0.5))
+    for xg in (xf1 + tc / 2, xr1 - tc / 2):
+        hs = hs.cut(tube(xg - 2.5, xg + 2.5, 78.0, 74.0))
+    # split lugs (both halves) and centre-line feet (lower half, extended), bolt + dowel holes; lifting bosses (upper half)
+    l0, l1, lt = FBH['lug']
+    for sy in (1, -1):
+        hs = hs.fuse(Part.makeBox(xr1 - FBH['x0'] - 10.0, l1 - l0, 2 * lt, V(FBH['x0'] + 5.0, min(sy * l0, sy * l1), -lt)))
+        hs = hs.fuse(Part.makeBox(70.0, FBH['foot'] - l1, lt, V(xb - 5.0, min(sy * l1, sy * FBH['foot']), -lt)))
+        for xh in (FBH['x0'] + 15.0, xb + 25.0, c0 + 5.0, xr1 - 12.0):
+            hs = hs.cut(Part.makeCylinder(6.5, 4 * lt, V(xh, sy * 147.0, -2 * lt), V(0, 0, 1)))       # M12 split bolts (phase 8)
+        hs = hs.cut(Part.makeCylinder(5.0 if sy > 0 else 6.0, 4 * lt, V(xb + 2.0 if sy > 0 else c1 + 4.0, sy * 147.0, -2 * lt), V(0, 0, 1)))
+        for xh in (xb + 5.0, xb + 55.0):
+            hs = hs.cut(Part.makeCylinder(9.0, 3 * lt, V(xh, sy * 185.0, -2 * lt), V(0, 0, 1)))       # feet: M16 to the casing
+    for xh in (FBH['x0'] + 18.0, xr1 - 14.0):
+        hs = hs.fuse(Part.makeCylinder(18.0, 16.0, V(xh, 0, ro - 4.0), V(0, 0, 1))).cut(Part.makeCylinder(7.0, 30.0, V(xh, 0, ro - 6.0), V(0, 0, 1)))
+    # oil inlets on the lower half, -y side, below the split lugs: JB1 -> feed groove; TB -> axial gallery -> LEG grooves
+    z_in = -45.0
+    for xin in (xb, 0.5 * (c0 + c1)):
+        hs = hs.fuse(Part.makeCylinder(14.0, 30.0, V(xin, -ro + 12.0, z_in), V(0, -1, 0)))
+    hs = hs.cut(Part.makeCylinder(4.0, ro + 20.0 - 80.0, V(xb, -ro - 20.0, z_in), V(0, 1, 0)))
+    xm = 0.5 * (c0 + c1); a_g = math.radians(205.0); yg, zg = 100.0 * math.cos(a_g), 100.0 * math.sin(a_g)
+    hs = hs.cut(Part.makeCylinder(4.0, ro + 20.0 + yg, V(xm, -ro - 20.0, zg), V(0, 1, 0)))
+    hs = hs.cut(Part.makeCylinder(4.0, xr1 - xf1 - 2.0, V(xf1 + 1.0, yg, zg), V(1, 0, 0)))
+    for xg in (xf1 + tc / 2, xr1 - tc / 2):
+        hs = hs.cut(_radial_hole(xg, 75.0, 101.0, 205.0, 6.0))
+    # JB1 chambers -> thrust chamber: 4 axial holes d 16 at r 82 through the separator (vent + drain paths) and a d 14 drain
+    # hole at the bottom from the front chamber; drain DN65 at the bottom of the thrust chamber, vent DN25 at the top
+    for deg in (45.0, 135.0, 225.0, 270.0, 315.0):
+        hs = hs.cut(Part.makeCylinder(8.0, xf1 + tc - xi1 + 2.0, _polar(xi1 - 1.0, 82.0, deg), V(1, 0, 0)))
+    hs = hs.cut(Part.makeCylinder(7.0, xf1 + tc - xw1 + 2.0, _polar(xw1 - 1.0, 100.0, 270.0), V(1, 0, 0)))
+    hs = hs.cut(_radial_hole(xw1 + 3.0, 92.0, 101.0, 270.0, 6.0))
+    xd = xm
+    hs = hs.fuse(Part.makeCylinder(38.0, 48.0, V(xd, 0, -ro + 5.0), V(0, 0, -1))).fuse(Part.makeCylinder(70.0, 16.0, V(xd, 0, -ro - 43.0), V(0, 0, -1)))
+    hs = hs.cut(Part.makeCylinder(36.0, ro + 70.0 - 88.0, V(xd, 0, -88.0), V(0, 0, -1)))
+    xv = 0.5 * (xf1 + tc + xr1 - tc) + 6.0
+    hs = hs.fuse(Part.makeCylinder(22.0, 30.0, V(xv, 0, ro - 6.0), V(0, 0, 1))).cut(Part.makeCylinder(13.5, ro - 60.0, V(xv, 0, 88.0), V(0, 0, 1)))
+    # buffer air: boss on the lower half (225 deg) and a straight drilling through the fairing into the buffer annulus
+    a = 225.0; p0 = _polar(xr1 - 8.0, 124.0, a); p1 = _polar(xbuf, 50.5, a)
+    hs = hs.fuse(Part.makeCylinder(11.0, 22.0, _polar(xr1 - 8.0, ro - 8.0, a), _radial(a)))
+    hs = hs.cut(Part.makeCylinder(3.0, (p1 - p0).Length + 30.0, p0 - (p1 - p0).normalize() * 30.0, (p1 - p0).normalize()))
+    hs = hs.cut(Part.makeCylinder(3.0, 30.0, _polar(xr1 - 8.0, 120.0, a), _radial(a)))
+    hs = hs.cut(_radial_hole(xi0 - 3.0, rq + 0.5, ro + 1.0, 45.0, 8.0))                  # ISFD anti-rotation pin (top)
+    hs = _clean(hs)
+    lo, up = _splitz(hs)
+    return {'FB-1 Front bearing housing, upper half (JB1 + thrust, EN-GJS-400-18)': (up, 'EN-GJS-400-18', 'housing'),
+            'FB-2 Front bearing housing, lower half (JB1 + thrust, EN-GJS-400-18)': (lo, 'EN-GJS-400-18', 'housing')}
+
+
+def jb2_cartridge():
+    """JB2: one-piece cartridge housing that slides on from the rear into the support ring of the exhaust frame (phase 2,
+    EX-412: plain OD r 130 over the ring, shoulder behind it), split front labyrinth ring (buffer annulus fed from the
+    hub air through 4 restrictor holes, sized in sim/engine/a1000_lube_piping.py), blind end cover, heat shield (fibre in
+    1.4828 foil) in the annulus between the
+    support ring and the hub bore, slotted for the 8 frame keys"""
+    App, Part, V = _fc()
+    xb, L = X_BRG[1], JOURNAL['L']; q = JB2C; rq = ISFD['ro']; ro = q['ro']
+    Lf = SFD['L'] + 8.0; xi0, xi1 = xb - Lf / 2, xb + Lf / 2
+    s0, s1 = q['seal']; sh0, sh1, r_sh = q['shoulder']
+    prof = [(q['x0'], 61.55), (q['x0'], ro), (sh0, ro), (sh0, r_sh), (sh1, r_sh), (sh1, ro), (q['x1'], ro), (q['x1'], rq),
+            (xi1, rq), (xi1, rq + 0.02), (xi0, rq + 0.02), (xi0, rq), (s1 + 0.5, rq), (s1 + 0.5, 60.05), (s0 + 3.5, 60.05),
+            (s0 + 3.5, 61.55)]           # front counterbore for the seal-ring step: the housing slides on from the rear, a
+                                         # reversed ring (step at the oil end) does not fit under the 60.05 bore
+    hs = revolve(prof)
+    hs = hs.cut(tube(xb - 5.0, xb + 5.0, rq + 6.0, rq - 0.5))                                  # ISFD feed groove
+    xbuf = 0.5 * (s0 + s1) + 1.5
+    hs = hs.cut(tube(xbuf - 1.5, xbuf + 1.5, 63.0, 60.0))                                      # buffer groove at the seal ring
+    for deg in (45.0, 135.0, 225.0, 315.0):                                                    # restrictor holes from the shield air
+        hs = hs.cut(_radial_hole(xbuf, 61.0, ro + 1.0, deg, _lube().get('seals', {}).get(
+            'JB2 front (turbine side, R2 aft cavity 1.04 bar)', {}).get('restrictor_mm', 5.5)))
+    hs = hs.cut(Part.makeCylinder(7.0, q['x_port'] - s1 + 6.0, _polar(s1 - 1.0, 100.0, 270.0), V(1, 0, 0)))   # front -> rear chamber
+    hs = hs.cut(_radial_hole(s1 + 1.5, rq - 0.5, 101.0, 270.0, 6.0))
+    # ports to the strut services (phase 2): oil in at the top through the ring hole; drain (bottom) and vent (-y) behind
+    # the ring, from the rear chamber
+    for deg, xp, r_b, r_h, r_in in ((90.0, xb, 12.0, 4.0, rq + 4.0), (270.0, q['x_port'], 18.0, 15.0, rq - 1.0),
+                                    (180.0, q['x_port'], 16.0, 13.0, rq - 1.0)):
+        hs = hs.fuse(Part.makeCylinder(r_b, JB2_RING['r'][1] - ro + 6.0, _polar(xp, ro - 6.0, deg), _radial(deg)))
+        hs = hs.cut(_radial_hole(xp, r_in, JB2_RING['r'][1] + 1.0, deg, 2 * r_h))
+    for k in range(8):                                                                         # 8 x M8 end cover
+        hs = hs.cut(Part.makeCylinder(3.4, 16.0, _polar(q['x1'] - 15.0, 110.0, 45.0 * k), V(1, 0, 0)))
+    hs = hs.cut(_radial_hole(xi0 - 3.0, rq + 0.5, ro + 1.0, 45.0, 8.0))                        # ISFD anti-rotation pin
+    hs = hs.fuse(Part.makeCylinder(16.0, 14.0, _polar(q['x1'] - 8.0, ro - 4.0, 90.0), _radial(90.0))).cut(
+        Part.makeCylinder(5.0, 20.0, _polar(q['x1'] - 8.0, ro - 2.0, 90.0), _radial(90.0)))   # M10 eye-bolt boss (top)
+    out = {'JB2 bearing cartridge housing (one piece, from the rear)': (_clean(hs), '1.4313', 'housing')}
+    # split labyrinth ring: gas side 3 teeth | buffer annulus | windback to the oil side, on the r 44.5 land
+    c = SEAL_C['jb2']; r_land = rear_stub_profile()[6][1]
+    ring = tube(s0, s1, 60.0, r_land + c + 1.3).fuse(tube(s0, s0 + 3.0, 61.5, 59.0))   # gas-side step: no reverse fit
+    ring = ring.fuse(_teeth([s0 + 1.5, s0 + 4.0, s0 + 6.5], r_land + c + 1.3, r_land + c))
+    ring = ring.cut(tube(xbuf - 2.0, xbuf + 2.0, 50.0, r_land + c + 1.0))
+    ring = ring.fuse(tube(xbuf + 2.5, s1, r_land + c + 1.3, r_land + c)).cut(_windback(xbuf + 2.5, s1, r_land + c))
+    for deg in (45.0, 135.0, 225.0, 315.0):
+        ring = ring.cut(_radial_hole(xbuf, 48.0, 61.0, deg, 4.0))
+    out['JB2 front seal ring (split, labyrinth + buffer + windback)'] = (Part.makeCompound(_splitz(ring)), '1.4313', 'carrier')
+    cov = tube(q['x1'], q['x1'] + q['cover_t'], 125.0, 0.0).fuse(tube(q['x1'] - 6.0, q['x1'], rq - 0.05, rq - 7.0))
+    for k in range(8):
+        cov = cov.cut(Part.makeCylinder(4.5, q['cover_t'] + 2.0, _polar(q['x1'] - 1.0, 110.0, 45.0 * k), V(1, 0, 0)))
+    out['JB2 end cover'] = (_clean(cov), '1.4313', 'housing')
+    si, so_ = q['shield']; xs0 = q['shield_x0']
+    sh = tube(q['x0'] - 1.0, q['x_port'] + 22.0, so_, si).fuse(tube(xs0, xs0 + 6.0, so_, 96.0))
+    w = JB2_RING['key_w'] / 2 + 1.0
+    for k in range(JB2_RING['keys']):                                                          # slots for the frame keys
+        sh = sh.cut(_sector(0.5 * sum(JB2_RING['key_x']), so_ + 2.0, 22.5 + 45.0 * k - math.degrees(w / si), 2 * math.degrees(w / si),
+                            JB2_RING['key_x'][1] - JB2_RING['key_x'][0] + 4.0))
+    for deg, xp, r_h in ((90.0, xb, 15.0), (270.0, q['x_port'], 21.0), (180.0, q['x_port'], 19.0)):
+        sh = sh.cut(_radial_hole(xp, si - 1.0, so_ + 1.0, deg, 2 * r_h))
+    out['JB2 heat shield (ceramic fibre in 1.4828 foil)'] = (_clean(sh), 'ceramic fibre + 1.4828 foil', 'housing')
     return out
 
 
@@ -436,9 +683,9 @@ def _sector(xc, r, a0, span, L):
 
 
 def thrust_bearing():
-    """double-acting tilting-pad thrust bearing on the integral collar (8 pads on the loaded aft side, 4 of the same size on
-    the inactive forward side, leading-edge-groove lube), split carrier rings, a housing that also closes the rear of
-    journal 1 and carries the inlet-side labyrinth + windback seal"""
+    """double-acting tilting-pad thrust bearing on the integral collar: 8 pads on the loaded aft side, 4 of the same size on
+    the inactive forward side, leading-edge-groove lube fed through radial holes from the base-ring OD grooves (the
+    housing grooves FB-1 / FB-2), base rings split at z = 0 with 2 anti-rotation dowels each. The housing is FB-1 / FB-2."""
     App, Part, V = _fc()
     out = {}
     c0, c1 = COLLAR['x0'], COLLAR['x1']; ri, ro, n, t = THRUST['ri'], THRUST['ro'], THRUST['n'], THRUST['t']
@@ -449,22 +696,18 @@ def thrust_bearing():
             ring = tube(x0, x0 + t, ro, ri)
             pads.append(ring.common(_sector(x0 + t / 2, ro + 5, 360.0 / m * k + 3.0, 360.0 / n - 6.0, t + 2)))
     out['TB thrust pads %d + %d (steel + babbitt)' % (n, THRUST['n_in'])] = (Part.makeCompound(pads), 'steel + babbitt', 'pads')
-    tc = 8.0
-    car = tube(c0 - e - t - tc, c0 - e - t, ro + 6, ri - 3).fuse(tube(c1 + e + t, c1 + e + t + tc, ro + 6, ri - 3))
-    out['TB carrier rings (split)'] = (car, 'steel', 'carrier')
-    xb = X_BRG[0]; xf = xb + JOURNAL['L'] / 2 + 6; xw = c1 + e + t + tc          # front of the rear wall
-    hs = tube(xf, xw, ISFD['ro'] + 38.0, ro + 6.05)
-    hs = hs.fuse(tube(xf, xf + 2, ISFD['ro'] + 38.0, ri - 2.5))                   # 1.5 mm over the collar shoulder
-    # rear wall + inlet hub fairing: solid of revolution from the wall (x xw, bore r 49) along INLET_HUB to the nose
-    x_n = INLET_HUB[-1][0]
-    fair = [(xw, 49.0), (xw, ISFD['ro'] + 38.0), (INLET_HUB[0][0], ISFD['ro'] + 38.0)] + INLET_HUB + [(x_n, 49.0)]
-    hs = hs.fuse(revolve(fair))
-    for k in range(5):                                                      # labyrinth + windback in the fairing bore
-        xk = x_n - 4 - 6 * k
-        hs = hs.fuse(revolve([(xk - 0.7, 49.0), (xk + 0.7, 49.0), (xk + 0.2, 48.25), (xk - 0.2, 48.25)]))
-    hs = hs.fuse(Part.makeCylinder(10.0, 40.0, V(0.5 * (c0 + c1), 0, ISFD['ro'] + 33.0), V(0, 0, 1)))
-    hs = hs.fuse(Part.makeCylinder(16.0, 40.0, V(0.5 * (c0 + c1), 0, -ISFD['ro'] - 33.0), V(0, 0, -1)))
-    out['TB thrust housing + inlet hub fairing'] = (hs.removeSplitter(), 'EN-GJS-400-18', 'housing')
+    tc = 8.0; lube = _lube().get('bearings', {}).get('TB', {}).get('leg', {})
+    rings = []
+    for (xa, xz), m, d in (((c0 - e - t - tc, c0 - e - t), THRUST['n_in'], lube.get('d_feed_inactive_mm', 1.3)),
+                           ((c1 + e + t, c1 + e + t + tc), n, lube.get('d_feed_loaded_mm', 1.6))):
+        rg = tube(xa, xz, ro + 6, ri - 3)
+        for k in range(m):                                                   # LEG feed: radial hole at each leading edge
+            rg = rg.cut(_radial_hole(0.5 * (xa + xz), ri - 4, ro + 7, 360.0 / m * k + 1.5, d))
+        for sy in (1, -1):
+            rg = rg.cut(Part.makeCylinder(3.0, 12.0, V(0.5 * (xa + xz), sy * 0.5 * (ri + ro + 3), -6.0), V(0, 0, 1)))   # split dowels
+        rg = rg.cut(_radial_hole(0.5 * (xa + xz), ro + 1.0, ro + 7, 135.0, 6.0))                  # anti-rotation pin
+        rings += _splitz(rg)
+    out['TB carrier rings (split)'] = (Part.makeCompound(rings), 'steel', 'carrier')
     return out
 
 
@@ -472,16 +715,19 @@ def build_all():
     parts = build_rotor()
     for row in ('R1', 'R2'):
         parts['A1000_%s disc with arms (cast MAR-M247)' % row] = (build_blisk_arms(row), 'MAR-M247', 'blisk')
-    parts.update(tilting_pad_journal(X_BRG[0], 'JB1', walls=(True, False)))
-    parts.update(tilting_pad_journal(X_BRG[1], 'JB2'))
+    parts.update(journal_parts(X_BRG[0], 'JB1'))
+    parts.update(journal_parts(X_BRG[1], 'JB2'))
     parts.update(thrust_bearing())
+    parts.update(front_bearing_housing())
+    parts.update(jb2_cartridge())
     return parts
 
 
 def main_cad():
     out_c = os.path.join(ROOT, 'cad_out', 'engine', 'A1000_rotor'); out_f = os.path.join(ROOT, 'fusion', 'A1000_rotor')
     os.makedirs(out_c, exist_ok=True); os.makedirs(out_f, exist_ok=True)
-    rho = {'MAR-M247': 8540, 'IN718': 8190, '34CrNiMo6 QT': 7850, '17-4PH H1025': 7800, '17-4PH H1100': 7800}
+    rho = {'MAR-M247': 8540, 'IN718': 8190, '34CrNiMo6 QT': 7850, '17-4PH H1025': 7800, '17-4PH H1100': 7800, 'EN-GJS-400-18': 7100,
+           '1.4313': 7700, 'ceramic fibre + 1.4828 foil': 700}
     info = {}
     for name, (s, mat, grp) in build_all().items():
         fn = ''.join(c if c.isalnum() else '_' for c in name).strip('_') + '.step'

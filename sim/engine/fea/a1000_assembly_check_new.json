@@ -1,0 +1,799 @@
+{
+ "sequence": "new (cad/engine/a1000_assembly_seq.py)",
+ "partial": true,
+ "moves_total": 62,
+ "moves_done": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  27
+ ],
+ "moves_with_clash": 0,
+ "moves_with_final_overlap": 3,
+ "vol_tol_mm3": 5.0,
+ "results": [
+  {
+   "label": "A1 front stub + thrust collar",
+   "parts": [
+    "RT-101 Front stub shaft + thrust collar"
+   ],
+   "path": [
+    [
+     -200,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 1,
+   "n_installed": 0,
+   "s": 0.0,
+   "k": 0
+  },
+  {
+   "label": "A2 impeller 1",
+   "parts": [
+    "Impeller 1 blade x13",
+    "Impeller 1 hub",
+    "Impeller 1 splitter x13"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 19,
+   "n_moving": 27,
+   "n_installed": 1,
+   "s": 13.3,
+   "k": 1
+  },
+  {
+   "label": "A3 compressor spacer RT-104",
+   "parts": [
+    "RT-104 Compressor spacer"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [
+    {
+     "a": "RT-104 Compressor spacer",
+     "b": "Impeller 1 hub",
+     "vol_mm3": 7.3
+    }
+   ],
+   "n_positions": 19,
+   "n_moving": 1,
+   "n_installed": 28,
+   "s": 18.4,
+   "k": 2
+  },
+  {
+   "label": "A4 impeller 2",
+   "parts": [
+    "Impeller 2 blade x13",
+    "Impeller 2 hub",
+    "Impeller 2 splitter x13"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [
+    {
+     "a": "Impeller 2 hub",
+     "b": "RT-104 Compressor spacer",
+     "vol_mm3": 5.5
+    }
+   ],
+   "n_positions": 19,
+   "n_moving": 27,
+   "n_installed": 29,
+   "s": 11.2,
+   "k": 3
+  },
+  {
+   "label": "A5 drum RT-105",
+   "parts": [
+    "RT-105 Drum IN718"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [
+    {
+     "a": "RT-105 Drum IN718",
+     "b": "Impeller 2 hub",
+     "vol_mm3": 9.0
+    }
+   ],
+   "n_positions": 19,
+   "n_moving": 1,
+   "n_installed": 56,
+   "s": 16.2,
+   "k": 4
+  },
+  {
+   "label": "A6 tie bolt M42 (through the stub)",
+   "parts": [
+    "RT-102 Tie bolt M42 IN718"
+   ],
+   "path": [
+    [
+     -800,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 29,
+   "n_moving": 1,
+   "n_installed": 57,
+   "s": 48.6,
+   "k": 5
+  },
+  {
+   "label": "A7 tie-bolt nut",
+   "parts": [
+    "RT-103 Tie-bolt nut"
+   ],
+   "path": [
+    [
+     -200,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 1,
+   "n_installed": 58,
+   "s": 2.4,
+   "k": 6
+  },
+  {
+   "label": "A8 studs drum - R1 into the drum flange",
+   "parts": [
+    "RT-111 Studs + nuts drum - R1 (16 x M10)"
+   ],
+   "path": [
+    [
+     80,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 11,
+   "n_moving": 16,
+   "n_installed": 59,
+   "s": 60.8,
+   "k": 7
+  },
+  {
+   "label": "A9 R1 blisk onto the studs, parked 6 mm short",
+   "parts": [
+    "A1000_R1 disc with arms (cast MAR-M247)",
+    "Blisk 1 blade x59"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     6,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 19,
+   "n_moving": 60,
+   "n_installed": 75,
+   "s": 80.5,
+   "k": 8
+  },
+  {
+   "label": "A10 nuts drum - R1 in radially behind the stud tips, then 3 mm onto them",
+   "parts": [
+    "RT-111 Studs + nuts drum - R1 (16 x M10)"
+   ],
+   "path": [
+    [
+     9,
+     0,
+     1500,
+     150
+    ],
+    [
+     9,
+     0,
+     1500,
+     0
+    ],
+    [
+     6,
+     0,
+     1500,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 16,
+   "n_moving": 16,
+   "n_installed": 135,
+   "s": 219.8,
+   "k": 9
+  },
+  {
+   "label": "A11 R1 pulled home by the nuts",
+   "parts": [
+    "A1000_R1 disc with arms (cast MAR-M247)",
+    "Blisk 1 blade x59",
+    "RT-111 Studs + nuts drum - R1 (16 x M10)"
+   ],
+   "path": [
+    [
+     6,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 5,
+   "n_moving": 76,
+   "n_installed": 75,
+   "s": 85.1,
+   "k": 10
+  },
+  {
+   "label": "A12 turbine spacer ring RT-107",
+   "parts": [
+    "RT-107 Turbine spacer ring R1 - R2"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 19,
+   "n_moving": 1,
+   "n_installed": 151,
+   "s": 32.0,
+   "k": 11
+  },
+  {
+   "label": "A13 R2 blisk with the R1 - R2 studs, parked 6 mm short",
+   "parts": [
+    "A1000_R2 disc with arms (cast MAR-M247)",
+    "Blisk 2 blade x36",
+    "RT-112 Studs + nuts R1 - R2 (16 x M10)"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     6,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 19,
+   "n_moving": 53,
+   "n_installed": 152,
+   "s": 203.4,
+   "k": 12
+  },
+  {
+   "label": "A14 nuts R1 - R2 in radially (R1 aft cavity), then 3 mm onto the stud tips (they seat on R1)",
+   "parts": [
+    "RT-112 Studs + nuts R1 - R2 (16 x M10)"
+   ],
+   "path": [
+    [
+     -3,
+     0,
+     1500,
+     150
+    ],
+    [
+     -3,
+     0,
+     1500,
+     0
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 16,
+   "n_moving": 16,
+   "n_installed": 205,
+   "s": 336.4,
+   "k": 13
+  },
+  {
+   "label": "A15 R2 pulled home by the nuts",
+   "parts": [
+    "A1000_R2 disc with arms (cast MAR-M247)",
+    "Blisk 2 blade x36",
+    "RT-112 Studs + nuts R1 - R2 (16 x M10)"
+   ],
+   "path": [
+    [
+     6,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 5,
+   "n_moving": 53,
+   "n_installed": 168,
+   "s": 219.3,
+   "k": 14
+  },
+  {
+   "label": "A16 rear stub with the R2 - stub studs, parked 6 mm short",
+   "parts": [
+    "RT-106 Rear stub shaft",
+    "RT-113 Studs + nuts R2 - rear stub (16 x M10)"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     6,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 19,
+   "n_moving": 17,
+   "n_installed": 221,
+   "s": 139.3,
+   "k": 15
+  },
+  {
+   "label": "A17 nuts R2 - stub in radially (R2 aft cavity), then 3 mm onto the stud tips (they seat on R2)",
+   "parts": [
+    "RT-113 Studs + nuts R2 - rear stub (16 x M10)"
+   ],
+   "path": [
+    [
+     -3,
+     0,
+     1500,
+     150
+    ],
+    [
+     -3,
+     0,
+     1500,
+     0
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 16,
+   "n_moving": 16,
+   "n_installed": 238,
+   "s": 378.5,
+   "k": 16
+  },
+  {
+   "label": "A18 rear stub pulled home (rotor balanced as one unit)",
+   "parts": [
+    "RT-106 Rear stub shaft",
+    "RT-113 Studs + nuts R2 - rear stub (16 x M10)"
+   ],
+   "path": [
+    [
+     6,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 5,
+   "n_moving": 17,
+   "n_installed": 237,
+   "s": 150.8,
+   "k": 17
+  },
+  {
+   "label": "B1 scroll pressure casing, lower half CB-341",
+   "parts": [
+    "CB-341 Scroll pressure casing lower half (P355NH)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     600
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 1,
+   "n_installed": 254,
+   "s": 0.0,
+   "k": 18
+  },
+  {
+   "label": "B2 hot-gas scroll lower half, deswirl vanes, insulation",
+   "parts": [
+    "CB-331 Hot-gas casing lower half (Haynes 230)",
+    "CB-332 Deswirl vanes x22 (Haynes 230)",
+    "CB-333 Scroll insulation cassettes"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     600
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 13,
+   "n_installed": 255,
+   "s": 44.7,
+   "k": 19
+  },
+  {
+   "label": "B3 lower scroll support pins, radially through CB-341",
+   "parts": [
+    "CB-360 Scroll support pins x4 (1.4980)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     0,
+     250
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 15,
+   "n_moving": 2,
+   "n_installed": 268,
+   "s": 37.9,
+   "k": 20
+  },
+  {
+   "label": "B4 turbine casing lower half HS-202 (bottom key cast on)",
+   "parts": [
+    "HS-202 Outer casing lower half (EN-GJS-400-18LT)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     600
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 1,
+   "n_installed": 270,
+   "s": 24.0,
+   "k": 21
+  },
+  {
+   "label": "B5 compressor casing lower half with its vanes",
+   "parts": [
+    "Compressor casing",
+    "Diffuser 1 vane x19",
+    "Diffuser 2 vane x19",
+    "Return-channel vane x17"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     600
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 42,
+   "n_installed": 271,
+   "s": 46.3,
+   "k": 22
+  },
+  {
+   "label": "B6 front bearing housing lower half FB-2",
+   "parts": [
+    "FB-2 Front bearing housing, lower half (JB1 + thrust, EN-GJS-400-18)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     600
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 1,
+   "n_installed": 313,
+   "s": 5.8,
+   "k": 23
+  },
+  {
+   "label": "B7 lower halves of JB1 (ISFD, carrier, 2 pads) and of the thrust bearing",
+   "parts": [
+    "JB1 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes",
+    "JB1 pad carrier + end plates (split)",
+    "JB1 tilting pads x4 (steel + babbitt)",
+    "TB carrier rings (split)",
+    "TB thrust pads 8 + 4 (steel + babbitt)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     300
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 12,
+   "n_moving": 13,
+   "n_installed": 314,
+   "s": 77.2,
+   "k": 24
+  },
+  {
+   "label": "B8 lower stator half-module (C1 + C2, NGV1 / NGV2, shrouds, liners, diaphragms, support keys)",
+   "parts": [
+    "CB-350 NGV1 interface leaf seals",
+    "HS-210 Shroud carrier C1 (NGV1 + R1, 1.4828)",
+    "HS-211 Honeycomb shroud R1 (Hastelloy X)",
+    "HS-211 Shroud backing R1",
+    "HS-220 Shroud carrier C2 (NGV2 + R2, 1.4828)",
+    "HS-221 Honeycomb shroud R2 (Hastelloy X)",
+    "HS-221 Shroud backing R2",
+    "HS-222 Gap liner R1 - NGV2, outer (Hastelloy X)",
+    "HS-230 Front diaphragm (Hastelloy X)",
+    "HS-231 Front seal honeycomb",
+    "HS-232 Interstage diaphragm (Hastelloy X)",
+    "HS-233 Interstage seal honeycomb",
+    "HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)",
+    "HS-240 Support keys x2 at the split (1.4980)",
+    "NGV1 rings",
+    "NGV1 vane x48",
+    "NGV2 rings",
+    "NGV2 vane x24"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     600
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 14,
+   "n_moving": 61,
+   "n_installed": 327,
+   "s": 963.2,
+   "k": 25
+  },
+  {
+   "label": "D1 upper halves of JB1 and of the thrust bearing",
+   "parts": [
+    "JB1 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes",
+    "JB1 pad carrier + end plates (split)",
+    "JB1 tilting pads x4 (steel + babbitt)",
+    "TB carrier rings (split)",
+    "TB thrust pads 8 + 4 (steel + babbitt)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     300
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 12,
+   "n_moving": 13,
+   "n_installed": 388,
+   "s": 31.0,
+   "k": 27
+  }
+ ]
+}

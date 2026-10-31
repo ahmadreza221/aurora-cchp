@@ -8,7 +8,7 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 57.51,
+   "mass_kg": 57.55,
    "x": [
     678.0,
     903.0
@@ -21,7 +21,7 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 57.51,
+   "mass_kg": 57.23,
    "x": [
     678.0,
     903.0
@@ -34,10 +34,10 @@
    "group": "carrier",
    "valid": true,
    "solids": 1,
-   "mass_kg": 12.41,
+   "mass_kg": 12.65,
    "x": [
     676.0,
-    733.7
+    735.7
    ],
    "r": 300.0
   },
@@ -47,7 +47,7 @@
    "group": "carrier",
    "valid": true,
    "solids": 1,
-   "mass_kg": 26.99,
+   "mass_kg": 27.05,
    "x": [
     733.7,
     875.0
@@ -184,18 +184,18 @@
    ],
    "r": 212.7
   },
-  "HS-240 Radial centring pins x8 (1.4980)": {
-   "step": "HS_240_Radial_centring_pins_x8__1_4980.step",
+  "HS-240 Support keys x2 at the split (1.4980)": {
+   "step": "HS_240_Support_keys_x2_at_the_split__1_4980.step",
    "material": "1.4980 (A286)",
    "group": "pins",
    "valid": true,
-   "solids": 16,
-   "mass_kg": 2.4,
+   "solids": 4,
+   "mass_kg": 0.13,
    "x": [
-    717.7,
-    749.7
+    725.7,
+    741.7
    ],
-   "r": 348.0
+   "r": 334.0
   }
  }
 }

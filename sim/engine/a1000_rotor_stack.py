@@ -255,23 +255,26 @@ def turb_factor(Re):
     return 1.0 if Re < 1000 else 1.0 + 0.0012 * (Re ** 0.94 - 1000 ** 0.94)
 
 
-def journal(W, D=None, L=None, m_pre=0.3, cb_ratio=1.4e-3, n_pad=5, arc=52.0, dT_oil=20.0):
+def journal(W, D=None, L=None, m_pre=0.3, cb_ratio=1.4e-3, n_pad=None, arc=None, dT_oil=20.0):
     """tilting-pad journal, load between pads: minimum film (tilting-slider model, W_bar 0.06), pad film stiffness at
-    the preloaded position, power loss (Petroff on the pad arc x turbulence), oil flow for dT_oil, Babbitt temperature"""
+    the preloaded position, power loss (Petroff on the pad arc x turbulence), oil flow for dT_oil, Babbitt temperature.
+    Pads from G.JOURNAL (sec. 19: 4 pads x 65 deg, load between pads, so the horizontal split runs between pads; rev 1.3:
+    5 x 52 deg): the two loaded pads sit at +-180/n from the load line, the sum of cos^2 over the pads is n / 2"""
     D = D or G.JOURNAL['D']; L = L or G.JOURNAL['L']; R = D / 2e3; Lm = L * 1e-3
+    n_pad = n_pad or G.JOURNAL.get('n_pad', 5); arc = arc or G.JOURNAL.get('arc', 52.0)
     U = OM * R; Cb = cb_ratio * R; Cp = Cb / (1 - m_pre); B = R * math.radians(arc)
     T_eff = T_OIL_IN + 0.6 * dT_oil + 10.0; mu = visc(T_eff)
     Wbar = 0.06
-    W_pad = W / (2 * math.cos(math.radians(36.0)))
+    W_pad = W / (2 * math.cos(math.radians(180.0 / n_pad)))
     h_load = B * math.sqrt(Wbar * mu * U * Lm / W_pad)
     h_min = min(h_load, Cb)
     W_p0 = Wbar * mu * U * B ** 2 * Lm / Cb ** 2                   # each pad at the preloaded concentric position
-    K = 2.5 * 2 * W_p0 / Cb                                       # 5 pads, sum cos^2 = 2.5, pad k = 2 W / h (W ~ 1 / h^2)
+    K = n_pad / 2.0 * 2 * W_p0 / Cb                               # sum cos^2 = n / 2, pad k = 2 W / h (W ~ 1 / h^2)
     h_eff = 0.5 * (Cb + Cp); Re = RHO_OIL * U * h_eff / mu
     A_f = n_pad * B * Lm
     P = mu * U ** 2 * A_f / h_eff * turb_factor(Re)
     Q = P / (RHO_OIL * CP_OIL * dT_oil)
-    return dict(D=D, L=L, U=U, unit_load_MPa=W / (D * L), Cb_um=Cb * 1e6, Cp_um=Cp * 1e6, mu=mu, T_eff=T_eff, h_min_um=h_min * 1e6,
+    return dict(D=D, L=L, n_pad=n_pad, arc=arc, U=U, unit_load_MPa=W / (D * L), Cb_um=Cb * 1e6, Cp_um=Cp * 1e6, mu=mu, T_eff=T_eff, h_min_um=h_min * 1e6,
                 K=K, C=K / OM * 0.6, Re=Re, P_kW=P / 1e3, Q_lpm=Q * 6e4, T_babbitt=T_OIL_IN + 2.2 * dT_oil, W=W)
 
 

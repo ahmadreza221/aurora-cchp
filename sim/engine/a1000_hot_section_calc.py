@@ -157,15 +157,19 @@ def main():
     T1 = STACK['torque_Nm']['rated']['drum_R1'] - STACK['torque_Nm']['rated']['R1_R2']; T2 = STACK['torque_Nm']['rated']['R1_R2']
     res['ngv_loads'] = dict(N1_axial_N=Fa1, N2_axial_N=Fa2, N1_torque_Nm=T1, N2_torque_Nm=T2)
     print('   NGV1 axial %.1f kN, torque %.0f Nm; NGV2 axial %.1f kN, torque %.0f Nm (to the carriers, then the pins)' % (Fa1 / 1e3, T1, Fa2 / 1e3, T2))
-    # pins: torque + axial + weight of the hot inner structure shared by 8 pins (each takes load in its tangential and axial
-    # direction only, radial sliding), single shear, 1.4980 (A286) at ~ 400 C, allowable shear 0.4 x 600 MPa
+    # keys (sec. 19: 4 radial keys instead of 8 radial pins): torque + axial + weight of the hot inner structure; each key
+    # takes load in its tangential and axial direction only (radial sliding); conservatively 2 keys carry the torque and
+    # the axial load, the 2 support keys the weight; flank bearing on the 16 mm carrier flange and key-root shear,
+    # 1.4980 (A286) at ~ 400 C, allowable shear 0.4 x 600 MPa, bearing 1.0 x 600 MPa / 2
     W_hot = 9.81 * 77.0                                          # rev 6: +7 kg (C2 25 mm longer, gap liner, inner gap ring)
-    F_t = (T1 + T2) / (H.FLANGE_C['ro'] * 1e-3); F_pin = math.hypot(F_t, Fa1 + Fa2) / (H.PIN['n'] / 2) + W_hot / 2
-    tau_pin = F_pin / (math.pi / 4 * (H.PIN['d'] * 1e-3) ** 2) / 1e6
-    check('centring pin shear / allowable (A286, 240 MPa)', tau_pin / 240.0, 1.0, '-', tau_pin <= 240.0, '%.0f MPa, %d pins Ø%.0f' % (tau_pin, H.PIN['n'], H.PIN['d']))
+    F_t = (T1 + T2) / (H.FLANGE_C['ro'] * 1e-3); F_pin = math.hypot(F_t, Fa1 + Fa2) / (H.KEY['n'] / 2) + W_hot / 2
+    tau_pin = F_pin / (H.KEY['w'] * 1e-3 * (H.KEY['t'] + 8.0) * 1e-3) / 1e6
+    p_key = F_pin / (H.KEY['t'] * 1e-3 * 12e-3) / 1e6
+    check('centring key root shear / allowable (A286, 240 MPa)', tau_pin / 240.0, 1.0, '-', tau_pin <= 240.0, '%.0f MPa, %d keys %.0f x %.0f' % (tau_pin, H.KEY['n'], H.KEY['w'], H.KEY['t']))
+    check('centring key flank bearing / allowable (300 MPa)', p_key / 300.0, 1.0, '-', p_key <= 300.0, '%.0f MPa on 12 mm engagement' % p_key)
     dr = ALPHA_C * H.FLANGE_C['ro'] * (car['R1']['T_carrier'] - 20) - 11.5e-6 * (H.CAS['ri'] + H.CAS['t']) * (T_CD - 273.15 - 20)
-    res['pins'] = dict(shear_MPa=tau_pin, radial_slide_mm=dr)
-    print('   pin shear %.0f MPa; radial sliding of the carriers on the pins %.2f mm (hot)' % (tau_pin, dr))
+    res['pins'] = dict(type='4 radial keys (sec. 19)', shear_MPa=tau_pin, bearing_MPa=p_key, radial_slide_mm=dr)
+    print('   key shear %.0f MPa, flank bearing %.0f MPa; radial sliding of the carriers on the keys %.2f mm (hot)' % (tau_pin, p_key, dr))
     res['casing'] = dict(hoop_MPa=s_hoop, bolts_per_side=n_b, F_side_N=F_side)
     # ------------------------------------------------------------------ 4. secondary air
     print('4. secondary air (labyrinths, clearance 0.30 mm)')

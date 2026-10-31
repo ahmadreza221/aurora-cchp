@@ -408,9 +408,16 @@ def fc_ngv_vane(row, secs):
     return v
 
 
+# aft extension of the NGV inner ring: NGV1 2.5 mm (was 4): with the R1 platform overhang PLAT_OVH 4.5 in the 8 mm GAP1 the
+# ring overlapped the R1 forward platform by 0.5 mm (2,949 mm3, assembly review docs/08 sec. 19); now 1.0 mm cold, the gap
+# opens hot (rotor grows aft from the thrust collar) and keeps 0.7 mm with the 0.3 mm thrust end play
+EXT_IN_TE = dict(N1=2.5)
+
+
 def ngv_rings(row, t_in=6.0, t_out=8.0, ext=4.0):
     x0, x1 = X_LE[row] - ext, X_TE[row] + ext
-    inner = _rev([(x0, r_hub(x0) - t_in), (x1, r_hub(x1) - t_in), (x1, r_hub(x1)), (x0, r_hub(x0))])
+    xi1 = X_TE[row] + EXT_IN_TE.get(row, ext)
+    inner = _rev([(x0, r_hub(x0) - t_in), (xi1, r_hub(xi1) - t_in), (xi1, r_hub(xi1)), (x0, r_hub(x0))])
     outer = _rev([(x0, r_tip(x0)), (x1, r_tip(x1)), (x1, r_tip(x1) + t_out), (x0, r_tip(x0) + t_out)])
     passage = _rev([(x0, r_hub(x0)), (x1, r_hub(x1)), (x1, r_tip(x1)), (x0, r_tip(x0))])
     return inner, outer, passage
@@ -524,8 +531,21 @@ def build_sector(row):
               open(os.path.join(OUT, 'A1000_%s_sector.json' % row), 'w'), indent=1)
 
 
+def build_rings():
+    """NGV rings only (inner + outer, as build_cad saves them): fusion/A1000/A1000_<row>_rings.step"""
+    App, Part, V = _fc()
+    for row in ('N1', 'N2'):
+        inner, outer, passage = ngv_rings(row)
+        rings = inner.fuse(outer); rings.rotate(V(0, 0, 0), V(1, 0, 0), 180.0 / Z[row])
+        for d in (OUT, os.path.join(ROOT, 'fusion', 'A1000')):
+            os.makedirs(d, exist_ok=True); rings.exportStep(os.path.join(d, 'A1000_%s_rings.step' % row))
+        print('%s rings: valid %s, %.2f kg' % (row, rings.isValid(), rings.Volume * 8.54e-6), flush=True)
+
+
 if '--cad' in sys.argv:
     build_cad()
+if '--rings' in sys.argv:
+    build_rings()
 if '--sector' in sys.argv:
     for row_ in [a for a in sys.argv if a in ('R1', 'R2')] or ['R1', 'R2']:
         build_sector(row_)

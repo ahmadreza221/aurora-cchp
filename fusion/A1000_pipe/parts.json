@@ -1,0 +1,229 @@
+{
+ "frame": "rotor frame mm, z up",
+ "parts": {
+  "PL-01 Oil supply header + distribution block (tube 35 x 2)": {
+   "step": "PL_01_Oil_supply_header___distribution_block__tube_35_x_2.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "lube module -> distribution block under the inlet plenum; PCV on the module holds 2.0 bar(g) here",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    -150.0,
+    160.0,
+    -675.0,
+    -625.0,
+    -475.0,
+    -425.0
+   ]
+  },
+  "PL-02 Oil to JB1 (tube 15 x 1.5, orifice 3.2 mm)": {
+   "step": "PL_02_Oil_to_JB1__tube_15_x_1_5__orifice_3_2_mm.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "bulkhead union in the plenum wall (y -400) = module disconnect; 24 deg cone union on the FB-2 boss",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    50.5,
+    79.5,
+    -657.5,
+    -138.0,
+    -425.0,
+    -30.5
+   ]
+  },
+  "PL-03 Oil to TB (tube 18 x 1.5, orifice 5.4 mm)": {
+   "step": "PL_03_Oil_to_TB__tube_18_x_1_5__orifice_5_4_mm.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "bulkhead union in the plenum wall (y -400) = module disconnect; 24 deg cone union on the FB-2 boss",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    110.0,
+    142.0,
+    -659.0,
+    -138.0,
+    -425.0,
+    -29.0
+   ]
+  },
+  "PL-04 Oil to JB2 (tube 18 x 1.5, hose at the top strut)": {
+   "step": "PL_04_Oil_to_JB2__tube_18_x_1_5__hose_at_the_top_strut.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "along the -y side outside the scroll casing, over the frame behind the scroll-casing ribs; braided hose at the strut exit; tube through the strut",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    160.0,
+    1010.0,
+    -749.0,
+    18.0,
+    -459.0,
+    649.0
+   ]
+  },
+  "PL-05 FBH drain DN65 (to the reservoir)": {
+   "step": "PL_05_FBH_drain_DN65__to_the_reservoir.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "flange DN65 PN16 under the plenum floor = disconnect; vertical, no trap",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    33.5,
+    218.5,
+    -92.5,
+    92.5,
+    -710.0,
+    -189.0
+   ]
+  },
+  "PL-06 JB2 drain DN50 (hose at the bottom strut, 11 % fall)": {
+   "step": "PL_06_JB2_drain_DN50__hose_at_the_bottom_strut__11___fall.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "PTFE-lined braided hose DN50 at the strut exit, then rigid under the scroll casing (60 mm below it) to the reservoir",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    139.8,
+    1044.2,
+    -39.2,
+    180.2,
+    -714.1,
+    -525.0
+   ]
+  },
+  "PL-07 FBH vent DN25 (to the reservoir)": {
+   "step": "PL_07_FBH_vent_DN25__to_the_reservoir.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "union on FB-1 (opened to lift the upper half) and at the plenum wall; falls to the tank",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    108.2,
+    155.8,
+    -16.9,
+    486.9,
+    -710.0,
+    217.8
+   ]
+  },
+  "PL-08 JB2 vent DN32 (hose at the -y strut, falls to the reservoir)": {
+   "step": "PL_08_JB2_vent_DN32__hose_at_the__y_strut__falls_to_the_reservoir.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "high point at the strut exit, then a continuous fall; the reservoir carries the mist separator",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    158.8,
+    1064.3,
+    -751.2,
+    -518.0,
+    -714.0,
+    30.2
+   ]
+  },
+  "PL-09 Buffer air from stage 1 to the TB rear seal (tube 22)": {
+   "step": "PL_09_Buffer_air_from_stage_1_to_the_TB_rear_seal__tube_22.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, 10 g/s; union under the plenum floor",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    89.0,
+    400.0,
+    -760.0,
+    11.0,
+    -551.0,
+    600.0
+   ]
+  },
+  "PL-10 Fuel hoses P / A / B1 / B2 + gas valve block (bought in)": {
+   "step": "PL_10_Fuel_hoses_P___A___B1___B2___gas_valve_block__bought_in.step",
+   "material": "1.4404 / bought in",
+   "group": "pipe",
+   "desc": "valve block: 2 shut-off valves + vent (double block and bleed), 4 staging valves; hoses take the can growth (+14 mm); unions at z 900",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    588.0,
+    1300.0,
+    -1250.0,
+    -440.0,
+    -700.0,
+    880.0
+   ]
+  },
+  "PL-12 Combustor drains DN15 + drain pot": {
+   "step": "PL_12_Combustor_drains_DN15___drain_pot.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "normally open, air-operated valves close at light-off (fail open); closed drain pot with a level switch",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    691.0,
+    869.0,
+    -975.0,
+    9.0,
+    -700.0,
+    -500.0
+   ]
+  },
+  "PL-13 Gearbox oil feed (tube 35 x 2)": {
+   "step": "PL_13_Gearbox_oil_feed__tube_35_x_2.step",
+   "material": "1.4404",
+   "group": "pipe",
+   "desc": "to the gearbox jets (bought-in gearbox interface); the gearbox drains straight down into the reservoir",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    -600.0,
+    -282.5,
+    -450.0,
+    -402.5,
+    -367.5,
+    -332.5
+   ]
+  },
+  "LO-100 Oil reservoir in the base frame (338 l)": {
+   "step": "LO_100_Oil_reservoir_in_the_base_frame__338_l.step",
+   "material": "1.4301",
+   "group": "aux",
+   "desc": "between the base-frame beams under the coupling and the gearbox; returns enter through the deck; heater, level, mist separator on the module",
+   "valid": true,
+   "solids": 1,
+   "bbox": [
+    -540.0,
+    200.0,
+    -940.0,
+    790.0,
+    -985.0,
+    -715.0
+   ]
+  },
+  "PL-90 Pipe supports (posts to the base frame)": {
+   "step": "PL_90_Pipe_supports__posts_to_the_base_frame.step",
+   "material": "S235",
+   "group": "pipe",
+   "desc": "clamps <= 1.5 m (tube) / 2.5 m (pipe) apart",
+   "valid": true,
+   "solids": 4,
+   "bbox": [
+    -70.0,
+    620.0,
+    -750.0,
+    20.0,
+    -700.0,
+    -461.0
+   ]
+  }
+ }
+}

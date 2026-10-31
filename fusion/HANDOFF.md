@@ -205,8 +205,14 @@ further aft (`a1000_turbine.DGAP2`); NGV1, R1 and the combustor are unchanged.
 2. **Add-in `fusion/AURORA1000_Animate/`**: a panel **AURORA-1000** in the Design workspace (Solid tab) with three buttons
    for the package design.
    - Installed in `~/Library/Application Support/Autodesk/Autodesk Fusion 360/API/AddIns/` with runOnStartup.
-   - **Assembly sequence** (about 55 s): all parts are hidden, then they fly in by the build order of docs/08 §13 (5 steps,
-     40 moves), with a label at the top left of the view.
+   - **Assembly sequence** (about 55 s): all parts are hidden, then they fly in by the build order of docs/08 §19 (6 steps;
+     33 moves on package v12, 38 on the updated pkg.json), with a label at the top left of the view. The rotor is
+     stacked 700 mm above its place and then lowered in as one unit (a move marked `again` takes parts that an earlier
+     move placed). The order is checked step by step along each path by `cad/engine/a1000_assembly_check.py`
+     (`cad/engine/a1000_assembly_seq.py`). Parts that are halves in the machine are single parts in the package, so they
+     are shown whole in the lower-half step.
+   - The installed copy in Fusion's AddIns folder was updated with this version (sec. 19); Fusion loads it at the next
+     start (or Utilities > Add-Ins > Stop / Run).
    - **Spin rotor** (20 s, 2 turns): the rotor shaft group, the blisks and the impellers turn about the X axis
      (y = z = 0). The low-speed coupling turns at −1/10.
    - **Reset**: stops an animation and restores the transforms and light bulbs the animation started from. Each

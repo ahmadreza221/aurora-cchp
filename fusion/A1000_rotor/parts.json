@@ -176,117 +176,89 @@
    ],
    "r": 203.02
   },
-  "JB1 tilting pads x5 (steel + babbitt)": {
-   "step": "JB1_tilting_pads_x5__steel___babbitt.step",
+  "JB1 tilting pads x4 (steel + babbitt)": {
+   "step": "JB1_tilting_pads_x4__steel___babbitt.step",
    "material": "steel + babbitt",
    "group": "pads",
    "valid": true,
-   "solids": 5,
-   "vol_cm3": 82.24,
-   "mass_kg": 0.646,
+   "solids": 4,
+   "vol_cm3": 81.69,
+   "mass_kg": 0.641,
    "x": [
     47.0,
     83.0
    ],
-   "r": 55.83
+   "r": 53.7
   },
   "JB1 pad carrier + end plates (split)": {
    "step": "JB1_pad_carrier___end_plates__split.step",
    "material": "steel",
    "group": "carrier",
    "valid": true,
-   "solids": 1,
-   "vol_cm3": 344.91,
-   "mass_kg": 2.708,
+   "solids": 2,
+   "vol_cm3": 338.17,
+   "mass_kg": 2.655,
    "x": [
     41.0,
     89.0
    ],
    "r": 74.0
   },
-  "JB1 integral S-spring damper ring (ISFD, 8 springs)": {
-   "step": "JB1_integral_S_spring_damper_ring__ISFD__8_springs.step",
+  "JB1 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes": {
+   "step": "JB1_integral_S_spring_damper_ring__ISFD__8_springs__split____transfer_tubes.step",
    "material": "17-4PH H1100",
    "group": "cage",
    "valid": true,
-   "solids": 1,
-   "vol_cm3": 285.84,
-   "mass_kg": 2.23,
+   "solids": 4,
+   "vol_cm3": 281.74,
+   "mass_kg": 2.198,
    "x": [
     43.5,
     86.5
    ],
    "r": 92.0
   },
-  "JB1 bearing cartridge housing": {
-   "step": "JB1_bearing_cartridge_housing.step",
-   "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
-   "group": "housing",
-   "valid": true,
-   "solids": 1,
-   "vol_cm3": 1885.73,
-   "mass_kg": 14.803,
-   "x": [
-    27.0,
-    89.0
-   ],
-   "r": 165.0
-  },
-  "JB2 tilting pads x5 (steel + babbitt)": {
-   "step": "JB2_tilting_pads_x5__steel___babbitt.step",
+  "JB2 tilting pads x4 (steel + babbitt)": {
+   "step": "JB2_tilting_pads_x4__steel___babbitt.step",
    "material": "steel + babbitt",
    "group": "pads",
    "valid": true,
-   "solids": 5,
-   "vol_cm3": 82.24,
-   "mass_kg": 0.646,
+   "solids": 4,
+   "vol_cm3": 81.69,
+   "mass_kg": 0.641,
    "x": [
     937.25,
     973.25
    ],
-   "r": 55.83
+   "r": 53.7
   },
   "JB2 pad carrier + end plates (split)": {
    "step": "JB2_pad_carrier___end_plates__split.step",
    "material": "steel",
    "group": "carrier",
    "valid": true,
-   "solids": 1,
-   "vol_cm3": 344.91,
-   "mass_kg": 2.708,
+   "solids": 2,
+   "vol_cm3": 338.15,
+   "mass_kg": 2.654,
    "x": [
     931.25,
     979.25
    ],
    "r": 74.0
   },
-  "JB2 integral S-spring damper ring (ISFD, 8 springs)": {
-   "step": "JB2_integral_S_spring_damper_ring__ISFD__8_springs.step",
+  "JB2 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes": {
+   "step": "JB2_integral_S_spring_damper_ring__ISFD__8_springs__split____transfer_tubes.step",
    "material": "17-4PH H1100",
    "group": "cage",
    "valid": true,
-   "solids": 1,
-   "vol_cm3": 285.84,
-   "mass_kg": 2.23,
+   "solids": 4,
+   "vol_cm3": 281.73,
+   "mass_kg": 2.198,
    "x": [
     933.75,
     976.75
    ],
    "r": 92.0
-  },
-  "JB2 bearing cartridge housing": {
-   "step": "JB2_bearing_cartridge_housing.step",
-   "material": "EN-GJS-400-18 (front) / 1.4313 (rear)",
-   "group": "housing",
-   "valid": true,
-   "solids": 1,
-   "vol_cm3": 2501.82,
-   "mass_kg": 19.639,
-   "x": [
-    917.25,
-    993.25
-   ],
-   "r": 165.0
   },
   "TB thrust pads 8 + 4 (steel + babbitt)": {
    "step": "TB_thrust_pads_8___4__steel___babbitt.step",
@@ -307,28 +279,98 @@
    "material": "steel",
    "group": "carrier",
    "valid": true,
-   "solids": 2,
-   "vol_cm3": 154.57,
-   "mass_kg": 1.213,
+   "solids": 4,
+   "vol_cm3": 152.44,
+   "mass_kg": 1.197,
    "x": [
     95.85,
     156.15
    ],
    "r": 74.0
   },
-  "TB thrust housing + inlet hub fairing": {
-   "step": "TB_thrust_housing___inlet_hub_fairing.step",
+  "FB-1 Front bearing housing, upper half (JB1 + thrust, EN-GJS-400-18)": {
+   "step": "FB_1_Front_bearing_housing__upper_half__JB1___thrust__EN_GJS_400_18.step",
    "material": "EN-GJS-400-18",
    "group": "housing",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 3164.56,
-   "mass_kg": 24.842,
+   "vol_cm3": 2443.14,
+   "mass_kg": 17.346,
    "x": [
-    89.0,
+    27.0,
     201.0
    ],
    "r": 165.0
+  },
+  "FB-2 Front bearing housing, lower half (JB1 + thrust, EN-GJS-400-18)": {
+   "step": "FB_2_Front_bearing_housing__lower_half__JB1___thrust__EN_GJS_400_18.step",
+   "material": "EN-GJS-400-18",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2563.97,
+   "mass_kg": 18.204,
+   "x": [
+    27.0,
+    201.0
+   ],
+   "r": 200.0
+  },
+  "JB2 bearing cartridge housing (one piece, from the rear)": {
+   "step": "JB2_bearing_cartridge_housing__one_piece__from_the_rear.step",
+   "material": "1.4313",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 3310.11,
+   "mass_kg": 25.488,
+   "x": [
+    911.0,
+    1034.0
+   ],
+   "r": 150.0
+  },
+  "JB2 front seal ring (split, labyrinth + buffer + windback)": {
+   "step": "JB2_front_seal_ring__split__labyrinth___buffer___windback.step",
+   "material": "1.4313",
+   "group": "carrier",
+   "valid": true,
+   "solids": 2,
+   "vol_cm3": 78.21,
+   "mass_kg": 0.602,
+   "x": [
+    913.5,
+    930.5
+   ],
+   "r": 61.5
+  },
+  "JB2 end cover": {
+   "step": "JB2_end_cover.step",
+   "material": "1.4313",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 508.97,
+   "mass_kg": 3.919,
+   "x": [
+    1020.0,
+    1036.0
+   ],
+   "r": 125.0
+  },
+  "JB2 heat shield (ceramic fibre in 1.4828 foil)": {
+   "step": "JB2_heat_shield__ceramic_fibre_in_1_4828_foil.step",
+   "material": "ceramic fibre + 1.4828 foil",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2096.93,
+   "mass_kg": 1.468,
+   "x": [
+    904.0,
+    1027.0
+   ],
+   "r": 181.0
   }
  }
 }

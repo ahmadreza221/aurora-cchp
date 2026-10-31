@@ -10,6 +10,13 @@ Parts (rotor frame mm, x = engine axis from the gearbox coupling face, z up; can
   CB-333       insulation cassettes on the outside of the hot-gas casing (microporous in foil)
   CB-340/341   scroll pressure casing (mid-casing) halves: eccentric shell, end plates, can nozzle, split flanges  P355NH
   CB-350       NGV1 interface leaf seals (hub, tip); CB-360 4 radial support pins; CB-370 fuel manifolds + igniter
+  sec. 19      CB-370 rebuilt for the four fuel circuits of sec. 16.9 (P pilot, A 3 alternate mains on a ring, B1 1 main,
+               B2 2 mains on an arc): rev 1 had one torus for A and B and lance stubs that did not reach the manifolds.
+               1.4404 tube, ISO 8434-1 24 deg cone unions at every lance (flexible pigtail: down outside the ring, then in),
+               a bulkhead plate on the head cover (-y) and four hanging drops to z 900, where braided hoses (piping,
+               cad/engine/a1000_piping.py) take them to the gas valve block on the skid: the head cover lifts off after four
+               unions. CB-341 gets an air-side drain DN15 and a sleeve for the scroll drain DN15 at the bottom; lifting lugs
+               on CB-340 / CB-341 / CB-301 and eye-bolt holes in CB-303
 Not modelled: impingement holes (perforation of CB-321, count in parts.json), DZ ribs, TBC, bolts, instrumentation.
 Run:   freecadcmd -c "import sys; sys.argv=['a1000_combustor.py','--cad']; exec(open('cad/engine/a1000_combustor.py').read())"
        -> cad_out/engine/A1000_comb/*.step, fusion/A1000_comb/*.step + parts.json
@@ -296,14 +303,105 @@ def seals_pins_manifolds(can):
         p = Part.makeCylinder(10.0, r1 - r0 + 15, V(760.0, 0, 0) + d * r0, d).fuse(Part.makeCylinder(22.0, 12.0, V(760.0, 0, 0) + d * (r1 + 3), d))
         pins.append(p)
     st = GJ['stations']; zt = st['z_cover'] + GJ['t_cover']; xc = GJ['x_can']
-    man = []
-    for rr, tag in ((150.0, 'A/B'), (110.0, 'P')):
-        tor = Part.makeTorus(rr, 14.0, V(xc, 0, zt + 60), V(0, 0, 1)); man.append(tor)
-    for (x, y) in can['pos']:
-        man.append(zcyl(8.0, zt + 30, zt + 60, x, y))
+    man = fuel_manifolds(can)
     ign = Part.makeCylinder(12.0, 260.0, V(xc + 0.0, 185.0, st['z_dome'] + 60), V(0, 0.15, 1))
     uv = [Part.makeCylinder(10.0, 240.0, V(xc + 185.0 * math.cos(a), 185.0 * math.sin(a), st['z_dome'] + 70), V(0, 0, 1)) for a in (math.radians(200), math.radians(340))]
     return seals, Part.makeCompound(pins), Part.makeCompound(man), Part.makeCompound([ign] + uv)
+
+
+FUEL = dict(z_fit=(30.0, 50.0), r_fit=14.0, z_A=95.0, r_A=185.0, d_A=28.0, z_B=135.0, r_B=230.0, d_B=28.0, z_low=62.0,
+            d_pig=18.0, z_P=165.0, z_B1=195.0, d_P=18.0, y_bh=-430.0, z_drop=900.0, dx=(-60.0, -20.0, 20.0, 60.0))
+FUEL_CIRCUITS = dict(P=[0], A=[1, 3, 5], B1=[2], B2=[4, 6])      # premixer indices (can['pos']: 0 pilot, 1.. mains at 30 + 60 k)
+
+
+def _tube_path(pts, d):
+    """tube of OD d along a polyline (straight pieces + a sphere at each corner)"""
+    App, Part, V = _fc()
+    pieces = []
+    for a, b in zip(pts[:-1], pts[1:]):
+        va, vb = V(*a), V(*b); L = (vb - va).Length
+        if L < 1e-6: continue
+        pieces.append(Part.makeCylinder(d / 2, L, va, (vb - va).normalize()))
+    pieces += [Part.makeSphere(d / 2, V(*p)) for p in pts[1:-1]]
+    return pieces[0].multiFuse(pieces[1:]).removeSplitter() if len(pieces) > 1 else pieces[0]
+
+
+def fuel_manifolds(can):
+    """CB-370: fuel circuits P / A / B1 / B2 (sec. 16.9) on the head cover: union at each lance top, ring manifold A, arc
+    manifold B2, single lines P and B1, pigtails down outside the manifolds and then in, bulkhead plate (-y) on the head
+    cover, four drops to z 900 (braided hoses from there: cad/engine/a1000_piping.py)"""
+    App, Part, V = _fc()
+    st = GJ['stations']; zt = st['z_cover'] + GJ['t_cover']; xc = GJ['x_can']; F = FUEL
+    pos = can['pos']; out = []
+    ang = lambda i: math.atan2(pos[i][1], pos[i][0] - xc)
+    for (x, y) in pos:                                                            # 24 deg cone unions on the lance tops
+        out.append(zcyl(F['r_fit'], zt + F['z_fit'][0], zt + F['z_fit'][1], x, y))
+    zA, zB, zl = zt + F['z_A'], zt + F['z_B'], zt + F['z_low']
+    out.append(Part.makeTorus(F['r_A'], F['d_A'] / 2, V(xc, 0, zA), V(0, 0, 1)))  # ring A
+    a0, a1 = ang(FUEL_CIRCUITS['B2'][0]), ang(FUEL_CIRCUITS['B2'][1])
+    arc = [(xc + F['r_B'] * math.cos(a), F['r_B'] * math.sin(a), zB) for a in [a0 + (a1 + 2 * math.pi - a0) % (2 * math.pi) * k / 12 for k in range(13)]]
+    out.append(_tube_path(arc, F['d_B']))                                          # arc B2
+    zf = zt + F['z_fit'][1]
+    for c, ids in FUEL_CIRCUITS.items():
+        for i in ids:
+            x, y = pos[i]
+            if c == 'P':                                                          # over the manifolds, straight down
+                out.append(_tube_path([(xc + F['dx'][0], F['y_bh'], zt + F['z_P']), (xc + F['dx'][0], -60.0, zt + F['z_P']),
+                                       (x, y, zt + F['z_P']), (x, y, zf)], F['d_P'])); continue
+            if c == 'B1':                                                         # over the manifolds and the igniter
+                out.append(_tube_path([(xc + F['dx'][2], F['y_bh'], zt + F['z_B1']), (xc + F['dx'][2], 0.0, zt + F['z_B1']),
+                                       (x, y, zt + F['z_B1']), (x, y, zf)], F['d_P'])); continue
+            a = ang(i); r0 = F['r_A'] if c == 'A' else F['r_B']
+            z0 = zA if c == 'A' else (zB if c == 'B2' else zt + F['z_B1'])
+            pr = lambda r, z: (xc + r * math.cos(a), r * math.sin(a), z)
+            pts = [pr(r0, z0), pr(r0, zl), pr(math.hypot(x - xc, y), zl), (x, y, zf)]
+            out.append(_tube_path(pts, F['d_pig']))
+    # feeds from the bulkhead to ring A (at its -y point) and to the B2 arc (its middle, -y side)
+    out.append(_tube_path([(xc + F['dx'][1], F['y_bh'], zA), (xc + F['dx'][1], -F['r_A'], zA)], F['d_A']))
+    out.append(_tube_path([(xc + F['dx'][3], F['y_bh'], zB), (xc + F['dx'][3], -F['r_B'], zB)], F['d_B']))
+    # bulkhead plate on two brackets from the head cover, four drops to z 900 (unions there: module boundary)
+    Rcov = GJ['D_case'] / 2 + 55.0
+    out.append(box(xc - 110, xc + 110, F['y_bh'] - 12, F['y_bh'] - 2, zt - 40, zt + F['z_B1'] + 25))
+    for dx in (-90.0, 90.0):
+        out.append(box(xc + dx - 6, xc + dx + 6, F['y_bh'] - 2, -math.sqrt(Rcov ** 2 - (abs(dx) - 6) ** 2) - 0.2, zt - 40, zt - 20))
+    for k, (c, z) in enumerate((('P', zt + F['z_P']), ('A', zA), ('B1', zt + F['z_B1']), ('B2', zB))):
+        dx = F['dx'][(0, 1, 2, 3)[k]]
+        out.append(_tube_path([(xc + dx, F['y_bh'] - 2, z), (xc + dx, F['y_bh'] - 30, z), (xc + dx, F['y_bh'] - 30, F['z_drop'])],
+                              F['d_A'] if c in ('A', 'B2') else F['d_P']))
+        out.append(zcyl(F['r_fit'], F['z_drop'] - 20, F['z_drop'], xc + dx, F['y_bh'] - 30))   # union at the drop end
+    return out
+
+
+DRAINS = dict(scroll=(700.0, 24.0), air=(860.0, 16.0))                                 # x, bore (sleeve / drain) at the bottom
+
+
+def casing_features(up, lo, can):
+    """sec. 19: drain bosses at the bottom of CB-341 (scroll-drain sleeve, air-side drain), lifting lugs on CB-340, tapped
+    eye-bolt holes in the CB-341 split flanges, lugs on the can casing, eye-bolt holes in the head cover (the BOV DN125 is
+    on the cold-air pipe of phase 2, EX-441)"""
+    App, Part, V = _fc()
+    R, t, zc = GJ['R_mc'], GJ['t_mc'], GJ['z_mc']
+    z_bot = zc - R - t
+    for x, d in DRAINS.values():
+        lo = lo.fuse(Part.makeCylinder(d / 2 + 10.0, 26.0, V(x, 0, z_bot + 4.0), V(0, 0, -1)))
+        lo = lo.cut(Part.makeCylinder(d / 2, 60.0, V(x, 0, z_bot + 30.0), V(0, 0, -1)))
+    y_s = math.sqrt(R ** 2 - zc ** 2)
+    for x in (GJ['x_mc0'] + 40.0, GJ['x_mc1'] - 40.0):
+        for sy in (1, -1):                                       # on the shoulders, clear of the can base plate (r 355)
+            zt = zc + math.sqrt((R + t) ** 2 - 450.0 ** 2)
+            lug = box(x - 15, x + 15, sy * 450 - 50, sy * 450 + 50, zt - 12, zt + 90).cut(
+                Part.makeCylinder(18.0, 40.0, V(x - 20, sy * 450, zt + 55), V(1, 0, 0)))
+            up = up.fuse(lug)
+            lo = lo.cut(Part.makeCylinder(10.5, 31.0, V(x, sy * (y_s + t + 40.0), -30.0), V(0, 0, 1)))   # M24 eye bolts
+    st = GJ['stations']; xc = GJ['x_can']; Rc = GJ['D_case'] / 2 + GJ['t_case']
+    lugs = []
+    for sx in (1, -1):
+        lugs.append(box(xc + sx * Rc - (3 if sx > 0 else 60), xc + sx * Rc + (60 if sx > 0 else 3), -12, 12, st['z_cover'] - 160, st['z_cover'] - 60).cut(
+            Part.makeCylinder(15.0, 30.0, V(xc + sx * (Rc + 32), -15, st['z_cover'] - 110), V(0, 1, 0))))
+    can_lugs = Part.makeCompound(lugs)
+    cover_holes = Part.makeCompound([zcyl(8.5, st['z_cover'] + GJ['t_cover'] - 30, st['z_cover'] + GJ['t_cover'] + 1, xc + sx * 300.0, 0.0)
+                                     for sx in (1, -1)])
+    return up, lo, can_lugs, cover_holes
 
 
 def build_all():
@@ -329,11 +427,14 @@ def build_all():
     out['CB-333 Scroll insulation cassettes'] = (ins.cut(ph), 'microporous + foil', 'insulation')
     up, lo = up.cut(ph), lo.cut(ph)
     out['CB-303 Head cover (1.4948)'] = (out['CB-303 Head cover (1.4948)'][0].cut(ih), '1.4948', 'casing')
+    up, lo, can_lugs, cover_holes = casing_features(up, lo, can)
+    out['CB-301 Can casing (1.4948)'] = (out['CB-301 Can casing (1.4948)'][0].fuse(can_lugs), '1.4948', 'casing')
+    out['CB-303 Head cover (1.4948)'] = (out['CB-303 Head cover (1.4948)'][0].cut(cover_holes), '1.4948', 'casing')
     out['CB-340 Scroll pressure casing upper half (P355NH)'] = (up, 'P355NH', 'casing')
     out['CB-341 Scroll pressure casing lower half (P355NH)'] = (lo, 'P355NH', 'casing')
     out['CB-350 NGV1 interface leaf seals'] = (seals, 'Haynes 25', 'hot')
     out['CB-360 Scroll support pins x4 (1.4980)'] = (pins, '1.4980 (A286)', 'casing')
-    out['CB-370 Fuel manifolds P / A / B + lances'] = (man, '1.4404', 'aux')
+    out['CB-370 Fuel manifolds P / A / B1 / B2, pigtails, bulkhead (1.4404)'] = (man, '1.4404', 'aux')
     out['CB-371 Igniter + 2 UV flame scanners'] = (ign, 'bought in', 'aux')
     return out, gas
 
