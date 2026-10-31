@@ -12,6 +12,8 @@
   7. bearing losses against the cycle's mechanical-loss allowance
   8. transient axial thrust through trips, surge, start and stop (sim/engine/a1000_thrust_transient.py, run from here
      after the steady results are written): its checks join this list
+ 10. transient thermal-structural analysis (phase 5, sim/engine/a1000_tiebolt_thermal.py, run on its own): its checks
+     (tie-bolt and stud preload, joint clamp and lift-off, disc LCF per cycle) are read from its JSON and join this list
 Run:    python sim/engine/a1000_rotor_stack.py [--bore-study]    (numpy, scipy, matplotlib; CCX = ccx path, gmsh for the FEA)
 Writes: sim/engine/fea/a1000_rotor_stack.json, docs/img/a1000_rotor_stack.png (+ the transient JSON and plot)
 """
@@ -57,6 +59,8 @@ MAT = {
     'Ti64':      dict(E=([20, 200], [114e3, 104e3]), a=([20, 200], [8.6e-6, 9.2e-6]), Sy=([20, 200], [880., 690.]), rho=4430., nu=0.34),
     'MAR-M247':  dict(E=(list(DF.MAT_T), list(DF.MAT_E)), a=(list(DF.MAT_T), list(DF.MAT_A)), Sy=(list(DF.MAT_T), list(DF.MAT_YS)),
                       rho=8540., nu=0.30),
+    'Waspaloy':  dict(E=([20, 400, 650, 760], [213e3, 196e3, 180e3, 172e3]), a=([20, 400, 650, 760], [12.0e-6, 13.3e-6, 14.0e-6, 14.8e-6]),
+                      Sy=([20, 400, 650, 760], [795., 725., 705., 690.]), rho=8190., nu=0.30),
 }
 
 
@@ -539,25 +543,35 @@ def main():
     check('impeller 2 curvics, Ti-6Al-4V / 0.6 Sy', p_o / (0.6 * mp('Ti64', 'Sy', T_SS['imp2'])), 1.0, '-', p_o <= 0.6 * mp('Ti64', 'Sy', T_SS['imp2']),
           '%.0f MPa' % p_o)
     # ------------------------------------------------------------------ hot joints
-    print('4. hot joints, 16 x M10 IN718 studs')
+    print('4. hot joints, 16 x M10 studs (R1 - R2: %s, phase 5)' % G.STUD_R12['mat'])
     st = G.STUD; As = 61.2                                     # MJ10x1.25 stress area [mm2]
-    Fs = st['pre_kN'] * 1e3; F_hot = st['n'] * Fs
+    # phase 5 (sim/engine/fea/a1000_tiebolt_thermal.json, docs/08 sec. 22): steady joint temperatures at the rating and the
+    # transient stud preload swing from the axisymmetric heat model replace the estimates (480 / 500 / 460 C, 60 K stud lag)
+    tj = os.path.join(HERE, 'fea', 'a1000_tiebolt_thermal.json')
+    p5 = json.load(open(tj))['configs'] if os.path.exists(tj) else {}
+    p5 = p5.get('fix', {}).get('hot_joints', {})
     hot = {}
     for j, T_j in (('drum_R1', 480.0), ('R1_R2', 500.0), ('R2_stub', 460.0)):
-        # grip: the two flanges; R1 - R2 (rev 6) also the IN718 spacer ring (no mismatch with the IN718 studs over its length)
+        sm, pre, rel = (G.STUD_R12['mat'], G.STUD_R12['pre_kN'], G.STUD_R12['relax']) if j == 'R1_R2' else ('IN718', st['pre_kN'], 0.10)
+        q = p5.get(j)
+        if q and q.get('T_ss') is not None: T_j = q['T_ss']
+        Fs = pre * 1e3; F_hot = st['n'] * Fs
+        # grip: the two flanges; R1 - R2 (rev 6) also the spacer ring, same alloy as its studs (no mismatch over its length)
         L_spc = G.L_TSPC if j == 'R1_R2' else 0.0
-        Lg = 2 * G.ARM['tf'] + L_spc; Lst = Lg + 0.8 * st['d']; ks = mp('IN718', 'E', 500) * As / Lst
+        Lg = 2 * G.ARM['tf'] + L_spc; Lst = Lg + 0.8 * st['d']; ks = mp(sm, 'E', T_j) * As / Lst
         kf = 3.0 * ks
-        dmis = (mp('IN718', 'a', T_j) - 0.5 * (mp('IN718', 'a', T_j) + mp('MAR-M247', 'a', T_j))) * (T_j - 20) * Lg
-        if j == 'R1_R2': dmis = (mp('IN718', 'a', T_j) - mp('MAR-M247', 'a', T_j)) * (T_j - 20) * (Lg - L_spc)
+        dmis = (mp(sm, 'a', T_j) - 0.5 * (mp('IN718', 'a', T_j) + mp('MAR-M247', 'a', T_j))) * (T_j - 20) * Lg
+        if j == 'R1_R2': dmis = (mp(sm, 'a', T_j) - mp('MAR-M247', 'a', T_j)) * (T_j - 20) * (Lg - L_spc)
         dF_ss = -dmis / (1 / ks + 1 / kf)
-        dF_tr = -(mp('IN718', 'a', T_j) * 60.0 * Lg) / (1 / ks + 1 / kf)            # studs 60 K hotter than the flanges
-        relax = 0.10 * Fs                                         # IN718 stress relaxation at ~500 C over 30,000 h (re-torque at HSI)
+        dF_tr = -(mp(sm, 'a', T_j) * 60.0 * Lg) / (1 / ks + 1 / kf)                # studs 60 K hotter than the flanges
+        if q and q.get('F_ss') is not None:                     # phase 5: FE steady change and the worst transient swing
+            dF_ss = q['F_ss'] - Fs; dF_tr = q['F_min'] - q['F_ss']
+        relax = rel * Fs                                          # stress relaxation over the inspection interval (re-torque at HSI)
         F_min_s = Fs + min(0.0, dF_ss) + dF_tr - relax
         M = max(gravity_moment(x) for x in ((G.X_J['R1_spc'], G.X_J['spc_R2']) if j == 'R1_R2' else (xjoint[j],)))
         F_r, br = curvic_ring_clamp(G.CURVIC_HOT['ri'], G.CURVIC_HOT['ro'], M, tq_max[j], max(0.0, fax[j]))
         x0s, x1s = G.STUD_SETS[dict(drum_R1='drum - R1', R1_R2='R1 - R2', R2_stub='R2 - rear stub')[j]][:2]
-        hot[j] = dict(T=T_j, grip_mm=Lg, stud_mm=x1s - x0s,
+        hot[j] = dict(T=T_j, material=sm, pre_kN=pre, relax=rel, grip_mm=Lg, stud_mm=x1s - x0s,
                       dF_steady_N=dF_ss, dF_transient_N=dF_tr, F_min_total=F_min_s * st['n'], required=F_r, parts=br,
                       stud_stress=(Fs + max(0.0, dF_ss)) / As, flank=curvic_flank_pressure(F_hot, tq_max[j], G.CURVIC_HOT['ri'], G.CURVIC_HOT['ro'],
                                                                                          G.CURVIC_HOT['N']))
@@ -565,9 +579,10 @@ def main():
               'vs required %.0f kN; stud %.0f MPa; flank %.0f MPa' % (j, T_j, x1s - x0s, Lg, Fs / 1e3, dF_ss / 1e3, dF_tr / 1e3,
                                                                      F_min_s * st['n'] / 1e3, F_r / 1e3, hot[j]['stud_stress'], hot[j]['flank']))
         check('hot joint %s: min clamp / required' % j, F_min_s * st['n'] / F_r, 1.25, '-', F_min_s * st['n'] / F_r >= 1.25,
-              'after 10 % relaxation and a 60 K stud lag')
-    check('hot studs: stress / 0.7 Sy(500 C)', max(v['stud_stress'] for v in hot.values()) / (0.7 * mp('IN718', 'Sy', 500)), 1.0, '-',
-          max(v['stud_stress'] for v in hot.values()) <= 0.7 * mp('IN718', 'Sy', 500), 'MJ10x1.25, %.0f kN' % (Fs / 1e3))
+              'after %.0f %% relaxation and the %s stud swing' % (100 * rel, 'phase 5 transient' if q else '60 K'))
+    sr = max(hot.values(), key=lambda v: v['stud_stress'] / mp(v['material'], 'Sy', v['T']))
+    check('hot studs: stress / 0.7 Sy(T)', sr['stud_stress'] / (0.7 * mp(sr['material'], 'Sy', sr['T'])), 1.0, '-',
+          sr['stud_stress'] <= 0.7 * mp(sr['material'], 'Sy', sr['T']), 'MJ10x1.25, %s %.0f kN at %.0f C' % (sr['material'], sr['pre_kN'], sr['T']))
     res['hot_joints'] = dict(stud=st, curvic=G.CURVIC_HOT, joints=hot, x=G.X_J)
     # ------------------------------------------------------------------ disc FEA with arms
     print('5. blisks with cast arms: axisymmetric FEA (CalculiX)')
@@ -657,7 +672,7 @@ def main():
                                                                                             short_circuit_factor=5.0),
         tie_bolt='M42x3 IN718, shank %.0f mm, lands %.1f mm at x %s' % (G.TIE['shank'], G.TIE['land'], list(G.TIE['lands'])),
         blisk_arms=dict(ri=G.ARM['ri'], ro=G.ARM['ro'], flange_od=2 * G.ARM['rf'], flange_t=G.ARM['tf'], cavity=G.ARM['cav'], joints_x=G.X_J,
-                        studs='16 x MJ10x1.25 IN718 on PCD %.0f' % (2 * G.STUD['r'])))
+                        studs='16 x MJ10x1.25 on PCD %.0f: IN718, R1 - R2 %s %.0f kN' % (2 * G.STUD['r'], G.STUD_R12['mat'], G.STUD_R12['pre_kN'])))
     json.dump(res, open(os.path.join(HERE, 'fea', 'a1000_rotor_stack.json'), 'w'), indent=1, default=float)   # read by the transient
     # ------------------------------------------------------------------ transient thrust
     print('8. transient axial thrust (sim/engine/a1000_thrust_transient.py)')
@@ -666,6 +681,15 @@ def main():
     for c in tr['checks']:
         check(c['test'], c['value'], c['limit'], c['unit'], c['ok'], c['note'])
     res['thrust_transient'] = dict(worst=tr['worst'], bound=tr['bound'], bov=tr['bov'], results='sim/engine/fea/a1000_thrust_transient.json')
+    # ------------------------------------------------------------------ transient thermal-structural (phase 5)
+    tj = os.path.join(HERE, 'fea', 'a1000_tiebolt_thermal.json')
+    if os.path.exists(tj):                                    # heavy CalculiX runs: python sim/engine/a1000_tiebolt_thermal.py
+        print('10. transient thermal-structural: tie bolt, studs, joints, disc LCF (sim/engine/fea/a1000_tiebolt_thermal.json)')
+        th = json.load(open(tj))
+        for c in th['checks']:
+            check(c['test'], c['value'], c['limit'], c['unit'], c['ok'], c['note'])
+        res['tiebolt_thermal'] = dict(configuration=th['final_config'], purge=th['configs'][th['final_config']]['purge'],
+                                      results='sim/engine/fea/a1000_tiebolt_thermal.json')
     n_ok = sum(c['ok'] for c in chk)
     print('checks: %d of %d pass' % (n_ok, len(chk)))
     json.dump(res, open(os.path.join(HERE, 'fea', 'a1000_rotor_stack.json'), 'w'), indent=1, default=float)

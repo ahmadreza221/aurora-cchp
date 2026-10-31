@@ -26,6 +26,9 @@ double-acting tilting-pad thrust bearing on the integral collar, at the cold end
                8 pads on the loaded (aft) side and 4 on the inactive (forward) side, collar r 82 -> 72; the stub and rear-stub
                lands step down with the journal (front seal r 43, neck r 44.5, seal runner r 41, collar shoulders r 48).
                Bearing + seal losses 28.6 -> 15.9 kW at the same film and critical-speed margins.
+               phase 5 (transient thermal-structural, docs/08 sec. 22): R1 - R2 studs, nuts and spacer ring in Waspaloy at
+               24 kN (the joint runs at ~710 C), TBC on the R1 platform, start / stop rule; no geometry change. Open: the
+               blisk arm-root fillets reach only ~1,500-4,700 starts in transients (sec. 22.12, disc redesign proposed).
 
 Frame: rotor frame of sim/engine/a1000_rotordynamics.py, mm, x = engine axis from the gearbox coupling face, r = radius.
 Run:   freecadcmd -c "import sys; sys.argv=['a1000_rotor.py','--cad']; exec(open('cad/engine/a1000_rotor.py').read())"
@@ -51,8 +54,14 @@ X_OFF = HUB['R1'][0] - (0.5 * (A.X_LE['R1'] + A.X_TE['R1']) - A.DISC['R1']['hub_
 
 # ------------------------------------------------------------------------------------------------ hot joints (cast arms)
 ARM = dict(ri=58.0, ro=66.0, cav=13.0, tf=9.0, rf=92.0)          # arm bore / OD, cavity length, flange thickness / OD
-STUD = dict(n=16, d=10.0, r=76.0, hole=10.5, nut_h=6.0, nut_af=14.0, pre_kN=27.0)   # M10x1.25 MJ, IN718
+STUD = dict(n=16, d=10.0, r=76.0, hole=10.5, nut_h=6.0, nut_af=14.0, pre_kN=27.0)   # M10x1.25 MJ, IN718 (R1 - R2: STUD_R12)
+# phase 5 (docs/08 sec. 22): the unpurged interstage cavity runs the R1 - R2 joint at ~710 C, over the 650 C IN718 bolting
+# limit -> studs, nuts and the RT-107 spacer ring in Waspaloy, lower preload, 50 % relaxation allowance (re-torque at the
+# hot-section inspection), Heli-Coils in the R2 flange in Nimonic 90
+STUD_R12 = dict(mat='Waspaloy', pre_kN=24.0, relax=0.50, insert='Nimonic 90 Heli-Coil')
 CURVIC_HOT = dict(ri=62.0, ro=90.0, N=48, phi=30.0, h=2.6)        # bolted curvic on every hot flange face
+# phase 5: thermal barrier on the R1 platform and blade-root fillets (rim 795 -> 770 C, platform LCF 6,000 -> 15,000 starts)
+TBC_R1 = dict(t=0.4, system='MCrAlY bond coat + 7YSZ (as NGV1)', area='R1 platform top and blade-root fillets')
 
 
 def arm_x(row, side):
@@ -63,8 +72,9 @@ def arm_x(row, side):
 
 
 X_J = dict(drum_R1=arm_x('R1', 'f')[1], R1_spc=arm_x('R1', 'a')[1], spc_R2=arm_x('R2', 'f')[1], R2_stub=arm_x('R2', 'a')[1])
-# rev 6: R1 - R2 spacer ring between the R1 aft and the R2 forward arm flanges (IN718, curvic both faces, 4 seal fins)
-TSPC = dict(ri=60.0, ro=88.0, land=5.0, n_fin=4, fin_pitch=3.0, r_fin=92.3, mat='IN718')
+# rev 6: R1 - R2 spacer ring between the R1 aft and the R2 forward arm flanges (curvic both faces, 4 seal fins); phase 5:
+# Waspaloy (was IN718), the same alloy as its studs
+TSPC = dict(ri=60.0, ro=88.0, land=5.0, n_fin=4, fin_pitch=3.0, r_fin=92.3, mat='Waspaloy')
 L_TSPC = X_J['spc_R2'] - X_J['R1_spc']
 # stud sets of the hot joints: (stud x0, x1, nut face x, nut direction); R1 - R2: from the Heli-Coil inserts in the R2
 # flange forward through the spacer and the R1 flange, nut in the R1 aft cavity
@@ -195,7 +205,7 @@ ROTOR_PARTS = [  # name, profile function, material, density kg/m3, colour group
     ('RT-104 Compressor spacer', spacer_profile, '17-4PH H1025', 7800),
     ('RT-105 Drum IN718', drum_profile, 'IN718', 8190),
     ('RT-106 Rear stub shaft', rear_stub_profile, 'IN718', 8190),
-    ('RT-107 Turbine spacer ring R1 - R2', turbine_spacer_profile, 'IN718', 8190),
+    ('RT-107 Turbine spacer ring R1 - R2', turbine_spacer_profile, 'Waspaloy', 8190),
 ]
 
 
@@ -340,14 +350,14 @@ def build_rotor():
     sp = curvic_face(sp, X_J['R1_spc'], +1, ch['ri'], ch['ro'], ch['N'], ch['h'], 0.5)       # mates the R1 aft face
     sp = curvic_face(sp, X_J['spc_R2'], -1, ch['ri'], ch['ro'], ch['N'], ch['h'], 0.0)       # mates the R2 forward face
     sp = sp.cut(holes(X_J['R1_spc'] - ch['h'], X_J['spc_R2'] + ch['h'], STUD['r'], STUD['hole'], STUD['n']))
-    out['RT-107 Turbine spacer ring R1 - R2'] = (sp.removeSplitter(), 'IN718', 'shaft')
+    out['RT-107 Turbine spacer ring R1 - R2'] = (sp.removeSplitter(), TSPC['mat'], 'shaft')
     # studs + nuts of the three hot joints (nuts in the cavity behind the cast flange): drum - R1 from the drum flange through
     # the R1 flange, nut aft of it; R1 - R2 from the R2 flange inserts through the spacer and the R1 flange, nut in front;
     # R2 - rear stub from the rear-stub flange through the R2 flange, nut in front
     for tag, (x0_, x1_, xn_, dn_) in STUD_SETS.items():
         st, nu = stud_set(x0_, x1_, xn_, dn_, STUD['n'], STUD['r'])
         out['RT-11%d Studs + nuts %s (16 x M10)' % (len([k for k in out if 'Studs' in k]) + 1, tag)] = (
-            Part.makeCompound(st + nu), 'IN718 / Waspaloy nuts', 'studs')
+            Part.makeCompound(st + nu), 'Waspaloy studs + nuts' if tag == 'R1 - R2' else 'IN718 / Waspaloy nuts', 'studs')
     return out
 
 

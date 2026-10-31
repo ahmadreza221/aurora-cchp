@@ -94,7 +94,7 @@
   },
   "RT-107 Turbine spacer ring R1 - R2": {
    "step": "RT_107_Turbine_spacer_ring_R1___R2.step",
-   "material": "IN718",
+   "material": "Waspaloy",
    "group": "shaft",
    "valid": true,
    "solids": 1,
@@ -122,7 +122,7 @@
   },
   "RT-112 Studs + nuts R1 - R2 (16 x M10)": {
    "step": "RT_112_Studs___nuts_R1___R2__16_x_M10.step",
-   "material": "IN718 / Waspaloy nuts",
+   "material": "Waspaloy studs + nuts",
    "group": "studs",
    "valid": true,
    "solids": 32,

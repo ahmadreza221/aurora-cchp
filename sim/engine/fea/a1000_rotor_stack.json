@@ -3,7 +3,7 @@
  "checks": [
   {
    "test": "tie bolt: min clamp / required (all states)",
-   "value": 1.759253988955415,
+   "value": 1.7592539889554148,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
@@ -43,35 +43,35 @@
   },
   {
    "test": "hot joint drum_R1: min clamp / required",
-   "value": 4.924813340914824,
+   "value": 5.172051060505529,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
-   "note": "after 10 % relaxation and a 60 K stud lag"
+   "note": "after 10 % relaxation and the phase 5 transient stud swing"
   },
   {
    "test": "hot joint R1_R2: min clamp / required",
-   "value": 7.23290627857136,
+   "value": 1.2859176547725093,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
-   "note": "after 10 % relaxation and a 60 K stud lag"
+   "note": "after 50 % relaxation and the phase 5 transient stud swing"
   },
   {
    "test": "hot joint R2_stub: min clamp / required",
-   "value": 48.160198853915524,
+   "value": 51.49353454121255,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
-   "note": "after 10 % relaxation and a 60 K stud lag"
+   "note": "after 10 % relaxation and the phase 5 transient stud swing"
   },
   {
-   "test": "hot studs: stress / 0.7 Sy(500 C)",
-   "value": 0.6537884863488964,
+   "test": "hot studs: stress / 0.7 Sy(T)",
+   "value": 0.8041589898792335,
    "limit": 1.0,
    "unit": "-",
    "ok": true,
-   "note": "MJ10x1.25, 27 kN"
+   "note": "MJ10x1.25, Waspaloy 24 kN at 711 C"
   },
   {
    "test": "R1 disc+arms yield margin (trip)",
@@ -83,7 +83,7 @@
   },
   {
    "test": "R1 disc+arms burst / 15k",
-   "value": 1.8584949669828674,
+   "value": 1.85849498888666,
    "limit": 1.342,
    "unit": "x",
    "ok": true,
@@ -91,7 +91,7 @@
   },
   {
    "test": "R1 LCF starts (hub peak)",
-   "value": 19650.88893597266,
+   "value": 19650.88893597877,
    "limit": 10000,
    "unit": "cyc",
    "ok": true,
@@ -115,15 +115,15 @@
   },
   {
    "test": "R2 disc+arms yield margin (trip)",
-   "value": 1.4017374389409394,
+   "value": 1.4035055031655024,
    "limit": 1.0,
    "unit": "-",
    "ok": true,
-   "note": "vm 561 MPa"
+   "note": "vm 560 MPa"
   },
   {
    "test": "R2 disc+arms burst / 15k",
-   "value": 1.780298604266172,
+   "value": 1.8400674830936594,
    "limit": 1.342,
    "unit": "x",
    "ok": true,
@@ -131,7 +131,7 @@
   },
   {
    "test": "R2 LCF starts (hub peak)",
-   "value": 20407.43098786769,
+   "value": 20408.75536087844,
    "limit": 10000,
    "unit": "cyc",
    "ok": true,
@@ -139,7 +139,7 @@
   },
   {
    "test": "R2 LCF starts (arm root)",
-   "value": 15641.10888368477,
+   "value": 15699.800742926558,
    "limit": 10000,
    "unit": "cyc",
    "ok": true,
@@ -147,15 +147,15 @@
   },
   {
    "test": "R2 LCF starts (flange stud hole)",
-   "value": 315227.1325549608,
+   "value": 310192.60844417464,
    "limit": 10000,
    "unit": "cyc",
    "ok": true,
-   "note": "324 MPa (Kt 2.6) @ 458 C"
+   "note": "325 MPa (Kt 2.6) @ 458 C"
   },
   {
    "test": "thrust bearing unit load at 1.5 x max thrust",
-   "value": 0.7652846959717555,
+   "value": 0.7652846959717561,
    "limit": 2.0,
    "unit": "MPa",
    "ok": true,
@@ -163,7 +163,7 @@
   },
   {
    "test": "thrust bearing min film at 1.5 x max thrust",
-   "value": 44.67992268293404,
+   "value": 44.67992268293403,
    "limit": 20.0,
    "unit": "um",
    "ok": true,
@@ -211,15 +211,15 @@
   },
   {
    "test": "critical 3895 rpm (nominal): separation margin",
-   "value": 72.66950196448195,
-   "limit": 1.5385228242080928,
+   "value": 72.66950196476894,
+   "limit": 1.538522823086276,
    "unit": "%",
    "ok": true,
    "note": "AF 2.6, log dec 1.21"
   },
   {
    "test": "critical 8282 rpm (nominal): separation margin",
-   "value": 41.88320909591782,
+   "value": 41.88320909384633,
    "limit": 0.0,
    "unit": "%",
    "ok": true,
@@ -227,15 +227,15 @@
   },
   {
    "test": "critical 21202 rpm (nominal): separation margin",
-   "value": 34.6138736510823,
-   "limit": 20.187346366082096,
+   "value": 34.613873652180715,
+   "limit": 20.187346366180048,
    "unit": "%",
    "ok": true,
    "note": "AF 4.0, log dec 0.79"
   },
   {
    "test": "API unbalance response (nominal)",
-   "value": 3.9606557869923487,
+   "value": 3.960655786994861,
    "limit": 22.170937647976825,
    "unit": "um",
    "ok": true,
@@ -243,15 +243,15 @@
   },
   {
    "test": "critical 3834 rpm (pi-film SFD): separation margin",
-   "value": 73.0966853356646,
-   "limit": 11.574734960428254,
+   "value": 73.09668533549745,
+   "limit": 11.57473496071363,
    "unit": "%",
    "ok": true,
    "note": "AF 4.6, log dec 0.68"
   },
   {
    "test": "critical 7706 rpm (pi-film SFD): separation margin",
-   "value": 45.92183314041656,
+   "value": 45.92183313827703,
    "limit": 0.0,
    "unit": "%",
    "ok": true,
@@ -259,15 +259,15 @@
   },
   {
    "test": "critical 20559 rpm (pi-film SFD): separation margin",
-   "value": 30.530315956041115,
-   "limit": 22.951016179213518,
+   "value": 30.530315955717228,
+   "limit": 22.951016179240586,
    "unit": "%",
    "ok": true,
    "note": "AF 5.7, log dec 0.55"
   },
   {
    "test": "API unbalance response (pi-film SFD)",
-   "value": 4.313549412601809,
+   "value": 4.313549412603865,
    "limit": 22.170937647976825,
    "unit": "um",
    "ok": true,
@@ -275,7 +275,7 @@
   },
   {
    "test": "transient thrust, forward side 4 pads: unit load",
-   "value": 2.0189146072890742,
+   "value": 2.018914607289068,
    "limit": 3.5,
    "unit": "MPa",
    "ok": true,
@@ -283,7 +283,7 @@
   },
   {
    "test": "transient thrust, forward side: min film",
-   "value": 27.508376007907565,
+   "value": 27.508376007907604,
    "limit": 10.0,
    "unit": "um",
    "ok": true,
@@ -291,7 +291,7 @@
   },
   {
    "test": "transient thrust, aft side 8 pads: unit load",
-   "value": 1.0763422539673835,
+   "value": 1.0763422517442935,
    "limit": 3.5,
    "unit": "MPa",
    "ok": true,
@@ -299,7 +299,7 @@
   },
   {
    "test": "transient thrust, aft side: min film",
-   "value": 37.674607138466115,
+   "value": 37.6746071773729,
    "limit": 10.0,
    "unit": "um",
    "ok": true,
@@ -307,7 +307,7 @@
   },
   {
    "test": "load rejection overspeed / trip speed",
-   "value": 0.9303272057030775,
+   "value": 0.9303272057034839,
    "limit": 1.0,
    "unit": "-",
    "ok": true,
@@ -315,7 +315,7 @@
   },
   {
    "test": "forward side, bound (stages collapsed, cavities frozen)",
-   "value": 2.6391077735461317,
+   "value": 2.6391077735461357,
    "limit": 3.5,
    "unit": "MPa",
    "ok": true,
@@ -323,11 +323,219 @@
   },
   {
    "test": "no surge in trips, start and stop: min surge margin",
-   "value": 26.237781320573706,
+   "value": 26.23778096632259,
    "limit": 0.0,
    "unit": "%",
    "ok": true,
    "note": "cases a, b, d, e"
+  },
+  {
+   "test": "transient: tie-bolt min preload / required",
+   "value": 1.5926162612553671,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "min 116 kN in B at 540 s, required 73 kN"
+  },
+  {
+   "test": "transient: tie-bolt max shank stress / 0.75 Sy",
+   "value": 0.49093135288961187,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "max 230 kN (374 MPa) in A; Sy at 128 C"
+  },
+  {
+   "test": "transient: tie-bolt max temperature (IN718 relaxation onset 593 C)",
+   "value": 127.54385104430973,
+   "limit": 593.0,
+   "unit": "C",
+   "ok": true,
+   "note": "no creep / relaxation"
+  },
+  {
+   "test": "spring preload model vs FE at the critical times",
+   "value": 4.931366522990944,
+   "limit": 10.0,
+   "unit": "%",
+   "ok": true,
+   "note": "100 states"
+  },
+  {
+   "test": "transient: joint stub_I1 clamp / required",
+   "value": 2.05065570358159,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "B at 540 s, 63 % of the assembly clamp"
+  },
+  {
+   "test": "transient: joint I1_spc clamp / required",
+   "value": 1.989374276151631,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "B at 540 s, 63 % of the assembly clamp"
+  },
+  {
+   "test": "transient: joint spc_I2 clamp / required",
+   "value": 1.9924234972693888,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "B at 540 s, 63 % of the assembly clamp"
+  },
+  {
+   "test": "transient: joint I2_drum clamp / required",
+   "value": 1.6082713966084718,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "B at 540 s, 63 % of the assembly clamp"
+  },
+  {
+   "test": "transient: joint drum_R1 clamp / required (studs, 10 % relaxation)",
+   "value": 5.172051060505529,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "D15 at 1272 s, 81 % of the assembly clamp"
+  },
+  {
+   "test": "transient: joint R1_R2 clamp / required (studs, 50 % relaxation)",
+   "value": 1.2859176547725093,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "C2 at 140 s, 63 % of the assembly clamp"
+  },
+  {
+   "test": "transient: joint R2_stub clamp / required (studs, 10 % relaxation)",
+   "value": 51.49353454121272,
+   "limit": 1.25,
+   "unit": "-",
+   "ok": true,
+   "note": "C2 at 181 s, 82 % of the assembly clamp"
+  },
+  {
+   "test": "transient: studs drum_R1 max temperature (IN718 bolting 650 C)",
+   "value": 434.9627110310891,
+   "limit": 650.0,
+   "unit": "C",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "test": "transient: studs drum_R1 max stress / 0.7 Sy",
+   "value": 0.6957902594879225,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "475 MPa (IN718)"
+  },
+  {
+   "test": "transient: studs R1_R2 max temperature (Waspaloy bolting 760 C)",
+   "value": 711.1719703721781,
+   "limit": 760.0,
+   "unit": "C",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "test": "transient: studs R1_R2 max stress / 0.7 Sy",
+   "value": 0.9443712487178821,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "461 MPa (Waspaloy)"
+  },
+  {
+   "test": "transient: studs R2_stub max temperature (IN718 bolting 650 C)",
+   "value": 481.69458117396533,
+   "limit": 650.0,
+   "unit": "C",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "test": "transient: studs R2_stub max stress / 0.7 Sy",
+   "value": 0.7006143383418745,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": "474 MPa (IN718)"
+  },
+  {
+   "test": "LCF R1: standard start-stop cycles",
+   "value": 2830.6304776613943,
+   "limit": 10000.0,
+   "unit": "cyc",
+   "ok": false,
+   "note": "worst cycle standard_fast 77 (36.87 standard cycles each)"
+  },
+  {
+   "test": "LCF R1_platform: standard start-stop cycles",
+   "value": 4684.00172386936,
+   "limit": 10000.0,
+   "unit": "cyc",
+   "ok": false,
+   "note": "worst cycle standard_fast 4.4e+02 (10.63 standard cycles each)"
+  },
+  {
+   "test": "LCF R2: standard start-stop cycles",
+   "value": 1532.0160584755054,
+   "limit": 10000.0,
+   "unit": "cyc",
+   "ok": false,
+   "note": "worst cycle standard_fast 45 (33.76 standard cycles each)"
+  },
+  {
+   "test": "LCF R2_platform: standard start-stop cycles",
+   "value": 3343.5001814585994,
+   "limit": 10000.0,
+   "unit": "cyc",
+   "ok": false,
+   "note": "worst cycle standard_fast 3.1e+02 (10.71 standard cycles each)"
+  },
+  {
+   "test": "LCF imp1: standard start-stop cycles",
+   "value": 146288.42270574058,
+   "limit": 10000.0,
+   "unit": "cyc",
+   "ok": true,
+   "note": "worst cycle load_rejection 1.4e+05 (1.04 standard cycles each)"
+  },
+  {
+   "test": "LCF imp2: standard start-stop cycles",
+   "value": 35841.13475590266,
+   "limit": 10000.0,
+   "unit": "cyc",
+   "ok": true,
+   "note": "worst cycle load_rejection 3.1e+04 (1.14 standard cycles each)"
+  },
+  {
+   "test": "LCF drum: standard start-stop cycles",
+   "value": 1167379.3645673648,
+   "limit": 10000.0,
+   "unit": "cyc",
+   "ok": true,
+   "note": "worst cycle trip_noBOV 1.6e+05 (7.33 standard cycles each)"
+  },
+  {
+   "test": "phase 5 fine mesh: preload change (case E)",
+   "value": 0.06337238986311444,
+   "limit": 3.0,
+   "unit": "%",
+   "ok": true,
+   "note": "bolt / R1 temperatures within 1.4 K"
+  },
+  {
+   "test": "phase 5 half step: preload change (case E)",
+   "value": 0.005952992650737343,
+   "limit": 3.0,
+   "unit": "%",
+   "ok": true,
+   "note": "bolt / R1 temperatures within 0.7 K"
   }
  ],
  "bore_study": null,
@@ -376,20 +584,20 @@
    "R2 blade row": 3180.364625760492,
    "R2 aft cavity": -445.73734895966294
   },
-  "net": 2461.9138854600355,
+  "net": 2461.9138854600374,
   "cases": {
-   "design (100 %)": 2461.9138854600355,
-   "part load (~60 %)": 1477.1483312760242,
-   "idle (~15 %)": 369.28708281900606
+   "design (100 %)": 2461.9138854600374,
+   "part load (~60 %)": 1477.1483312760254,
+   "idle (~15 %)": 369.28708281900634
   },
   "scan": [
    [
     70.0,
-    1702.872693179343
+    1702.8726931793503
    ],
    [
     75.0,
-    1939.5629574389136
+    1939.5629574389209
    ],
    [
     80.0,
@@ -397,51 +605,51 @@
    ],
    [
     85.0,
-    2461.9138854600337
+    2461.9138854600374
    ],
    [
     90.0,
-    2747.5745492215815
+    2747.574549221585
    ],
    [
     95.0,
-    3049.558679483793
+    3049.558679483797
    ],
    [
     100.0,
-    3367.866276246665
+    3367.866276246669
    ],
    [
     105.0,
-    3702.4973395101897
+    3702.4973395101933
    ],
    [
     110.0,
-    4053.4518692743786
+    4053.4518692743823
    ],
    [
     115.0,
-    4420.729865539235
+    4420.729865539239
    ],
    [
     120.0,
-    4804.331328304743
+    4804.331328304746
    ],
    [
     125.0,
-    5204.256257570913
+    5204.256257570916
    ],
    [
     130.0,
-    5620.504653337739
+    5620.504653337743
    ],
    [
     135.0,
-    6053.076515605229
+    6053.076515605233
    ],
    [
     140.0,
-    6501.971844373378
+    6501.971844373382
    ]
   ],
   "cavities": {
@@ -512,49 +720,49 @@
    "stub_I1": {
     "F": 57168.1610183816,
     "parts": {
-     "bending": 11649.234518866024,
-     "torque": 43057.01261405554,
-     "axial": 2461.9138854600355
+     "bending": 11649.234518866022,
+     "torque": 43057.012614055544,
+     "axial": 2461.9138854600374
     },
-    "M": 266.1247540947841,
+    "M": 266.12475409478407,
     "T": 3803.4236069535905,
-    "Fax": 2461.9138854600355
+    "Fax": 2461.9138854600374
    },
    "I1_spc": {
     "F": 58933.71158199162,
     "parts": {
-     "bending": 18129.244707962247,
-     "torque": 36131.8429488282,
+     "bending": 18129.244707962243,
+     "torque": 36131.842948828205,
      "axial": 4672.623925201171
     },
-    "M": 479.13003871043094,
+    "M": 479.13003871043077,
     "T": 3754.9312655081844,
     "Fax": 4672.623925201171
    },
    "spc_I2": {
     "F": 58828.26412230417,
     "parts": {
-     "bending": 19396.707097573708,
-     "torque": 34966.299627898254,
-     "axial": 4465.257396832208
+     "bending": 19396.707097573704,
+     "torque": 34966.29962789826,
+     "axial": 4465.2573968322085
     },
-    "M": 531.2542555057689,
+    "M": 531.2542555057688,
     "T": 3754.9312655081844,
-    "Fax": 4465.257396832208
+    "Fax": 4465.2573968322085
    },
    "I2_drum": {
-    "F": 72870.96911797917,
+    "F": 72870.96911797918,
     "parts": {
-     "bending": 21715.785450270305,
-     "torque": 32518.917525282446,
-     "axial": 18636.26614242643
+     "bending": 21715.785450270294,
+     "torque": 32518.917525282453,
+     "axial": 18636.266142426433
     },
-    "M": 626.1384804827939,
+    "M": 626.1384804827935,
     "T": 3661.0871284605273,
-    "Fax": 18636.26614242643
+    "Fax": 18636.266142426433
    }
   },
-  "F_req": 72870.96911797917
+  "F_req": 72870.96911797918
  },
  "curvic_compressor": {
   "rings": {
@@ -612,47 +820,56 @@
   },
   "joints": {
    "drum_R1": {
-    "T": 480.0,
+    "T": 392.0509261014668,
+    "material": "IN718",
+    "pre_kN": 27.0,
+    "relax": 0.1,
     "grip_mm": 18.0,
     "stud_mm": 26.0,
-    "dF_steady_N": -1365.848418461535,
-    "dF_transient_N": -4770.626244923076,
-    "F_min_total": 290616.4053858463,
+    "dF_steady_N": -3223.4210721057534,
+    "dF_transient_N": -2001.2000299175634,
+    "F_min_total": 305206.06236762693,
     "required": 59010.64370733326,
     "parts": {
-     "bending": 18520.28328728717,
-     "torque": 27812.232093991566,
+     "bending": 18520.28328728716,
+     "torque": 27812.23209399157,
      "axial": 12678.128326054528
     },
     "stud_stress": 441.17647058823525,
     "flank": 120.3193059530093
    },
    "R1_R2": {
-    "T": 500.0,
+    "T": 711.1719667774811,
+    "material": "Waspaloy",
+    "pre_kN": 24.0,
+    "relax": 0.5,
     "grip_mm": 42.981063849021666,
     "stud_mm": 50.981063849021666,
-    "dF_steady_N": -1413.8907334979651,
-    "dF_transient_N": -5830.974947385361,
-    "F_min_total": 272882.1491058668,
+    "dF_steady_N": -5178.107483701027,
+    "dF_transient_N": -3789.7091199173246,
+    "F_min_total": 48514.93434210637,
     "required": 37727.87018052809,
     "parts": {
      "bending": 15587.624788135077,
-     "torque": 14906.244336949183,
-     "axial": 7234.0010554438295
+     "torque": 14906.244336949185,
+     "axial": 7234.001055443829
     },
-    "stud_stress": 441.17647058823525,
-    "flank": 113.95030848217387
+    "stud_stress": 392.156862745098,
+    "flank": 102.10650836570143
    },
    "R2_stub": {
-    "T": 460.0,
+    "T": 480.89469284573534,
+    "material": "IN718",
+    "pre_kN": 27.0,
+    "relax": 0.1,
     "grip_mm": 18.0,
     "stud_mm": 26.0,
-    "dF_steady_N": -1342.2572307692287,
-    "dF_transient_N": -4753.054877538461,
-    "F_min_total": 291275.00626707694,
-    "required": 6048.044094473162,
+    "dF_steady_N": -3922.1899232548712,
+    "dF_transient_N": -913.1121088994187,
+    "F_min_total": 311435.16748553136,
+    "required": 6048.044094473182,
     "parts": {
-     "bending": 6048.044094473162,
+     "bending": 6048.044094473182,
      "torque": 0.0,
      "axial": 0.0
     },
@@ -676,8 +893,8 @@
    ],
    "T_at_max": 472.0562518437098,
    "margin_yield": 1.581604201553937,
-   "burst_ratio": 1.8584949669828674,
-   "vm_hub": 451.5606400851349,
+   "burst_ratio": 1.85849498888666,
+   "vm_hub": 451.56064008511606,
    "hub_at": [
     0.0,
     42.9792
@@ -691,11 +908,11 @@
    "T_arm": 488.36846630374606,
    "hoop_flange_studs": 121.422,
    "T_flange": 494.009456757525,
-   "u_rim_mm": 1.9334,
+   "u_rim_mm": 1.9333,
    "lcf_hub_peak": {
-    "s": 451.5606400851349,
+    "s": 451.56064008511606,
     "T": 450.0,
-    "cycles": 19650.88893597266
+    "cycles": 19650.88893597877
    },
    "lcf_arm_root": {
     "s": 466.6804362329966,
@@ -716,8 +933,8 @@
    ],
    "T_at_max": 472.0562518437098,
    "margin_yield": 1.3858842484211868,
-   "burst_ratio": 1.858504443854752,
-   "vm_hub": 511.1192801263912,
+   "burst_ratio": 1.8585044735090763,
+   "vm_hub": 511.1192801263704,
    "hub_at": [
     0.0,
     42.9792
@@ -731,72 +948,72 @@
    "T_arm": 488.36846630374606,
    "hoop_flange_studs": 147.938,
    "T_flange": 494.009456757525,
-   "u_rim_mm": 1.97334
+   "u_rim_mm": 1.97324
   },
   "R2_op": {
-   "vm_max": 486.48524362968095,
+   "vm_max": 76653.76452132016,
    "vm_max_at": [
-    53.78217232520115,
-    139.89870600895438
+    111.31832040431797,
+    182.82532207879973
    ],
-   "T_at_max": 438.9470691636933,
-   "margin_yield": 1.615887230655704,
-   "burst_ratio": 1.780298604266172,
-   "vm_hub": 448.3282401429561,
+   "T_at_max": 501.17058026029923,
+   "margin_yield": 0.01017409838700168,
+   "burst_ratio": 1.8400674830936594,
+   "vm_hub": 448.324370123525,
    "hub_at": [
     0.0,
     171.960264
    ],
    "T_hub": 420.0,
-   "vm_arm": 465.7597950607158,
+   "vm_arm": 465.53470815571853,
    "arm_at": [
-    70.488554,
-    202.139436
+    70.934858,
+    202.032288
    ],
-   "T_arm": 452.5463704788067,
-   "hoop_flange_studs": 124.67,
+   "T_arm": 452.9598151994821,
+   "hoop_flange_studs": 124.894,
    "T_flange": 457.80561751606945,
-   "u_rim_mm": 1.63071,
+   "u_rim_mm": 1.6156,
    "lcf_hub_peak": {
-    "s": 448.3282401429561,
+    "s": 448.324370123525,
     "T": 420.0,
-    "cycles": 20407.43098786769
+    "cycles": 20408.75536087844
    },
    "lcf_arm_root": {
-    "s": 465.7597950607158,
-    "T": 452.5463704788067,
-    "cycles": 15641.10888368477
+    "s": 465.53470815571853,
+    "T": 452.9598151994821,
+    "cycles": 15699.800742926558
    },
    "lcf_flange_stud_hole": {
-    "s": 324.142,
+    "s": 324.7244,
     "T": 457.80561751606945,
-    "cycles": 315227.1325549608
+    "cycles": 310192.60844417464
    }
   },
   "R2_trip": {
-   "vm_max": 560.8078026920363,
+   "vm_max": 560.1013257950386,
    "vm_max_at": [
     53.78217232520115,
-    139.89870600895438
+    202.0218226030031
    ],
    "T_at_max": 438.9470691636933,
-   "margin_yield": 1.4017374389409394,
-   "burst_ratio": 1.7803055404551849,
-   "vm_hub": 512.2236601646823,
+   "margin_yield": 1.4035055031655024,
+   "burst_ratio": 1.7803837517961654,
+   "vm_hub": 512.2192401651876,
    "hub_at": [
     0.0,
     171.960264
    ],
    "T_hub": 420.0,
-   "vm_arm": 542.1359367829161,
+   "vm_arm": 541.5051672082825,
    "arm_at": [
-    70.488554,
-    202.139436
+    70.934858,
+    202.032288
    ],
-   "T_arm": 452.5463704788067,
-   "hoop_flange_studs": 151.988,
+   "T_arm": 452.9598151994821,
+   "hoop_flange_studs": 152.235,
    "T_flange": 457.80561751606945,
-   "u_rim_mm": 1.67179
+   "u_rim_mm": 1.67171
   }
  },
  "bearings": {
@@ -807,7 +1024,7 @@
     "n_pad": 4,
     "arc": 65.0,
     "U": 70.68583470577035,
-    "unit_load_MPa": 0.3361837112275307,
+    "unit_load_MPa": 0.33618371122753093,
     "Cb_um": 63.0,
     "Cp_um": 90.0,
     "mu": 0.009089402228439654,
@@ -819,7 +1036,7 @@
     "P_kW": 4.364197528415749,
     "Q_lpm": 7.611972433283284,
     "T_babbitt": 94.0,
-    "W": 1089.2352243771995
+    "W": 1089.2352243772002
    },
    {
     "D": 90.0,
@@ -849,13 +1066,13 @@
    "n_in": 4,
    "U_mean": 94.24777960769381,
    "area_mm2": 4825.486315913923,
-   "unit_load_MPa": 0.7652846959717555,
-   "h_min_um": 44.67992268293404,
-   "Re": 758.0169078974062,
-   "P_kW": 6.039334347683108,
-   "P_loaded_kW": 4.583255085599837,
-   "Q_lpm": 10.533722699447283,
-   "W": 3692.8708281900535,
+   "unit_load_MPa": 0.7652846959717561,
+   "h_min_um": 44.67992268293403,
+   "Re": 758.016907897406,
+   "P_kW": 6.039334347683111,
+   "P_loaded_kW": 4.583255085599839,
+   "Q_lpm": 10.533722699447285,
+   "W": 3692.8708281900563,
    "cap_kN": 9.650972631827846,
    "cap_reverse_kN": 4.825486315913923
   },
@@ -866,13 +1083,13 @@
    "n_in": 4,
    "U_mean": 94.24777960769381,
    "area_mm2": 4825.486315913923,
-   "unit_load_MPa": 0.5101897973145036,
-   "h_min_um": 54.72150616009619,
-   "Re": 928.3773203754587,
-   "P_kW": 5.207562763577442,
-   "P_loaded_kW": 3.7422121069118797,
-   "Q_lpm": 9.082958308565306,
-   "W": 2461.9138854600355,
+   "unit_load_MPa": 0.5101897973145041,
+   "h_min_um": 54.721506160096176,
+   "Re": 928.3773203754585,
+   "P_kW": 5.207562763577443,
+   "P_loaded_kW": 3.7422121069118806,
+   "Q_lpm": 9.082958308565308,
+   "W": 2461.9138854600374,
    "cap_kN": 9.650972631827846,
    "cap_reverse_kN": 4.825486315913923
   },
@@ -894,10 +1111,10 @@
    "cap_reverse_kN": 4.825486315913923
   },
   "sfd": {
-   "C_full": 47183.91279821876,
-   "C_pi": 23591.95639910938,
+   "C_full": 47183.91279821927,
+   "C_pi": 23591.956399109637,
    "k": 31414273.661438625,
-   "mu": 0.009620109530547434,
+   "mu": 0.00962010953054754,
    "E": 196000000000.0,
    "t": 0.004200000000000001,
    "l": 0.043000000000000003,
@@ -905,9 +1122,9 @@
   },
   "cage": [
    {
-    "sag_um": 24.66751581614051,
+    "sag_um": 24.66751581614053,
     "s_alt_MPa": 138.90665224445647,
-    "s_mean_MPa": 32.94694270391596
+    "s_mean_MPa": 32.94694270391599
    },
    {
     "sag_um": 37.68977932024912,
@@ -916,11 +1133,11 @@
    }
   ],
   "journal_loads_kg": [
-   78.99205834822666,
+   78.99205834822672,
    120.69286868557964
   ],
   "U_api_gmm": [
-   31.847591778491385,
+   31.84759177849141,
    48.66029943831306
   ]
  },
@@ -930,94 +1147,94 @@
     "kb": 57858381.85100485,
     "cb": 22100.27393012598,
     "ks": 31414273.661438625,
-    "cs": 47183.91279821876,
+    "cs": 47183.91279821927,
     "mh": 6.0
    },
    "criticals": [
     {
      "mode": 1,
-     "N": 3894.5959700613216,
-     "f_Hz": 64.90993283435536,
-     "logdec": 1.2085340951269121,
-     "AF": 2.599506845737674,
-     "SM": 72.66950196448195,
-     "SM_req": 1.5385228242080928,
+     "N": 3894.595970020426,
+     "f_Hz": 64.90993283367376,
+     "logdec": 1.2085340951640002,
+     "AF": 2.5995068456578987,
+     "SM": 72.66950196476894,
+     "SM_req": 1.538522823086276,
      "ok": true
     },
     {
      "mode": 2,
-     "N": 8281.64270383171,
-     "f_Hz": 138.02737839719518,
-     "logdec": 2.496147818045774,
-     "AF": 1.2585763675042834,
-     "SM": 41.88320909591782,
+     "N": 8281.642704126898,
+     "f_Hz": 138.02737840211498,
+     "logdec": 2.4961478181001002,
+     "AF": 1.2585763674768917,
+     "SM": 41.88320909384633,
      "SM_req": 0.0,
      "ok": true
     },
     {
      "mode": 3,
-     "N": 21201.685100045463,
-     "f_Hz": 353.36141833409107,
-     "logdec": 0.7863109585017104,
-     "AF": 3.9953565693348523,
-     "SM": 34.6138736510823,
-     "SM_req": 20.187346366082096,
+     "N": 21201.685100218463,
+     "f_Hz": 353.3614183369744,
+     "logdec": 0.7863109584946492,
+     "AF": 3.9953565693707316,
+     "SM": 34.613873652180715,
+     "SM_req": 20.187346366180048,
      "ok": true
     }
    ],
    "amp_um": {
-    "mid": 2.2675712214490127,
-    "conical": 3.9606557869923487,
-    "turbine": 3.72521253425364
+    "mid": 2.267571221447077,
+    "conical": 3.960655786994861,
+    "turbine": 3.725212534255797
    },
-   "rotor_mass": 199.6849270338063
+   "rotor_mass": 199.68492703380636
   },
   "pi-film SFD": {
    "support": {
     "kb": 57858381.85100485,
     "cb": 22100.27393012598,
     "ks": 31414273.661438625,
-    "cs": 23591.95639910938,
+    "cs": 23591.956399109637,
     "mh": 6.0
    },
    "criticals": [
     {
      "mode": 1,
-     "N": 3833.7223396677928,
-     "f_Hz": 63.895372327796544,
-     "logdec": 0.678019024934386,
-     "AF": 4.633487465774009,
-     "SM": 73.0966853356646,
-     "SM_req": 11.574734960428254,
+     "N": 3833.7223396916115,
+     "f_Hz": 63.895372328193524,
+     "logdec": 0.678019024910267,
+     "AF": 4.633487465938836,
+     "SM": 73.09668533549745,
+     "SM_req": 11.57473496071363,
      "ok": true
     },
     {
      "mode": 2,
-     "N": 7706.13877749064,
-     "f_Hz": 128.43564629151066,
-     "logdec": 1.4268156732546031,
-     "AF": 2.2018209587113238,
-     "SM": 45.92183314041656,
+     "N": 7706.138777795523,
+     "f_Hz": 128.43564629659207,
+     "logdec": 1.4268156731828567,
+     "AF": 2.2018209588220405,
+     "SM": 45.92183313827703,
      "SM_req": 0.0,
      "ok": true
     },
     {
      "mode": 3,
-     "N": 20558.524763076475,
-     "f_Hz": 342.64207938460794,
-     "logdec": 0.5512935274288805,
-     "AF": 5.69858432447327,
-     "SM": 30.530315956041115,
-     "SM_req": 22.951016179213518,
+     "N": 20558.524763025463,
+     "f_Hz": 342.64207938375773,
+     "logdec": 0.5512935274261656,
+     "AF": 5.698584324501334,
+     "SM": 30.530315955717228,
+     "SM_req": 22.951016179240586,
      "ok": true
     }
    ],
    "amp_um": {
-    "mid": 2.6575430090228878,
-    "conical": 4.313549412601809,
-    "turbine": 3.999841194577624
+    "mid": 2.6575430090199457,
+    "conical": 4.313549412603865,
+    "turbine": 3.9998411945799
    },
-   "rotor_mass": 199.6849270338063
+   "rotor_mass": 199.68492703380636
   }
  },
  "rotor_segments": [
@@ -1264,11 +1481,11 @@
  ],
  "losses": {
   "journals_kW": 8.728395056831499,
-  "thrust_kW": 5.207562763577442,
+  "thrust_kW": 5.207562763577443,
   "seals_kW": 2.0,
   "total_kW": 15.935957820408941,
   "cycle_allowance_kW": 5.9959386706084015,
-  "oil_lpm": 24.306903175131872,
+  "oil_lpm": 24.306903175131875,
   "d_eta_el_pt": -0.35873548313900194
  },
  "interfaces": {
@@ -1326,24 +1543,24 @@
     "spc_R2": 791.2491059693687,
     "R2_stub": 897.2491059693687
    },
-   "studs": "16 x MJ10x1.25 IN718 on PCD 152"
+   "studs": "16 x MJ10x1.25 on PCD 152: IN718, R1 - R2 Waspaloy 24 kN"
   }
  },
  "thrust_transient": {
   "worst": {
-   "F_fwd": -4871.122405236079,
-   "F_aft": 5193.874817759557,
-   "fwd_unit": 2.0189146072890742,
-   "fwd_film": 27.508376007907565,
-   "aft_unit": 1.0763422539673835,
-   "aft_film": 37.674607138466115,
-   "n_max": 1.0233599262733852,
-   "sm_min": 0.26237781320573705
+   "F_fwd": -4871.122405236065,
+   "F_aft": 5193.874807032067,
+   "fwd_unit": 2.018914607289068,
+   "fwd_film": 27.508376007907604,
+   "aft_unit": 1.0763422517442935,
+   "aft_film": 37.6746071773729,
+   "n_max": 1.0233599262738322,
+   "sm_min": 0.2623778096632259
   },
   "bound": {
-   "F": -6367.489223734459,
-   "unit": 2.6391077735461317,
-   "film": 24.059985661707582,
+   "F": -6367.489223734468,
+   "unit": 2.6391077735461357,
+   "film": 24.059985661707564,
    "note": "surge bound: stages fully collapsed, plenum and cavities frozen at the rating"
   },
   "bov": {
@@ -1354,5 +1571,15 @@
    "location": "compressor delivery volume (collector / scroll pressure body) to the stack"
   },
   "results": "sim/engine/fea/a1000_thrust_transient.json"
+ },
+ "tiebolt_thermal": {
+  "configuration": "fix",
+  "purge": {
+   "on": false,
+   "frac": 0.0045,
+   "pickup": 150.0,
+   "ingest": 0.2
+  },
+  "results": "sim/engine/fea/a1000_tiebolt_thermal.json"
  }
 }
