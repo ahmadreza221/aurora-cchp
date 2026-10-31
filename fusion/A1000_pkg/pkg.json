@@ -579,14 +579,63 @@
    "dx": 0.0
   },
   {
-   "name": "Air inlet plenum + bellmouth",
+   "name": "IN-501 Inlet casing, upper half (EN-GJS-400-18)",
    "group": "casing",
    "inst": [
     0.0
    ],
-   "desc": "radial inlet: plenum round the front bearing housings, front wall at x 157 over the rotor hub fairing, shroud wall at x 204 with an R10 bend into the inducer; entry r 260 (area 1.60 x inducer); duct up to the filter house and the absorption-chiller inlet-air cooler",
-   "material": "steel sheet, acoustic lining",
-   "step": "Air_inlet_plenum___bellmouth.step",
+   "desc": "upper half: hub wall x 143-157 (bore r 130.5 over FB, cord O-ring on the FB fairing face), front lip R40, struts at 45 / 135 deg (solid, chord 75, t 16), shroud wall x 204-222 with the R10 bellmouth corner into the inducer shroud r 137.5, spigot recess r 150 on the compressor casing, 24 x M12 from the back; lifts off after the plenum upper half",
+   "material": "EN-GJS-400-18",
+   "mass_kg": 56.6,
+   "step": "../A1000_inl/IN_501_Inlet_casing__upper_half__EN_GJS_400_18.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-502 Inlet casing, lower half + FB-2 foot brackets (EN-GJS-400-18)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "lower half as IN-501 with the struts at 225 / 315 deg and two L brackets for the FB-2 centre-line feet (pad z -20, 2 x M16 each, window for the oil-inlet fittings)",
+   "material": "EN-GJS-400-18",
+   "mass_kg": 58.95,
+   "step": "../A1000_inl/IN_502_Inlet_casing__lower_half___FB_2_foot_brackets__EN_GJS_400_18.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-510 Plenum box, upper half + filter-house flange (S235JR)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "welded box 6 mm: plenum x -140..204, y +-540, z 0..600, filter-house flange 1080 x 344 on top, dry tunnel half r 290 round FB-1 and the coupling, bolted flush onto the casing rim (24 x M10) and the tunnel ring (16 x M10)",
+   "material": "S235JR",
+   "mass_kg": 84.47,
+   "step": "../A1000_inl/IN_510_Plenum_box__upper_half___filter_house_flange__S235JR.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-511 Plenum box, lower half + feet (S235JR)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "lower half of the box down to z -620, 4 feet to the skid, washing / condensate drain at the low point; the dry tunnel half carries no penetration: the FB services leave forward through the tunnel (open at x -140)",
+   "material": "S235JR",
+   "mass_kg": 108.54,
+   "step": "../A1000_inl/IN_511_Plenum_box__lower_half___feet__S235JR.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-520 Filter-house adapter + fabric joint",
+   "group": "aux",
+   "inst": [
+    0.0
+   ],
+   "desc": "rectangular frame 300 mm with the fabric expansion joint to the filter-house duct (F7 + F9, inlet-air cooler, silencer: vendor)",
+   "material": "S235JR + fabric",
+   "mass_kg": 51.79,
+   "step": "../A1000_inl/IN_520_Filter_house_adapter___fabric_joint.step",
    "dx": 0.0
   },
   {

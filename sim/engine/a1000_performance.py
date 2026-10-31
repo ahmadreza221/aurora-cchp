@@ -10,6 +10,8 @@ is put into the cycle in turn (cumulative), giving a waterfall of grid power and
   4. bearings     : journals + thrust + seals in kW (sim/engine/fea/a1000_rotor_stack.json) in place of eta_mech 0.994
   5. exhaust      : diffuser + collector (CFD), recuperator ducting (correlations), recuperator core / economizer
                     (vendor assumptions) in place of dp_exh 1.5 %, dp_rec_h 3.5 %, dp_rec_c 2.5 % (sim/engine/fea/a1000_exhaust.json)
+  6. inlet        : filter house + inlet-air cooler + silencer (vendor assumption, mid-life filters) and the plenum + radial
+                    inlet + bellmouth (CFD) in place of dp_inlet 1.0 % (sim/engine/fea/a1000_inlet.json)
 Secondary air stays at the cycle allowance of 1.5 % (bypasses the turbine work); the labyrinths of the hot section use
 part of it (sim/engine/fea/a1000_hot_section.json), the rest is for the NGV half-joint strip seals and other joints.
 Then the TIT that brings the grid power back to 1,000 kW at the same air flow.
@@ -37,6 +39,7 @@ RS = json.load(open(os.path.join(HERE, 'fea', 'a1000_rotor_stack.json')))
 HOT = json.load(open(os.path.join(HERE, 'fea', 'a1000_hot_section.json')))
 TC = json.load(open(os.path.join(HERE, 'fea', 'a1000_turbine_checks.json')))
 EXH = os.path.join(HERE, 'fea', 'a1000_exhaust.json')
+INL = os.path.join(HERE, 'fea', 'a1000_inlet.json')
 LIFE_TARGET = 1.0e5                                              # h, R1 creep on the minimum curve (a1000_turbine_checks.py)
 D_ETA_T_CHORDS = -0.008 + 0.003                                  # rev 5 row chords (Kacker-Okapuu secondary loss)
 DGAP = 25.0                                                      # mm, R1 TE - NGV2 LE added (EO24 fix)
@@ -110,6 +113,10 @@ def asbuilt_steps():
         ex = json.load(open(EXH))['dps_new']
         steps.append(('exhaust + recuperator ducting: dp_exh %.2f %%, dp_rec_h %.2f %%, dp_rec_c %.2f %% (was 1.5 / 3.5 / 2.5)'
                       % (100 * ex['dp_exh'], 100 * ex['dp_rec_h'], 100 * ex['dp_rec_c']), dict(ex), None))
+    if os.path.exists(INL):                                      # phase 3 (sim/engine/a1000_inlet.py): filter house + computed inlet
+        il = json.load(open(INL))['losses']['design']
+        steps.append(('inlet: filter house %.0f Pa (mid-life, assumed) + plenum / radial inlet %.0f Pa = dp_inlet %.2f %% (was 1.0)'
+                      % (il['dp_filter_Pa'], il['dp_ours_Pa'], 100 * il['dp_inlet']), dict(dp_inlet=il['dp_inlet']), None))
     return case, ma, gap, steps
 
 
@@ -138,13 +145,14 @@ def main():
     sec_pct = sec['drum_balance_seal']['pct'] + sec['interstage_seal']['pct']
     out = dict(air_kg_s=ma, site=SITE, gap=gap, case_asbuilt=dict(PR=cur['PR'], eta_c=cur['eta_c'], eta_t=cur['eta_t'],
                dp_comb=cur['dp_comb'], P_mech_kW=pm / 1e3, leak=G.BASE['leak'], dp_exh=cur.get('dp_exh', G.BASE['dp_exh']),
-               dp_rec_h=cur.get('dp_rec_h', G.BASE['dp_rec_h']), dp_rec_c=cur.get('dp_rec_c', G.BASE['dp_rec_c'])), waterfall=rows, tit_for_1MW=fix,
+               dp_rec_h=cur.get('dp_rec_h', G.BASE['dp_rec_h']), dp_rec_c=cur.get('dp_rec_c', G.BASE['dp_rec_c']),
+               dp_inlet=cur.get('dp_inlet', G.BASE['dp_inlet'])), waterfall=rows, tit_for_1MW=fix,
                dTIT_K=t_req - case['TIT'], tit_life_limit=lim, dTIT_life_K=t_life - case['TIT'],
                shortfall_at_life_limit_kW=1000.0 - lim['P_grid_kW'],
                secondary_air=dict(allowance_pct=100 * G.BASE['leak'], labyrinths_bypassing_turbine_pct=sec_pct,
                                   left_for_joints_pct=100 * G.BASE['leak'] - sec_pct,
                                   backface_recirculation_pct=sec['backface_seal_r200']['pct']),
-               open=['compressor inlet plenum and radial-inlet bend loss (cycle dp_inlet 1.0 % kept)',
+               open=['filter-house, inlet-air cooler and silencer dp (vendor quote; assumed mid-life, sim/engine/a1000_inlet.py)',
                      'recuperator core dp (vendor quote; assumed 1.5 % air / 2.0 % gas) and economizer gas side (assumed 500 Pa)',
                      'turbine tip clearance 0.46 / 0.55 mm against the meanline eta_t (no row-by-row loss model yet)',
                      'disc windage of the turbine cavities', 'NGV half-joint strip seal leakage (inside the 1.5 % allowance)'])
