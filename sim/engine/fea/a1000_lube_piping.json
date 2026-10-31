@@ -112,7 +112,8 @@
    "slope_min": "1:50",
    "air_g_s": 6.217531515043709,
    "vent_DN": 25,
-   "v_vent_m_s": 7.804002052034302
+   "v_vent_m_s": 7.804002052034302,
+   "outlets": "2 x DN40 vertical sockets, joined into the DN65 below FB-2"
   },
   "JB2": {
    "oil_lpm": 11.92987927295336,
@@ -134,7 +135,7 @@
   "v_vent": 4.806901289187521
  },
  "reservoir": {
-  "location": "in the base frame between the beams at x -540 and 200 (under the couplings and the gearbox front), top z -715",
+  "location": "in the base frame between the beams at x -540 and 200 (under the couplings, the plenum front and the gearbox front), top z -715",
   "working_l": 260,
   "volume_l": 338,
   "retention_min": 4,
@@ -518,20 +519,28 @@
    "note": "cavity top -> reservoir, mist separator on the tank"
   },
   {
+   "name": "FB-2 drain outlets 2 x DN40: capacity at a 12 mm pool / design flow with foam",
+   "value": 1.9035,
+   "limit": 1.3,
+   "unit": "-",
+   "ok": true,
+   "note": "pool clear of the collar (r 72)"
+  },
+  {
    "name": "drain FBH: available slope to the reservoir in the base frame",
-   "value": 0.3571,
+   "value": 1.6296,
    "limit": 0.02,
    "unit": "-",
    "ok": true,
-   "note": "run 1.4 m"
+   "note": "run 0.3 m"
   },
   {
    "name": "drain JB2: available slope to the reservoir in the base frame",
-   "value": 0.0932,
+   "value": 0.0467,
    "limit": 0.02,
    "unit": "-",
    "ok": true,
-   "note": "run 2.2 m"
+   "note": "run 0.8 m"
   },
   {
    "name": "fuel lines: supply margin after the line loss (combustor allowed 0.03 bar for lances)",

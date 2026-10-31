@@ -252,7 +252,7 @@
    "group": "cage",
    "valid": true,
    "solids": 4,
-   "vol_cm3": 281.73,
+   "vol_cm3": 281.74,
    "mass_kg": 2.198,
    "x": [
     933.75,
@@ -294,8 +294,8 @@
    "group": "housing",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 2443.14,
-   "mass_kg": 17.346,
+   "vol_cm3": 2477.22,
+   "mass_kg": 17.588,
    "x": [
     27.0,
     201.0
@@ -308,8 +308,8 @@
    "group": "housing",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 2563.97,
-   "mass_kg": 18.204,
+   "vol_cm3": 2424.57,
+   "mass_kg": 17.214,
    "x": [
     27.0,
     201.0

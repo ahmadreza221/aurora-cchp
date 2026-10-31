@@ -7,10 +7,12 @@ CB-370 drops) and the exhaust frame of phase 2 (cad/engine/a1000_exhaust.py: str
 
 Layout rules:
   service side   all oil, fuel and drain lines run on the -y side and under the engine; +y is left to the recuperator
-                 ducts (phase 2). Nothing crosses the vertical lift path of an upper casing half (|y| < 662 above the axis)
+                 ducts (phase 2). The front-bearing lines (FB-1 / FB-2) leave forward inside the dry tunnel of the inlet
+                 plenum (r 284, open at the plenum front plate x -146; phase 3) and turn in the gap in front of it, so no
+                 line crosses the filtered air. Nothing crosses the vertical lift path of an upper casing half (|y| < 662 above the axis)
                  or the axial path of the exhaust frame except the lines that end on it (disconnected first).
-  disconnects    at every module boundary, so modules come apart without cutting: inlet-plenum wall bulkhead unions
-                 (FBH oil, vent, buffer air), DN65 flange under the plenum (FBH drain), flexible hose at each exhaust-strut
+  disconnects    at every module boundary, so modules come apart without cutting: unions at the FB bosses and in front
+                 of the plenum (FB oil, vent, buffer air, drain sockets), flexible hose at each exhaust-strut
                  exit (JB2 oil, drain, vent), unions at the fuel drops
                  (z 900) and at the bulkhead on the head cover, unions at the CB-341 drain bosses
   flexibility    the hot end (exhaust frame, ~3 mm axial / radial growth) and the can head (+14 mm) are reached through
@@ -35,17 +37,19 @@ OD = dict(DN15=21.3, DN25=33.7, DN32=42.4, DN50=60.3, DN65=76.1, DN125=139.7, DN
 
 # end points (from the CAD scripts; checked by cad/engine/a1000_assembly_check.py)
 FBH_IN = dict(JB1=(65.0, -148.0, -45.0), TB=(126.0, -148.0, -45.0))      # FB-2 inlet boss faces (-y)
-FBH_DRAIN = (126.0, 0.0, -189.0)                                        # FB-2 DN65 flange face
-FBH_VENT = (132.0, 0.0, 154.0)                                          # FB-1 DN25 boss top
-FBH_BUF = (148.15, -101.8, -101.8)                                      # FB-2 buffer-air boss face (225 deg)
-PLENUM_Y, PLENUM_Z = 400.0, 400.0                                       # inlet plenum walls (+-y, floor)
+FBH_DRAIN = (110.0, (-32.0, 32.0), -150.0)                              # FB-2 two DN40 socket faces
+FBH_VENT = (118.0, 0.0, 142.0)                                          # FB-1 DN25 boss top
+FBH_BUF = (125.0, -101.8, -101.8)                                       # FB-2 buffer-air boss face (225 deg)
+TUNNEL = dict(r=284.0, x_front=-146.0, x_lip=(97.0, 143.0), r_lip=250.0)  # inlet plenum dry tunnel (phase 3): lines inside stay
+                                                                        # at r < 250 over the casing lip, turn at x -240..-152
 JB2_X = dict(oil=955.25, drain=1005.0, vent=1005.0)                     # JB2 ports (cad/engine/a1000_rotor.py jb2_cartridge)
 STRUT = dict(oil=90.0, drain=270.0, vent=180.0)                         # strut services (exhaust frame EX-410, phase 2)
 R_STRUT_OUT = 545.0                                                     # hose ends, clear of the frame manifold shell (r 500-510)
 RES = dict(x=(-540.0, 200.0), y=(-940.0, 790.0), z=(-985.0, -715.0))    # reservoir between the base-frame beams (clear of the
                                                                         # recuperator support frame at y >= 800)
 Z_DECK = -700.0
-JUNCTION = (40.0, 160.0, -650.0, -450.0)                                # oil distribution block: x0, x1, y, z
+JUNCTION = (-215.0, -165.0, -400.0, -400.0)                            # FB oil block in front of the plenum: x0, x1, y, z
+Y_JB2 = -670.0                                                          # JB2 oil run (own nozzle on the module's rear face)
 STAGE1_TAP = (360.0, 0.0, 500.0)                                        # DN25 boss on the compressor casing top (phase 7)
 GVB = (1000.0, 1300.0, -1200.0, -900.0, -700.0, -300.0)                 # gas valve block envelope (bought in)
 DRAIN_POT = (780.0, -900.0, -640.0)
@@ -108,26 +112,34 @@ def lines():
     b = LP['bearings']; out = {}
     od_h = LP['oil_header']['tube_OD']
     x0j, x1j, yj, zj = JUNCTION
-    # ---- oil supply: lube module -> junction block -> JB1, TB (through the plenum wall) and JB2 (to the 198 deg strut)
-    hdr = route([(-150.0, yj, zj), (x0j, yj, zj)], od_h).fuse(box(x0j, x1j, yj - 25, yj + 25, zj - 25, zj + 25))
-    out['PL-01 Oil supply header + distribution block (tube %d x 2)' % od_h] = (hdr, '1.4404', 'pipe',
-        'lube module -> distribution block under the inlet plenum; PCV on the module holds %.1f bar(g) here' % LP['lube_module']['header_barg'])
-    for tag, key in (('PL-02', 'JB1'), ('PL-03', 'TB')):
-        od = b[key]['supply_tube_OD']; xi, yi, zi = FBH_IN[key]
-        pts = [(xi, yj, zj + 25), (xi, yj, zi), (xi, -PLENUM_Y - 40, zi), (xi, yi, zi)]
-        s = route(pts, od).fuse(fitting((xi, -PLENUM_Y, zi), (xi, 0, zi), od + 14, 24.0)).fuse(fitting((xi, yi, zi), (xi, yi - 1, zi), od + 10, 20.0))
+    # ---- oil supply: lube module -> FB block in front of the plenum -> JB1, TB forward through the tunnel; JB2 from its own
+    # nozzle on the module's rear face, along the -y side to the top strut
+    hdr = route([(0.5 * (x0j + x1j), -455.0, zj), (0.5 * (x0j + x1j), yj - 25.0, zj)], od_h).fuse(box(x0j, x1j, yj - 25, yj + 25, zj - 25, zj + 25))
+    out['PL-01 Oil supply header + FB distribution block (tube %d x 2)' % od_h] = (hdr, '1.4404', 'pipe',
+        'lube module (+y face) -> block in front of the plenum; PCV on the module holds %.1f bar(g)' % LP['lube_module']['header_barg'])
+    for tag, key, xu, yr, zr in (('PL-02', 'JB1', -205.0, -185.0, -55.0), ('PL-03', 'TB', -180.0, -160.0, -75.0)):
+        od = b[key]['supply_tube_OD']; xi, yi, zi = FBH_IN[key]                   # under the FB-2 foot brackets (pad z -36)
+        pts = [(xu, yj + 25.0, zj), (xu, yr, zj), (xu, yr, zr), (xi, yr, zr), (xi, yr, zi), (xi, yi, zi)]
+        s = route(pts, od).fuse(fitting((xi, yi, zi), (xi, yi - 1, zi), od + 10, 20.0)).fuse(fitting((xu, yr, zj + 60), (xu, yr, 0), od + 10, 24.0))
         out['%s Oil to %s (tube %d x %.1f, orifice %s mm)' % (tag, key, od, 1.5, b[key]['orifice_mm'])] = (s, '1.4404', 'pipe',
-            'bulkhead union in the plenum wall (y -400) = module disconnect; 24 deg cone union on the FB-2 boss')
+            'forward through the plenum tunnel (r %.0f), union on the FB-2 boss and one in front of the plenum = disconnects' % math.hypot(yr, zr))
     od = b['JB2']['supply_tube_OD']; pe = polar(JB2_X['oil'], R_STRUT_OUT + 45.0, STRUT['oil']); xr = 990.0   # behind the CB-340
                                                                         # ribs; clear of the manifold top (z <= 560)
-    s = route([(x1j, yj, zj), (xr, yj, zj), (xr, -740.0, zj), (xr, -740.0, 640.0), (xr, 0.0, 640.0), (xr, 0.0, pe[2] + 40.0)], od)
+    s = route([(-150.0, Y_JB2, zj - 50.0), (xr, Y_JB2, zj - 50.0), (xr, -740.0, zj - 50.0), (xr, -740.0, 640.0), (xr, 0.0, 640.0),
+               (xr, 0.0, pe[2] + 40.0)], od)
     s = s.fuse(hose([(xr, 0.0, pe[2] + 40.0), (pe[0], pe[1], pe[2] + 40.0), pe], od + 8.0))   # DN15 through the strut: phase 2
     out['PL-04 Oil to JB2 (tube %d x 1.5, hose at the top strut)' % od] = (s, '1.4404', 'pipe',
         'along the -y side outside the scroll casing, over the frame behind the scroll-casing ribs; braided hose at the strut exit; tube through the strut')
-    # ---- drains: FBH DN65 straight down into the reservoir; JB2 DN50 from the bottom strut, falling ~11 % to the reservoir
-    d65 = OD['DN65']; xd, yd, zd = FBH_DRAIN
-    s = route([(xd, yd, zd), (xd, yd, RES['z'][1] + 5)], d65).fuse(fitting((xd, yd, -PLENUM_Z - 10), (xd, yd, 0), 185.0, 18.0))
-    out['PL-05 FBH drain DN65 (to the reservoir)'] = (s, '1.4404', 'pipe', 'flange DN65 PN16 under the plenum floor = disconnect; vertical, no trap')
+    # ---- drains: FBH 2 x DN40 down, joined into DN65 forward through the tunnel at 2.6 %, down to the reservoir in front of
+    # the plenum; JB2 DN50 from the bottom strut, falling ~5 % to the reservoir
+    d65, d40 = OD['DN65'], 48.3; xd, yds, zd = FBH_DRAIN
+    s = None
+    for yd in yds:
+        p = route([(xd, yd, zd), (xd, yd, -200.0), (80.0, 0.6 * yd, -226.0), (72.0, 0.0, -228.0)], d40)
+        s = p if s is None else s.fuse(p)
+    s = s.fuse(route([(72.0, 0.0, -228.0), (-190.0, 0.0, -235.0), (-190.0, 0.0, RES['z'][1] + 1)], d65))
+    out['PL-05 FBH drain 2 x DN40 + DN65 (forward through the tunnel to the reservoir)'] = (s, '1.4404', 'pipe',
+        'socket unions on FB-2; DN65 at 2.6 %% inside the tunnel (bottom r %.0f), vertical to the tank in front of the plenum' % (235.0 + d65 / 2))
     d50 = OD['DN50']; pe = polar(JB2_X['drain'], R_STRUT_OUT, 270.0)
     s = hose([pe, (pe[0], 0.0, -640.0)], d50 + 8).fuse(route([(pe[0], 0.0, -640.0), (260.0, 0.0, -680.0), (170.0, 150.0, -684.0),
                                                             (170.0, 150.0, RES['z'][1] + 1)], d50))   # the strut cavity is the drain;
@@ -136,9 +148,9 @@ def lines():
         'PTFE-lined braided hose DN50 at the strut exit, then rigid under the scroll casing (60 mm below it) to the reservoir')
     # ---- vents: FBH DN25 from the top of FB-1 through the +y plenum wall straight down; JB2 DN32 from the 126 deg strut
     d25 = OD['DN25']; xv, yv, zv = FBH_VENT
-    s = route([(xv, yv, zv), (xv, yv, zv + 40), (xv, PLENUM_Y + 70, zv + 40), (xv, PLENUM_Y + 70, RES['z'][1] + 5)], d25)
-    s = s.fuse(fitting((xv, PLENUM_Y, zv + 40), (xv, 0, zv + 40), d25 + 14, 24.0))
-    out['PL-07 FBH vent DN25 (to the reservoir)'] = (s, '1.4404', 'pipe', 'union on FB-1 (opened to lift the upper half) and at the plenum wall; falls to the tank')
+    s = route([(xv, yv, zv), (xv, yv, zv + 40.0), (-200.0, 130.0, zv + 30.0), (-200.0, 130.0, RES['z'][1] + 1)], d25)
+    out['PL-07 FBH vent DN25 (forward through the tunnel, to the reservoir)'] = (s, '1.4404', 'pipe',
+        'union on FB-1 (opened to lift the upper half); high point at the boss, then a continuous fall to the tank')
     d32 = OD['DN32']; pe = polar(JB2_X['vent'], R_STRUT_OUT, STRUT['vent']); xv2 = 1030.0; yv = -730.0   # 80 mm off PL-04
     s = hose([pe, (xv2, -640.0, pe[2])], d32 + 8).fuse(route([(xv2, -640.0, pe[2]), (xv2, yv, pe[2]), (xv2, yv, -600.0),
                                                               (220.0, yv, -675.0), (180.0, yv, -680.0), (180.0, yv, RES['z'][1] + 1)], d32))
@@ -147,14 +159,15 @@ def lines():
     # ---- buffer air: stage-1 tap -> isolation valve + orifice -> TB rear seal (in under the plenum floor); the JB2 shield /
     # buffer air comes from the frame manifold through the strut roots (phase 2)
     a = LP['air_lines']; od_b = a['TB_buffer']['tube_OD']
-    t = STAGE1_TAP; y_air = -720.0; x_dn, z_lo = 100.0, -540.0       # down outside the plenum, in under its floor
-    pa = (FBH_BUF[0], -330.0, -330.0)                                 # on the boss axis (225 deg), inside the plenum
-    s = route([t, (t[0], 0.0, t[2] + 60), (t[0], y_air, t[2] + 60), (x_dn, y_air, t[2] + 60), (x_dn, y_air, z_lo),
-               (FBH_BUF[0], -330.0, z_lo), pa, FBH_BUF], od_b)
-    s = s.fuse(fitting((FBH_BUF[0], -330.0, -PLENUM_Z), (FBH_BUF[0], -330.0, 0), od_b + 14, 24.0))
+    t = STAGE1_TAP; y_air = -720.0                                   # over the plenum on the -y side, in through the tunnel
+    pa = (FBH_BUF[0], -141.4, -141.4)                                 # on the boss axis (225 deg), inside the tunnel
+    xa = -170.0                                                       # riser in front of the plenum front plate (x -152)
+    s = route([t, (t[0], 0.0, t[2] + 60), (t[0], y_air, t[2] + 60), (xa, y_air, t[2] + 60), (xa, -230.0, t[2] + 60), (xa, -230.0, pa[2]),
+               (xa, pa[1], pa[2]), pa, FBH_BUF], od_b)
+    s = s.fuse(fitting((xa, -230.0, -60.0), (xa, -230.0, 0.0), od_b + 14, 24.0))
     s = s.fuse(box(t[0] - 40, t[0] + 40, y_air - 40, y_air + 40, t[2] + 20, t[2] + 100))         # valve + orifice block
     out['PL-09 Buffer air from stage 1 to the TB rear seal (tube %d)' % od_b] = (s, '1.4404', 'pipe',
-        'tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, %.0f g/s; union under the plenum floor'
+        'tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, %.0f g/s; over the plenum, in through the tunnel'
         % a['TB_buffer']['m_g_s'])
     # ---- fuel: gas valve block (bought in) on the skid, 4 braided hoses up to the drops of CB-370 at z 900
     f = LP['fuel']['circuits']; x_can = 665.0
@@ -184,7 +197,7 @@ def lines():
         'between the base-frame beams under the coupling and the gearbox; returns enter through the deck; heater, level, mist separator on the module')
     sup = []                                                          # posts to the base-frame deck under the long runs
     zv = lambda x0, z0, x1, z1, x: z0 + (z1 - z0) * (x - x0) / (x1 - x0)
-    for p, dd in (((-50.0, yj, zj), od_h), ((500.0, yj, zj), b['JB2']['supply_tube_OD']),
+    for p, dd in (((0.5 * (x0j + x1j), yj, zj - 25.0), od_h), ((500.0, Y_JB2, zj - 50.0), b['JB2']['supply_tube_OD']),
                   ((600.0, 0.0, zv(JB2_X['drain'], -640.0, 260.0, -680.0, 600.0)), d50),
                   ((600.0, -730.0, zv(1030.0, -600.0, 220.0, -675.0, 600.0)), d32)):
         sup.append(support(p, dd))

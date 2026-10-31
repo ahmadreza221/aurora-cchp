@@ -404,7 +404,14 @@ for cav, Q_l in (('FBH (JB1 + TB)', brg['JB1']['Q_design_lpm'] + brg['TB']['Q_de
         cav, Q_l, dn, pipe_id(dn), Q / (0.5 * area(pipe_id(dn))), dn_v, a_cav * 1e3, v_vent))
     check('drain %s: velocity half full' % cav, Q / (0.5 * area(pipe_id(dn))), 0.30, 'm/s', Q / (0.5 * area(pipe_id(dn))) <= 0.30)
     check('vent %s: air velocity' % cav, v_vent, 10.0, 'm/s', v_vent <= 10.0, 'cavity top -> reservoir, mist separator on the tank')
-# the JB2 drain passes the bottom exhaust strut: an oval passage of the same area as DN50 (40 x 66 mm) in a 56 mm strut
+# FB-2 outlet: two vertical DN40 sockets (bores d 44) under the thrust chamber, all of FB within x 141 (phase 3 inlet casing);
+# the oil pool on the chamber floor (r 90) must stay below the collar (r 72): head <= 12 mm, orifice flow Cd 0.6
+h_pool = 0.012
+Q_out = 2 * 0.6 * area(44.0) * math.sqrt(2 * G * h_pool)
+check('FB-2 drain outlets 2 x DN40: capacity at a 12 mm pool / design flow with foam', Q_out / drains['FBH (JB1 + TB)']['design_m3s'],
+      1.3, '-', Q_out >= 1.3 * drains['FBH (JB1 + TB)']['design_m3s'], 'pool clear of the collar (r 72)')
+drains['FBH (JB1 + TB)']['outlets'] = '2 x DN40 vertical sockets, joined into the DN65 below FB-2'
+# the JB2 drain passes the bottom exhaust strut: the strut cavity itself (phase 2, 36 x ~120 mm)
 res['drains'] = drains
 air_total = sum(air_cav.values())
 # tank vent: mist separator (coalescing element + small fan, -10 mbar); vent DN50 to atmosphere above the package roof
@@ -412,10 +419,10 @@ res['vent'] = dict(air_into_tank_g_s=air_total * 1e3, separator='coalescing elem
                    oil_carry_over_target='< 5 mg/m3', v_vent=air_total / 1.15 / area(pipe_id(50)))
 print('   tank vent: %.1f g/s air -> mist separator, DN50 outlet (%.2f m/s)' % (air_total * 1e3, air_total / 1.15 / area(pipe_id(50))))
 # drain head: FBH outlet z -175 and JB2 strut outlet z -470 to the tank top z -715 (reservoir in the base frame)
-for cav, z0, L in (('FBH', -175.0, 1.4), ('JB2', -470.0, 2.2)):
+for cav, z0, L in (('FBH', -235.0, 0.27), ('JB2', -640.0, 0.75)):
     slope = (z0 - (-715.0) - 40.0) / (L * 1e3)
     check('drain %s: available slope to the reservoir in the base frame' % cav, slope, 0.02, '-', slope >= 0.02, 'run %.1f m' % L)
-res['reservoir'] = dict(location='in the base frame between the beams at x -540 and 200 (under the couplings and the gearbox front), top z -715',
+res['reservoir'] = dict(location='in the base frame between the beams at x -540 and 200 (under the couplings, the plenum front and the gearbox front), top z -715',
                         working_l=round(Q_tot * 4), volume_l=round(Q_tot * 4 * 1.3), retention_min=4,
                         heater_kW=3.0, note='gearbox drains straight down through the deck')
 

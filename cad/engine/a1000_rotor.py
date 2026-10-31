@@ -387,7 +387,9 @@ PAD = dict(t=10.0, pivot=0.60, stop_deg=12.0)                   # pad thickness,
 SPRAY = dict(w=8.0, r0=46.5, jets=2, d_jet=1.5, aim=15.0)        # spray bar width, inner radius, jets per bar, jet d, inward aim
 ISFD_CLOCK = 7.5                                                 # spring k from 7.5 + 45 k: gaps at 0 / 45 / ... / 180 deg
 SEAL_C = dict(jb1=0.20, tb=0.15, jb2=0.20)                       # radial clearance of the oil / buffer labyrinths
-FBH = dict(x0=27.0, ro=130.0, lug=(125.0, 165.0, 20.0), foot=200.0)   # front bearing housing: front face, OD, split lugs, feet
+FBH = dict(x0=27.0, ro=130.0, lug=(125.0, 165.0, 20.0), foot=200.0, x_max=141.0)   # front bearing housing: front face, OD,
+# split lugs, feet; x_max: nothing of FB-1 / FB-2 at r > 130 aft of x 141 (inlet casing hub wall x 143-157 over the OD, its
+# rear face seals on the fairing face x 157; phase 3, docs/08 sec. 20), except that fairing face and the fairing itself
 JB2C = dict(x0=911.0, x1=1026.0, ro=130.0, cover_t=10.0, seal=(913.5, 930.5), shoulder=(985.0, 990.0, 140.0),
             x_port=1005.0, shield=(167.0, 181.0), shield_x0=904.0)   # JB2 cartridge (phase 2 mount), shield (fibre + foils)
 # phase 2 exhaust frame (sim/engine/a1000_exhaust.py JB2_MOUNT): ring EX-412 r 130-150 over x 925-985 clamps the housing,
@@ -535,8 +537,9 @@ def journal_parts(xb, tag):
 
 def front_bearing_housing():
     """FB-1 / FB-2: horizontally split front bearing housing for JB1 and the thrust bearing, with the inlet hub fairing,
-    centre-line feet, oil inlets on the lower half (no line is opened to lift the upper half), drain DN65 and vent DN25,
-    buffered rear seal (compressor eye) and plain front seal (coupling side)"""
+    centre-line feet, oil inlets on the lower half (no line is opened to lift the upper half), drain 2 x DN40 and vent DN25,
+    buffered rear seal (compressor eye) and plain front seal (coupling side); all lines leave forward through the dry
+    tunnel of the inlet plenum (phase 3)"""
     App, Part, V = _fc()
     xb, L = X_BRG[0], JOURNAL['L']; c0, c1 = COLLAR['x0'], COLLAR['x1']; t = THRUST['t']; e = 0.15; tc = 8.0
     xr1 = c1 + e + t + tc; xf1 = c0 - e - t - tc                     # aft / forward base-ring outer faces
@@ -563,15 +566,23 @@ def front_bearing_housing():
     # split lugs (both halves) and centre-line feet (lower half, extended), bolt + dowel holes; lifting bosses (upper half)
     l0, l1, lt = FBH['lug']
     for sy in (1, -1):
-        hs = hs.fuse(Part.makeBox(xr1 - FBH['x0'] - 10.0, l1 - l0, 2 * lt, V(FBH['x0'] + 5.0, min(sy * l0, sy * l1), -lt)))
+        hs = hs.fuse(Part.makeBox(FBH['x_max'] - 1.0 - FBH['x0'] - 5.0, l1 - l0, 2 * lt, V(FBH['x0'] + 5.0, min(sy * l0, sy * l1), -lt)))
         hs = hs.fuse(Part.makeBox(70.0, FBH['foot'] - l1, lt, V(xb - 5.0, min(sy * l1, sy * FBH['foot']), -lt)))
-        for xh in (FBH['x0'] + 15.0, xb + 25.0, c0 + 5.0, xr1 - 12.0):
+        for xh in (FBH['x0'] + 13.0, xb + 23.0, FBH['x_max'] - 11.0):
             hs = hs.cut(Part.makeCylinder(6.5, 4 * lt, V(xh, sy * 147.0, -2 * lt), V(0, 0, 1)))       # M12 split bolts (phase 8)
-        hs = hs.cut(Part.makeCylinder(5.0 if sy > 0 else 6.0, 4 * lt, V(xb + 2.0 if sy > 0 else c1 + 4.0, sy * 147.0, -2 * lt), V(0, 0, 1)))
+        hs = hs.cut(Part.makeCylinder(5.0 if sy > 0 else 6.0, 4 * lt, V(xb + 2.0 if sy > 0 else c0 - 7.0, sy * 147.0, -2 * lt), V(0, 0, 1)))
+        # feet on the inlet-casing brackets (centre-line support): M16 in slots 18 x 26 along y (FB runs ~45 K hotter than the
+        # casing), a transverse key slot 16 x 6 under each foot for the axial location (thrust path)
         for xh in (xb + 5.0, xb + 55.0):
-            hs = hs.cut(Part.makeCylinder(9.0, 3 * lt, V(xh, sy * 185.0, -2 * lt), V(0, 0, 1)))       # feet: M16 to the casing
-    for xh in (FBH['x0'] + 18.0, xr1 - 14.0):
-        hs = hs.fuse(Part.makeCylinder(18.0, 16.0, V(xh, 0, ro - 4.0), V(0, 0, 1))).cut(Part.makeCylinder(7.0, 30.0, V(xh, 0, ro - 6.0), V(0, 0, 1)))
+            hs = hs.cut(Part.makeCylinder(9.0, 3 * lt, V(xh, sy * 181.0, -2 * lt), V(0, 0, 1))).cut(
+                Part.makeCylinder(9.0, 3 * lt, V(xh, sy * 189.0, -2 * lt), V(0, 0, 1))).cut(
+                Part.makeBox(18.0, 8.0, 3 * lt, V(xh - 9.0, sy * 185.0 - 4.0, -2 * lt)))
+        hs = hs.cut(Part.makeBox(16.0, FBH['foot'] - l1 + 1.0, 6.0, V(xb + 22.0, min(sy * l1, sy * (FBH['foot'] + 1.0)), -lt)))
+    hs = hs.cut(Part.makeBox(40.0, 20.0, 9.0, V(FBH['x0'] + 13.0, -10.0, -ro - 1.0)))                  # bottom centre keyway (y)
+    for xh, yh in ((FBH['x0'] + 18.0, 0.0), (FBH['x_max'] - 23.0, 60.0), (FBH['x_max'] - 23.0, -60.0)):   # lifting: M12 eye bolts
+        zh = math.sqrt(ro ** 2 - yh ** 2)
+        hs = hs.fuse(Part.makeCylinder(18.0, ro + 12.0 - zh + 4.0, V(xh, yh, zh - 4.0), V(0, 0, 1))).cut(
+            Part.makeCylinder(7.0, 30.0, V(xh, yh, ro - 6.0), V(0, 0, 1)))
     # oil inlets on the lower half, -y side, below the split lugs: JB1 -> feed groove; TB -> axial gallery -> LEG grooves
     z_in = -45.0
     for xin in (xb, 0.5 * (c0 + c1)):
@@ -588,16 +599,19 @@ def front_bearing_housing():
         hs = hs.cut(Part.makeCylinder(8.0, xf1 + tc - xi1 + 2.0, _polar(xi1 - 1.0, 82.0, deg), V(1, 0, 0)))
     hs = hs.cut(Part.makeCylinder(7.0, xf1 + tc - xw1 + 2.0, _polar(xw1 - 1.0, 100.0, 270.0), V(1, 0, 0)))
     hs = hs.cut(_radial_hole(xw1 + 3.0, 92.0, 101.0, 270.0, 6.0))
-    xd = xm
-    hs = hs.fuse(Part.makeCylinder(38.0, 48.0, V(xd, 0, -ro + 5.0), V(0, 0, -1))).fuse(Part.makeCylinder(70.0, 16.0, V(xd, 0, -ro - 43.0), V(0, 0, -1)))
-    hs = hs.cut(Part.makeCylinder(36.0, ro + 70.0 - 88.0, V(xd, 0, -88.0), V(0, 0, -1)))
-    xv = 0.5 * (xf1 + tc + xr1 - tc) + 6.0
+    # drain: two DN40 socket bosses side by side under the thrust chamber (x <= 141), bores d 44 from the chamber floor
+    xd = FBH['x_max'] - 31.0
+    for yd in (-32.0, 32.0):
+        hs = hs.fuse(Part.makeCylinder(31.0, 25.0, V(xd, yd, -ro + 5.0), V(0, 0, -1)))
+        hs = hs.cut(Part.makeCylinder(22.0, ro + 20.0 - 80.0, V(xd, yd, -80.0), V(0, 0, -1)))     # from inside the chamber floor
+    xv = FBH['x_max'] - 23.0                                          # vent DN25 boss on the top of the thrust chamber
     hs = hs.fuse(Part.makeCylinder(22.0, 30.0, V(xv, 0, ro - 6.0), V(0, 0, 1))).cut(Part.makeCylinder(13.5, ro - 60.0, V(xv, 0, 88.0), V(0, 0, 1)))
     # buffer air: boss on the lower half (225 deg) and a straight drilling through the fairing into the buffer annulus
-    a = 225.0; p0 = _polar(xr1 - 8.0, 124.0, a); p1 = _polar(xbuf, 50.5, a)
-    hs = hs.fuse(Part.makeCylinder(11.0, 22.0, _polar(xr1 - 8.0, ro - 8.0, a), _radial(a)))
+    xab = FBH['x_max'] - 16.0
+    a = 225.0; p0 = _polar(xab, 124.0, a); p1 = _polar(xbuf, 50.5, a)
+    hs = hs.fuse(Part.makeCylinder(11.0, 22.0, _polar(xab, ro - 8.0, a), _radial(a)))
     hs = hs.cut(Part.makeCylinder(3.0, (p1 - p0).Length + 30.0, p0 - (p1 - p0).normalize() * 30.0, (p1 - p0).normalize()))
-    hs = hs.cut(Part.makeCylinder(3.0, 30.0, _polar(xr1 - 8.0, 120.0, a), _radial(a)))
+    hs = hs.cut(Part.makeCylinder(3.0, 30.0, _polar(xab, 120.0, a), _radial(a)))
     hs = hs.cut(_radial_hole(xi0 - 3.0, rq + 0.5, ro + 1.0, 45.0, 8.0))                  # ISFD anti-rotation pin (top)
     hs = _clean(hs)
     lo, up = _splitz(hs)

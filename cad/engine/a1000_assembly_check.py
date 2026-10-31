@@ -18,7 +18,7 @@ Model:
              check of the part (designed contacts give ~0)
   frame      build stand: the lower casing halves stay put, the rotor is lowered (-z) into them, upper halves come down,
              axial modules slide along x; gravity -z
-Run (MacBook, conda env fc; NPROC processes share the moves):
+Run (conda env fc, MacBook or the cloud node; NPROC processes: one per move, heaviest first; FCCMD = freecadcmd path):
   freecadcmd -c "import sys; sys.argv=['x','--sweep','v12']; exec(open('cad/engine/a1000_assembly_check.py').read())"
   freecadcmd -c "import sys; sys.argv=['x','--sweep','new']; exec(open('cad/engine/a1000_assembly_check.py').read())"
   -> sim/engine/fea/a1000_assembly_check_<seq>.json
@@ -297,14 +297,16 @@ def worker(seq_name, ks, out_path):
         json.dump(out, open(out_path, 'w'), indent=1)
 
 
-def static_all(out_path, only=()):
+def static_all(out_path, only=(), part=(0, 1)):
     """every pair of parts at home (one-piece units skipped): designed fits give ~0, anything above VOL_TOL is listed;
-    only: name prefixes - then just the pairs with at least one such part (a re-check after a change)"""
+    only: name prefixes - then just the pairs with at least one such part (a re-check after a change);
+    part (w, n): this process takes the rows i with i % n == w (the driver merges the parts)"""
     P = load_pkg()
     pcs = [Piece(n, s) for n in P for s in P[n]]
     hits = {}
     t0 = time.time()
     for i, a in enumerate(pcs):
+        if i % part[1] != part[0]: continue
         ba = bounds_at(a, (0, 0, 0))
         for b in pcs[i + 1:]:
             if a.name == b.name or (a.unit is not None and a.unit == b.unit): continue
@@ -314,37 +316,64 @@ def static_all(out_path, only=()):
             if v > VOL_TOL:
                 k = tuple(sorted((a.name, b.name))); hits[k] = hits.get(k, 0.0) + v
     res = [dict(a=a, b=b, vol_mm3=round(v, 1)) for (a, b), v in sorted(hits.items(), key=lambda kv: -kv[1])]
-    for r in res:
-        log('  STATIC %-55s %-55s %10.1f mm3' % (r['a'][:55], r['b'][:55], r['vol_mm3']))
     json.dump(dict(parts=len(P), solids=len(pcs), vol_tol_mm3=VOL_TOL, overlaps=res, s=round(time.time() - t0)), open(out_path, 'w'), indent=1)
-    log('static: %d parts, %d solids, %d overlapping pairs, %.0f s' % (len(P), len(pcs), len(res), time.time() - t0))
+    log('static part %d/%d: %d pairs, %.0f s' % (part[0], part[1], len(res), time.time() - t0))
 
+
+FCCMD = os.environ.get('FCCMD', os.path.expanduser('~/micromamba/envs/fc/bin/freecadcmd'))
+
+
+def run_pool(jobs, nproc):
+    """run [(tag, argv list)] as freecadcmd subprocesses, nproc at a time, in the given order (heaviest first)"""
+    import subprocess
+    todo, running = list(jobs), []
+    while todo or running:
+        while todo and len(running) < nproc:
+            tag, argv = todo.pop(0)
+            code = "import sys; sys.argv=%r; exec(open('cad/engine/a1000_assembly_check.py').read())" % (['x'] + argv)
+            running.append(subprocess.Popen(['nice', '-n', os.environ.get('NICE', '15'), FCCMD, '-c', code], cwd=ROOT,
+                                            stdout=open(os.path.join(ROOT, '_asm_%s.log' % tag), 'w'), stderr=subprocess.STDOUT))
+        time.sleep(2)
+        running = [p for p in running if p.poll() is None]
+
+
+# heaviest moves first (rotor or big casings against many installed solids), so the pool ends together
+HEAVY = ('C1 ', 'D3 ', 'D4 ', 'B8 ', 'F5 ', 'B5 ', 'D1 ', 'B7 ', 'A13', 'A9 ', 'A14', 'A10')
 
 if '--static' in sys.argv:
     _only = tuple(a[len('--only='):] for a in sys.argv if a.startswith('--only='))
-    static_all(os.path.join(ROOT, 'sim', 'engine', 'fea', 'a1000_assembly_static%s.json' % ('_recheck' if _only else '')), _only)
+    out = os.path.join(ROOT, 'sim', 'engine', 'fea', 'a1000_assembly_static%s.json' % ('_recheck' if _only else ''))
+    if '--part' in sys.argv:
+        w, n = (int(v) for v in sys.argv[sys.argv.index('--part') + 1].split('/'))
+        static_all(out + '.%d' % w, _only, (w, n))
+    else:
+        t0 = time.time()
+        run_pool([('static_%d' % w, ['--static', '--part', '%d/%d' % (w, NPROC)] + ['--only=' + o for o in _only]) for w in range(NPROC)], NPROC)
+        hits = {}
+        for w in range(NPROC):
+            for o in json.load(open(out + '.%d' % w))['overlaps']:
+                k = (o['a'], o['b']); hits[k] = hits.get(k, 0.0) + o['vol_mm3']
+            os.remove(out + '.%d' % w)
+        res = [dict(a=a, b=b, vol_mm3=round(v, 1)) for (a, b), v in sorted(hits.items(), key=lambda kv: -kv[1])]
+        for r in res:
+            log('  STATIC %-55s %-55s %10.1f mm3' % (r['a'][:55], r['b'][:55], r['vol_mm3']))
+        json.dump(dict(vol_tol_mm3=VOL_TOL, overlaps=res, s=round(time.time() - t0), only=list(_only)), open(out, 'w'), indent=1)
+        log('static: %d overlapping pairs, %.0f s' % (len(res), time.time() - t0))
 
 if '--sweep' in sys.argv:
     seq_name = sys.argv[sys.argv.index('--sweep') + 1]
-    only = [int(a) for i, a in enumerate(sys.argv) if a.isdigit() and sys.argv[i - 1] != '--worker']
-    if '--worker' in sys.argv:
-        w = int(sys.argv[sys.argv.index('--worker') + 1])
-        n = len(SEQS[seq_name])
-        ks = [k for k in range(n) if k % NPROC == w and (not only or k in only)]
-        worker(seq_name, ks, os.path.join(ROOT, 'sim', 'engine', 'fea', '_asm_%s_%d.json' % (seq_name, w)))
+    only = [int(a) for i, a in enumerate(sys.argv) if a.isdigit() and sys.argv[i - 1] not in ('--worker', '--move')]
+    seq = SEQS[seq_name]
+    if '--move' in sys.argv:
+        k = int(sys.argv[sys.argv.index('--move') + 1])
+        worker(seq_name, [k], os.path.join(ROOT, 'sim', 'engine', 'fea', '_asm_%s_m%02d.json' % (seq_name, k)))
     else:
-        import subprocess
-        exe = os.environ.get('FCCMD', os.path.expanduser('~/micromamba/envs/fc/bin/freecadcmd'))
-        procs = []
-        for w in range(NPROC):
-            code = "import sys; sys.argv=['x','--sweep','%s','--worker','%d'%s]; exec(open('cad/engine/a1000_assembly_check.py').read())" % (
-                seq_name, w, ''.join(",'%d'" % k for k in only))
-            procs.append(subprocess.Popen(['nice', '-n', '15', exe, '-c', code], cwd=ROOT, stdout=open(os.path.join(ROOT, '_asm_%s_%d.log' % (seq_name, w)), 'w'),
-                                          stderr=subprocess.STDOUT))
-        for p in procs: p.wait()
+        ks = [k for k in range(len(seq)) if not only or k in only]
+        ks.sort(key=lambda k: (0 if seq[k][0].startswith(HEAVY) else 1, k))
+        run_pool([('%s_m%02d' % (seq_name, k), ['--sweep', seq_name, '--move', str(k)]) for k in ks], NPROC)
         allr = []
-        for w in range(NPROC):
-            fn = os.path.join(ROOT, 'sim', 'engine', 'fea', '_asm_%s_%d.json' % (seq_name, w))
+        for k in ks:
+            fn = os.path.join(ROOT, 'sim', 'engine', 'fea', '_asm_%s_m%02d.json' % (seq_name, k))
             if os.path.exists(fn): allr += json.load(open(fn)); os.remove(fn)
         allr.sort(key=lambda r: r['k'])
         n_cl = sum(1 for r in allr if r['clashes']); n_fo = sum(1 for r in allr if r['final_overlaps'])

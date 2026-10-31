@@ -1064,7 +1064,7 @@
    "material": "EN-GJS-400-18",
    "step": "../A1000_rotor/FB_1_Front_bearing_housing__upper_half__JB1___thrust__EN_GJS_400_18.step",
    "dx": 0.0,
-   "mass_kg": 17.346
+   "mass_kg": 17.588
   },
   {
    "name": "FB-2 Front bearing housing, lower half (JB1 + thrust, EN-GJS-400-18)",
@@ -1075,7 +1075,7 @@
    "material": "EN-GJS-400-18",
    "step": "../A1000_rotor/FB_2_Front_bearing_housing__lower_half__JB1___thrust__EN_GJS_400_18.step",
    "dx": 0.0,
-   "mass_kg": 18.204
+   "mass_kg": 17.214
   },
   {
    "name": "JB2 bearing cartridge housing (one piece, from the rear)",
@@ -1463,15 +1463,15 @@
    "mass_kg": 0.81
   },
   {
-   "name": "PL-01 Oil supply header + distribution block (tube 35 x 2)",
+   "name": "PL-01 Oil supply header + FB distribution block (tube 35 x 2)",
    "group": "pipe",
    "inst": [
     0.0
    ],
    "material": "1.4404",
-   "step": "../A1000_pipe/PL_01_Oil_supply_header___distribution_block__tube_35_x_2.step",
+   "step": "../A1000_pipe/PL_01_Oil_supply_header___FB_distribution_block__tube_35_x_2.step",
    "dx": 0.0,
-   "desc": "lube module -> distribution block under the inlet plenum; PCV on the module holds 2.0 bar(g) here"
+   "desc": "lube module (+y face) -> block in front of the plenum; PCV on the module holds 2.0 bar(g)"
   },
   {
    "name": "PL-02 Oil to JB1 (tube 15 x 1.5, orifice 3.2 mm)",
@@ -1482,7 +1482,7 @@
    "material": "1.4404",
    "step": "../A1000_pipe/PL_02_Oil_to_JB1__tube_15_x_1_5__orifice_3_2_mm.step",
    "dx": 0.0,
-   "desc": "bulkhead union in the plenum wall (y -400) = module disconnect; 24 deg cone union on the FB-2 boss"
+   "desc": "forward through the plenum tunnel (r 193), union on the FB-2 boss and one in front of the plenum = disconnects"
   },
   {
    "name": "PL-03 Oil to TB (tube 18 x 1.5, orifice 5.4 mm)",
@@ -1493,7 +1493,7 @@
    "material": "1.4404",
    "step": "../A1000_pipe/PL_03_Oil_to_TB__tube_18_x_1_5__orifice_5_4_mm.step",
    "dx": 0.0,
-   "desc": "bulkhead union in the plenum wall (y -400) = module disconnect; 24 deg cone union on the FB-2 boss"
+   "desc": "forward through the plenum tunnel (r 177), union on the FB-2 boss and one in front of the plenum = disconnects"
   },
   {
    "name": "PL-04 Oil to JB2 (tube 18 x 1.5, hose at the top strut)",
@@ -1507,15 +1507,15 @@
    "desc": "along the -y side outside the scroll casing, over the frame behind the scroll-casing ribs; braided hose at the strut exit; tube through the strut"
   },
   {
-   "name": "PL-05 FBH drain DN65 (to the reservoir)",
+   "name": "PL-05 FBH drain 2 x DN40 + DN65 (forward through the tunnel to the reservoir)",
    "group": "pipe",
    "inst": [
     0.0
    ],
    "material": "1.4404",
-   "step": "../A1000_pipe/PL_05_FBH_drain_DN65__to_the_reservoir.step",
+   "step": "../A1000_pipe/PL_05_FBH_drain_2_x_DN40___DN65__forward_through_the_tunnel_to_the_reservoir.step",
    "dx": 0.0,
-   "desc": "flange DN65 PN16 under the plenum floor = disconnect; vertical, no trap"
+   "desc": "socket unions on FB-2; DN65 at 2.6 % inside the tunnel (bottom r 273), vertical to the tank in front of the plenum"
   },
   {
    "name": "PL-06 JB2 drain DN50 (hose at the bottom strut, 11 % fall)",
@@ -1529,15 +1529,15 @@
    "desc": "PTFE-lined braided hose DN50 at the strut exit, then rigid under the scroll casing (60 mm below it) to the reservoir"
   },
   {
-   "name": "PL-07 FBH vent DN25 (to the reservoir)",
+   "name": "PL-07 FBH vent DN25 (forward through the tunnel, to the reservoir)",
    "group": "pipe",
    "inst": [
     0.0
    ],
    "material": "1.4404",
-   "step": "../A1000_pipe/PL_07_FBH_vent_DN25__to_the_reservoir.step",
+   "step": "../A1000_pipe/PL_07_FBH_vent_DN25__forward_through_the_tunnel__to_the_reservoir.step",
    "dx": 0.0,
-   "desc": "union on FB-1 (opened to lift the upper half) and at the plenum wall; falls to the tank"
+   "desc": "union on FB-1 (opened to lift the upper half); high point at the boss, then a continuous fall to the tank"
   },
   {
    "name": "PL-08 JB2 vent DN32 (hose at the -y strut, falls to the reservoir)",
@@ -1559,7 +1559,7 @@
    "material": "1.4404",
    "step": "../A1000_pipe/PL_09_Buffer_air_from_stage_1_to_the_TB_rear_seal__tube_22.step",
    "dx": 0.0,
-   "desc": "tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, 10 g/s; union under the plenum floor"
+   "desc": "tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, 10 g/s; over the plenum, in through the tunnel"
   },
   {
    "name": "PL-10 Fuel hoses P / A / B1 / B2 + gas valve block (bought in)",

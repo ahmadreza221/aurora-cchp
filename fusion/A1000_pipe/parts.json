@@ -1,52 +1,52 @@
 {
  "frame": "rotor frame mm, z up",
  "parts": {
-  "PL-01 Oil supply header + distribution block (tube 35 x 2)": {
-   "step": "PL_01_Oil_supply_header___distribution_block__tube_35_x_2.step",
+  "PL-01 Oil supply header + FB distribution block (tube 35 x 2)": {
+   "step": "PL_01_Oil_supply_header___FB_distribution_block__tube_35_x_2.step",
    "material": "1.4404",
    "group": "pipe",
-   "desc": "lube module -> distribution block under the inlet plenum; PCV on the module holds 2.0 bar(g) here",
+   "desc": "lube module (+y face) -> block in front of the plenum; PCV on the module holds 2.0 bar(g)",
    "valid": true,
    "solids": 1,
    "bbox": [
-    -150.0,
-    160.0,
-    -675.0,
-    -625.0,
-    -475.0,
-    -425.0
+    -215.0,
+    -165.0,
+    -455.0,
+    -375.0,
+    -425.0,
+    -375.0
    ]
   },
   "PL-02 Oil to JB1 (tube 15 x 1.5, orifice 3.2 mm)": {
    "step": "PL_02_Oil_to_JB1__tube_15_x_1_5__orifice_3_2_mm.step",
    "material": "1.4404",
    "group": "pipe",
-   "desc": "bulkhead union in the plenum wall (y -400) = module disconnect; 24 deg cone union on the FB-2 boss",
+   "desc": "forward through the plenum tunnel (r 193), union on the FB-2 boss and one in front of the plenum = disconnects",
    "valid": true,
    "solids": 1,
    "bbox": [
-    50.5,
-    79.5,
-    -657.5,
+    -217.5,
+    77.5,
+    -375.0,
     -138.0,
-    -425.0,
-    -30.5
+    -407.5,
+    -32.5
    ]
   },
   "PL-03 Oil to TB (tube 18 x 1.5, orifice 5.4 mm)": {
    "step": "PL_03_Oil_to_TB__tube_18_x_1_5__orifice_5_4_mm.step",
    "material": "1.4404",
    "group": "pipe",
-   "desc": "bulkhead union in the plenum wall (y -400) = module disconnect; 24 deg cone union on the FB-2 boss",
+   "desc": "forward through the plenum tunnel (r 177), union on the FB-2 boss and one in front of the plenum = disconnects",
    "valid": true,
    "solids": 1,
    "bbox": [
-    110.0,
-    142.0,
-    -659.0,
+    -194.0,
+    140.0,
+    -375.0,
     -138.0,
-    -425.0,
-    -29.0
+    -409.0,
+    -31.0
    ]
   },
   "PL-04 Oil to JB2 (tube 18 x 1.5, hose at the top strut)": {
@@ -57,7 +57,7 @@
    "valid": true,
    "solids": 1,
    "bbox": [
-    160.0,
+    -150.0,
     1010.0,
     -749.0,
     18.0,
@@ -65,20 +65,20 @@
     649.0
    ]
   },
-  "PL-05 FBH drain DN65 (to the reservoir)": {
-   "step": "PL_05_FBH_drain_DN65__to_the_reservoir.step",
+  "PL-05 FBH drain 2 x DN40 + DN65 (forward through the tunnel to the reservoir)": {
+   "step": "PL_05_FBH_drain_2_x_DN40___DN65__forward_through_the_tunnel_to_the_reservoir.step",
    "material": "1.4404",
    "group": "pipe",
-   "desc": "flange DN65 PN16 under the plenum floor = disconnect; vertical, no trap",
+   "desc": "socket unions on FB-2; DN65 at 2.6 % inside the tunnel (bottom r 273), vertical to the tank in front of the plenum",
    "valid": true,
    "solids": 1,
    "bbox": [
-    33.5,
-    218.5,
-    -92.5,
-    92.5,
-    -710.0,
-    -189.0
+    -228.1,
+    134.2,
+    -56.1,
+    56.1,
+    -714.0,
+    -150.0
    ]
   },
   "PL-06 JB2 drain DN50 (hose at the bottom strut, 11 % fall)": {
@@ -97,20 +97,20 @@
     -525.0
    ]
   },
-  "PL-07 FBH vent DN25 (to the reservoir)": {
-   "step": "PL_07_FBH_vent_DN25__to_the_reservoir.step",
+  "PL-07 FBH vent DN25 (forward through the tunnel, to the reservoir)": {
+   "step": "PL_07_FBH_vent_DN25__forward_through_the_tunnel__to_the_reservoir.step",
    "material": "1.4404",
    "group": "pipe",
-   "desc": "union on FB-1 (opened to lift the upper half) and at the plenum wall; falls to the tank",
+   "desc": "union on FB-1 (opened to lift the upper half); high point at the boss, then a continuous fall to the tank",
    "valid": true,
    "solids": 1,
    "bbox": [
-    108.2,
-    155.8,
+    -216.8,
+    134.8,
     -16.9,
-    486.9,
-    -710.0,
-    217.8
+    146.8,
+    -714.0,
+    198.8
    ]
   },
   "PL-08 JB2 vent DN32 (hose at the -y strut, falls to the reservoir)": {
@@ -133,15 +133,15 @@
    "step": "PL_09_Buffer_air_from_stage_1_to_the_TB_rear_seal__tube_22.step",
    "material": "1.4404",
    "group": "pipe",
-   "desc": "tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, 10 g/s; union under the plenum floor",
+   "desc": "tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, 10 g/s; over the plenum, in through the tunnel",
    "valid": true,
    "solids": 1,
    "bbox": [
-    89.0,
+    -188.0,
     400.0,
     -760.0,
     11.0,
-    -551.0,
+    -152.4,
     600.0
    ]
   },
@@ -189,8 +189,8 @@
     -282.5,
     -450.0,
     -402.5,
-    -367.5,
-    -332.5
+    -317.5,
+    -282.5
    ]
   },
   "LO-100 Oil reservoir in the base frame (338 l)": {
@@ -217,12 +217,12 @@
    "valid": true,
    "solids": 4,
    "bbox": [
-    -70.0,
+    -210.0,
     620.0,
     -750.0,
     20.0,
     -700.0,
-    -461.0
+    -444.5
    ]
   }
  }
