@@ -1,0 +1,299 @@
+{
+ "title": "GR180 D2R radial turbine for a bought turbo wheel: meanline + electric output vs ambient",
+ "date": "2026-10-23",
+ "script": "sim/variant_d/d2r_turbine.py",
+ "meanline": {
+  "N_rpm": 115000.0,
+  "m_gas_kg_s": 0.4,
+  "T01_C": 800.0000000000001,
+  "P01_bar_after_plenum": 2.82695,
+  "W_shaft_kW": 85.0,
+  "dh_shaft_kJ_kg": 212.5,
+  "dh_euler_kJ_kg": 212.88839796003148,
+  "wheel": {
+   "D4_mm": 78.0,
+   "b4_mm": 14.0,
+   "Z_blades": 11,
+   "splitters": 0,
+   "D6t_mm": 70.0,
+   "D6h_mm": 21.0,
+   "trim": 80.5,
+   "Lz_mm": 34.0,
+   "eps_axial_mm": 0.35,
+   "eps_radial_mm": 0.35,
+   "U4_m_s": 469.66810171167407,
+   "U6t_m_s": 421.4970143566306,
+   "psi": 0.9650945499505124,
+   "phi": 0.6314546618988623,
+   "U_over_C0": 0.6258567648920438,
+   "Ns_rad": 0.9726522319663587
+  },
+  "rotor_inlet": {
+   "alpha4_deg": 67.55526478605503,
+   "ct4": 453.27412524753953,
+   "cm4": 187.24027506977944,
+   "c4": 490.4246662099377,
+   "W4": 187.95659890653818,
+   "beta4_deg": -5.003818727405201,
+   "beta4_opt_deg": -24.290853545305044,
+   "T4_C": 695.245490754735,
+   "P4_bar": 1.8292415359333285,
+   "rho4": 0.6581674480229165,
+   "M4_abs": 0.8057306839681283
+  },
+  "rotor_exit": {
+   "c6_m_s": 296.57411237102565,
+   "W6rms": 429.8613249345171,
+   "W6tip": 515.3794109587765,
+   "Mrel6_tip": 0.9040974565027659,
+   "beta6rms_deg": 46.37545252125147,
+   "T6_C": 576.2486933585695,
+   "P6_bar": 1.0004345470386782,
+   "rho6": 0.41038774429484837,
+   "A6_mm2": 3286.490410589222,
+   "KE6_kJ_kg": 43.978102064330876
+  },
+  "nozzle": {
+   "Z_vanes": 17,
+   "r_in_mm": 56.62800000000001,
+   "r_out_mm": 42.9,
+   "b_mm": 14.0,
+   "alpha3_deg": 67.95282610921183,
+   "c3_m_s": 453.4685729995982,
+   "M3": 0.7392383724489741,
+   "throat_mm": 5.351790422418748,
+   "chord_mm": 24.856946525847604,
+   "solidity": 1.5676876565480777,
+   "P3_bar": 1.9475834268266858,
+   "vane_count_logic": "17 prime, odd, not a multiple of 11 blades, no 4/rev; |17-11|=6, |17-22|=5, |34-33|=1 only at 2nd vane harmonic (weak); NPF 17x1917 Hz = 32.6 kHz"
+  },
+  "losses_kJ_kg": {
+   "nozzle": 6.683096767694488,
+   "incidence": 1.9271008970641639,
+   "passage": 14.272811096042856,
+   "clearance": 1.0951384896131064,
+   "trailing_edge": 0.735630662601773,
+   "disc_friction": 0.3883979600314939,
+   "exit_KE": 43.978102064330876
+  },
+  "dh_is_ts_kJ_kg": 281.58027793737875,
+  "PR_ts": 2.825722090833301,
+  "PR_ts_from_core": 2.868753391708935,
+  "eta_ts": 0.7546693310930617,
+  "eta_ts_from_core_exit": 0.7451909665206762,
+  "eta_tt_approx": 0.894352079138955,
+  "eta_ts_with_diffuser": 0.8033633337075923,
+  "diffuser_Cp": 0.5,
+  "P_diffuser_exit_bar": 1.090674917561425
+ },
+ "alternatives": {
+  "D4 76 trim 72 (HX40 76/64.5)": {
+   "error": "exducer choked / no solution"
+  },
+  "D4 80 trim 76 (80/69.7)": {
+   "eta_ts": 0.7529,
+   "eta_ts_diff": 0.8028,
+   "c6": 300.0,
+   "PR_ts": 2.877,
+   "U_over_C0": 0.641
+  },
+  "D4 78 trim 84 (78/71.5)": {
+   "eta_ts": 0.7757,
+   "eta_ts_diff": 0.8185,
+   "c6": 275.6,
+   "PR_ts": 2.778,
+   "U_over_C0": 0.635
+  },
+  "12 blades": {
+   "eta_ts": 0.7502,
+   "eta_ts_diff": 0.7997,
+   "c6": 300.2,
+   "PR_ts": 2.889,
+   "U_over_C0": 0.624
+  },
+  "clearance 0.5 mm": {
+   "eta_ts": 0.7526,
+   "eta_ts_diff": 0.8014,
+   "c6": 297.5,
+   "PR_ts": 2.878,
+   "U_over_C0": 0.625
+  },
+  "b4 12 mm": {
+   "eta_ts": 0.7434,
+   "eta_ts_diff": 0.7924,
+   "c6": 301.5,
+   "PR_ts": 2.921,
+   "U_over_C0": 0.621
+  },
+  "D4 78 trim 76 (78/68)": {
+   "eta_ts": 0.7185,
+   "eta_ts_diff": 0.7765,
+   "c6": 332.3,
+   "PR_ts": 3.046,
+   "U_over_C0": 0.611
+  },
+  "diffuser Cp 0.35": {
+   "eta_ts": 0.7547,
+   "eta_ts_diff": 0.7854,
+   "c6": 296.6,
+   "PR_ts": 2.869,
+   "U_over_C0": 0.626
+  }
+ },
+ "compressor_model": {
+  "ref": {
+   "T": 288.15,
+   "P": 101325.0,
+   "ma": 0.395,
+   "PR": 3.1,
+   "W_c": 59500.0
+  },
+  "eta_c": 0.7336645761561053,
+  "law": "constant physical speed; corrected flow ~ Nc, (PR^x-1) ~ Nc^2"
+ },
+ "cycle_basis": "concept_study.cycle arch single, eps 0, booster False (4 bar gas), P_exit = 1.02 Pa (HX + stack), site 50 m; P_net = P_gen_shaft*0.95*0.96 - 0.6 kW",
+ "electric_vs_ambient_diffuser": [
+  {
+   "T_amb_C": 0,
+   "ma_kg_s": 0.4142,
+   "PR": 3.268,
+   "eta_t_used": 0.8024,
+   "W_compressor_kW": 62.4,
+   "W_turbine_kW": 99.07,
+   "P_gen_shaft_kW": 36.68,
+   "P_el_gross_kW": 33.45,
+   "P_el_net_kW": 32.85,
+   "fuel_kW": 325.1,
+   "eta_el_net_pct": 10.1,
+   "T_exhaust_C": 592.0
+  },
+  {
+   "T_amb_C": 15,
+   "ma_kg_s": 0.3927,
+   "PR": 3.1,
+   "eta_t_used": 0.8033,
+   "W_compressor_kW": 59.15,
+   "W_turbine_kW": 90.08,
+   "P_gen_shaft_kW": 30.93,
+   "P_el_gross_kW": 28.21,
+   "P_el_net_kW": 27.61,
+   "fuel_kW": 301.1,
+   "eta_el_net_pct": 9.17,
+   "T_exhaust_C": 600.0
+  },
+  {
+   "T_amb_C": 30,
+   "ma_kg_s": 0.3732,
+   "PR": 2.954,
+   "eta_t_used": 0.8031,
+   "W_compressor_kW": 56.22,
+   "W_turbine_kW": 82.14,
+   "P_gen_shaft_kW": 25.92,
+   "P_el_gross_kW": 23.64,
+   "P_el_net_kW": 23.04,
+   "fuel_kW": 279.4,
+   "eta_el_net_pct": 8.25,
+   "T_exhaust_C": 608.0
+  },
+  {
+   "T_amb_C": 40,
+   "ma_kg_s": 0.3613,
+   "PR": 2.867,
+   "eta_t_used": 0.8025,
+   "W_compressor_kW": 54.43,
+   "W_turbine_kW": 77.35,
+   "P_gen_shaft_kW": 22.93,
+   "P_el_gross_kW": 20.91,
+   "P_el_net_kW": 20.31,
+   "fuel_kW": 266.1,
+   "eta_el_net_pct": 7.63,
+   "T_exhaust_C": 613.0
+  },
+  {
+   "T_amb_C": 45,
+   "ma_kg_s": 0.3556,
+   "PR": 2.826,
+   "eta_t_used": 0.802,
+   "W_compressor_kW": 53.57,
+   "W_turbine_kW": 75.1,
+   "P_gen_shaft_kW": 21.52,
+   "P_el_gross_kW": 19.63,
+   "P_el_net_kW": 19.03,
+   "fuel_kW": 259.8,
+   "eta_el_net_pct": 7.33,
+   "T_exhaust_C": 616.0
+  }
+ ],
+ "electric_vs_ambient_bare_eta_ts": [
+  {
+   "T_amb_C": 0,
+   "ma_kg_s": 0.4142,
+   "PR": 3.268,
+   "eta_t_used": 0.7538,
+   "W_compressor_kW": 62.4,
+   "W_turbine_kW": 93.07,
+   "P_gen_shaft_kW": 30.67,
+   "P_el_gross_kW": 27.97,
+   "P_el_net_kW": 27.37,
+   "fuel_kW": 325.1,
+   "eta_el_net_pct": 8.42,
+   "T_exhaust_C": 604.0
+  },
+  {
+   "T_amb_C": 15,
+   "ma_kg_s": 0.3927,
+   "PR": 3.1,
+   "eta_t_used": 0.7546,
+   "W_compressor_kW": 59.15,
+   "W_turbine_kW": 84.62,
+   "P_gen_shaft_kW": 25.47,
+   "P_el_gross_kW": 23.23,
+   "P_el_net_kW": 22.63,
+   "fuel_kW": 301.1,
+   "eta_el_net_pct": 7.52,
+   "T_exhaust_C": 612.0
+  },
+  {
+   "T_amb_C": 30,
+   "ma_kg_s": 0.3732,
+   "PR": 2.954,
+   "eta_t_used": 0.7545,
+   "W_compressor_kW": 56.22,
+   "W_turbine_kW": 77.16,
+   "P_gen_shaft_kW": 20.94,
+   "P_el_gross_kW": 19.1,
+   "P_el_net_kW": 18.5,
+   "fuel_kW": 279.4,
+   "eta_el_net_pct": 6.62,
+   "T_exhaust_C": 620.0
+  },
+  {
+   "T_amb_C": 40,
+   "ma_kg_s": 0.3613,
+   "PR": 2.867,
+   "eta_t_used": 0.7538,
+   "W_compressor_kW": 54.43,
+   "W_turbine_kW": 72.66,
+   "P_gen_shaft_kW": 18.24,
+   "P_el_gross_kW": 16.63,
+   "P_el_net_kW": 16.03,
+   "fuel_kW": 266.1,
+   "eta_el_net_pct": 6.03,
+   "T_exhaust_C": 625.0
+  },
+  {
+   "T_amb_C": 45,
+   "ma_kg_s": 0.3556,
+   "PR": 2.826,
+   "eta_t_used": 0.7534,
+   "W_compressor_kW": 53.57,
+   "W_turbine_kW": 70.54,
+   "P_gen_shaft_kW": 16.97,
+   "P_el_gross_kW": 15.48,
+   "P_el_net_kW": 14.88,
+   "fuel_kW": 259.8,
+   "eta_el_net_pct": 5.73,
+   "T_exhaust_C": 627.0
+  }
+ ]
+}

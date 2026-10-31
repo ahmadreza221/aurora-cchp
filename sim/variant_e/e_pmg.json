@@ -1,0 +1,160 @@
+{
+ "rating": {
+  "P_shaft_continuous_kW": 335.0,
+  "P_shaft_design_kW": 305.8,
+  "torque_Nm": 91.4,
+  "poles": 2,
+  "f_Hz": 583.3,
+  "N_rpm": 35000.0
+ },
+ "geometry": {
+  "rotor_OD_mm": 120.0,
+  "magnet_mm": [
+   80.0,
+   108.0
+  ],
+  "magnet_t_mm": 14.0,
+  "sleeve_t_mm": 6.0,
+  "gap_mm": 2.5,
+  "stator_ID_mm": 125.0,
+  "stator_OD_mm": 240.0,
+  "stack_mm": 190.0,
+  "slots": 24,
+  "tooth_mm": 6.86,
+  "yoke_mm": 27.5,
+  "slot_depth_mm": 30.0,
+  "slot_area_mm2": 402.6,
+  "endturn_axial_mm": 85.0,
+  "rotor_mass_kg": 26.2,
+  "U_tip_m_s": 219.9,
+  "L_over_D": 1.58
+ },
+ "magnetics": {
+  "Br_150C": 1.05,
+  "B_gap_peak_T": 0.629,
+  "flux_Wb": 0.0146387637588918,
+  "kw": 0.925,
+  "turns_per_phase": 10,
+  "parallel_paths": 2,
+  "E_ph_V": 350.7,
+  "E_ll_V": 607.5,
+  "I_ph_A": 335.2,
+  "A_rms_kA_m": 51.2,
+  "shear_kPa": 21.1,
+  "J_A_mm2": 5.48,
+  "R_ph_mOhm": 3.73,
+  "L_s_uH": 130.6,
+  "X_s_Ohm": 0.479,
+  "x_pu": 0.457,
+  "torque_check_Nm": 94.3,
+  "winding": "3-ph double layer 24 slots, 10/12 pitch, 2 parallel paths, Litz (0.2 mm strands), class H, vacuum-pressure impregnated"
+ },
+ "losses_W": {
+  "copper": 1258,
+  "iron": 1596,
+  "rotor_eddy": 1100,
+  "windage": 2206,
+  "bearings": 1700
+ },
+ "efficiency": {
+  "electromagnetic": 0.9883,
+  "incl_windage_bearings": 0.9771
+ },
+ "cooling": {
+  "jacket_heat_W": 3846,
+  "glycol_L_min": 30.0,
+  "dT_K": 2.1,
+  "inlet_C": "<= 45",
+  "rotor": "filtered intake air drawn through the gap by the compressor-eye suction (~0.5 % of the air, ~3 kPa), magnets ~130-150 C (est); Sm2Co17 good to 300 C"
+ },
+ "rotor_mech": {
+  "magnet_pressure_MPa_100": 65.1,
+  "sleeve_hoop_MPa_100": 688,
+  "sleeve_hoop_MPa_120": 991,
+  "allowable_MPa": 1400,
+  "SF_120": 1.41,
+  "sleeve_interference_mm": 0.425,
+  "build": "Sm2Co17 segments (2 halves x 8 axial pieces), bonded on the d80 rotor body; T700/T800 carbon sleeve wound with pre-tension (or pressed on a 1:200 taper); 1.4404 end rings = balance planes; balance G1 as an assembly"
+ },
+ "conversion": {
+  "rectifier": {
+   "type": "6-pulse diode bridge (or 12-pulse with a 2 x 3-ph winding)",
+   "V_dc_full_load": 617,
+   "V_dc_no_load": 820,
+   "regulation_pct": 24.7,
+   "window": "400 V-class AFE: DC >= ~620 V at full load, no-load <= 850 V (braking chopper clamps load rejection)",
+   "I_dc_A": 439,
+   "bridge_conducts_above_speed_pct": 79.3
+  },
+  "dc_bus_V": "620-850 (load dependent; AFE holds it, braking chopper at 860 V)",
+  "grid": {
+   "type": "IGBT active front end supply unit + LCL filter, 400 V 50 Hz, ~350 kVA",
+   "candidates": "ABB ACS880-207 IGBT supply unit (FI/CH), Danfoss VACON NXA AFE (FI/DK), Siemens SINAMICS S120 Active Line Module (DE), Ingeteam (ES), Inovance / INVT (CN)"
+  },
+  "start": {
+   "type": "standard inverter module on the DC bus (<= 500 Hz output), 45 kW class, contactor to the PMG",
+   "to_speed_pct": 55,
+   "f_max_Hz": 321,
+   "light_off_pct": 22,
+   "energy": "from the grid through the AFE (black start: 50 kWh battery on the DC bus, optional)"
+  },
+  "why": "no frequency changer >= 600 Hz (dual-use 3A225); every block is a standard industrial product; the diode bridge blocks by itself while motoring",
+  "efficiency": {
+   "rectifier": 0.99,
+   "afe_lcl": 0.98,
+   "total": 0.97
+  }
+ },
+ "buy_options": [
+  "active parts (stator with winding + magnet rotor sleeve) made to this spec by a high-speed machine shop: e+a Elektromaschinen und Antriebe (CH)",
+  "complete HS machine: Safran GENeUS 300 (FR; 300 kW, 550-800 VDC with integrated active rectifier, ~40k rpm) - inquire 24/7 industrial rating, export",
+  "turbo-blower HS motor makers as a cross-check / supplier of the stator stack (KEBA LeviTurb 300 AT; Chinese maglev-blower motor makers - inquiry)"
+ ],
+ "design_point_losses_W": {
+  "copper": 1258,
+  "iron": 1596,
+  "rotor_eddy": 1100,
+  "windage": 2206,
+  "bearings": 1700
+ },
+ "at_design_shaft_power": {
+  "P_shaft_kW": 305.8,
+  "losses_W": {
+   "copper": 1048,
+   "iron": 1596,
+   "rotor_eddy": 1100,
+   "windage": 2206,
+   "bearings": 1700
+  },
+  "efficiency": {
+   "electromagnetic": 0.9879,
+   "incl_windage_bearings": 0.9756
+  },
+  "V_dc": 635
+ },
+ "title": "GR180 version E high-speed PMG + power conversion",
+ "date": "2026-10-23",
+ "script": "sim/variant_e/e_pmg.py",
+ "inputs": {
+  "G": {
+   "rotor_OD": 120.0,
+   "sleeve_t": 6.0,
+   "magnet_ID": 80.0,
+   "gap": 2.5,
+   "stack": 190.0,
+   "slots": 24,
+   "stator_OD": 240.0,
+   "endturn_axial": 85.0,
+   "turns_per_phase": null,
+   "parallel_paths": 2,
+   "fill": 0.38,
+   "V_dc0_max": 850.0
+  },
+  "SPEC": {
+   "Br20": 1.1,
+   "alpha": -0.00035,
+   "T_mag": 150.0,
+   "mu_r": 1.05
+  }
+ }
+}

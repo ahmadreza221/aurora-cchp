@@ -1,0 +1,22 @@
+[
+ {
+  "a": "IN-501 Inlet casing, upper half (EN-GJS-400-18)",
+  "b": "A1000_pkg/Compressor_casing.step",
+  "mm3": 1015186.4076370302
+ },
+ {
+  "a": "IN-502 Inlet casing, lower half + FB-2 foot brackets (EN-GJS-400-18)",
+  "b": "A1000_pkg/Compressor_casing.step",
+  "mm3": 1016424.0338331006
+ },
+ {
+  "a": "IN-510 Plenum box, upper half + filter-house flange (S235JR)",
+  "b": "A1000_pkg/Compressor_casing.step",
+  "mm3": 99446.48713085313
+ },
+ {
+  "a": "IN-511 Plenum box, lower half + feet (S235JR)",
+  "b": "A1000_pkg/Compressor_casing.step",
+  "mm3": 99446.48713085335
+ }
+]

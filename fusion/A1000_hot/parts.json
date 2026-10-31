@@ -1,0 +1,201 @@
+{
+ "frame": "rotor frame mm",
+ "x_pin": 733.7472425773041,
+ "parts": {
+  "HS-201 Outer casing upper half (EN-GJS-400-18LT)": {
+   "step": "HS_201_Outer_casing_upper_half__EN_GJS_400_18LT.step",
+   "material": "EN-GJS-400-18LT",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 57.55,
+   "x": [
+    678.0,
+    903.0
+   ],
+   "r": 392.0
+  },
+  "HS-202 Outer casing lower half (EN-GJS-400-18LT)": {
+   "step": "HS_202_Outer_casing_lower_half__EN_GJS_400_18LT.step",
+   "material": "EN-GJS-400-18LT",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 57.23,
+   "x": [
+    678.0,
+    903.0
+   ],
+   "r": 392.0
+  },
+  "HS-210 Shroud carrier C1 (NGV1 + R1, 1.4828)": {
+   "step": "HS_210_Shroud_carrier_C1__NGV1___R1__1_4828.step",
+   "material": "1.4828",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 12.65,
+   "x": [
+    676.0,
+    735.7
+   ],
+   "r": 300.0
+  },
+  "HS-220 Shroud carrier C2 (NGV2 + R2, 1.4828)": {
+   "step": "HS_220_Shroud_carrier_C2__NGV2___R2__1_4828.step",
+   "material": "1.4828",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 27.05,
+   "x": [
+    733.7,
+    875.0
+   ],
+   "r": 300.0
+  },
+  "HS-222 Gap liner R1 - NGV2, outer (Hastelloy X)": {
+   "step": "HS_222_Gap_liner_R1___NGV2__outer__Hastelloy_X.step",
+   "material": "Hastelloy X",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1.99,
+   "x": [
+    732.7,
+    758.7
+   ],
+   "r": 271.7
+  },
+  "HS-211 Honeycomb shroud R1 (Hastelloy X)": {
+   "step": "HS_211_Honeycomb_shroud_R1__Hastelloy_X.step",
+   "material": "Hastelloy X honeycomb",
+   "group": "honeycomb",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 0.13,
+   "x": [
+    700.3,
+    732.2
+   ],
+   "r": 254.9
+  },
+  "HS-211 Shroud backing R1": {
+   "step": "HS_211_Shroud_backing_R1.step",
+   "material": "Hastelloy X",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1.26,
+   "x": [
+    700.3,
+    732.2
+   ],
+   "r": 257.9
+  },
+  "HS-221 Honeycomb shroud R2 (Hastelloy X)": {
+   "step": "HS_221_Honeycomb_shroud_R2__Hastelloy_X.step",
+   "material": "Hastelloy X honeycomb",
+   "group": "honeycomb",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 0.21,
+   "x": [
+    820.2,
+    868.3
+   ],
+   "r": 267.6
+  },
+  "HS-221 Shroud backing R2": {
+   "step": "HS_221_Shroud_backing_R2.step",
+   "material": "Hastelloy X",
+   "group": "carrier",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1.98,
+   "x": [
+    820.2,
+    868.3
+   ],
+   "r": 270.6
+  },
+  "HS-230 Front diaphragm (Hastelloy X)": {
+   "step": "HS_230_Front_diaphragm__Hastelloy_X.step",
+   "material": "Hastelloy X",
+   "group": "diaphragm",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 2.81,
+   "x": [
+    654.3,
+    678.3
+   ],
+   "r": 212.4
+  },
+  "HS-231 Front seal honeycomb": {
+   "step": "HS_231_Front_seal_honeycomb.step",
+   "material": "Hastelloy X honeycomb",
+   "group": "honeycomb",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 0.03,
+   "x": [
+    654.3,
+    678.3
+   ],
+   "r": 96.0
+  },
+  "HS-232 Interstage diaphragm (Hastelloy X)": {
+   "step": "HS_232_Interstage_diaphragm__Hastelloy_X.step",
+   "material": "Hastelloy X",
+   "group": "diaphragm",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 2.47,
+   "x": [
+    768.3,
+    789.2
+   ],
+   "r": 202.6
+  },
+  "HS-233 Interstage seal honeycomb": {
+   "step": "HS_233_Interstage_seal_honeycomb.step",
+   "material": "Hastelloy X honeycomb",
+   "group": "honeycomb",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 0.03,
+   "x": [
+    768.3,
+    789.2
+   ],
+   "r": 96.0
+  },
+  "HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)": {
+   "step": "HS_234_Gap_ring_R1___NGV2__inner__Hastelloy_X.step",
+   "material": "Hastelloy X",
+   "group": "diaphragm",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1.07,
+   "x": [
+    735.2,
+    758.7
+   ],
+   "r": 212.7
+  },
+  "HS-240 Support keys x2 at the split (1.4980)": {
+   "step": "HS_240_Support_keys_x2_at_the_split__1_4980.step",
+   "material": "1.4980 (A286)",
+   "group": "pins",
+   "valid": true,
+   "solids": 4,
+   "mass_kg": 0.13,
+   "x": [
+    725.7,
+    741.7
+   ],
+   "r": 334.0
+  }
+ }
+}

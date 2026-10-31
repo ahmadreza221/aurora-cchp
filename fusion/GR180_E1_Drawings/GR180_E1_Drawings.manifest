@@ -1,0 +1,10 @@
+{
+	"autodeskProduct": "Fusion",
+	"type": "script",
+	"author": "GR180-CCHP",
+	"description": {
+		"": "Drawing helpers for the GR180 E1 turbine stage (base views, dimensions, datums, GD&T frames, notes table, PDF)"
+	},
+	"supportedOS": "windows|mac",
+	"editEnabled": true
+}

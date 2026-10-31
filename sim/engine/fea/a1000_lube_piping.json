@@ -1,0 +1,554 @@
+{
+ "jb2_thermal": {
+  "mount": "phase 2 EX-412 ring + 8 keys",
+  "shield_area_m2": 0.17782985215645022,
+  "fibre_mm": 12.0,
+  "k_fibre": 0.1,
+  "m_cool_kg_s": 0.015211374883822952,
+  "T_air_in_C": 174.6612733466613,
+  "T_air_out_C": 219.54643308153737,
+  "q_shield_kW": 0.6895926413619502,
+  "h_air": 10.0,
+  "Q_keys_kW": 0.9318918674140876,
+  "Q_keys_bare_kW": 1.9303474396434672,
+  "Q_air_kW": 0.0723097417501712,
+  "q_into_oil_kW": 1.0042016091642587,
+  "T_wall_wetted_C": 102.17062197248939,
+  "T_under_key_C": 129.13508572868403,
+  "T_under_key_bare_C": 190.0121244335806,
+  "key_pad": "3 mm mica / zirconia between each key and the support ring (k <= 2 W/mK)",
+  "Q_shaft_conduction_kW": 0.2801203840083341,
+  "T_seal_land_C": 143.8637115390132,
+  "soak_MJ": 1.1988574601119655,
+  "T_peak_no_postlube_C": 152.12301614382127,
+  "T_peak_postlube_C": 80.48911447173082,
+  "post_lube": {
+   "flow_lpm": 3.0,
+   "minutes": 40,
+   "pump": "AC main; DC emergency pump on loss of AC"
+  },
+  "coke_limit_C": 150.0
+ },
+ "isfd": {
+  "feed_orifices": 2,
+  "d_orifice_mm": 1.4,
+  "Q_lpm": 2.0987758864191868,
+  "end_seals": "none: 4 open-ended pads, the film drains into the bearing cavity",
+  "p_land_barg": 0.6,
+  "e_normal": 0.015154466933787782,
+  "p_dynamic_normal_bar": 0.39343923370722284,
+  "film": "full film at the normal orbit; pi-film at large orbits (both in the rotor model)"
+ },
+ "anti_rotation": {
+  "JB1/JB2 pad (each pad: pivot pin + offset stop pin)": {
+   "torque_Nm": 2.0837508278303964,
+   "force_N": 37.88637868782539,
+   "d_pin_mm": 4.0,
+   "shear_MPa": 3.0149022220094235
+  },
+  "JB1/JB2 carrier in the ISFD ring (radial pin d 6 at 135 deg; split dowels d 6 / d 8)": {
+   "torque_Nm": 8.335003311321586,
+   "force_N": 112.63517988272413,
+   "d_pin_mm": 6.0,
+   "shear_MPa": 3.983654587640079
+  },
+  "JB1/JB2 ISFD ring in the housing (radial pin d 8 at 45 deg)": {
+   "torque_Nm": 8.335003311321586,
+   "force_N": 90.59786207958246,
+   "d_pin_mm": 8.0,
+   "shear_MPa": 1.8023871979404162
+  },
+  "TB base ring in the housing (2 dowels per ring)": {
+   "torque_Nm": 8.753372427891382,
+   "force_N": 59.14440829656339,
+   "d_pin_mm": 6.0,
+   "shear_MPa": 2.0918055414763046
+  }
+ },
+ "seals": {
+  "JB1 front (coupling side)": {
+   "type": "windback + 3-tooth labyrinth, r 43, c 0.20, no buffer",
+   "air_into_cavity_g_s": 1.7995546448695992
+  },
+  "TB rear (inlet side, eye 0.91 bar)": {
+   "type": "windback + 3 teeth | buffer annulus 1.10 bar | 4 teeth, r 49, c 0.15",
+   "air_into_cavity_g_s": 4.41797687017411,
+   "air_to_inlet_g_s": 5.19180692961116,
+   "buffer_g_s": 9.60978379978527
+  },
+  "JB2 front (turbine side, R2 aft cavity 1.04 bar)": {
+   "type": "split ring: 3 teeth | buffer annulus 1.08-1.26 bar (hub air, 4 restrictors d 5.5) | windback, r 44.5, c 0.20",
+   "air_into_cavity_g_s": 7.544093358984298,
+   "air_to_R2_cavity_g_s": 6.118906034179986,
+   "restrictor_mm": 5.5,
+   "p_buffer_bar": [
+    1.081576281230435,
+    1.2580379344058046
+   ]
+  },
+  "JB2 rear": {
+   "type": "blind end cover (the rear stub ends inside), O-ring; no shaft seal",
+   "air_into_cavity_g_s": 0.0
+  }
+ },
+ "hub_air_split_g_s": {
+  "feed": 21.730535548318503,
+  "jb2_cavity": 7.544093358984298,
+  "R2_aft_purge": 14.186442189334207
+ },
+ "bleed": {
+  "TB_buffer_kg_s": 0.00960978379978527,
+  "JB2_cavity_kg_s": 0.007544093358984297,
+  "lost_kg_s": 0.011962070229158408,
+  "P_cost_kW": 3.785689697998078
+ },
+ "drains": {
+  "FBH (JB1 + TB)": {
+   "oil_lpm": 22.966325289059334,
+   "design_m3s": 0.0004976037145962856,
+   "DN": 65,
+   "ID_mm": 72.1,
+   "v_half_full": 0.24375481234881452,
+   "slope_min": "1:50",
+   "air_g_s": 6.217531515043709,
+   "vent_DN": 25,
+   "v_vent_m_s": 7.804002052034302,
+   "outlets": "2 x DN40 vertical sockets, joined into the DN65 below FB-2"
+  },
+  "JB2": {
+   "oil_lpm": 13.428655159372546,
+   "design_m3s": 0.0002909541951197385,
+   "DN": 50,
+   "ID_mm": 56.3,
+   "v_half_full": 0.23374802389700042,
+   "slope_min": "1:50",
+   "air_g_s": 7.544093358984298,
+   "vent_DN": 25,
+   "v_vent_m_s": 9.46905052460163
+  }
+ },
+ "vent": {
+  "air_into_tank_g_s": 13.761624874028007,
+  "separator": "coalescing element + 0.1 kW fan, tank at -10 mbar",
+  "vent_DN": 50,
+  "oil_carry_over_target": "< 5 mg/m3",
+  "v_vent": 4.806901289187521
+ },
+ "reservoir": {
+  "location": "in the base frame between the beams at x -540 and 200 (under the couplings, the plenum front and the gearbox front), top z -715",
+  "working_l": 272,
+  "volume_l": 354,
+  "retention_min": 4,
+  "heater_kW": 3.0,
+  "note": "gearbox drains straight down through the deck"
+ },
+ "fuel": {
+  "circuits": {
+   "P": {
+    "premixers": 1,
+    "m_kg_s": 0.00841748518909746,
+    "tube_OD": 18,
+    "v": 16.22657697234458,
+    "dp_bar": 0.039722182744493954,
+    "pigtail_OD": 18,
+    "v_pigtail": 16.22657697234458,
+    "dp_pigtail_bar": 0.012721413702732436
+   },
+   "A": {
+    "premixers": 3,
+    "m_kg_s": 0.025252455567292383,
+    "tube_OD": 28,
+    "v": 19.015519889466308,
+    "dp_bar": 0.04149869906724563,
+    "pigtail_OD": 18,
+    "v_pigtail": 16.22657697234458,
+    "dp_pigtail_bar": 0.012721413702732436
+   },
+   "B1": {
+    "premixers": 1,
+    "m_kg_s": 0.00841748518909746,
+    "tube_OD": 18,
+    "v": 16.22657697234458,
+    "dp_bar": 0.039722182744493954,
+    "pigtail_OD": 18,
+    "v_pigtail": 16.22657697234458,
+    "dp_pigtail_bar": 0.012721413702732436
+   },
+   "B2": {
+    "premixers": 2,
+    "m_kg_s": 0.01683497037819492,
+    "tube_OD": 28,
+    "v": 12.677013259644205,
+    "dp_bar": 0.019153298854963113,
+    "pigtail_OD": 18,
+    "v_pigtail": 16.22657697234458,
+    "dp_pigtail_bar": 0.012721413702732436
+   }
+  },
+  "rho_kg_m3": 2.9355065056399003,
+  "dp_max_bar": 0.05422011276997807,
+  "margin_bar": 0.10459689114007104,
+  "header": "DN50 PN16 from the gas train (shut-off, vent, 4 staging valves on the skid) to the valve block"
+ },
+ "oil_header": {
+  "Q_lpm": 36.39498044843188,
+  "tube_OD": 35,
+  "v": 0.8036685455568255,
+  "dp_bar": 0.03706019990441213
+ },
+ "air_lines": {
+  "TB_buffer": {
+   "m_g_s": 9.60978379978527,
+   "tube_OD": 22,
+   "v": 19.544356961385912
+  }
+ },
+ "bov": {
+  "DN": 125,
+  "m_kg_s": 3.6,
+  "by": "phase 2 (EX-441): tee on the DN350 cold-air pipe -> DN125 valve -> DN200 dump to the economizer inlet plenum",
+  "valve": "DN125 PN16 butterfly, pneumatic fail-open, 150 ms stroke (sec. 13.11)"
+ },
+ "combustor_drains": {
+  "points": [
+   "scroll hot-gas casing CB-331 bottom (through CB-341), DN15",
+   "can base plate CB-302 low point, DN15"
+  ],
+  "valve": "normally open, closes at light-off (air-operated, fail-open), to a closed drain pot",
+  "tube_OD": 18
+ },
+ "bearings": {
+  "JB1": {
+   "P_friction_kW": 4.364197528415749,
+   "P_soak_kW": 0.0,
+   "Q_heat_lpm": 7.611972433283284,
+   "Q_isfd_lpm": 2.0987758864191868,
+   "Q_design_lpm": 10.852544184694962,
+   "jets": {
+    "bars": 4,
+    "per_bar": 2,
+    "d_mm": 1.5,
+    "v_m_s": 10.320040706309026,
+    "dp_bar": 0.9346202709662529,
+    "aim": "leading edge of the next pad, 15 deg to the surface, with rotation"
+   },
+   "p_bearing_bar": 0.9346202709662529,
+   "supply_tube_OD": 18,
+   "supply_v": 1.0235472901436482,
+   "line_dp_bar": 0.09430806732021325,
+   "p_groove_barg": 1.9056919326797868,
+   "orifice_dp_bar": 0.9710716617135339,
+   "orifices": 2,
+   "orifice_mm": 3.2,
+   "orifice_at": "transfer tubes",
+   "galleries": {
+    "housing_groove_mm": "10 x 6",
+    "v_groove": 1.5072978034298556,
+    "transfer_tubes": "2 x OD 12 / ID 8, FKM O-rings",
+    "v_transfer": 1.4512557243247068,
+    "carrier_groove_mm": "8 x 5",
+    "v_carrier": 0.9118508644037265,
+    "spray_bar_bore_mm": 4.0
+   }
+  },
+  "JB2": {
+   "P_friction_kW": 4.364197528415749,
+   "P_soak_kW": 1.2843219931725929,
+   "Q_heat_lpm": 9.852068933002922,
+   "Q_isfd_lpm": 2.0987758864191868,
+   "Q_design_lpm": 13.428655159372546,
+   "jets": {
+    "bars": 4,
+    "per_bar": 2,
+    "d_mm": 1.7,
+    "v_m_s": 10.399113557813937,
+    "dp_bar": 0.9489973877341459,
+    "aim": "leading edge of the next pad, 15 deg to the surface, with rotation"
+   },
+   "p_bearing_bar": 0.9489973877341459,
+   "supply_tube_OD": 18,
+   "supply_v": 1.266510724557407,
+   "line_dp_bar": 0.20502738418695549,
+   "p_groove_barg": 1.7949726158130446,
+   "orifice_dp_bar": 0.8459752280788987,
+   "orifices": 2,
+   "orifice_mm": 3.7,
+   "orifice_at": "transfer tubes",
+   "galleries": {
+    "housing_groove_mm": "10 x 6",
+    "v_groove": 1.865090994357298,
+    "transfer_tubes": "2 x OD 12 / ID 8, FKM O-rings",
+    "v_transfer": 1.8783398863801422,
+    "carrier_groove_mm": "8 x 5",
+    "v_carrier": 1.180195757599308,
+    "spray_bar_bore_mm": 4.0
+   }
+  },
+  "TB": {
+   "P_friction_kW": 6.039334347683108,
+   "P_soak_kW": 0.0,
+   "Q_heat_lpm": 10.533722699447283,
+   "Q_design_lpm": 12.113781104364374,
+   "leg": {
+    "n_loaded": 8,
+    "n_inactive": 4,
+    "d_feed_loaded_mm": 1.6,
+    "d_feed_inactive_mm": 1.3,
+    "Q_loaded_lpm": 9.193157003092695,
+    "Q_inactive_lpm": 2.9206241012716783
+   },
+   "p_bearing_bar": 1.0,
+   "supply_tube_OD": 18,
+   "supply_v": 1.1424996398772083,
+   "line_dp_bar": 0.10877445103618258,
+   "p_groove_barg": 1.8912255489638174,
+   "orifice_dp_bar": 0.8912255489638174,
+   "orifices": 1,
+   "orifice_mm": 5.4,
+   "orifice_at": "inlet union"
+  }
+ },
+ "lube_module": {
+  "flow_lpm": 68,
+  "header_barg": 2.0,
+  "T_supply_C": 50.0,
+  "filter": "duplex 10 um abs, beta 200",
+  "pumps": "AC main + AC standby (auto changeover) + DC emergency pump (coast-down and post-lube)",
+  "cooler": "air-cooled, fan, sized for 40 C ambient",
+  "heat_kW": 32.5520513976872
+ },
+ "checks": [
+  {
+   "name": "JB2 housing wetted-wall temperature (running)",
+   "value": 102.1706,
+   "limit": 150.0,
+   "unit": "C",
+   "ok": true,
+   "note": "coking limit"
+  },
+  {
+   "name": "JB2 wetted wall under a frame key (with 3 mm barrier pads)",
+   "value": 129.1351,
+   "limit": 150.0,
+   "unit": "C",
+   "ok": true,
+   "note": "bare keys 190 C"
+  },
+  {
+   "name": "JB2 shield cooling-air outlet temperature",
+   "value": 219.5464,
+   "limit": 300.0,
+   "unit": "C",
+   "ok": true,
+   "note": "buffer + R2 aft purge air"
+  },
+  {
+   "name": "JB2 soak-back with post-lube 3 l/min for 40 min",
+   "value": 80.4891,
+   "limit": 150.0,
+   "unit": "C",
+   "ok": true,
+   "note": "without post-lube 152 C"
+  },
+  {
+   "name": "JB1 jet diameter (clogging, 10 um filter)",
+   "value": 1.5,
+   "limit": 1.2,
+   "unit": "mm",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "JB2 jet diameter (clogging, 10 um filter)",
+   "value": 1.7,
+   "limit": 1.2,
+   "unit": "mm",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "JB1 flow orifice diameter (>= 3 mm, no clogging)",
+   "value": 3.1573,
+   "limit": 3.0,
+   "unit": "mm",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TB flow orifice diameter (>= 3 mm, no clogging)",
+   "value": 5.3665,
+   "limit": 3.0,
+   "unit": "mm",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "JB2 flow orifice diameter (>= 3 mm, no clogging)",
+   "value": 3.718,
+   "limit": 3.0,
+   "unit": "mm",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "JB1 gallery / transfer-tube velocity",
+   "value": 1.5073,
+   "limit": 2.0,
+   "unit": "m/s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "JB2 gallery / transfer-tube velocity",
+   "value": 1.8783,
+   "limit": 2.0,
+   "unit": "m/s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "ISFD full film at 2 x the API orbit (land / squeeze pressure)",
+   "value": 1.525,
+   "limit": 1.0,
+   "unit": "-",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "anti-rotation: JB1/JB2 pad (each pad: pivot pin + offset stop pin)",
+   "value": 3.0149,
+   "limit": 60.0,
+   "unit": "MPa",
+   "ok": true,
+   "note": "pin 4 mm, 2.1 N m"
+  },
+  {
+   "name": "anti-rotation: JB1/JB2 carrier in the ISFD ring (radial pin d 6 at 135 deg; split dowels d 6 / d 8)",
+   "value": 3.9837,
+   "limit": 60.0,
+   "unit": "MPa",
+   "ok": true,
+   "note": "pin 6 mm, 8.3 N m"
+  },
+  {
+   "name": "anti-rotation: JB1/JB2 ISFD ring in the housing (radial pin d 8 at 45 deg)",
+   "value": 1.8024,
+   "limit": 60.0,
+   "unit": "MPa",
+   "ok": true,
+   "note": "pin 8 mm, 8.3 N m"
+  },
+  {
+   "name": "anti-rotation: TB base ring in the housing (2 dowels per ring)",
+   "value": 2.0918,
+   "limit": 60.0,
+   "unit": "MPa",
+   "ok": true,
+   "note": "pin 6 mm, 8.8 N m"
+  },
+  {
+   "name": "TB rear seal: buffer above the eye pressure",
+   "value": 1.2086,
+   "limit": 1.05,
+   "unit": "-",
+   "ok": true,
+   "note": "oil cannot be drawn into the compressor"
+  },
+  {
+   "name": "JB2 front seal: buffer above the R2 aft cavity at the lowest hub pressure",
+   "value": 1.0357,
+   "limit": 1.03,
+   "unit": "-",
+   "ok": true,
+   "note": "restrictors 4 x d 5.5"
+  },
+  {
+   "name": "JB2 vent DN25 (phase 2 strut): air velocity at the highest hub pressure",
+   "value": 9.4691,
+   "limit": 10.0,
+   "unit": "m/s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "R2 aft cavity purge left after the JB2 buffer",
+   "value": 14.1864,
+   "limit": 3.0,
+   "unit": "g/s",
+   "ok": true,
+   "note": "hub feed 21.7 g/s"
+  },
+  {
+   "name": "seal air: power cost",
+   "value": 3.7857,
+   "limit": 4.925,
+   "unit": "kW",
+   "ok": true,
+   "note": "<= 0.5 % of the rating"
+  },
+  {
+   "name": "drain FBH (JB1 + TB): velocity half full",
+   "value": 0.2438,
+   "limit": 0.3,
+   "unit": "m/s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "vent FBH (JB1 + TB): air velocity",
+   "value": 7.804,
+   "limit": 10.0,
+   "unit": "m/s",
+   "ok": true,
+   "note": "cavity top -> reservoir, mist separator on the tank"
+  },
+  {
+   "name": "drain JB2: velocity half full",
+   "value": 0.2337,
+   "limit": 0.3,
+   "unit": "m/s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "vent JB2: air velocity",
+   "value": 9.4691,
+   "limit": 10.0,
+   "unit": "m/s",
+   "ok": true,
+   "note": "cavity top -> reservoir, mist separator on the tank"
+  },
+  {
+   "name": "FB-2 drain outlets 2 x DN40: capacity at a 12 mm pool / design flow with foam",
+   "value": 1.7792,
+   "limit": 1.3,
+   "unit": "-",
+   "ok": true,
+   "note": "pool clear of the collar (r 72)"
+  },
+  {
+   "name": "drain FBH: available slope to the reservoir in the base frame",
+   "value": 1.6296,
+   "limit": 0.02,
+   "unit": "-",
+   "ok": true,
+   "note": "run 0.3 m"
+  },
+  {
+   "name": "drain JB2: available slope to the reservoir in the base frame",
+   "value": 0.0467,
+   "limit": 0.02,
+   "unit": "-",
+   "ok": true,
+   "note": "run 0.8 m"
+  },
+  {
+   "name": "fuel lines: supply margin after the line loss (combustor allowed 0.03 bar for lances)",
+   "value": 0.1046,
+   "limit": 0.05,
+   "unit": "bar",
+   "ok": true,
+   "note": ""
+  }
+ ]
+}

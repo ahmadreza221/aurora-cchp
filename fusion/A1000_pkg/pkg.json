@@ -1,0 +1,1669 @@
+{
+ "frame": "rotor frame, mm, x = engine axis from the gearbox coupling face, z up",
+ "x_offset_turbine": 673.2888416633899,
+ "groups": {
+  "turbine": {
+   "rgb": [
+    204,
+    207,
+    214
+   ]
+  },
+  "ngv": {
+   "rgb": [
+    219,
+    133,
+    71
+   ]
+  },
+  "rotor": {
+   "rgb": [
+    140,
+    148,
+    161
+   ]
+  },
+  "comp": {
+   "rgb": [
+    178,
+    199,
+    219
+   ]
+  },
+  "casing": {
+   "rgb": [
+    107,
+    115,
+    125
+   ]
+  },
+  "diff": {
+   "rgb": [
+    204,
+    158,
+    82
+   ]
+  },
+  "comb": {
+   "rgb": [
+    199,
+    115,
+    56
+   ]
+  },
+  "exhaust": {
+   "rgb": [
+    153,
+    143,
+    133
+   ]
+  },
+  "bearing": {
+   "rgb": [
+    217,
+    178,
+    64
+   ]
+  },
+  "recup": {
+   "rgb": [
+    168,
+    178,
+    168
+   ]
+  },
+  "gearbox": {
+   "rgb": [
+    76,
+    115,
+    102
+   ]
+  },
+  "gen": {
+   "rgb": [
+    56,
+    92,
+    158
+   ]
+  },
+  "aux": {
+   "rgb": [
+    219,
+    184,
+    51
+   ]
+  },
+  "skid": {
+   "rgb": [
+    64,
+    69,
+    76
+   ]
+  },
+  "hot": {
+   "rgb": [
+    184,
+    140,
+    107
+   ]
+  },
+  "pipe": {
+   "rgb": [
+    74,
+    140,
+    196
+   ]
+  }
+ },
+ "parts": [
+  {
+   "name": "NGV1 rings",
+   "group": "ngv",
+   "inst": [
+    0.0
+   ],
+   "desc": "NGV1 inner and outer rings, cast integral with the vanes",
+   "material": "MAR-M247, aluminide + TBC",
+   "mass_kg": 5.3,
+   "step": "../A1000/A1000_N1_rings.step",
+   "dx": 673.2888416633899
+  },
+  {
+   "name": "NGV1 vane x48",
+   "group": "ngv",
+   "inst": [
+    0.0,
+    7.5,
+    15.0,
+    22.5,
+    30.0,
+    37.5,
+    45.0,
+    52.5,
+    60.0,
+    67.5,
+    75.0,
+    82.5,
+    90.0,
+    97.5,
+    105.0,
+    112.5,
+    120.0,
+    127.5,
+    135.0,
+    142.5,
+    150.0,
+    157.5,
+    165.0,
+    172.5,
+    180.0,
+    187.5,
+    195.0,
+    202.5,
+    210.0,
+    217.5,
+    225.0,
+    232.5,
+    240.0,
+    247.5,
+    255.0,
+    262.5,
+    270.0,
+    277.5,
+    285.0,
+    292.5,
+    300.0,
+    307.5,
+    315.0,
+    322.5,
+    330.0,
+    337.5,
+    345.0,
+    352.5
+   ],
+   "desc": "48 vanes, axial chord 22 mm, throat 174 cm2 (M 0.75)",
+   "material": "MAR-M247 + TBC",
+   "mass_kg": 1.9,
+   "step": "../A1000/A1000_N1_vane.step",
+   "dx": 673.2888416633899
+  },
+  {
+   "name": "Blisk 1 blade x59",
+   "group": "turbine",
+   "inst": [
+    0.0,
+    6.101694915254237,
+    12.203389830508474,
+    18.305084745762713,
+    24.406779661016948,
+    30.508474576271187,
+    36.610169491525426,
+    42.71186440677966,
+    48.813559322033896,
+    54.91525423728814,
+    61.016949152542374,
+    67.11864406779661,
+    73.22033898305085,
+    79.32203389830508,
+    85.42372881355932,
+    91.52542372881356,
+    97.62711864406779,
+    103.72881355932203,
+    109.83050847457628,
+    115.9322033898305,
+    122.03389830508475,
+    128.135593220339,
+    134.23728813559322,
+    140.33898305084745,
+    146.4406779661017,
+    152.54237288135593,
+    158.64406779661016,
+    164.74576271186442,
+    170.84745762711864,
+    176.94915254237287,
+    183.05084745762713,
+    189.15254237288136,
+    195.25423728813558,
+    201.35593220338984,
+    207.45762711864407,
+    213.5593220338983,
+    219.66101694915255,
+    225.76271186440678,
+    231.864406779661,
+    237.96610169491527,
+    244.0677966101695,
+    250.16949152542372,
+    256.271186440678,
+    262.3728813559322,
+    268.47457627118644,
+    274.5762711864407,
+    280.6779661016949,
+    286.77966101694915,
+    292.8813559322034,
+    298.9830508474576,
+    305.08474576271186,
+    311.1864406779661,
+    317.2881355932203,
+    323.3898305084746,
+    329.49152542372883,
+    335.59322033898303,
+    341.6949152542373,
+    347.79661016949154,
+    353.89830508474574
+   ],
+   "desc": "59 blades cast integral with the disc; root 100 MPa at 865 C, creep 2.6e5 h",
+   "material": "MAR-M247",
+   "mass_kg": 2.0,
+   "step": "../A1000/A1000_R1_blade.step",
+   "dx": 673.2888416633899
+  },
+  {
+   "name": "NGV2 rings",
+   "group": "ngv",
+   "inst": [
+    0.0
+   ],
+   "desc": "NGV2 inner and outer rings",
+   "material": "MAR-M247",
+   "mass_kg": 10.1,
+   "step": "../A1000/A1000_N2_rings.step",
+   "dx": 673.2888416633899
+  },
+  {
+   "name": "NGV2 vane x24",
+   "group": "ngv",
+   "inst": [
+    0.0,
+    15.0,
+    30.0,
+    45.0,
+    60.0,
+    75.0,
+    90.0,
+    105.0,
+    120.0,
+    135.0,
+    150.0,
+    165.0,
+    180.0,
+    195.0,
+    210.0,
+    225.0,
+    240.0,
+    255.0,
+    270.0,
+    285.0,
+    300.0,
+    315.0,
+    330.0,
+    345.0
+   ],
+   "desc": "24 long-chord vanes, axial chord 49 mm, throat 278 cm2 (M 0.81)",
+   "material": "MAR-M247",
+   "mass_kg": 7.0,
+   "step": "../A1000/A1000_N2_vane.step",
+   "dx": 673.2888416633899
+  },
+  {
+   "name": "Blisk 2 blade x36",
+   "group": "turbine",
+   "inst": [
+    0.0,
+    10.0,
+    20.0,
+    30.0,
+    40.0,
+    50.0,
+    60.0,
+    70.0,
+    80.0,
+    90.0,
+    100.0,
+    110.0,
+    120.0,
+    130.0,
+    140.0,
+    150.0,
+    160.0,
+    170.0,
+    180.0,
+    190.0,
+    200.0,
+    210.0,
+    220.0,
+    230.0,
+    240.0,
+    250.0,
+    260.0,
+    270.0,
+    280.0,
+    290.0,
+    300.0,
+    310.0,
+    320.0,
+    330.0,
+    340.0,
+    350.0
+   ],
+   "desc": "36 blades; root 188 MPa at 723 C",
+   "material": "MAR-M247",
+   "mass_kg": 5.0,
+   "step": "../A1000/A1000_R2_blade.step",
+   "dx": 673.2888416633899
+  },
+  {
+   "name": "High-speed coupling",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "desc": "diaphragm coupling turbine -> gearbox, 15,000 rpm",
+   "material": "steel, disc packs",
+   "step": "High_speed_coupling.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Impeller 1 hub",
+   "group": "comp",
+   "inst": [
+    0.0
+   ],
+   "desc": "Impeller 1: D2 426 mm, U2 335 m/s, b2 33.5 mm, PR 2.012, eta 0.872; turned hub, flat back face, bore D46 (tie bolt), curvic both faces; impeller 22.2 kg",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 17.78,
+   "step": "../A1000C/A1000_C1_hub.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Impeller 1 blade x13",
+   "group": "comp",
+   "inst": [
+    0.0,
+    27.692307692307693,
+    55.38461538461539,
+    83.07692307692308,
+    110.76923076923077,
+    138.46153846153845,
+    166.15384615384616,
+    193.84615384615384,
+    221.53846153846155,
+    249.23076923076923,
+    276.9230769230769,
+    304.61538461538464,
+    332.3076923076923
+   ],
+   "desc": "13 ruled main blades (5-axis flank milling), 40 deg backsweep, wrap 51 deg, root fillet = cutter ball",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 2.56,
+   "step": "../A1000C/A1000_C1_blade.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Impeller 1 splitter x13",
+   "group": "comp",
+   "inst": [
+    0.0,
+    27.692307692307693,
+    55.38461538461539,
+    83.07692307692308,
+    110.76923076923077,
+    138.46153846153845,
+    166.15384615384616,
+    193.84615384615384,
+    221.53846153846155,
+    249.23076923076923,
+    276.9230769230769,
+    304.61538461538464,
+    332.3076923076923
+   ],
+   "desc": "13 ruled splitters from 30 % of the meridional length, mid-pitch",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 1.84,
+   "step": "../A1000C/A1000_C1_splitter.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Impeller 2 hub",
+   "group": "comp",
+   "inst": [
+    0.0
+   ],
+   "desc": "Impeller 2: D2 476 mm, U2 374 m/s, b2 16.5 mm, PR 1.991, eta 0.854; turned hub, flat back face, bore D46 (tie bolt), curvic both faces; impeller 28.4 kg",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 25.71,
+   "step": "../A1000C/A1000_C2_hub.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Impeller 2 blade x13",
+   "group": "comp",
+   "inst": [
+    0.0,
+    27.692307692307693,
+    55.38461538461539,
+    83.07692307692308,
+    110.76923076923077,
+    138.46153846153845,
+    166.15384615384616,
+    193.84615384615384,
+    221.53846153846155,
+    249.23076923076923,
+    276.9230769230769,
+    304.61538461538464,
+    332.3076923076923
+   ],
+   "desc": "13 ruled main blades (5-axis flank milling), 40 deg backsweep, wrap 65 deg, root fillet = cutter ball",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 1.57,
+   "step": "../A1000C/A1000_C2_blade.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Impeller 2 splitter x13",
+   "group": "comp",
+   "inst": [
+    0.0,
+    27.692307692307693,
+    55.38461538461539,
+    83.07692307692308,
+    110.76923076923077,
+    138.46153846153845,
+    166.15384615384616,
+    193.84615384615384,
+    221.53846153846155,
+    249.23076923076923,
+    276.9230769230769,
+    304.61538461538464,
+    332.3076923076923
+   ],
+   "desc": "13 ruled splitters from 30 % of the meridional length, mid-pitch",
+   "material": "Ti-6Al-4V forging, 5-axis flank milled",
+   "mass_kg": 1.08,
+   "step": "../A1000C/A1000_C2_splitter.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Compressor casing",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "shroud walls (tip clearance 0.50 / 0.40 mm), vaned-diffuser walls (pinch 8 %), crossover bend, return channel, diaphragm, discharge collector",
+   "material": "ductile iron EN-GJS-400-18 (casing), steel diaphragm",
+   "step": "Compressor_casing.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Diffuser 1 vane x19",
+   "group": "diff",
+   "inst": [
+    0.0,
+    18.94736842105263,
+    37.89473684210526,
+    56.8421052631579,
+    75.78947368421052,
+    94.73684210526316,
+    113.6842105263158,
+    132.6315789473684,
+    151.57894736842104,
+    170.52631578947367,
+    189.47368421052633,
+    208.42105263157896,
+    227.3684210526316,
+    246.31578947368422,
+    265.2631578947368,
+    284.2105263157895,
+    303.1578947368421,
+    322.10526315789474,
+    341.05263157894734
+   ],
+   "desc": "19 vanes, r 234 -> 337 mm, 68 -> 53 deg, throat 28.6 mm, AR 2.26, 2theta 10.2 deg, Cp 0.62; machined integral with the diffuser plate (2.5 axis)",
+   "material": "as the casing / 1.4057 plate",
+   "step": "Diffuser_1_vane_x19.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Diffuser 2 vane x19",
+   "group": "diff",
+   "inst": [
+    0.0,
+    18.94736842105263,
+    37.89473684210526,
+    56.8421052631579,
+    75.78947368421052,
+    94.73684210526316,
+    113.6842105263158,
+    132.6315789473684,
+    151.57894736842104,
+    170.52631578947367,
+    189.47368421052633,
+    208.42105263157896,
+    227.3684210526316,
+    246.31578947368422,
+    265.2631578947368,
+    284.2105263157895,
+    303.1578947368421,
+    322.10526315789474,
+    341.05263157894734
+   ],
+   "desc": "19 vanes, r 262 -> 369 mm, 67 -> 53 deg, throat 33.9 mm, AR 2.11, 2theta 10.3 deg, Cp 0.60; machined integral with the diffuser plate (2.5 axis)",
+   "material": "as the casing / 1.4057 plate",
+   "step": "Diffuser_2_vane_x19.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Return-channel vane x17",
+   "group": "diff",
+   "inst": [
+    0.0,
+    21.176470588235293,
+    42.35294117647059,
+    63.529411764705884,
+    84.70588235294117,
+    105.88235294117646,
+    127.05882352941177,
+    148.23529411764707,
+    169.41176470588235,
+    190.58823529411765,
+    211.76470588235293,
+    232.94117647058823,
+    254.11764705882354,
+    275.29411764705884,
+    296.47058823529414,
+    317.6470588235294,
+    338.8235294117647
+   ],
+   "desc": "17 deswirl vanes, r 325 -> 157 mm, 63 -> 0 deg, axial inflow to impeller 2",
+   "material": "steel, machined with the diaphragm",
+   "step": "Return_channel_vane_x17.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-501 Inlet casing, upper half (EN-GJS-400-18)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "upper half: hub wall x 143-157 (bore r 130.5 over FB, cord O-ring on the FB fairing face), front lip R40, struts at 45 / 135 deg (solid, chord 75, t 16), shroud wall x 204-222 with the R10 bellmouth corner into the inducer shroud r 137.5, spigot recess r 150 on the compressor casing, 24 x M12 from the back; lifts off after the plenum upper half",
+   "material": "EN-GJS-400-18",
+   "mass_kg": 56.6,
+   "step": "../A1000_inl/IN_501_Inlet_casing__upper_half__EN_GJS_400_18.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-502 Inlet casing, lower half + FB-2 foot brackets (EN-GJS-400-18)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "lower half as IN-501 with the struts at 225 / 315 deg and two L brackets for the FB-2 centre-line feet (pad z -20, 2 x M16 each, transverse key slot 16 x 6 at x 87-103, window for the oil-inlet fittings)",
+   "material": "EN-GJS-400-18",
+   "mass_kg": 58.9,
+   "step": "../A1000_inl/IN_502_Inlet_casing__lower_half___FB_2_foot_brackets__EN_GJS_400_18.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-510 Plenum box, upper half + filter-house flange (S235JR)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "welded box 6 mm: plenum x -140..204, y +-540, z 0..600, filter-house flange 1080 x 344 on top, dry tunnel half r 290 round FB-1 and the coupling, bolted flush onto the casing rim (24 x M10) and the tunnel ring (16 x M10)",
+   "material": "S235JR",
+   "mass_kg": 84.24,
+   "step": "../A1000_inl/IN_510_Plenum_box__upper_half___filter_house_flange__S235JR.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-511 Plenum box, lower half + feet (S235JR)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "lower half of the box down to z -620, 4 feet to the skid, washing / condensate drain at the low point; the dry tunnel half carries no penetration: the FB services leave forward through the tunnel (open at x -140)",
+   "material": "S235JR",
+   "mass_kg": 108.31,
+   "step": "../A1000_inl/IN_511_Plenum_box__lower_half___feet__S235JR.step",
+   "dx": 0.0
+  },
+  {
+   "name": "IN-520 Filter-house adapter + fabric joint",
+   "group": "aux",
+   "inst": [
+    0.0
+   ],
+   "desc": "rectangular frame 300 mm with the fabric expansion joint to the filter-house duct (F7 + F9, inlet-air cooler, silencer: vendor)",
+   "material": "S235JR + fabric",
+   "mass_kg": 51.79,
+   "step": "../A1000_inl/IN_520_Filter_house_adapter___fabric_joint.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-401 Air manifold casing (EN-GJS-400-18LT)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "compressor-air manifold: bolted on the scroll-casing rear plate (24 x M16 on r 535), port 150 x 600 to the DN350 pipe, 7 pin sleeves, rear rim with the rear leaf seal; 3.8 bar, 185 C",
+   "material": "EN-GJS-400-18LT",
+   "mass_kg": 138.05,
+   "step": "../A1000_exh/EX_401_Air_manifold_casing__EN_GJS_400_18LT.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-402 Frame pins x7 (A286)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "7 radial pins dia 24 (45 deg pitch, none under the air port), put in from outside: centre the hot frame, carry the 25 kN aft air load and the torque, let it grow 3.3 mm radially",
+   "material": "A286",
+   "mass_kg": 6.43,
+   "step": "../A1000_exh/EX_402_Frame_pins_x7__A286.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-410 Exhaust frame, 4 struts (1.4848 cast)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "hot one-piece frame: R2 exit -> 8.5 deg cone with 4 cambered hollow struts (top oil in, bottom = drain, -y vent, +y sensors, buffer air d 4 orifices) -> R120 axial-radial bend; hub carries JB2 on keys; floats on 7 radial pins",
+   "material": "1.4848 cast",
+   "mass_kg": 101.94,
+   "step": "../A1000_exh/EX_410_Exhaust_frame__4_struts__1_4848_cast.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-411 Frame heat shield (1.4828)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "keeps the frame cone hot (uniform with the struts) in the manifold air; ceramic paper behind",
+   "material": "1.4828",
+   "mass_kg": 2.23,
+   "step": "../A1000_exh/EX_411_Frame_heat_shield__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-412 JB2 support ring + 8 keys (1.4313)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "desc": "clamps the JB2 cartridge housing; 8 radial keys on 3 mm mica pads in through-slots of the hub (frame slides on from the rear), retaining ring; JB2 drain / vent bosses behind the ring (x >= 1004)",
+   "material": "1.4313",
+   "mass_kg": 9.42,
+   "step": "../A1000_exh/EX_412_JB2_support_ring___8_keys__1_4313.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-413 Front leaf seal (Haynes 25)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "C2 rear face <-> frame: 2.9 mm axial closure hot, radial sliding",
+   "material": "Haynes 25",
+   "mass_kg": 1.05,
+   "step": "../A1000_exh/EX_413_Front_leaf_seal__Haynes_25.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-414 Rear leaf seal (Haynes 25)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "manifold rim <-> frame rear flange: radial sliding 3.2 mm",
+   "material": "Haynes 25",
+   "mass_kg": 0.14,
+   "step": "../A1000_exh/EX_414_Rear_leaf_seal__Haynes_25.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-420 Exhaust collector (1.4828)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "collector box 0.58 x 1.55 x 1.53 m with front / rear wells, hub cap (R180 bend + rear cone), radial diffuser to r 500, open +y face; centre-line lugs, bottom key; 100 mm external insulation (not modelled)",
+   "material": "1.4828",
+   "mass_kg": 446.82,
+   "step": "../A1000_exh/EX_420_Exhaust_collector__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-421 Hub access cover (1.4828)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "bolted cover in the hub cap, reached from the rear well: JB2 rear inspection without removing the collector",
+   "material": "1.4828",
+   "mass_kg": 5.57,
+   "step": "../A1000_exh/EX_421_Hub_access_cover__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-430 Exhaust transition + fabric joint",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "collector +y face -> recuperator gas inlet hood, 300 mm fabric expansion joint",
+   "material": "1.4828",
+   "mass_kg": 130.47,
+   "step": "../A1000_exh/EX_430_Exhaust_transition___fabric_joint.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-440 Cold air pipe DN350 + BOV tee (P265GH)",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "manifold port -> rect-round elbow -> DN350 run at y 760 / z -360 -> recuperator air inlet; pressure-balanced joint",
+   "material": "P265GH",
+   "mass_kg": 197.95,
+   "step": "../A1000_exh/EX_440_Cold_air_pipe_DN350___BOV_tee__P265GH.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-441 BOV DN125 + dump line DN200",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "blow-off / start-bleed valve DN125 on the cold pipe; dump DN200 into the economizer inlet plenum (sparger)",
+   "material": "1.4541",
+   "mass_kg": 180.99,
+   "step": "../A1000_exh/EX_441_BOV_DN125___dump_line_DN200.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-450 Hot air pipe DN450 + gimbal pair (1.4948)",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "recuperator air outlet (top, rear) -> can nozzle DN450; 3 elbows R/D 1, gimbal pair in the vertical leg; 626 C",
+   "material": "1.4948",
+   "mass_kg": 338.25,
+   "step": "../A1000_exh/EX_450_Hot_air_pipe_DN450___gimbal_pair__1_4948.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-460 Recuperator (bought in)",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "primary-surface counterflow core, eff 0.90, 3.0 MW; gas in at the rear (side hood), out at the front (top); air in front (side), out rear (top); moved +300 mm in y for the pipe lane",
+   "material": "bought in",
+   "mass_kg": 2500.0,
+   "step": "../A1000_exh/EX_460_Recuperator__bought_in.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-470 Economizer + stack DN800 (bought in)",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "hot-water economizer 95/75 C (~1 MW) on the recuperator gas outlet, stack DN800 to z 5000 with silencer",
+   "material": "bought in",
+   "mass_kg": 1400.0,
+   "step": "../A1000_exh/EX_470_Economizer___stack_DN800__bought_in.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Epicyclic gearbox 10:1",
+   "group": "gearbox",
+   "inst": [
+    0.0
+   ],
+   "desc": "star epicyclic, 15,000 -> 1,500 rpm, 1,100 kW, API 677 / AGMA 6123, >= 98.5 %; about 0.5-0.7 t",
+   "material": "bought in (Flender, Allen, Renk, ZF)",
+   "step": "Epicyclic_gearbox_10_1.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Starter motor",
+   "group": "gearbox",
+   "inst": [
+    0.0
+   ],
+   "desc": "AC starter + VFD 60-80 kW on the accessory pad",
+   "material": "bought in",
+   "step": "Starter_motor.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Low-speed coupling",
+   "group": "gearbox",
+   "inst": [
+    0.0
+   ],
+   "desc": "disc coupling gearbox -> generator, 1,500 rpm",
+   "material": "bought in",
+   "step": "Low_speed_coupling.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Synchronous generator",
+   "group": "gen",
+   "inst": [
+    0.0
+   ],
+   "desc": "4-pole brushless, 1,250 kVA, 400 V, 1,500 rpm, IP54 for Borazjan dust; about 2.1 x 1.05 x 1.3 m, 3-3.5 t",
+   "material": "bought in",
+   "step": "Synchronous_generator.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Lube oil module",
+   "group": "aux",
+   "inst": [
+    0.0
+   ],
+   "desc": "tank, pumps, cooler, filters; ISO VG 32 shared by the turbine and the gearbox",
+   "material": "bought in",
+   "step": "Lube_oil_module.step",
+   "dx": 0.0
+  },
+  {
+   "name": "Base frame (skid)",
+   "group": "skid",
+   "inst": [
+    0.0
+   ],
+   "desc": "welded steel base frame, about 5.9 m with the side-mounted recuperator",
+   "material": "S355 sections",
+   "step": "Base_frame__skid.step",
+   "dx": 0.0
+  },
+  {
+   "name": "RT-101 Front stub shaft + thrust collar",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "34CrNiMo6 QT",
+   "step": "../A1000_rotor/RT_101_Front_stub_shaft___thrust_collar.step",
+   "dx": 0.0,
+   "mass_kg": 10.229
+  },
+  {
+   "name": "RT-102 Tie bolt M42 IN718",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "step": "../A1000_rotor/RT_102_Tie_bolt_M42_IN718.step",
+   "dx": 0.0,
+   "mass_kg": 3.976
+  },
+  {
+   "name": "RT-103 Tie-bolt nut",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "step": "../A1000_rotor/RT_103_Tie_bolt_nut.step",
+   "dx": 0.0,
+   "mass_kg": 0.495
+  },
+  {
+   "name": "RT-104 Compressor spacer",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "17-4PH H1025",
+   "step": "../A1000_rotor/RT_104_Compressor_spacer.step",
+   "dx": 0.0,
+   "mass_kg": 6.228
+  },
+  {
+   "name": "RT-105 Drum IN718",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "step": "../A1000_rotor/RT_105_Drum_IN718.step",
+   "dx": 0.0,
+   "mass_kg": 13.271
+  },
+  {
+   "name": "RT-106 Rear stub shaft",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "step": "../A1000_rotor/RT_106_Rear_stub_shaft.step",
+   "dx": 0.0,
+   "mass_kg": 5.143
+  },
+  {
+   "name": "RT-107 Turbine spacer ring R1 - R2",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718",
+   "step": "../A1000_rotor/RT_107_Turbine_spacer_ring_R1___R2.step",
+   "dx": 0.0,
+   "mass_kg": 2.617
+  },
+  {
+   "name": "RT-111 Studs + nuts drum - R1 (16 x M10)",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718 / Waspaloy nuts",
+   "step": "../A1000_rotor/RT_111_Studs___nuts_drum___R1__16_x_M10.step",
+   "dx": 0.0,
+   "mass_kg": 0.325
+  },
+  {
+   "name": "RT-112 Studs + nuts R1 - R2 (16 x M10)",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718 / Waspaloy nuts",
+   "step": "../A1000_rotor/RT_112_Studs___nuts_R1___R2__16_x_M10.step",
+   "dx": 0.0,
+   "mass_kg": 0.572
+  },
+  {
+   "name": "RT-113 Studs + nuts R2 - rear stub (16 x M10)",
+   "group": "rotor",
+   "inst": [
+    0.0
+   ],
+   "material": "IN718 / Waspaloy nuts",
+   "step": "../A1000_rotor/RT_113_Studs___nuts_R2___rear_stub__16_x_M10.step",
+   "dx": 0.0,
+   "mass_kg": 0.325
+  },
+  {
+   "name": "A1000_R1 disc with arms (cast MAR-M247)",
+   "group": "turbine",
+   "inst": [
+    0.0
+   ],
+   "material": "MAR-M247",
+   "step": "../A1000_rotor/A1000_R1_disc_with_arms__cast_MAR_M247.step",
+   "dx": 0.0,
+   "mass_kg": 45.331
+  },
+  {
+   "name": "A1000_R2 disc with arms (cast MAR-M247)",
+   "group": "turbine",
+   "inst": [
+    0.0
+   ],
+   "material": "MAR-M247",
+   "step": "../A1000_rotor/A1000_R2_disc_with_arms__cast_MAR_M247.step",
+   "dx": 0.0,
+   "mass_kg": 50.474
+  },
+  {
+   "name": "JB1 tilting pads x4 (steel + babbitt)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel + babbitt",
+   "step": "../A1000_rotor/JB1_tilting_pads_x4__steel___babbitt.step",
+   "dx": 0.0,
+   "mass_kg": 0.641
+  },
+  {
+   "name": "JB1 pad carrier + end plates (split)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel",
+   "step": "../A1000_rotor/JB1_pad_carrier___end_plates__split.step",
+   "dx": 0.0,
+   "mass_kg": 2.655
+  },
+  {
+   "name": "JB1 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "17-4PH H1100",
+   "step": "../A1000_rotor/JB1_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
+   "dx": 0.0,
+   "mass_kg": 2.596
+  },
+  {
+   "name": "JB2 tilting pads x4 (steel + babbitt)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel + babbitt",
+   "step": "../A1000_rotor/JB2_tilting_pads_x4__steel___babbitt.step",
+   "dx": 0.0,
+   "mass_kg": 0.641
+  },
+  {
+   "name": "JB2 pad carrier + end plates (split)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel",
+   "step": "../A1000_rotor/JB2_pad_carrier___end_plates__split.step",
+   "dx": 0.0,
+   "mass_kg": 2.654
+  },
+  {
+   "name": "JB2 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "17-4PH H1100",
+   "step": "../A1000_rotor/JB2_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
+   "dx": 0.0,
+   "mass_kg": 2.596
+  },
+  {
+   "name": "TB thrust pads 8 + 4 (steel + babbitt)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel + babbitt",
+   "step": "../A1000_rotor/TB_thrust_pads_8___4__steel___babbitt.step",
+   "dx": 0.0,
+   "mass_kg": 0.739
+  },
+  {
+   "name": "TB carrier rings (split)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "steel",
+   "step": "../A1000_rotor/TB_carrier_rings__split.step",
+   "dx": 0.0,
+   "mass_kg": 1.197
+  },
+  {
+   "name": "FB-1 Front bearing housing, upper half (JB1 + thrust, EN-GJS-400-18)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18",
+   "step": "../A1000_rotor/FB_1_Front_bearing_housing__upper_half__JB1___thrust__EN_GJS_400_18.step",
+   "dx": 0.0,
+   "mass_kg": 17.588
+  },
+  {
+   "name": "FB-2 Front bearing housing, lower half (JB1 + thrust, EN-GJS-400-18)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18",
+   "step": "../A1000_rotor/FB_2_Front_bearing_housing__lower_half__JB1___thrust__EN_GJS_400_18.step",
+   "dx": 0.0,
+   "mass_kg": 17.212
+  },
+  {
+   "name": "JB2 bearing cartridge housing (one piece, from the rear)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4313",
+   "step": "../A1000_rotor/JB2_bearing_cartridge_housing__one_piece__from_the_rear.step",
+   "dx": 0.0,
+   "mass_kg": 25.488
+  },
+  {
+   "name": "JB2 front seal ring (split, labyrinth + buffer + windback)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4313",
+   "step": "../A1000_rotor/JB2_front_seal_ring__split__labyrinth___buffer___windback.step",
+   "dx": 0.0,
+   "mass_kg": 0.602
+  },
+  {
+   "name": "JB2 end cover",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4313",
+   "step": "../A1000_rotor/JB2_end_cover.step",
+   "dx": 0.0,
+   "mass_kg": 3.919
+  },
+  {
+   "name": "JB2 heat shield (ceramic fibre in 1.4828 foil)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "material": "ceramic fibre + 1.4828 foil",
+   "step": "../A1000_rotor/JB2_heat_shield__ceramic_fibre_in_1_4828_foil.step",
+   "dx": 0.0,
+   "mass_kg": 1.468
+  },
+  {
+   "name": "HS-201 Outer casing upper half (EN-GJS-400-18LT)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18LT",
+   "step": "../A1000_hot/HS_201_Outer_casing_upper_half__EN_GJS_400_18LT.step",
+   "dx": 0.0,
+   "mass_kg": 57.55
+  },
+  {
+   "name": "HS-202 Outer casing lower half (EN-GJS-400-18LT)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "EN-GJS-400-18LT",
+   "step": "../A1000_hot/HS_202_Outer_casing_lower_half__EN_GJS_400_18LT.step",
+   "dx": 0.0,
+   "mass_kg": 57.23
+  },
+  {
+   "name": "HS-210 Shroud carrier C1 (NGV1 + R1, 1.4828)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4828",
+   "step": "../A1000_hot/HS_210_Shroud_carrier_C1__NGV1___R1__1_4828.step",
+   "dx": 0.0,
+   "mass_kg": 12.65
+  },
+  {
+   "name": "HS-220 Shroud carrier C2 (NGV2 + R2, 1.4828)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4828",
+   "step": "../A1000_hot/HS_220_Shroud_carrier_C2__NGV2___R2__1_4828.step",
+   "dx": 0.0,
+   "mass_kg": 27.05
+  },
+  {
+   "name": "HS-222 Gap liner R1 - NGV2, outer (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_hot/HS_222_Gap_liner_R1___NGV2__outer__Hastelloy_X.step",
+   "dx": 0.0,
+   "mass_kg": 1.99
+  },
+  {
+   "name": "HS-211 Honeycomb shroud R1 (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "step": "../A1000_hot/HS_211_Honeycomb_shroud_R1__Hastelloy_X.step",
+   "dx": 0.0,
+   "mass_kg": 0.13
+  },
+  {
+   "name": "HS-211 Shroud backing R1",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_hot/HS_211_Shroud_backing_R1.step",
+   "dx": 0.0,
+   "mass_kg": 1.26
+  },
+  {
+   "name": "HS-221 Honeycomb shroud R2 (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "step": "../A1000_hot/HS_221_Honeycomb_shroud_R2__Hastelloy_X.step",
+   "dx": 0.0,
+   "mass_kg": 0.21
+  },
+  {
+   "name": "HS-221 Shroud backing R2",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_hot/HS_221_Shroud_backing_R2.step",
+   "dx": 0.0,
+   "mass_kg": 1.98
+  },
+  {
+   "name": "HS-230 Front diaphragm (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_hot/HS_230_Front_diaphragm__Hastelloy_X.step",
+   "dx": 0.0,
+   "mass_kg": 2.81
+  },
+  {
+   "name": "HS-231 Front seal honeycomb",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "step": "../A1000_hot/HS_231_Front_seal_honeycomb.step",
+   "dx": 0.0,
+   "mass_kg": 0.03
+  },
+  {
+   "name": "HS-232 Interstage diaphragm (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_hot/HS_232_Interstage_diaphragm__Hastelloy_X.step",
+   "dx": 0.0,
+   "mass_kg": 2.47
+  },
+  {
+   "name": "HS-233 Interstage seal honeycomb",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X honeycomb",
+   "step": "../A1000_hot/HS_233_Interstage_seal_honeycomb.step",
+   "dx": 0.0,
+   "mass_kg": 0.03
+  },
+  {
+   "name": "HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_hot/HS_234_Gap_ring_R1___NGV2__inner__Hastelloy_X.step",
+   "dx": 0.0,
+   "mass_kg": 1.07
+  },
+  {
+   "name": "HS-240 Support keys x2 at the split (1.4980)",
+   "group": "hot",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4980 (A286)",
+   "step": "../A1000_hot/HS_240_Support_keys_x2_at_the_split__1_4980.step",
+   "dx": 0.0,
+   "mass_kg": 0.13
+  },
+  {
+   "name": "CB-330 Hot-gas casing upper half (Haynes 230)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Haynes 230",
+   "step": "../A1000_comb/CB_330_Hot_gas_casing_upper_half__Haynes_230.step",
+   "dx": 0.0,
+   "mass_kg": 87.79
+  },
+  {
+   "name": "CB-331 Hot-gas casing lower half (Haynes 230)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Haynes 230",
+   "step": "../A1000_comb/CB_331_Hot_gas_casing_lower_half__Haynes_230.step",
+   "dx": 0.0,
+   "mass_kg": 61.69
+  },
+  {
+   "name": "CB-332 Deswirl vanes x22 (Haynes 230)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Haynes 230",
+   "step": "../A1000_comb/CB_332_Deswirl_vanes_x22__Haynes_230.step",
+   "dx": 0.0,
+   "mass_kg": 9.54
+  },
+  {
+   "name": "CB-333 Scroll insulation cassettes",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "microporous + foil",
+   "step": "../A1000_comb/CB_333_Scroll_insulation_cassettes.step",
+   "dx": 0.0,
+   "mass_kg": 13.01
+  },
+  {
+   "name": "CB-301 Can casing (1.4948)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4948",
+   "step": "../A1000_comb/CB_301_Can_casing__1_4948.step",
+   "dx": 0.0,
+   "mass_kg": 233.03
+  },
+  {
+   "name": "CB-302 Can base plate (1.4948)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4948",
+   "step": "../A1000_comb/CB_302_Can_base_plate__1_4948.step",
+   "dx": 0.0,
+   "mass_kg": 42.5
+  },
+  {
+   "name": "CB-303 Head cover (1.4948)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4948",
+   "step": "../A1000_comb/CB_303_Head_cover__1_4948.step",
+   "dx": 0.0,
+   "mass_kg": 163.11
+  },
+  {
+   "name": "CB-310 Premixers x7 (pilot + 6 mains, IN625)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "IN625",
+   "step": "../A1000_comb/CB_310_Premixers_x7__pilot___6_mains__IN625.step",
+   "dx": 0.0,
+   "mass_kg": 12.98
+  },
+  {
+   "name": "CB-320 Liner (Hastelloy X + TBC)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_comb/CB_320_Liner__Hastelloy_X___TBC.step",
+   "dx": 0.0,
+   "mass_kg": 18.29
+  },
+  {
+   "name": "CB-321 Impingement sleeve (Hastelloy X)",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Hastelloy X",
+   "step": "../A1000_comb/CB_321_Impingement_sleeve__Hastelloy_X.step",
+   "dx": 0.0,
+   "mass_kg": 13.71
+  },
+  {
+   "name": "CB-340 Scroll pressure casing upper half (P355NH)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "P355NH",
+   "step": "../A1000_comb/CB_340_Scroll_pressure_casing_upper_half__P355NH.step",
+   "dx": 0.0,
+   "mass_kg": 362.28
+  },
+  {
+   "name": "CB-341 Scroll pressure casing lower half (P355NH)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "P355NH",
+   "step": "../A1000_comb/CB_341_Scroll_pressure_casing_lower_half__P355NH.step",
+   "dx": 0.0,
+   "mass_kg": 211.59
+  },
+  {
+   "name": "CB-350 NGV1 interface leaf seals",
+   "group": "comb",
+   "inst": [
+    0.0
+   ],
+   "material": "Haynes 25",
+   "step": "../A1000_comb/CB_350_NGV1_interface_leaf_seals.step",
+   "dx": 0.0,
+   "mass_kg": 0.09
+  },
+  {
+   "name": "CB-360 Scroll support pins x4 (1.4980)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4980 (A286)",
+   "step": "../A1000_comb/CB_360_Scroll_support_pins_x4__1_4980.step",
+   "dx": 0.0,
+   "mass_kg": 1.68
+  },
+  {
+   "name": "CB-370 Fuel manifolds P / A / B1 / B2, pigtails, bulkhead (1.4404)",
+   "group": "aux",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_comb/CB_370_Fuel_manifolds_P___A___B1___B2__pigtails__bulkhead__1_4404.step",
+   "dx": 0.0,
+   "mass_kg": 37.17
+  },
+  {
+   "name": "CB-371 Igniter + 2 UV flame scanners",
+   "group": "aux",
+   "inst": [
+    0.0
+   ],
+   "material": "bought in",
+   "step": "../A1000_comb/CB_371_Igniter___2_UV_flame_scanners.step",
+   "dx": 0.0,
+   "mass_kg": 0.81
+  },
+  {
+   "name": "PL-01 Oil supply header + FB distribution block (tube 35 x 2)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_01_Oil_supply_header___FB_distribution_block__tube_35_x_2.step",
+   "dx": 0.0,
+   "desc": "lube module (+y face) -> block in front of the plenum; PCV on the module holds 2.0 bar(g)"
+  },
+  {
+   "name": "PL-02 Oil to JB1 (tube 15 x 1.5, orifice 3.2 mm)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_02_Oil_to_JB1__tube_15_x_1_5__orifice_3_2_mm.step",
+   "dx": 0.0,
+   "desc": "forward through the plenum tunnel (r 193), union on the FB-2 boss and one in front of the plenum = disconnects"
+  },
+  {
+   "name": "PL-03 Oil to TB (tube 18 x 1.5, orifice 5.4 mm)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_03_Oil_to_TB__tube_18_x_1_5__orifice_5_4_mm.step",
+   "dx": 0.0,
+   "desc": "forward through the plenum tunnel (r 177), union on the FB-2 boss and one in front of the plenum = disconnects"
+  },
+  {
+   "name": "PL-04 Oil to JB2 (tube 18 x 1.5, hose at the top strut)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_04_Oil_to_JB2__tube_18_x_1_5__hose_at_the_top_strut.step",
+   "dx": 0.0,
+   "desc": "along the -y side outside the scroll casing, over the frame behind the scroll-casing ribs; braided hose at the strut exit; tube through the strut"
+  },
+  {
+   "name": "PL-05 FBH drain 2 x DN40 + DN65 (forward through the tunnel to the reservoir)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_05_FBH_drain_2_x_DN40___DN65__forward_through_the_tunnel_to_the_reservoir.step",
+   "dx": 0.0,
+   "desc": "socket unions on FB-2; DN65 at 2.6 % inside the tunnel (bottom r 273), vertical to the tank in front of the plenum"
+  },
+  {
+   "name": "PL-06 JB2 drain DN50 (hose at the bottom strut, 11 % fall)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_06_JB2_drain_DN50__hose_at_the_bottom_strut__11___fall.step",
+   "dx": 0.0,
+   "desc": "PTFE-lined braided hose DN50 at the strut exit, then rigid under the scroll casing (60 mm below it) to the reservoir"
+  },
+  {
+   "name": "PL-07 FBH vent DN25 (forward through the tunnel, to the reservoir)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_07_FBH_vent_DN25__forward_through_the_tunnel__to_the_reservoir.step",
+   "dx": 0.0,
+   "desc": "union on FB-1 (opened to lift the upper half); high point 19 mm over the boss, then a continuous fall to the tank"
+  },
+  {
+   "name": "PL-08 JB2 vent DN32 (hose at the -y strut, falls to the reservoir)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_08_JB2_vent_DN32__hose_at_the__y_strut__falls_to_the_reservoir.step",
+   "dx": 0.0,
+   "desc": "high point at the strut exit, then a continuous fall; the reservoir carries the mist separator"
+  },
+  {
+   "name": "PL-09 Buffer air from stage 1 to the TB rear seal (tube 22)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_09_Buffer_air_from_stage_1_to_the_TB_rear_seal__tube_22.step",
+   "dx": 0.0,
+   "desc": "tap DN25 on the return channel (phase 7 boss), isolation valve + orifice, 10 g/s; over the plenum, in through the tunnel"
+  },
+  {
+   "name": "PL-10 Fuel hoses P / A / B1 / B2 + gas valve block (bought in)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404 / bought in",
+   "step": "../A1000_pipe/PL_10_Fuel_hoses_P___A___B1___B2___gas_valve_block__bought_in.step",
+   "dx": 0.0,
+   "desc": "valve block: 2 shut-off valves + vent (double block and bleed), 4 staging valves; hoses take the can growth (+14 mm); unions at z 900"
+  },
+  {
+   "name": "PL-12 Combustor drains DN15 + drain pot",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_12_Combustor_drains_DN15___drain_pot.step",
+   "dx": 0.0,
+   "desc": "normally open, air-operated valves close at light-off (fail open); closed drain pot with a level switch"
+  },
+  {
+   "name": "PL-13 Gearbox oil feed (tube 35 x 2)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4404",
+   "step": "../A1000_pipe/PL_13_Gearbox_oil_feed__tube_35_x_2.step",
+   "dx": 0.0,
+   "desc": "to the gearbox jets (bought-in gearbox interface); the gearbox drains straight down into the reservoir"
+  },
+  {
+   "name": "LO-100 Oil reservoir in the base frame (338 l)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "1.4301",
+   "step": "../A1000_pipe/LO_100_Oil_reservoir_in_the_base_frame__338_l.step",
+   "dx": 0.0,
+   "desc": "between the base-frame beams under the coupling and the gearbox; returns enter through the deck; heater, level, mist separator on the module"
+  },
+  {
+   "name": "PL-90 Pipe supports (posts to the base frame)",
+   "group": "pipe",
+   "inst": [
+    0.0
+   ],
+   "material": "S235",
+   "step": "../A1000_pipe/PL_90_Pipe_supports__posts_to_the_base_frame.step",
+   "dx": 0.0,
+   "desc": "clamps <= 1.5 m (tube) / 2.5 m (pipe) apart"
+  }
+ ]
+}

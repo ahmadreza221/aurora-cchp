@@ -1,0 +1,1060 @@
+{
+ "has_e2": false,
+ "groups": {
+  "core": "GR180 core (v13A)",
+  "E1": "E1 GG turbine + NGV (IN713LC)",
+  "E2": "E2 combustor + pressure casing",
+  "E3": "E3 interduct + FPT + PMG",
+  "E3pmg": "E3 PMG (stator, magnets, windings)",
+  "E3sens": "E3 sensors",
+  "E4": "E4 recuperator",
+  "E4ins": "E4 insulation",
+  "legacy": "v13A combustor (stand-in until E2)"
+ },
+ "parts": [
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    4.5,
+    97.0,
+    96.8
+   ],
+   "name": "v13A CC_FrontCap",
+   "tris": 2644,
+   "tol_mm": 0.165
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    77.0,
+    42.2,
+    42.2
+   ],
+   "name": "v13A CC_Inner",
+   "tris": 16616,
+   "tol_mm": 0.117
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    75.0,
+    96.0,
+    96.0
+   ],
+   "name": "v13A CC_Outer",
+   "tris": 24440,
+   "tol_mm": 0.186
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    12.5,
+    97.0,
+    96.8
+   ],
+   "name": "v13A CC_RearCone",
+   "tris": 970,
+   "tol_mm": 0.165
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    66.0,
+    88.3,
+    88.3
+   ],
+   "name": "v13A CC_Vaporisers",
+   "tris": 5184,
+   "tol_mm": 0.17
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    127.3,
+    108.8,
+    107.6
+   ],
+   "name": "v13A Casing",
+   "tris": 6140,
+   "tol_mm": 0.239
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    38.0,
+    74.0,
+    74.0
+   ],
+   "name": "v13A Compressor",
+   "tris": 13703,
+   "tol_mm": 0.134
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    17.0,
+    107.0,
+    107.0
+   ],
+   "name": "v13A Diffuser",
+   "tris": 25454,
+   "tol_mm": 0.183
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    8.1,
+    25.4,
+    15.9
+   ],
+   "name": "v13A EGT_Probe",
+   "tris": 592,
+   "tol_mm": 0.037
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    170.3,
+    84.5,
+    79.3
+   ],
+   "name": "v13A Fasteners",
+   "tris": 2840,
+   "tol_mm": 0.247
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    7.0,
+    22.0,
+    22.0
+   ],
+   "name": "v13A FrontBearing_608_hybrid_8x22x7",
+   "tris": 5238,
+   "tol_mm": 0.038
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    1.4,
+    24.9,
+    24.9
+   ],
+   "name": "v13A FrontBearing_Oring",
+   "tris": 3744,
+   "tol_mm": 0.046
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    16.2,
+    19.8,
+    19.8
+   ],
+   "name": "v13A GasBulkhead",
+   "tris": 820,
+   "tol_mm": 0.039
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    9.2,
+    27.3,
+    18.6
+   ],
+   "name": "v13A Igniter",
+   "tris": 1216,
+   "tol_mm": 0.041
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    39.2,
+    94.0,
+    93.9
+   ],
+   "name": "v13A Intake",
+   "tris": 15666,
+   "tol_mm": 0.166
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    12.5,
+    107.0,
+    106.8
+   ],
+   "name": "v13A IntakeOuter",
+   "tris": 13902,
+   "tol_mm": 0.182
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    24.1,
+    17.9,
+    17.9
+   ],
+   "name": "v13A NoseCone",
+   "tris": 1576,
+   "tol_mm": 0.042
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    2.0,
+    2.0,
+    2.0
+   ],
+   "name": "v13A RPM_Magnet",
+   "tris": 140,
+   "tol_mm": 0.02
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    6.4,
+    5.5,
+    26.4
+   ],
+   "name": "v13A RPM_Sensor",
+   "tris": 748,
+   "tol_mm": 0.033
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    7.0,
+    22.0,
+    22.0
+   ],
+   "name": "v13A RearBearing_608_hybrid_8x22x7",
+   "tris": 5238,
+   "tol_mm": 0.038
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    107.3,
+    39.9,
+    40.0
+   ],
+   "name": "v13A ShaftTunnel",
+   "tris": 7836,
+   "tol_mm": 0.146
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    84.2,
+    89.4,
+    77.4
+   ],
+   "name": "v13A Starter",
+   "tris": 2302,
+   "tol_mm": 0.174
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    121.7,
+    90.8,
+    99.9
+   ],
+   "name": "v13A SupplyLines",
+   "tris": 26358,
+   "tol_mm": 0.222
+  },
+  {
+   "group": "legacy",
+   "desc": "v13A part, replaced by E2 (recuperated combustor, no vaporisers)",
+   "bbox_mm": [
+    23.7,
+    81.3,
+    90.0
+   ],
+   "name": "v13A SupplySeals",
+   "tris": 9572,
+   "tol_mm": 0.149
+  },
+  {
+   "group": "core",
+   "desc": "GR180 core per Rutten drawings (build_gr180.py v13A)",
+   "bbox_mm": [
+    1.0,
+    21.2,
+    21.2
+   ],
+   "name": "v13A WaveSpring_22x16_free3_0_inst2_8",
+   "tris": 14536,
+   "tol_mm": 0.037
+  },
+  {
+   "group": "E1",
+   "desc": "GG turbine disc, cast IN713LC, friction-welded to the shaft at x 104.3",
+   "bbox_mm": [
+    15.1,
+    44.2,
+    44.2
+   ],
+   "name": "E1 disc (bore-less, final)",
+   "tris": 7026,
+   "tol_mm": 0.083
+  },
+  {
+   "group": "E1",
+   "desc": "29 blades, integral with the disc (blisk)",
+   "bbox_mm": [
+    9.1,
+    16.4,
+    6.2
+   ],
+   "name": "E1 rotor blade x29",
+   "tris": 157180,
+   "tol_mm": 0.026
+  },
+  {
+   "group": "E1",
+   "desc": "NGV inner/outer rings, cast IN713LC",
+   "bbox_mm": [
+    24.0,
+    75.9,
+    75.9
+   ],
+   "name": "E1 NGV rings (final)",
+   "tris": 1580,
+   "tol_mm": 0.132
+  },
+  {
+   "group": "E1",
+   "desc": "21 NGV vanes, cast integral with the rings",
+   "bbox_mm": [
+    11.5,
+    15.3,
+    10.8
+   ],
+   "name": "E1 NGV vane x21",
+   "tris": 87276,
+   "tol_mm": 0.028
+  },
+  {
+   "group": "E1",
+   "desc": "GG shaft, 42CrMo4, friction-welded to the disc; compressor-side nut clamps the stack",
+   "bbox_mm": [
+    152.0,
+    15.5,
+    15.5
+   ],
+   "name": "E1 shaft (42CrMo4, welded)",
+   "tris": 1076,
+   "tol_mm": 0.184
+  },
+  {
+   "group": "E3",
+   "desc": "Interduct NGV module",
+   "material": "SLM IN718 (iDesign3D, Tehran); stress relief + solution/age AMS 5662; flanges & seal lands machined 5-axis",
+   "mass_kg": "2.633",
+   "bbox_mm": [
+    90.0,
+    175.9,
+    175.8
+   ],
+   "name": "E3-101_Interduct_NGV_module",
+   "tris": 42724,
+   "tol_mm": 0.318
+  },
+  {
+   "group": "E3",
+   "desc": "Shroud DiffuserWestWall",
+   "material": "IN718 ring (5-axis/turn) + IN625 1.5-3 mm radial wall, EB/TIG weld",
+   "mass_kg": "1.409",
+   "bbox_mm": [
+    30.0,
+    250.0,
+    249.9
+   ],
+   "name": "E3-102_Shroud_DiffuserWestWall",
+   "tris": 5834,
+   "tol_mm": 0.426
+  },
+  {
+   "group": "E3",
+   "desc": "FPT Blisk",
+   "material": "IN718 forged disc AMS 5662/5663 (VDM Metals DE, Aubert & Duval FR, GH4169 CN); 5-axis CNC; Hirth 24T; balance G1.0; spin test 78k",
+   "mass_kg": "0.418",
+   "bbox_mm": [
+    23.0,
+    110.4,
+    110.7
+   ],
+   "name": "E3-103_FPT_Blisk",
+   "tris": 43406,
+   "tol_mm": 0.193
+  },
+  {
+   "group": "E3",
+   "desc": "FPT Nut",
+   "material": "IN718, M10x1.25 RH, 15 AF, silver plated",
+   "mass_kg": "0.006",
+   "bbox_mm": [
+    6.0,
+    15.0,
+    17.3
+   ],
+   "name": "E3-104_FPT_Nut",
+   "tris": 192,
+   "tol_mm": 0.028
+  },
+  {
+   "group": "E3",
+   "desc": "Tie Stud",
+   "material": "IN718 stud M10x1.25 rolled thread, stretch-controlled preload ~25 kN",
+   "mass_kg": "0.03",
+   "bbox_mm": [
+    46.5,
+    10.0,
+    10.0
+   ],
+   "name": "E3-105_Tie_Stud",
+   "tris": 140,
+   "tol_mm": 0.058
+  },
+  {
+   "group": "E3",
+   "desc": "HeatDam Sleeve",
+   "material": "IN718, Hirth 24T, 4 labyrinth teeth r 14.0, slinger",
+   "mass_kg": "0.054",
+   "bbox_mm": [
+    22.0,
+    35.0,
+    35.0
+   ],
+   "name": "E3-106_HeatDam_Sleeve",
+   "tris": 2220,
+   "tol_mm": 0.065
+  },
+  {
+   "group": "E3",
+   "desc": "Heat Shield",
+   "material": "1.4828 0.8 mm + ceramic paper 3 mm (Unifrax/Thermal Ceramics EU)",
+   "mass_kg": "0.006",
+   "bbox_mm": [
+    0.8,
+    47.9,
+    48.0
+   ],
+   "name": "E3-107_Heat_Shield",
+   "tris": 400,
+   "tol_mm": 0.081
+  },
+  {
+   "group": "E3",
+   "desc": "Collector Body",
+   "material": "1.4828/310S sheet 2.5-3 mm, TIG; DN250 PN6 flange 1.4541; hub bell spun",
+   "mass_kg": "19.23",
+   "bbox_mm": [
+    374.8,
+    484.7,
+    469.9
+   ],
+   "name": "E3-110_Collector_Body",
+   "tris": 11930,
+   "tol_mm": 0.8
+  },
+  {
+   "group": "E3",
+   "desc": "Collector WestCover",
+   "material": "1.4828 plate 6 mm laser + machined, 24 x M8 to drum flange",
+   "mass_kg": "7.763",
+   "bbox_mm": [
+    6.0,
+    469.2,
+    470.0
+   ],
+   "name": "E3-111_Collector_WestCover",
+   "tris": 5688,
+   "tol_mm": 0.798
+  },
+  {
+   "group": "E3",
+   "desc": "Support Cone",
+   "material": "IN625 1.5 mm spun cone + flange, 6 windows; mica spacer 3 mm",
+   "mass_kg": "0.416",
+   "bbox_mm": [
+    37.0,
+    199.0,
+    198.7
+   ],
+   "name": "E3-112_Support_Cone",
+   "tris": 2468,
+   "tol_mm": 0.341
+  },
+  {
+   "group": "E3",
+   "desc": "Insulation HubCylinder",
+   "material": "microporous panel 6 mm (+ 3 mm ceramic paper on the hub bell, not modelled)",
+   "mass_kg": "0.045",
+   "bbox_mm": [
+    39.9,
+    194.5,
+    194.8
+   ],
+   "name": "E3-113_Insulation_HubCylinder",
+   "tris": 424,
+   "tol_mm": 0.334
+  },
+  {
+   "group": "E3",
+   "desc": "Shaft",
+   "material": "34CrNiMo6 (1.6582) Q+T, CNC turn + cylindrical grind (h5, runout <= 3 um)",
+   "mass_kg": "1.109",
+   "bbox_mm": [
+    230.6,
+    30.0,
+    30.0
+   ],
+   "name": "E3-201_Shaft",
+   "tris": 1004,
+   "tol_mm": 0.281
+  },
+  {
+   "group": "E3pmg",
+   "desc": "PM Magnets",
+   "material": "Sm2Co17 (VACOMAX 225 HR class), 8 axial x 8 segments, parallel (2-pole) magnetised",
+   "mass_kg": "0.453",
+   "bbox_mm": [
+    67.0,
+    44.0,
+    43.9
+   ],
+   "name": "E3-202_PM_Magnets",
+   "tris": 2624,
+   "tol_mm": 0.11
+  },
+  {
+   "group": "E3pmg",
+   "desc": "CF Sleeve",
+   "material": "T700S-class carbon / high-Tg epoxy, hoop wound, 3 mm, 0.18 mm interference (press/thermal)",
+   "mass_kg": "0.052",
+   "bbox_mm": [
+    75.0,
+    50.0,
+    49.9
+   ],
+   "name": "E3-203_CF_Sleeve",
+   "tris": 348,
+   "tol_mm": 0.124
+  },
+  {
+   "group": "E3pmg",
+   "desc": "Magnet EndRings",
+   "material": "Ti-6Al-4V rings, bonded",
+   "mass_kg": "0.029",
+   "bbox_mm": [
+    75.0,
+    44.0,
+    44.0
+   ],
+   "name": "E3-204_Magnet_EndRings",
+   "tris": 640,
+   "tol_mm": 0.117
+  },
+  {
+   "group": "E3",
+   "desc": "Bearing B1 71905 hybrid",
+   "material": "71905 class 25x42x9, 15 deg, hybrid Si3N4 balls, P4, outer-ring-guided PEEK/phenolic cage (locating)",
+   "mass_kg": "0.043",
+   "bbox_mm": [
+    9.0,
+    41.9,
+    42.0
+   ],
+   "name": "E3-205_Bearing_B1_71905_hybrid",
+   "tris": 384,
+   "tol_mm": 0.072
+  },
+  {
+   "group": "E3",
+   "desc": "Bearing B2 7005 hybrid",
+   "material": "7005 class 25x47x12, 15 deg, hybrid Si3N4 balls, P4, outer-ring-guided cage (floating, spring preloaded)",
+   "mass_kg": "0.081",
+   "bbox_mm": [
+    12.0,
+    46.9,
+    47.0
+   ],
+   "name": "E3-206_Bearing_B2_7005_hybrid",
+   "tris": 376,
+   "tol_mm": 0.081
+  },
+  {
+   "group": "E3",
+   "desc": "B1 SFD Cartridge",
+   "material": "1.4542 (17-4PH H1150), SFD land OD 50 g5 (c 0.075), 2 FKM O-rings 2.62",
+   "mass_kg": "0.074",
+   "bbox_mm": [
+    17.0,
+    49.9,
+    50.0
+   ],
+   "name": "E3-207_B1_SFD_Cartridge",
+   "tris": 1546,
+   "tol_mm": 0.087
+  },
+  {
+   "group": "E3",
+   "desc": "B2 SFD Cartridge",
+   "material": "1.4542 (17-4PH H1150), SFD land OD 55 g5",
+   "mass_kg": "0.105",
+   "bbox_mm": [
+    21.4,
+    55.0,
+    55.0
+   ],
+   "name": "E3-208_B2_SFD_Cartridge",
+   "tris": 1530,
+   "tol_mm": 0.097
+  },
+  {
+   "group": "E3",
+   "desc": "B2 Preload WaveSpring",
+   "material": "wave spring 17-7PH, 200 N at 3.0 mm",
+   "mass_kg": "0.009",
+   "bbox_mm": [
+    3.0,
+    46.5,
+    46.6
+   ],
+   "name": "E3-209_B2_Preload_WaveSpring",
+   "tris": 420,
+   "tol_mm": 0.079
+  },
+  {
+   "group": "E3",
+   "desc": "B2 Locknut",
+   "material": "precision locknut M20x1 (KMT/KMD 4 class)",
+   "mass_kg": "0.023",
+   "bbox_mm": [
+    6.0,
+    31.9,
+    32.0
+   ],
+   "name": "E3-210_B2_Locknut",
+   "tris": 388,
+   "tol_mm": 0.055
+  },
+  {
+   "group": "E3",
+   "desc": "N2 Target 2tooth",
+   "material": "1.4542 2-tooth target wheel",
+   "mass_kg": "0.019",
+   "bbox_mm": [
+    6.0,
+    27.9,
+    34.0
+   ],
+   "name": "E3-211_N2_Target_2tooth",
+   "tris": 420,
+   "tol_mm": 0.053
+  },
+  {
+   "group": "E3",
+   "desc": "B1 Bearing Housing",
+   "material": "SLM 316L (3dfast) with oil/buffer galleries + jets, stress relieved, bores machined",
+   "mass_kg": "0.636",
+   "bbox_mm": [
+    39.2,
+    120.0,
+    119.8
+   ],
+   "name": "E3-301_B1_Bearing_Housing",
+   "tris": 3500,
+   "tol_mm": 0.209
+  },
+  {
+   "group": "E3",
+   "desc": "PMG Housing Jacket",
+   "material": "SLM AlSi10Mg (3dfast), internal helical channel 12x6 (6 turns), T6, bore for stator shrink fit",
+   "mass_kg": "1.849",
+   "bbox_mm": [
+    154.6,
+    167.7,
+    168.0
+   ],
+   "name": "E3-302_PMG_Housing_Jacket",
+   "tris": 9484,
+   "tol_mm": 0.34
+  },
+  {
+   "group": "E3pmg",
+   "desc": "Stator Core",
+   "material": "0.10 mm NO10 Si-steel (JFE 10JNEX900 / Baosteel B10AT class), bonded stack 63 mm, 24 slots",
+   "mass_kg": "2.63",
+   "bbox_mm": [
+    63.0,
+    117.7,
+    117.6
+   ],
+   "name": "E3-303_Stator_Core",
+   "tris": 1172,
+   "tol_mm": 0.214
+  },
+  {
+   "group": "E3pmg",
+   "desc": "Stator Winding",
+   "material": "Litz wire (e.g. 270 x 0.18 mm, ~7 mm2) class H, 2-layer lap 10/12, VPI + potting, 3 x PT1000",
+   "mass_kg": "2.244",
+   "bbox_mm": [
+    132.6,
+    93.9,
+    93.9
+   ],
+   "name": "E3-304_Stator_Winding",
+   "tris": 2864,
+   "tol_mm": 0.225
+  },
+  {
+   "group": "E3",
+   "desc": "B2 Housing EndShield",
+   "material": "SLM 316L (3dfast), oil galleries, bores machined",
+   "mass_kg": "1.172",
+   "bbox_mm": [
+    35.0,
+    160.8,
+    152.0
+   ],
+   "name": "E3-305_B2_Housing_EndShield",
+   "tris": 3288,
+   "tol_mm": 0.269
+  },
+  {
+   "group": "E3",
+   "desc": "End Cover",
+   "material": "AlSi10Mg / 6082-T6, 2 x M12x1 sensor bosses",
+   "mass_kg": "0.089",
+   "bbox_mm": [
+    28.0,
+    84.9,
+    82.4
+   ],
+   "name": "E3-306_End_Cover",
+   "tris": 1228,
+   "tol_mm": 0.146
+  },
+  {
+   "group": "E3",
+   "desc": "Terminal Box",
+   "material": "AlSi10Mg cast / Al box IP66, 3 x M8 studs on PEEK board, PT1000 connector, M40 EMC gland (east)",
+   "mass_kg": "0.269",
+   "bbox_mm": [
+    80.0,
+    100.0,
+    79.0
+   ],
+   "name": "E3-307_Terminal_Box",
+   "tris": 320,
+   "tol_mm": 0.181
+  },
+  {
+   "group": "E3",
+   "desc": "Foot Front Flexure",
+   "material": "1.4828 flexure plate 8 mm + base 10 mm",
+   "mass_kg": "2.99",
+   "bbox_mm": [
+    48.0,
+    260.0,
+    206.9
+   ],
+   "name": "E3-401_Foot_Front_Flexure",
+   "tris": 148,
+   "tol_mm": 0.403
+  },
+  {
+   "group": "E3",
+   "desc": "Foot Rear Flexure",
+   "material": "S355J2 plate 10 mm flexure + base, clamp band",
+   "mass_kg": "4.926",
+   "bbox_mm": [
+    50.0,
+    220.0,
+    340.0
+   ],
+   "name": "E3-402_Foot_Rear_Flexure",
+   "tris": 652,
+   "tol_mm": 0.49
+  },
+  {
+   "group": "E3sens",
+   "desc": "TE-510A FPT inlet TC",
+   "material": "type K class 1, MI 1.5 mm Inconel 600, ungrounded, immersion mid-span (Roessel / Electronic Sensor)",
+   "mass_kg": "0.005",
+   "bbox_mm": [
+    10.0,
+    35.2,
+    35.2
+   ],
+   "name": "E3-501_TE-510A_FPT_inlet_TC",
+   "tris": 284,
+   "tol_mm": 0.061
+  },
+  {
+   "group": "E3sens",
+   "desc": "TE-510B FPT inlet TC",
+   "material": "type K class 1, MI 1.5 mm Inconel 600, ungrounded, immersion mid-span (Roessel / Electronic Sensor)",
+   "mass_kg": "0.005",
+   "bbox_mm": [
+    10.0,
+    35.2,
+    35.2
+   ],
+   "name": "E3-502_TE-510B_FPT_inlet_TC",
+   "tris": 284,
+   "tol_mm": 0.061
+  },
+  {
+   "group": "E3sens",
+   "desc": "PT-524 P45 tap",
+   "material": "static tap 1.6 mm + 1/8\" tube to PT-524 (0-4 bar abs)",
+   "mass_kg": "0.003",
+   "bbox_mm": [
+    8.0,
+    18.4,
+    18.4
+   ],
+   "name": "E3-503_PT-524_P45_tap",
+   "tris": 140,
+   "tol_mm": 0.033
+  },
+  {
+   "group": "E3sens",
+   "desc": "TE-505A FPT exit TOT",
+   "material": "type K class 1, MI 3 mm Inconel 600, immersion 60 mm (TOT = recuperator hot inlet)",
+   "mass_kg": "0.005",
+   "bbox_mm": [
+    10.0,
+    10.0,
+    90.0
+   ],
+   "name": "E3-504_TE-505A_FPT_exit_TOT",
+   "tris": 284,
+   "tol_mm": 0.109
+  },
+  {
+   "group": "E3sens",
+   "desc": "TE-505B FPT exit TOT",
+   "material": "type K class 1, MI 3 mm Inconel 600, immersion 60 mm (TOT = recuperator hot inlet)",
+   "mass_kg": "0.005",
+   "bbox_mm": [
+    10.0,
+    10.0,
+    90.0
+   ],
+   "name": "E3-505_TE-505B_FPT_exit_TOT",
+   "tris": 284,
+   "tol_mm": 0.109
+  },
+  {
+   "group": "E3sens",
+   "desc": "PT-525 FPT exit tap",
+   "material": "static tap (proposed new tag PT-525, FPT exit/collector static)",
+   "mass_kg": "0.003",
+   "bbox_mm": [
+    8.0,
+    8.0,
+    18.0
+   ],
+   "name": "E3-506_PT-525_FPT_exit_tap",
+   "tris": 156,
+   "tol_mm": 0.026
+  },
+  {
+   "group": "E3sens",
+   "desc": "SE-002B1 N2 speed",
+   "material": "M12x1 Hall/inductive speed sensor, 2 ppr on the 2-tooth target, gap 1.0 mm (Jaquet DSD / Baumer class)",
+   "mass_kg": "0.023",
+   "bbox_mm": [
+    14.0,
+    50.9,
+    50.9
+   ],
+   "name": "E3-507_SE-002B1_N2_speed",
+   "tris": 284,
+   "tol_mm": 0.088
+  },
+  {
+   "group": "E3sens",
+   "desc": "SE-002B2 N2 speed",
+   "material": "M12x1 Hall/inductive speed sensor, 2 ppr on the 2-tooth target, gap 1.0 mm (Jaquet DSD / Baumer class)",
+   "mass_kg": "0.023",
+   "bbox_mm": [
+    14.0,
+    50.9,
+    50.9
+   ],
+   "name": "E3-508_SE-002B2_N2_speed",
+   "tris": 284,
+   "tol_mm": 0.088
+  },
+  {
+   "group": "E3sens",
+   "desc": "VE-011 vib FPT side",
+   "material": "IEPE 100 mV/g accelerometer, M5 stud (MMF KS80D / Hansford HS-100 class), radial horizontal",
+   "mass_kg": "0.024",
+   "bbox_mm": [
+    20.0,
+    25.0,
+    20.0
+   ],
+   "name": "E3-509_VE-011_vib_FPT_side",
+   "tris": 184,
+   "tol_mm": 0.045
+  },
+  {
+   "group": "E3sens",
+   "desc": "VE-012 vib PMG end",
+   "material": "IEPE 100 mV/g accelerometer, radial horizontal at B2",
+   "mass_kg": "0.024",
+   "bbox_mm": [
+    20.0,
+    25.0,
+    20.0
+   ],
+   "name": "E3-510_VE-012_vib_PMG_end",
+   "tris": 184,
+   "tol_mm": 0.045
+  },
+  {
+   "group": "E3sens",
+   "desc": "TE-721 B2 RTD",
+   "material": "PT1000 class A, 3-wire, spring-loaded on the B2 outer ring",
+   "mass_kg": "0.004",
+   "bbox_mm": [
+    10.0,
+    32.0,
+    10.0
+   ],
+   "name": "E3-511_TE-721_B2_RTD",
+   "tris": 284,
+   "tol_mm": 0.042
+  },
+  {
+   "group": "E3sens",
+   "desc": "TE-720 B1 RTD",
+   "material": "PT1000 class A, 3-wire, embedded in the B1 housing at the outer ring, lead via cone window",
+   "mass_kg": "0.001",
+   "bbox_mm": [
+    5.0,
+    14.0,
+    5.0
+   ],
+   "name": "E3-512_TE-720_B1_RTD",
+   "tris": 140,
+   "tol_mm": 0.02
+  },
+  {
+   "group": "E3",
+   "desc": "GapAir Fan 48V",
+   "material": "48 V EC radial blower 4 g/s @ 2 kPa + G4 filter (ebm-papst / Micronel class)",
+   "mass_kg": "0.076",
+   "bbox_mm": [
+    60.0,
+    30.0,
+    59.9
+   ],
+   "name": "E3-701_GapAir_Fan_48V",
+   "tris": 208,
+   "tol_mm": 0.108
+  },
+  {
+   "group": "E4",
+   "desc": "two brazed plate-fin cores, 347H, counterflow",
+   "bbox_mm": [
+    535.8,
+    280.5,
+    420.0
+   ],
+   "name": "E4 core",
+   "tris": 48,
+   "tol_mm": 0.8
+  },
+  {
+   "group": "E4",
+   "bbox_mm": [
+    929.0,
+    342.5,
+    973.0
+   ],
+   "name": "E4 headers + plenums",
+   "tris": 1690,
+   "tol_mm": 0.8
+  },
+  {
+   "group": "E4",
+   "bbox_mm": [
+    1114.9,
+    461.5,
+    789.0
+   ],
+   "name": "E4 ducts",
+   "tris": 55606,
+   "tol_mm": 0.8
+  },
+  {
+   "group": "E4",
+   "bbox_mm": [
+    907.0,
+    535.0,
+    979.5
+   ],
+   "name": "E4 ports",
+   "tris": 8376,
+   "tol_mm": 0.8
+  },
+  {
+   "group": "E4",
+   "bbox_mm": [
+    970.0,
+    420.0,
+    995.0
+   ],
+   "name": "E4 supports",
+   "tris": 624,
+   "tol_mm": 0.8
+  },
+  {
+   "group": "E4ins",
+   "desc": "insulation (skin <= 60 C)",
+   "bbox_mm": [
+    1270.6,
+    497.3,
+    1034.0
+   ],
+   "name": "E4 insulation",
+   "tris": 9898,
+   "tol_mm": 0.8
+  }
+ ]
+}

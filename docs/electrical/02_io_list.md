@@ -103,6 +103,7 @@
 | `FT-752` | دبی مدار خنک‌کاری (توربینی/vortex) | R-ENG | پالس 24 V | 1–30 L/min | ±2 % | هر پالس | M12 | **B2** FI03 | حفاظت | دبی کم → آلارم 5 s، CSD 30 s |
 | `TE-GLY` | دمای رفت گلیکول مدار کمکی به PMG، B3 و خنک‌کن روغن (خروجی HX-4 / DC-1؛ تگ مشترک با docs/hvac) | R-ENG | PT1000 class A، 3-wire | 0–120 °C | ±0.3 K | 1 Hz | M12 4-pin | **B2** RTD08 | حفاظت، پایش | طراحی 55 °C (DC-1، docs/hvac)؛ ALM 58 °C؛ FSD 65 °C؛ گرمای مدار ~3.1 kW |
 | `DC-1-FAN` | فن EC dry cooler مدار گلیکول DC-1 (تگ مشترک با docs/hvac) | R-CHP | تغذیه از BOP-R + فرمان 0–10 V و tach از B4 | 0–100 % | — | 1 Hz | M12 5-pin | **B4** FAN3 | کنترل | PI روی TE-GLY؛ DC-1 اصلی؛ HX-4 فقط trim اختیاری (XV-305 NC روی B6-R) وقتی برج کار می‌کند |
+| `XV-307` | شیر برقی آب پدهای پیش‌سرمایش adiabatic در DC-1 (آب نرم‌شده؛ تگ مشترک با docs/hvac)، NC | R-CHP | DO 24 V، NC، ≤ 0.5 A | باز/بسته | — | — | EN 175301-803 A | **B4** DO12 | کنترل | باز وقتی TT-OA > 35 °C یا TE-GLY > 42 °C؛ بسته در یخ‌زدگی (TT-OA < 3 °C) و ESD |
 | `TE-754` | دمای برگشت مایع خنک‌کن (بعد از PMG) | R-ENG | PT1000 class A، 3-wire | 0–100 °C | ±0.3 K | 1 Hz | M12 4-pin | **B2** RTD09 | پایش | تلفات PMG |
 | `PT-755` | فشار مدار خنک‌کاری (تشخیص نشتی) | R-ENG | 4–20 mA، 2-wire (loop 24 V از B2) | 0–4 barg | ±0.5 % FS | 2 Hz | M12 4-pin A | **B2** AI10 | حفاظت، پایش |  |
 | `LSL-756` | سطح پایین منبع انبساط | R-ENG | DI 24 V | — | — | 1 Hz | M12 | **B2** DI09 | حفاظت |  |
@@ -276,7 +277,7 @@
 | B2 fast AI / IEPE (ADC H7) | 5 | 8 | 3 |
 | B2 frequency/pulse | 3 | 6 | 3 |
 | B2 DI 24 V (ISO1I813T ×4) | 23 | 32 | 9 |
-| B4 DO 24 V high-side | 11 | 16 | 5 |
+| B4 DO 24 V high-side | 12 | 16 | 4 |
 | B4 PWM current out | 1 | 4 | 3 |
 | B4 AO 0–10 V | 1 | 4 | 3 |
 | B4 BLDC drives (MD) + fans | 7 | 8 | 1 |

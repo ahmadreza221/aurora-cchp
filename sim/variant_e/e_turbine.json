@@ -1,0 +1,237 @@
+{
+ "title": "GR180 version E radial turbine (bought TC-class wheel) at 770 C design and 850 C peak",
+ "date": "2026-10-23",
+ "script": "sim/variant_e/e_turbine.py",
+ "geometry": {
+  "D4": 288.0,
+  "Z_R": 12,
+  "D6t": 232.0,
+  "D6h": 75.0,
+  "Lz": 92.0,
+  "b4": 30.0,
+  "t_LE": 3.0,
+  "t_TE": 2.0,
+  "eps_a": 0.55,
+  "eps_r": 0.55,
+  "s_back": 3.0,
+  "Z_N": 19,
+  "r3_over_r4": 1.1,
+  "r2_over_r3": 1.3,
+  "t_vane_TE": 1.2
+ },
+ "design_770": {
+  "W_kW": 919.5153603680445,
+  "m_kg_s": 3.0141436444038585,
+  "T01_C": 770.0000000000001,
+  "P01_bar": 3.82853080815851,
+  "dh_shaft_kJ_kg": 305.06686769067625,
+  "eta_ts": 0.8602409510277406,
+  "eta_tt": 0.9083036377819463,
+  "U4_m_s": 527.7875658030852,
+  "U6t_m_s": 425.1622057858186,
+  "U_over_C0": 0.6266956664456406,
+  "psi": 1.0979314408626206,
+  "phi": 0.36705555745901147,
+  "Ns": 0.66579365361058,
+  "PR_ts": 3.9513038491565946,
+  "P6_bar": 0.9689284738190178,
+  "T6_C": 493.9639834902922,
+  "c6_m_s": 193.72735918578613,
+  "Mrel6_tip": 0.8558467250440599,
+  "beta6rms_deg": 58.48543980875342,
+  "A6_m2": 0.03597140607759361,
+  "rotor_inlet": {
+   "alpha4_deg": 75.11158575779082,
+   "beta4_deg": 18.546469186848608,
+   "beta4_opt_deg": -29.46801613687145,
+   "c4": 599.604450657482,
+   "W4": 162.50007444489546,
+   "cm4": 154.06079500504055,
+   "M4": 1.0195450019159136,
+   "P4_bar": 1.9515790399102433,
+   "T4_C": 617.1340487618127,
+   "T0rel4_C": 628.3616814451938
+  },
+  "T0rel6_rms_C": 552.3666514311386,
+  "nozzle": {
+   "Z": 19,
+   "r_in_mm": 205.92000000000002,
+   "r_out_mm": 158.4,
+   "b_mm": 30.0,
+   "alpha3_deg": 75.39090983106301,
+   "c3": 555.2837442374397,
+   "M3": 0.9328505682676906,
+   "throat_mm": 12.011919969625612,
+   "throat_area_mm2": 6846.7943826865985,
+   "P3_bar": 2.152761440764553
+  },
+  "losses_kJ_kg": {
+   "nozzle": 9.250201098430509,
+   "incidence": 7.294939962208862,
+   "passage": 11.56804112321252,
+   "clearance": 1.2891784307932563,
+   "trailing_edge": 0.6225830673375369,
+   "disc_friction": 0.7726011443288496,
+   "exit_KE": 18.765144848549294
+  },
+  "flow_function": 0.00025427588851522297,
+  "gas": {
+   "cp": 1175.9502176127746,
+   "R": 292.02240119104664,
+   "gamma": 1.3303690592894757
+  },
+  "cycle_eta_ts": 0.81
+ },
+ "peak_850": {
+  "W_kW": 978.3287003752391,
+  "m_kg_s": 2.9776589189922835,
+  "T01_C": 850.0000000000001,
+  "P01_bar": 3.91781281315642,
+  "dh_shaft_kJ_kg": 328.5563346880343,
+  "eta_ts": 0.843355917529463,
+  "eta_tt": 0.8929829426812282,
+  "U4_m_s": 527.7875658030852,
+  "U6t_m_s": 425.1622057858186,
+  "U_over_C0": 0.5979222054153501,
+  "psi": 1.1820789020130307,
+  "phi": 0.3942692050847699,
+  "Ns": 0.6430609887756132,
+  "PR_ts": 4.055109287601297,
+  "P6_bar": 0.9661423491434206,
+  "T6_C": 557.1774866159969,
+  "c6_m_s": 208.09038402280808,
+  "Mrel6_tip": 0.8351033738238152,
+  "beta6rms_deg": 56.63071555108233,
+  "A6_m2": 0.03597140607759361,
+  "rotor_inlet": {
+   "alpha4_deg": 74.94359463334895,
+   "beta4_deg": 29.795571297814487,
+   "beta4_opt_deg": -27.415054492706524,
+   "c4": 646.0656161633526,
+   "W4": 193.39434274913972,
+   "cm4": 167.828358028511,
+   "M4": 1.0661551263494744,
+   "P4_bar": 1.8896209379328968,
+   "T4_C": 675.8566975150078,
+   "T0rel4_C": 691.4608810959346
+  },
+  "T0rel6_rms_C": 616.8919971994266,
+  "nozzle": {
+   "Z": 19,
+   "r_in_mm": 205.92000000000002,
+   "r_out_mm": 158.4,
+   "b_mm": 30.0,
+   "alpha3_deg": 75.22578466542303,
+   "c3": 598.2936142164797,
+   "M3": 0.9746667049916669,
+   "throat_mm": 12.15794766509008,
+   "throat_area_mm2": 6930.030169101346,
+   "P3_bar": 2.102383951289784
+  },
+  "losses_kJ_kg": {
+   "nozzle": 10.738657464366536,
+   "incidence": 13.216169154887611,
+   "passage": 12.916195645209363,
+   "clearance": 1.1947694302913483,
+   "trailing_edge": 0.585901587493889,
+   "disc_friction": 0.7232269107190793,
+   "exit_KE": 21.65080396137987
+  },
+  "flow_function": 0.000254712435056752,
+  "gas": {
+   "cp": 1198.440521203806,
+   "R": 292.5002599155321,
+   "gamma": 1.322869257957018
+  },
+  "cycle_eta_ts": 0.8069336260580079
+ },
+ "alternatives": {
+  "D4 280": {
+   "eta_ts": 0.8518,
+   "U_over_C0": 0.609,
+   "c6": 194.4,
+   "T0rel4_C": 624.5
+  },
+  "D4 300": {
+   "eta_ts": 0.8695,
+   "U_over_C0": 0.653,
+   "c6": 193.0,
+   "T0rel4_C": 635.5
+  },
+  "13 blades": {
+   "eta_ts": 0.8593,
+   "U_over_C0": 0.627,
+   "c6": 194.6,
+   "T0rel4_C": 628.6
+  },
+  "clearance 0.8": {
+   "eta_ts": 0.8589,
+   "U_over_C0": 0.627,
+   "c6": 193.8,
+   "T0rel4_C": 628.8
+  },
+  "exducer 240/80": {
+   "eta_ts": 0.8672,
+   "U_over_C0": 0.627,
+   "c6": 181.9,
+   "T0rel4_C": 626.3
+  },
+  "b4 26": {
+   "eta_ts": 0.8557,
+   "U_over_C0": 0.627,
+   "c6": 194.1,
+   "T0rel4_C": 629.7
+  }
+ },
+ "life": [
+  {
+   "case": "TIT 770 C",
+   "wheel_blade_root": {
+    "stress_MPa": 544,
+    "T_metal_C": 560,
+    "creep_life_h": 89936090.29694855
+   },
+   "wheel_rim": {
+    "stress_MPa": 353,
+    "T_metal_C": 603,
+    "creep_life_h": 149675910.96926385
+   },
+   "nozzle_vane": {
+    "stress_MPa": 18.0,
+    "T_peak_gas_C": 854,
+    "T_metal_C": 794,
+    "creep_life_h": 7934560.605912951
+   },
+   "basis": "IN713LC cast (est. LMP curve), SF 1.25 on stress; alloy X SF 1.5; C = 20"
+  },
+  {
+   "case": "TIT 850 C",
+   "wheel_blade_root": {
+    "stress_MPa": 544,
+    "T_metal_C": 624,
+    "creep_life_h": 924749.6207474096
+   },
+   "wheel_rim": {
+    "stress_MPa": 353,
+    "T_metal_C": 666,
+    "creep_life_h": 1918936.7068653216
+   },
+   "nozzle_vane": {
+    "stress_MPa": 18.0,
+    "T_peak_gas_C": 946,
+    "T_metal_C": 886,
+    "creep_life_h": 58075.817047456294
+   },
+   "basis": "IN713LC cast (est. LMP curve), SF 1.25 on stress; alloy X SF 1.5; C = 20"
+  }
+ ],
+ "life_consumption_850_vs_770": 97.25453060933356,
+ "matching": {
+  "throat_area_mm2": 6846.7943826865985,
+  "flow_function_770": 0.00025427588851522297,
+  "flow_function_850": 0.000254712435056752,
+  "note": "fixed nozzle throat (no VTG): the 850 C point is the cycle off-design match (e_cycle.offdesign) - flow function changes only through the ellipse law; surge margin is in e_cycle.json"
+ },
+ "wheel_spec": "BUY: cast IN713LC (or K418 / MAR-M247 for margin) radial or mixed-flow TC turbine wheel D4 ~288 mm, 12 blades, exducer ~232/75, friction / EB-welded by the supplier to our 42CrMo4 / IN718 stub shaft; max permitted speed >= 38,500 rpm (110 %%) at 750 C metal; spin test 120 %% (42,000 rpm); supplier FEA + Campbell for 19 nozzle vanes and 1 combustor inlet (single can)",
+ "nozzle_spec": "MAKE: 19 straight 2.5D vanes milled from one 2.4665 (alloy X) ring + bolted 2.4665 cover plate; throat set by a re-cut vane trailing edge if the rig shows a mismatch; inner/outer piston-ring seals to the floating hot plenum"
+}

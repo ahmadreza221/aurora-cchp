@@ -1,0 +1,376 @@
+{
+ "frame": "rotor frame mm, x = engine axis from the gearbox coupling face",
+ "x_offset_turbine": 673.2888416633899,
+ "joints": {
+  "drum_R1": 666.268042120347,
+  "R1_spc": 766.268042120347,
+  "spc_R2": 791.2491059693687,
+  "R2_stub": 897.2491059693687
+ },
+ "parts": {
+  "RT-101 Front stub shaft + thrust collar": {
+   "step": "RT_101_Front_stub_shaft___thrust_collar.step",
+   "material": "34CrNiMo6 QT",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 1303.03,
+   "mass_kg": 10.229,
+   "x": [
+    0.0,
+    206.2
+   ],
+   "r": 80.0
+  },
+  "RT-102 Tie bolt M42 IN718": {
+   "step": "RT_102_Tie_bolt_M42_IN718.step",
+   "material": "IN718",
+   "group": "tie",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 485.49,
+   "mass_kg": 3.976,
+   "x": [
+    20.0,
+    626.0
+   ],
+   "r": 22.9
+  },
+  "RT-103 Tie-bolt nut": {
+   "step": "RT_103_Tie_bolt_nut.step",
+   "material": "IN718",
+   "group": "tie",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 60.39,
+   "mass_kg": 0.495,
+   "x": [
+    18.0,
+    48.0
+   ],
+   "r": 33.0
+  },
+  "RT-104 Compressor spacer": {
+   "step": "RT_104_Compressor_spacer.step",
+   "material": "17-4PH H1025",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 798.47,
+   "mass_kg": 6.228,
+   "x": [
+    327.26,
+    380.06
+   ],
+   "r": 80.0
+  },
+  "RT-105 Drum IN718": {
+   "step": "RT_105_Drum_IN718.step",
+   "material": "IN718",
+   "group": "drum",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 1620.39,
+   "mass_kg": 13.271,
+   "x": [
+    511.67,
+    667.57
+   ],
+   "r": 92.0
+  },
+  "RT-106 Rear stub shaft": {
+   "step": "RT_106_Rear_stub_shaft.step",
+   "material": "IN718",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 627.94,
+   "mass_kg": 5.143,
+   "x": [
+    895.95,
+    1003.25
+   ],
+   "r": 92.0
+  },
+  "RT-107 Turbine spacer ring R1 - R2": {
+   "step": "RT_107_Turbine_spacer_ring_R1___R2.step",
+   "material": "Waspaloy",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 319.49,
+   "mass_kg": 2.617,
+   "x": [
+    764.97,
+    792.55
+   ],
+   "r": 92.3
+  },
+  "RT-111 Studs + nuts drum - R1 (16 x M10)": {
+   "step": "RT_111_Studs___nuts_drum___R1__16_x_M10.step",
+   "material": "IN718 / Waspaloy nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 41.43,
+   "mass_kg": 0.325,
+   "x": [
+    657.27,
+    683.27
+   ],
+   "r": 82.47
+  },
+  "RT-112 Studs + nuts R1 - R2 (16 x M10)": {
+   "step": "RT_112_Studs___nuts_R1___R2__16_x_M10.step",
+   "material": "Waspaloy studs + nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 72.82,
+   "mass_kg": 0.572,
+   "x": [
+    749.27,
+    800.25
+   ],
+   "r": 82.47
+  },
+  "RT-113 Studs + nuts R2 - rear stub (16 x M10)": {
+   "step": "RT_113_Studs___nuts_R2___rear_stub__16_x_M10.step",
+   "material": "IN718 / Waspaloy nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 41.43,
+   "mass_kg": 0.325,
+   "x": [
+    880.25,
+    906.25
+   ],
+   "r": 82.47
+  },
+  "A1000_R1 disc with arms (cast MAR-M247)": {
+   "step": "A1000_R1_disc_with_arms__cast_MAR_M247.step",
+   "material": "MAR-M247",
+   "group": "blisk",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 5308.02,
+   "mass_kg": 45.331,
+   "x": [
+    664.97,
+    767.57
+   ],
+   "r": 214.24
+  },
+  "A1000_R2 disc with arms (cast MAR-M247)": {
+   "step": "A1000_R2_disc_with_arms__cast_MAR_M247.step",
+   "material": "MAR-M247",
+   "group": "blisk",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 5910.34,
+   "mass_kg": 50.474,
+   "x": [
+    789.95,
+    898.55
+   ],
+   "r": 203.02
+  },
+  "JB1 tilting pads x4 (steel + babbitt)": {
+   "step": "JB1_tilting_pads_x4__steel___babbitt.step",
+   "material": "steel + babbitt",
+   "group": "pads",
+   "valid": true,
+   "solids": 4,
+   "vol_cm3": 81.69,
+   "mass_kg": 0.641,
+   "x": [
+    47.0,
+    83.0
+   ],
+   "r": 53.7
+  },
+  "JB1 pad carrier + end plates (split)": {
+   "step": "JB1_pad_carrier___end_plates__split.step",
+   "material": "steel",
+   "group": "carrier",
+   "valid": true,
+   "solids": 2,
+   "vol_cm3": 338.17,
+   "mass_kg": 2.655,
+   "x": [
+    41.0,
+    89.0
+   ],
+   "r": 74.0
+  },
+  "JB1 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes": {
+   "step": "JB1_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
+   "material": "17-4PH H1100",
+   "group": "cage",
+   "valid": true,
+   "solids": 4,
+   "vol_cm3": 332.82,
+   "mass_kg": 2.596,
+   "x": [
+    43.5,
+    86.5
+   ],
+   "r": 92.0
+  },
+  "JB2 tilting pads x4 (steel + babbitt)": {
+   "step": "JB2_tilting_pads_x4__steel___babbitt.step",
+   "material": "steel + babbitt",
+   "group": "pads",
+   "valid": true,
+   "solids": 4,
+   "vol_cm3": 81.69,
+   "mass_kg": 0.641,
+   "x": [
+    937.25,
+    973.25
+   ],
+   "r": 53.7
+  },
+  "JB2 pad carrier + end plates (split)": {
+   "step": "JB2_pad_carrier___end_plates__split.step",
+   "material": "steel",
+   "group": "carrier",
+   "valid": true,
+   "solids": 2,
+   "vol_cm3": 338.15,
+   "mass_kg": 2.654,
+   "x": [
+    931.25,
+    979.25
+   ],
+   "r": 74.0
+  },
+  "JB2 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes": {
+   "step": "JB2_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
+   "material": "17-4PH H1100",
+   "group": "cage",
+   "valid": true,
+   "solids": 4,
+   "vol_cm3": 332.82,
+   "mass_kg": 2.596,
+   "x": [
+    933.75,
+    976.75
+   ],
+   "r": 92.0
+  },
+  "TB thrust pads 8 + 4 (steel + babbitt)": {
+   "step": "TB_thrust_pads_8___4__steel___babbitt.step",
+   "material": "steel + babbitt",
+   "group": "pads",
+   "valid": true,
+   "solids": 12,
+   "vol_cm3": 94.1,
+   "mass_kg": 0.739,
+   "x": [
+    103.85,
+    148.15
+   ],
+   "r": 67.91
+  },
+  "TB carrier rings (split)": {
+   "step": "TB_carrier_rings__split.step",
+   "material": "steel",
+   "group": "carrier",
+   "valid": true,
+   "solids": 4,
+   "vol_cm3": 152.44,
+   "mass_kg": 1.197,
+   "x": [
+    95.85,
+    156.15
+   ],
+   "r": 74.0
+  },
+  "FB-1 Front bearing housing, upper half (JB1 + thrust, EN-GJS-400-18)": {
+   "step": "FB_1_Front_bearing_housing__upper_half__JB1___thrust__EN_GJS_400_18.step",
+   "material": "EN-GJS-400-18",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2477.22,
+   "mass_kg": 17.588,
+   "x": [
+    27.0,
+    201.0
+   ],
+   "r": 165.0
+  },
+  "FB-2 Front bearing housing, lower half (JB1 + thrust, EN-GJS-400-18)": {
+   "step": "FB_2_Front_bearing_housing__lower_half__JB1___thrust__EN_GJS_400_18.step",
+   "material": "EN-GJS-400-18",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2424.27,
+   "mass_kg": 17.212,
+   "x": [
+    27.0,
+    201.0
+   ],
+   "r": 200.0
+  },
+  "JB2 bearing cartridge housing (one piece, from the rear)": {
+   "step": "JB2_bearing_cartridge_housing__one_piece__from_the_rear.step",
+   "material": "1.4313",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 3310.11,
+   "mass_kg": 25.488,
+   "x": [
+    911.0,
+    1034.0
+   ],
+   "r": 150.0
+  },
+  "JB2 front seal ring (split, labyrinth + buffer + windback)": {
+   "step": "JB2_front_seal_ring__split__labyrinth___buffer___windback.step",
+   "material": "1.4313",
+   "group": "carrier",
+   "valid": true,
+   "solids": 2,
+   "vol_cm3": 78.21,
+   "mass_kg": 0.602,
+   "x": [
+    913.5,
+    930.5
+   ],
+   "r": 61.5
+  },
+  "JB2 end cover": {
+   "step": "JB2_end_cover.step",
+   "material": "1.4313",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 508.97,
+   "mass_kg": 3.919,
+   "x": [
+    1020.0,
+    1036.0
+   ],
+   "r": 125.0
+  },
+  "JB2 heat shield (ceramic fibre in 1.4828 foil)": {
+   "step": "JB2_heat_shield__ceramic_fibre_in_1_4828_foil.step",
+   "material": "ceramic fibre + 1.4828 foil",
+   "group": "housing",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 2096.93,
+   "mass_kg": 1.468,
+   "x": [
+    904.0,
+    1027.0
+   ],
+   "r": 181.0
+  }
+ }
+}

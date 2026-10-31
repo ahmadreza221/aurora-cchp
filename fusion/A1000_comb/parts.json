@@ -1,0 +1,274 @@
+{
+ "frame": "rotor frame mm, z up; can axis vertical at x_can, y 0",
+ "x_can": 665.0,
+ "nozzle": {
+  "x": 665.0,
+  "y": 490.0,
+  "z": 1140.0,
+  "D": 438.0
+ },
+ "impingement_holes": {
+  "n": 1984,
+  "d": 6.0
+ },
+ "gas_volume_m3": 0.13227861421317025,
+ "z_top": 2065.0,
+ "parts": {
+  "CB-330 Hot-gas casing upper half (Haynes 230)": {
+   "step": "CB_330_Hot_gas_casing_upper_half__Haynes_230.step",
+   "material": "Haynes 230",
+   "group": "hot",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 87.79,
+   "bbox": [
+    479.1,
+    850.9,
+    -552.6,
+    552.6,
+    -93.9,
+    860.0
+   ]
+  },
+  "CB-331 Hot-gas casing lower half (Haynes 230)": {
+   "step": "CB_331_Hot_gas_casing_lower_half__Haynes_230.step",
+   "material": "Haynes 230",
+   "group": "hot",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 61.69,
+   "bbox": [
+    559.0,
+    840.0,
+    -552.6,
+    552.6,
+    -490.0,
+    195.4
+   ]
+  },
+  "CB-332 Deswirl vanes x22 (Haynes 230)": {
+   "step": "CB_332_Deswirl_vanes_x22__Haynes_230.step",
+   "material": "Haynes 230",
+   "group": "hot",
+   "valid": true,
+   "solids": 22,
+   "mass_kg": 9.54,
+   "bbox": [
+    564.0,
+    632.0,
+    -426.5,
+    426.5,
+    -425.0,
+    425.0
+   ]
+  },
+  "CB-333 Scroll insulation cassettes": {
+   "step": "CB_333_Scroll_insulation_cassettes.step",
+   "material": "microporous + foil",
+   "group": "insulation",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 13.01,
+   "bbox": [
+    467.0,
+    863.0,
+    -564.4,
+    564.4,
+    -502.0,
+    825.0
+   ]
+  },
+  "CB-301 Can casing (1.4948)": {
+   "step": "CB_301_Can_casing__1_4948.step",
+   "material": "1.4948",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 233.03,
+   "bbox": [
+    285.0,
+    1045.0,
+    -365.0,
+    490.0,
+    800.0,
+    1925.0
+   ]
+  },
+  "CB-302 Can base plate (1.4948)": {
+   "step": "CB_302_Can_base_plate__1_4948.step",
+   "material": "1.4948",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 42.5,
+   "bbox": [
+    310.0,
+    1020.0,
+    -355.0,
+    355.0,
+    780.0,
+    800.0
+   ]
+  },
+  "CB-303 Head cover (1.4948)": {
+   "step": "CB_303_Head_cover__1_4948.step",
+   "material": "1.4948",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 163.11,
+   "bbox": [
+    300.0,
+    1030.0,
+    -365.0,
+    365.0,
+    1921.2,
+    1978.7
+   ]
+  },
+  "CB-310 Premixers x7 (pilot + 6 mains, IN625)": {
+   "step": "CB_310_Premixers_x7__pilot___6_mains__IN625.step",
+   "material": "IN625",
+   "group": "hot",
+   "valid": true,
+   "solids": 7,
+   "mass_kg": 12.98,
+   "bbox": [
+    513.8,
+    816.2,
+    -168.3,
+    168.3,
+    1725.0,
+    2005.0
+   ]
+  },
+  "CB-320 Liner (Hastelloy X + TBC)": {
+   "step": "CB_320_Liner__Hastelloy_X___TBC.step",
+   "material": "Hastelloy X",
+   "group": "hot",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 18.29,
+   "bbox": [
+    449.4,
+    880.6,
+    -215.6,
+    215.6,
+    830.0,
+    1728.0
+   ]
+  },
+  "CB-321 Impingement sleeve (Hastelloy X)": {
+   "step": "CB_321_Impingement_sleeve__Hastelloy_X.step",
+   "material": "Hastelloy X",
+   "group": "hot",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 13.71,
+   "bbox": [
+    429.4,
+    900.6,
+    -235.6,
+    235.6,
+    1225.0,
+    1728.0
+   ]
+  },
+  "CB-340 Scroll pressure casing upper half (P355NH)": {
+   "step": "CB_340_Scroll_pressure_casing_upper_half__P355NH.step",
+   "material": "P355NH",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 362.28,
+   "bbox": [
+    380.0,
+    968.0,
+    -707.6,
+    707.6,
+    -0.0,
+    780.0
+   ]
+  },
+  "CB-341 Scroll pressure casing lower half (P355NH)": {
+   "step": "CB_341_Scroll_pressure_casing_lower_half__P355NH.step",
+   "material": "P355NH",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 211.59,
+   "bbox": [
+    390.0,
+    968.0,
+    -707.6,
+    707.6,
+    -612.5,
+    0.0
+   ]
+  },
+  "CB-350 NGV1 interface leaf seals": {
+   "step": "CB_350_NGV1_interface_leaf_seals.step",
+   "material": "Haynes 25",
+   "group": "hot",
+   "valid": true,
+   "solids": 2,
+   "mass_kg": 0.09,
+   "bbox": [
+    668.4,
+    669.2,
+    -248.5,
+    248.5,
+    -248.5,
+    248.5
+   ]
+  },
+  "CB-360 Scroll support pins x4 (1.4980)": {
+   "step": "CB_360_Scroll_support_pins_x4__1_4980.step",
+   "material": "1.4980 (A286)",
+   "group": "casing",
+   "valid": true,
+   "solids": 4,
+   "mass_kg": 1.68,
+   "bbox": [
+    738.0,
+    782.0,
+    -582.7,
+    582.7,
+    -403.0,
+    493.9
+   ]
+  },
+  "CB-370 Fuel manifolds P / A / B1 / B2, pigtails, bulkhead (1.4404)": {
+   "step": "CB_370_Fuel_manifolds_P___A___B1___B2__pigtails__bulkhead__1_4404.step",
+   "material": "1.4404",
+   "group": "aux",
+   "valid": true,
+   "solids": 29,
+   "mass_kg": 37.17,
+   "bbox": [
+    449.6,
+    880.4,
+    -474.0,
+    215.4,
+    880.0,
+    2195.0
+   ]
+  },
+  "CB-371 Igniter + 2 UV flame scanners": {
+   "step": "CB_371_Igniter___2_UV_flame_scanners.step",
+   "material": "bought in",
+   "group": "aux",
+   "valid": true,
+   "solids": 3,
+   "mass_kg": 0.81,
+   "bbox": [
+    481.2,
+    848.8,
+    -73.3,
+    235.4,
+    1783.2,
+    2043.9
+   ]
+  }
+ }
+}

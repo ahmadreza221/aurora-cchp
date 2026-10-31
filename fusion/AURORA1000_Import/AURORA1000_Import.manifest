@@ -1,0 +1,10 @@
+{
+	"autodeskProduct": "Fusion",
+	"type": "script",
+	"author": "GR180-CCHP",
+	"description": {
+		"": "Build the AURORA-1000 two-stage turbine (NGV1 43, blisk 59, NGV2 47, blisk 36) from fusion/A1000 STEP parts"
+	},
+	"supportedOS": "windows|mac",
+	"editEnabled": true
+}

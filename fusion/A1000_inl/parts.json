@@ -1,0 +1,411 @@
+{
+ "frame": "rotor frame mm, x = engine axis, z up",
+ "design": "A",
+ "geometry": {
+  "x_le": 215.0,
+  "r_eye_hub": 60.0,
+  "r_eye_shr": 137.5,
+  "x_nose": 205.0,
+  "hub": [
+   [
+    157.0,
+    150.0
+   ],
+   [
+    158.0,
+    132.0
+   ],
+   [
+    160.5,
+    112.0
+   ],
+   [
+    166.5,
+    94.0
+   ],
+   [
+    177.0,
+    79.0
+   ],
+   [
+    189.0,
+    68.0
+   ],
+   [
+    201.0,
+    61.5
+   ],
+   [
+    205.0,
+    60.0
+   ]
+  ],
+  "x_hub": 157.0,
+  "x_shr": 204.0,
+  "corner": {
+   "kind": "arc",
+   "R": 10.0
+  },
+  "R_T": 290.0,
+  "R_lip": 40.0,
+  "struts": {
+   "n": 4,
+   "theta0": 45.0,
+   "r_le": 240.0,
+   "r_te": 165.0,
+   "t_c": 0.21,
+   "t_te": 2.0
+  },
+  "box": {
+   "x0": -140.0,
+   "x1": 204.0,
+   "y0": -540.0,
+   "y1": 540.0,
+   "z0": -620.0,
+   "z1": 600.0
+  },
+  "splitter": null,
+  "duct_ext": 400.0,
+  "x_out": 400.0,
+  "x_end": 214.0,
+  "shroud": [
+   [
+    204.0,
+    520.0
+   ],
+   [
+    204.0,
+    147.5
+   ],
+   [
+    204.02141076761396,
+    146.84596870769857
+   ],
+   [
+    204.0855513862619,
+    146.19473807779949
+   ],
+   [
+    204.1921471959677,
+    145.54909677983872
+   ],
+   [
+    204.3407417371093,
+    144.9118095489748
+   ],
+   [
+    204.53069870504893,
+    144.2856053469684
+   ],
+   [
+    204.76120467488713,
+    143.6731656763491
+   ],
+   [
+    205.0312725846731,
+    143.07711309780998
+   ],
+   [
+    205.3397459621556,
+    142.5
+   ],
+   [
+    205.68530387697456,
+    141.94429766980397
+   ],
+   [
+    206.06646659708764,
+    141.4123857099128
+   ],
+   [
+    206.4816019252102,
+    140.90654184899932
+   ],
+   [
+    206.92893218813452,
+    140.42893218813452
+   ],
+   [
+    207.40654184899932,
+    139.9816019252102
+   ],
+   [
+    207.9123857099128,
+    139.56646659708764
+   ],
+   [
+    208.44429766980397,
+    139.18530387697456
+   ],
+   [
+    209.0,
+    138.8397459621556
+   ],
+   [
+    209.57711309780998,
+    138.5312725846731
+   ],
+   [
+    210.1731656763491,
+    138.26120467488713
+   ],
+   [
+    210.7856053469684,
+    138.03069870504893
+   ],
+   [
+    211.4118095489748,
+    137.8407417371093
+   ],
+   [
+    212.04909677983872,
+    137.6921471959677
+   ],
+   [
+    212.69473807779949,
+    137.5855513862619
+   ],
+   [
+    213.34596870769857,
+    137.52141076761396
+   ],
+   [
+    214.0,
+    137.5
+   ],
+   [
+    215.0,
+    137.5
+   ]
+  ],
+  "hub_path": [
+   [
+    -140.0,
+    290.0
+   ],
+   [
+    117.0,
+    290.0
+   ],
+   [
+    122.22104768880206,
+    289.6577944549524
+   ],
+   [
+    127.35276180410082,
+    288.63703305156275
+   ],
+   [
+    132.3073372946036,
+    286.9551813004515
+   ],
+   [
+    137.0,
+    284.6410161513775
+   ],
+   [
+    141.3504571603488,
+    281.7341336116494
+   ],
+   [
+    145.2842712474619,
+    278.2842712474619
+   ],
+   [
+    148.7341336116494,
+    274.3504571603488
+   ],
+   [
+    151.64101615137753,
+    270.0
+   ],
+   [
+    153.95518130045147,
+    265.3073372946036
+   ],
+   [
+    155.63703305156272,
+    260.35276180410085
+   ],
+   [
+    156.6577944549524,
+    255.22104768880206
+   ],
+   [
+    157.0,
+    250.0
+   ],
+   [
+    157.0,
+    150.0
+   ],
+   [
+    158.0,
+    132.0
+   ],
+   [
+    160.5,
+    112.0
+   ],
+   [
+    166.5,
+    94.0
+   ],
+   [
+    177.0,
+    79.0
+   ],
+   [
+    189.0,
+    68.0
+   ],
+   [
+    201.0,
+    61.5
+   ],
+   [
+    205.0,
+    60.0
+   ],
+   [
+    215.0,
+    60.0
+   ]
+  ]
+ },
+ "casing": {
+  "x_front": 143.0,
+  "r_bore": 130.5,
+  "x_land": 97.0,
+  "r_land_in": 276.0,
+  "x_ring": 109.0,
+  "r_ring_in": 250.0,
+  "r_ring_box": 253.0,
+  "x_rear": 222.0,
+  "r_rim": 460.0,
+  "r_rim_o": 480.0,
+  "x_rim": 210.0,
+  "r_spig": 150.0,
+  "x_spig": 214.0,
+  "r_bolt_cc": 440.0,
+  "n_bolt_cc": 24,
+  "r_bolt_box": 470.0,
+  "n_bolt_box": 24
+ },
+ "brackets": {
+  "x": [
+   55.0,
+   143.0
+  ],
+  "y": [
+   160.0,
+   215.0
+  ],
+  "z_pad": [
+   -36.0,
+   -20.0
+  ],
+  "web_y": [
+   199.0,
+   215.0
+  ],
+  "z_web": -110.0,
+  "holes_x": [
+   70.0,
+   120.0
+  ],
+  "y_hole": 185.0,
+  "key_x": [
+   87.0,
+   103.0
+  ],
+  "key_d": 6.0
+ },
+ "parts": {
+  "IN-501 Inlet casing, upper half (EN-GJS-400-18)": {
+   "step": "IN_501_Inlet_casing__upper_half__EN_GJS_400_18.step",
+   "material": "EN-GJS-400-18",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 56.6,
+   "desc": "upper half: hub wall x 143-157 (bore r 130.5 over FB, cord O-ring on the FB fairing face), front lip R40, struts at 45 / 135 deg (solid, chord 75, t 16), shroud wall x 204-222 with the R10 bellmouth corner into the inducer shroud r 137.5, spigot recess r 150 on the compressor casing, 24 x M12 from the back; lifts off after the plenum upper half",
+   "bbox": [
+    97.0,
+    222.0,
+    -480.0,
+    480.0,
+    -0.0,
+    480.0
+   ]
+  },
+  "IN-502 Inlet casing, lower half + FB-2 foot brackets (EN-GJS-400-18)": {
+   "step": "IN_502_Inlet_casing__lower_half___FB_2_foot_brackets__EN_GJS_400_18.step",
+   "material": "EN-GJS-400-18",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 58.9,
+   "desc": "lower half as IN-501 with the struts at 225 / 315 deg and two L brackets for the FB-2 centre-line feet (pad z -20, 2 x M16 each, transverse key slot 16 x 6 at x 87-103, window for the oil-inlet fittings)",
+   "bbox": [
+    55.0,
+    222.0,
+    -480.0,
+    480.0,
+    -480.0,
+    0.0
+   ]
+  },
+  "IN-510 Plenum box, upper half + filter-house flange (S235JR)": {
+   "step": "IN_510_Plenum_box__upper_half___filter_house_flange__S235JR.step",
+   "material": "S235JR",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 84.24,
+   "desc": "welded box 6 mm: plenum x -140..204, y +-540, z 0..600, filter-house flange 1080 x 344 on top, dry tunnel half r 290 round FB-1 and the coupling, bolted flush onto the casing rim (24 x M10) and the tunnel ring (16 x M10)",
+   "bbox": [
+    -166.0,
+    230.0,
+    -586.0,
+    586.0,
+    -0.0,
+    612.0
+   ]
+  },
+  "IN-511 Plenum box, lower half + feet (S235JR)": {
+   "step": "IN_511_Plenum_box__lower_half___feet__S235JR.step",
+   "material": "S235JR",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 108.31,
+   "desc": "lower half of the box down to z -620, 4 feet to the skid, washing / condensate drain at the low point; the dry tunnel half carries no penetration: the FB services leave forward through the tunnel (open at x -140)",
+   "bbox": [
+    -166.0,
+    230.0,
+    -586.0,
+    586.0,
+    -700.0,
+    0.0
+   ]
+  },
+  "IN-520 Filter-house adapter + fabric joint": {
+   "step": "IN_520_Filter_house_adapter___fabric_joint.step",
+   "material": "S235JR + fabric",
+   "group": "aux",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 51.79,
+   "desc": "rectangular frame 300 mm with the fabric expansion joint to the filter-house duct (F7 + F9, inlet-air cooler, silencer: vendor)",
+   "bbox": [
+    -166.0,
+    230.0,
+    -566.0,
+    566.0,
+    612.0,
+    912.0
+   ]
+  }
+ }
+}

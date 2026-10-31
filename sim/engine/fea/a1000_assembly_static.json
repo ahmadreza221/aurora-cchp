@@ -1,0 +1,72 @@
+{
+ "vol_tol_mm3": 5.0,
+ "overlaps": [
+  {
+   "a": "Compressor casing",
+   "b": "IN-502 Inlet casing, lower half + FB-2 foot brackets (EN-GJS-400-18)",
+   "vol_mm3": 1016776.7
+  },
+  {
+   "a": "Compressor casing",
+   "b": "IN-501 Inlet casing, upper half (EN-GJS-400-18)",
+   "vol_mm3": 1014685.8
+  },
+  {
+   "a": "CB-340 Scroll pressure casing upper half (P355NH)",
+   "b": "EX-401 Air manifold casing (EN-GJS-400-18LT)",
+   "vol_mm3": 142085.5
+  },
+  {
+   "a": "CB-341 Scroll pressure casing lower half (P355NH)",
+   "b": "EX-401 Air manifold casing (EN-GJS-400-18LT)",
+   "vol_mm3": 136272.4
+  },
+  {
+   "a": "Compressor casing",
+   "b": "IN-511 Plenum box, lower half + feet (S235JR)",
+   "vol_mm3": 99446.5
+  },
+  {
+   "a": "Compressor casing",
+   "b": "IN-510 Plenum box, upper half + filter-house flange (S235JR)",
+   "vol_mm3": 99446.5
+  },
+  {
+   "a": "CB-341 Scroll pressure casing lower half (P355NH)",
+   "b": "EX-440 Cold air pipe DN350 + BOV tee (P265GH)",
+   "vol_mm3": 49209.7
+  },
+  {
+   "a": "Compressor casing",
+   "b": "RT-104 Compressor spacer",
+   "vol_mm3": 8977.4
+  },
+  {
+   "a": "Compressor casing",
+   "b": "RT-105 Drum IN718",
+   "vol_mm3": 863.3
+  },
+  {
+   "a": "CB-340 Scroll pressure casing upper half (P355NH)",
+   "b": "EX-440 Cold air pipe DN350 + BOV tee (P265GH)",
+   "vol_mm3": 36.8
+  },
+  {
+   "a": "Impeller 2 hub",
+   "b": "RT-105 Drum IN718",
+   "vol_mm3": 9.0
+  },
+  {
+   "a": "Impeller 1 hub",
+   "b": "RT-104 Compressor spacer",
+   "vol_mm3": 7.3
+  },
+  {
+   "a": "Impeller 2 hub",
+   "b": "RT-104 Compressor spacer",
+   "vol_mm3": 5.5
+  }
+ ],
+ "s": 1533,
+ "only": []
+}
