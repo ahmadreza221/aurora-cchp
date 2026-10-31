@@ -123,7 +123,7 @@
   },
   {
    "test": "R2 disc+arms burst / 15k",
-   "value": 1.8400674830936594,
+   "value": 1.7803767879950818,
    "limit": 1.342,
    "unit": "x",
    "ok": true,
@@ -331,7 +331,7 @@
   },
   {
    "test": "transient: tie-bolt min preload / required",
-   "value": 1.5926162612553671,
+   "value": 1.5926160658186723,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
@@ -339,7 +339,7 @@
   },
   {
    "test": "transient: tie-bolt max shank stress / 0.75 Sy",
-   "value": 0.49093135288961187,
+   "value": 0.4909313204568248,
    "limit": 1.0,
    "unit": "-",
    "ok": true,
@@ -355,7 +355,7 @@
   },
   {
    "test": "spring preload model vs FE at the critical times",
-   "value": 4.931366522990944,
+   "value": 4.931376874965643,
    "limit": 10.0,
    "unit": "%",
    "ok": true,
@@ -363,7 +363,7 @@
   },
   {
    "test": "transient: joint stub_I1 clamp / required",
-   "value": 2.05065570358159,
+   "value": 2.0506558397093047,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
@@ -371,7 +371,7 @@
   },
   {
    "test": "transient: joint I1_spc clamp / required",
-   "value": 1.989374276151631,
+   "value": 1.9893743782663817,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
@@ -379,7 +379,7 @@
   },
   {
    "test": "transient: joint spc_I2 clamp / required",
-   "value": 1.9924234972693888,
+   "value": 1.992423603214604,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
@@ -387,7 +387,7 @@
   },
   {
    "test": "transient: joint I2_drum clamp / required",
-   "value": 1.6082713966084718,
+   "value": 1.6082714893207515,
    "limit": 1.25,
    "unit": "-",
    "ok": true,
@@ -467,15 +467,15 @@
   },
   {
    "test": "LCF R1: standard start-stop cycles",
-   "value": 2830.6304776613943,
+   "value": 2816.4294313381383,
    "limit": 10000.0,
    "unit": "cyc",
    "ok": false,
-   "note": "worst cycle standard_fast 77 (36.87 standard cycles each)"
+   "note": "worst cycle standard_fast 78 (36.04 standard cycles each)"
   },
   {
    "test": "LCF R1_platform: standard start-stop cycles",
-   "value": 4684.00172386936,
+   "value": 4683.766058200579,
    "limit": 10000.0,
    "unit": "cyc",
    "ok": false,
@@ -483,15 +483,15 @@
   },
   {
    "test": "LCF R2: standard start-stop cycles",
-   "value": 1532.0160584755054,
+   "value": 1504.9273788877344,
    "limit": 10000.0,
    "unit": "cyc",
    "ok": false,
-   "note": "worst cycle standard_fast 45 (33.76 standard cycles each)"
+   "note": "worst cycle standard_fast 47 (32.31 standard cycles each)"
   },
   {
    "test": "LCF R2_platform: standard start-stop cycles",
-   "value": 3343.5001814585994,
+   "value": 3342.9298337845084,
    "limit": 10000.0,
    "unit": "cyc",
    "ok": false,
@@ -499,7 +499,7 @@
   },
   {
    "test": "LCF imp1: standard start-stop cycles",
-   "value": 146288.42270574058,
+   "value": 146288.42258043276,
    "limit": 10000.0,
    "unit": "cyc",
    "ok": true,
@@ -515,7 +515,7 @@
   },
   {
    "test": "LCF drum: standard start-stop cycles",
-   "value": 1167379.3645673648,
+   "value": 1167378.1550320578,
    "limit": 10000.0,
    "unit": "cyc",
    "ok": true,
@@ -523,7 +523,7 @@
   },
   {
    "test": "phase 5 fine mesh: preload change (case E)",
-   "value": 0.06337238986311444,
+   "value": 0.06337239610713086,
    "limit": 3.0,
    "unit": "%",
    "ok": true,
@@ -951,14 +951,14 @@
    "u_rim_mm": 1.97324
   },
   "R2_op": {
-   "vm_max": 76653.76452132016,
+   "vm_max": 485.8808374796438,
    "vm_max_at": [
-    111.31832040431797,
-    182.82532207879973
+    53.78217232520115,
+    202.0218226030031
    ],
-   "T_at_max": 501.17058026029923,
-   "margin_yield": 0.01017409838700168,
-   "burst_ratio": 1.8400674830936594,
+   "T_at_max": 438.9470691636933,
+   "margin_yield": 1.6178972958911244,
+   "burst_ratio": 1.7803767879950818,
    "vm_hub": 448.324370123525,
    "hub_at": [
     0.0,
@@ -973,7 +973,7 @@
    "T_arm": 452.9598151994821,
    "hoop_flange_studs": 124.894,
    "T_flange": 457.80561751606945,
-   "u_rim_mm": 1.6156,
+   "u_rim_mm": 1.63063,
    "lcf_hub_peak": {
     "s": 448.324370123525,
     "T": 420.0,
@@ -999,7 +999,7 @@
    "T_at_max": 438.9470691636933,
    "margin_yield": 1.4035055031655024,
    "burst_ratio": 1.7803837517961654,
-   "vm_hub": 512.2192401651876,
+   "vm_hub": 512.2192401651877,
    "hub_at": [
     0.0,
     171.960264
