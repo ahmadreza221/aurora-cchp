@@ -16,11 +16,6 @@
  },
  {
   "a": "IN-511 Plenum box, lower half + feet (S235JR)",
-  "b": "A1000_pipe/PL_05_FBH_drain_2_x_DN40___DN65__forward_through_the_tunnel_to_the_reservoir.step",
-  "mm3": 4.532221719422406
- },
- {
-  "a": "IN-511 Plenum box, lower half + feet (S235JR)",
   "b": "A1000_pkg/Compressor_casing.step",
   "mm3": 99446.48713085335
  }

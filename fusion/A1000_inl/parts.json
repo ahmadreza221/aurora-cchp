@@ -280,6 +280,7 @@
   "r_land_in": 276.0,
   "x_ring": 109.0,
   "r_ring_in": 250.0,
+  "r_ring_box": 253.0,
   "x_rear": 222.0,
   "r_rim": 460.0,
   "r_rim_o": 480.0,
@@ -361,7 +362,7 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 84.47,
+   "mass_kg": 84.24,
    "desc": "welded box 6 mm: plenum x -140..204, y +-540, z 0..600, filter-house flange 1080 x 344 on top, dry tunnel half r 290 round FB-1 and the coupling, bolted flush onto the casing rim (24 x M10) and the tunnel ring (16 x M10)",
    "bbox": [
     -166.0,
@@ -378,7 +379,7 @@
    "group": "casing",
    "valid": true,
    "solids": 1,
-   "mass_kg": 108.54,
+   "mass_kg": 108.31,
    "desc": "lower half of the box down to z -620, 4 feet to the skid, washing / condensate drain at the low point; the dry tunnel half carries no penetration: the FB services leave forward through the tunnel (open at x -140)",
    "bbox": [
     -166.0,

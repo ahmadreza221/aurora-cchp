@@ -610,7 +610,7 @@
    ],
    "desc": "welded box 6 mm: plenum x -140..204, y +-540, z 0..600, filter-house flange 1080 x 344 on top, dry tunnel half r 290 round FB-1 and the coupling, bolted flush onto the casing rim (24 x M10) and the tunnel ring (16 x M10)",
    "material": "S235JR",
-   "mass_kg": 84.47,
+   "mass_kg": 84.24,
    "step": "../A1000_inl/IN_510_Plenum_box__upper_half___filter_house_flange__S235JR.step",
    "dx": 0.0
   },
@@ -622,7 +622,7 @@
    ],
    "desc": "lower half of the box down to z -620, 4 feet to the skid, washing / condensate drain at the low point; the dry tunnel half carries no penetration: the FB services leave forward through the tunnel (open at x -140)",
    "material": "S235JR",
-   "mass_kg": 108.54,
+   "mass_kg": 108.31,
    "step": "../A1000_inl/IN_511_Plenum_box__lower_half___feet__S235JR.step",
    "dx": 0.0
   },

@@ -31,7 +31,8 @@ G = E.DESIGNS[E.DESIGN]; ST = G['struts']; BX = G['box']
 OUT_F = os.path.join(ROOT, 'fusion', 'A1000_inl')
 RHO = {'EN-GJS-400-18': 7100, 'S235JR': 7850, 'S235JR + fabric': 7850}
 T_P = 6.0                                                         # plenum plate [mm]
-CAS = dict(x_front=143.0, r_bore=130.5, x_land=97.0, r_land_in=276.0, x_ring=109.0, r_ring_in=250.0,
+CAS = dict(x_front=143.0, r_bore=130.5, x_land=97.0, r_land_in=276.0, x_ring=109.0, r_ring_in=250.0, r_ring_box=253.0,  # box ring: 3 mm
+           # over the PL-05 DN40 drain branches (bottom r ~250 at x 83-88)
            x_rear=222.0, r_rim=460.0, r_rim_o=480.0, x_rim=210.0, r_spig=150.0, x_spig=214.0,
            r_bolt_cc=440.0, n_bolt_cc=24, r_bolt_box=470.0, n_bolt_box=24)
 BRK = dict(x=(55.0, 143.0), y=(160.0, 215.0), z_pad=(-36.0, -20.0), web_y=(199.0, 215.0), z_web=-110.0, holes_x=(70.0, 120.0), y_hole=185.0,
@@ -192,7 +193,7 @@ def plenum_full():
              box(x0 - t, x1 + t, y1, y1 + t, z0 - t, z1), box(x0 - t, x1 + t, -y1 - t, -y1, z0 - t, z1),
              box(x0 - t, x1 + t, -y1 - t, y1 + t, z0 - t, z0),
              box(x0 - 26.0, x1 + 26.0, -y1 - 26.0, y1 + 26.0, z1, z1 + 12.0).cut(box(x0, x1, -y1, y1, z1 - 1.0, z1 + 13.0)),
-             tube(x0, CAS['x_land'], R, R - t), tube(CAS['x_land'] - 12.0, CAS['x_land'], R - t, CAS['r_ring_in'])]
+             tube(x0, CAS['x_land'], R, R - t), tube(CAS['x_land'] - 12.0, CAS['x_land'], R - t, CAS['r_ring_box'])]
     for sy in (1, -1):
         ys = lambda a, b: (min(sy * a, sy * b), max(sy * a, sy * b))
         parts += [box(x0 - t, x1 + t, *ys(y1 + t, y1 + t + 40.0), -10.0, 10.0),            # side split flanges (outside)
