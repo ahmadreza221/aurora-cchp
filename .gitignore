@@ -38,6 +38,7 @@ graphify-out/*.pending.json
 !fusion/A1000_rotor/*.step
 !fusion/A1000_hot/*.step
 !fusion/A1000_comb/*.step
+!fusion/A1000_exh/*.step
 !fusion/A1000_pkg/*.step
 # Fusion script diagnostics (fusion/GR180_E1_Import writes _e1_verify.json)
 fusion/_*.json

@@ -8,6 +8,8 @@ is put into the cycle in turn (cumulative), giving a waterfall of grid power and
                     26 -> 22 mm +0.3 pt) and the duct friction of the R1-NGV2 gap +25 mm (docs/08 12.4.2)
   3. combustor    : total pressure loss inlet nozzle -> NGV1 (sim/engine/fea/a1000_combustor.json)
   4. bearings     : journals + thrust + seals in kW (sim/engine/fea/a1000_rotor_stack.json) in place of eta_mech 0.994
+  5. exhaust      : diffuser + collector (CFD), recuperator ducting (correlations), recuperator core / economizer
+                    (vendor assumptions) in place of dp_exh 1.5 %, dp_rec_h 3.5 %, dp_rec_c 2.5 % (sim/engine/fea/a1000_exhaust.json)
 Secondary air stays at the cycle allowance of 1.5 % (bypasses the turbine work); the labyrinths of the hot section use
 part of it (sim/engine/fea/a1000_hot_section.json), the rest is for the NGV half-joint strip seals and other joints.
 Then the TIT that brings the grid power back to 1,000 kW at the same air flow.
@@ -34,6 +36,7 @@ COMB = json.load(open(os.path.join(HERE, 'fea', 'a1000_combustor.json')))
 RS = json.load(open(os.path.join(HERE, 'fea', 'a1000_rotor_stack.json')))
 HOT = json.load(open(os.path.join(HERE, 'fea', 'a1000_hot_section.json')))
 TC = json.load(open(os.path.join(HERE, 'fea', 'a1000_turbine_checks.json')))
+EXH = os.path.join(HERE, 'fea', 'a1000_exhaust.json')
 LIFE_TARGET = 1.0e5                                              # h, R1 creep on the minimum curve (a1000_turbine_checks.py)
 D_ETA_T_CHORDS = -0.008 + 0.003                                  # rev 5 row chords (Kacker-Okapuu secondary loss)
 DGAP = 25.0                                                      # mm, R1 TE - NGV2 LE added (EO24 fix)
@@ -86,7 +89,8 @@ def r1_creep_life(tit):
     return T - 273.15, mar_m247_rupture_hours(b['sigma_root'], T)
 
 
-def main():
+def asbuilt_steps():
+    """meanline case, air flow, R1-NGV2 gap loss and the cumulative detail-design steps (name, case update, P_mech W)"""
     case = dict(MLM.CASE)
     r0 = G.cycle(case, SITE); ma = MLM.P_NET / r0['P_net']
     gap = gap_eta_loss()
@@ -102,6 +106,24 @@ def main():
     p_mech = RS['losses']['total_kW'] * 1e3
     steps.append(('bearings + seals %.1f kW (cycle allowance %.1f kW)' % (RS['losses']['total_kW'], RS['losses']['cycle_allowance_kW']),
                   {}, p_mech))
+    if os.path.exists(EXH):                                      # phase 2 (sim/engine/a1000_exhaust.py): computed duct losses
+        ex = json.load(open(EXH))['dps_new']
+        steps.append(('exhaust + recuperator ducting: dp_exh %.2f %%, dp_rec_h %.2f %%, dp_rec_c %.2f %% (was 1.5 / 3.5 / 2.5)'
+                      % (100 * ex['dp_exh'], 100 * ex['dp_rec_h'], 100 * ex['dp_rec_c']), dict(ex), None))
+    return case, ma, gap, steps
+
+
+def asbuilt_case(n_steps=None):
+    """cycle case, air flow and P_mech [W] after the first n_steps detail steps (all when None)"""
+    case, ma, gap, steps = asbuilt_steps()
+    cur, pm = dict(case), None
+    for name, upd, pm_new in steps[:n_steps]:
+        cur.update(upd); pm = pm_new if pm_new is not None else pm
+    return cur, ma, pm
+
+
+def main():
+    case, ma, gap, steps = asbuilt_steps()
     rows, cur, pm = [], dict(case), None
     for name, upd, pm_new in steps:
         cur.update(upd); pm = pm_new if pm_new is not None else pm
@@ -115,14 +137,15 @@ def main():
     sec = HOT['secondary_air']
     sec_pct = sec['drum_balance_seal']['pct'] + sec['interstage_seal']['pct']
     out = dict(air_kg_s=ma, site=SITE, gap=gap, case_asbuilt=dict(PR=cur['PR'], eta_c=cur['eta_c'], eta_t=cur['eta_t'],
-               dp_comb=cur['dp_comb'], P_mech_kW=pm / 1e3, leak=G.BASE['leak']), waterfall=rows, tit_for_1MW=fix,
+               dp_comb=cur['dp_comb'], P_mech_kW=pm / 1e3, leak=G.BASE['leak'], dp_exh=cur.get('dp_exh', G.BASE['dp_exh']),
+               dp_rec_h=cur.get('dp_rec_h', G.BASE['dp_rec_h']), dp_rec_c=cur.get('dp_rec_c', G.BASE['dp_rec_c'])), waterfall=rows, tit_for_1MW=fix,
                dTIT_K=t_req - case['TIT'], tit_life_limit=lim, dTIT_life_K=t_life - case['TIT'],
                shortfall_at_life_limit_kW=1000.0 - lim['P_grid_kW'],
                secondary_air=dict(allowance_pct=100 * G.BASE['leak'], labyrinths_bypassing_turbine_pct=sec_pct,
                                   left_for_joints_pct=100 * G.BASE['leak'] - sec_pct,
                                   backface_recirculation_pct=sec['backface_seal_r200']['pct']),
                open=['compressor inlet plenum and radial-inlet bend loss (cycle dp_inlet 1.0 % kept)',
-                     'exhaust diffuser and recuperator ducting (cycle dp_exh 1.5 %, dp_rec 2.5 / 3.5 % kept)',
+                     'recuperator core dp (vendor quote; assumed 1.5 % air / 2.0 % gas) and economizer gas side (assumed 500 Pa)',
                      'turbine tip clearance 0.46 / 0.55 mm against the meanline eta_t (no row-by-row loss model yet)',
                      'disc windage of the turbine cavities', 'NGV half-joint strip seal leakage (inside the 1.5 % allowance)'])
     with open(os.path.join(HERE, 'fea', 'a1000_performance.json'), 'w') as f:

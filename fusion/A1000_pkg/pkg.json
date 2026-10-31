@@ -759,47 +759,183 @@
    "dx": 0.0
   },
   {
-   "name": "Exhaust diffuser + 5 struts",
+   "name": "EX-401 Air manifold casing (EN-GJS-400-18LT)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "compressor-air manifold: bolted on the scroll-casing rear plate (24 x M16 on r 535), port 150 x 600 to the DN350 pipe, 7 pin sleeves, rear rim with the rear leaf seal; 3.8 bar, 185 C",
+   "material": "EN-GJS-400-18LT",
+   "mass_kg": 138.05,
+   "step": "../A1000_exh/EX_401_Air_manifold_casing__EN_GJS_400_18LT.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-402 Frame pins x7 (A286)",
+   "group": "casing",
+   "inst": [
+    0.0
+   ],
+   "desc": "7 radial pins dia 24 (45 deg pitch, none under the air port), put in from outside: centre the hot frame, carry the 25 kN aft air load and the torque, let it grow 3.3 mm radially",
+   "material": "A286",
+   "mass_kg": 6.43,
+   "step": "../A1000_exh/EX_402_Frame_pins_x7__A286.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-410 Exhaust frame, 4 struts (1.4848 cast)",
    "group": "exhaust",
    "inst": [
     0.0
    ],
-   "desc": "annular diffuser to the collector; oil and buffer air through the struts",
-   "material": "1.4828",
-   "step": "Exhaust_diffuser___5_struts.step",
+   "desc": "hot one-piece frame: R2 exit -> 8.5 deg cone with 4 cambered hollow struts (top oil in, bottom = drain, -y vent, +y sensors, buffer air d 4 orifices) -> R120 axial-radial bend; hub carries JB2 on keys; floats on 7 radial pins",
+   "material": "1.4848 cast",
+   "mass_kg": 101.94,
+   "step": "../A1000_exh/EX_410_Exhaust_frame__4_struts__1_4848_cast.step",
    "dx": 0.0
   },
   {
-   "name": "Exhaust collector",
+   "name": "EX-411 Frame heat shield (1.4828)",
    "group": "exhaust",
    "inst": [
     0.0
    ],
-   "desc": "collector box, side outlet DN600 to the recuperator hot side (approx. 560 C)",
+   "desc": "keeps the frame cone hot (uniform with the struts) in the manifold air; ceramic paper behind",
    "material": "1.4828",
-   "step": "Exhaust_collector.step",
+   "mass_kg": 2.23,
+   "step": "../A1000_exh/EX_411_Frame_heat_shield__1_4828.step",
    "dx": 0.0
   },
   {
-   "name": "Recuperator (bought in)",
+   "name": "EX-412 JB2 support ring + 8 keys (1.4313)",
+   "group": "bearing",
+   "inst": [
+    0.0
+   ],
+   "desc": "clamps the JB2 cartridge housing; 8 radial keys on 3 mm mica pads in through-slots of the hub (frame slides on from the rear), retaining ring; JB2 drain / vent bosses behind the ring (x >= 1004)",
+   "material": "1.4313",
+   "mass_kg": 9.42,
+   "step": "../A1000_exh/EX_412_JB2_support_ring___8_keys__1_4313.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-413 Front leaf seal (Haynes 25)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "C2 rear face <-> frame: 2.9 mm axial closure hot, radial sliding",
+   "material": "Haynes 25",
+   "mass_kg": 1.05,
+   "step": "../A1000_exh/EX_413_Front_leaf_seal__Haynes_25.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-414 Rear leaf seal (Haynes 25)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "manifold rim <-> frame rear flange: radial sliding 3.2 mm",
+   "material": "Haynes 25",
+   "mass_kg": 0.14,
+   "step": "../A1000_exh/EX_414_Rear_leaf_seal__Haynes_25.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-420 Exhaust collector (1.4828)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "collector box 0.58 x 1.55 x 1.53 m with front / rear wells, hub cap (R180 bend + rear cone), radial diffuser to r 500, open +y face; centre-line lugs, bottom key; 100 mm external insulation (not modelled)",
+   "material": "1.4828",
+   "mass_kg": 446.82,
+   "step": "../A1000_exh/EX_420_Exhaust_collector__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-421 Hub access cover (1.4828)",
+   "group": "exhaust",
+   "inst": [
+    0.0
+   ],
+   "desc": "bolted cover in the hub cap, reached from the rear well: JB2 rear inspection without removing the collector",
+   "material": "1.4828",
+   "mass_kg": 5.57,
+   "step": "../A1000_exh/EX_421_Hub_access_cover__1_4828.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-430 Exhaust transition + fabric joint",
    "group": "recup",
    "inst": [
     0.0
    ],
-   "desc": "primary-surface / plate-fin, 3.1 MW, effectiveness 0.90, 347 stainless; about 2.8 x 1.2 x 1.6 m, 2-3 t",
-   "material": "AISI 347",
-   "step": "Recuperator__bought_in.step",
+   "desc": "collector +y face -> recuperator gas inlet hood, 300 mm fabric expansion joint",
+   "material": "1.4828",
+   "mass_kg": 130.47,
+   "step": "../A1000_exh/EX_430_Exhaust_transition___fabric_joint.step",
    "dx": 0.0
   },
   {
-   "name": "Recuperator ducts",
+   "name": "EX-440 Cold air pipe DN350 + BOV tee (P265GH)",
    "group": "recup",
    "inst": [
     0.0
    ],
-   "desc": "compressor air DN300 in, hot air DN300 to the can, exhaust DN600 in, outlet DN600 to the hot-water / chiller heat exchanger",
-   "material": "321 stainless, insulated",
-   "step": "Recuperator_ducts.step",
+   "desc": "manifold port -> rect-round elbow -> DN350 run at y 760 / z -360 -> recuperator air inlet; pressure-balanced joint",
+   "material": "P265GH",
+   "mass_kg": 197.95,
+   "step": "../A1000_exh/EX_440_Cold_air_pipe_DN350___BOV_tee__P265GH.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-441 BOV DN125 + dump line DN200",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "blow-off / start-bleed valve DN125 on the cold pipe; dump DN200 into the economizer inlet plenum (sparger)",
+   "material": "1.4541",
+   "mass_kg": 180.99,
+   "step": "../A1000_exh/EX_441_BOV_DN125___dump_line_DN200.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-450 Hot air pipe DN450 + gimbal pair (1.4948)",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "recuperator air outlet (top, rear) -> can nozzle DN450; 3 elbows R/D 1, gimbal pair in the vertical leg; 626 C",
+   "material": "1.4948",
+   "mass_kg": 338.25,
+   "step": "../A1000_exh/EX_450_Hot_air_pipe_DN450___gimbal_pair__1_4948.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-460 Recuperator (bought in)",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "primary-surface counterflow core, eff 0.90, 3.0 MW; gas in at the rear (side hood), out at the front (top); air in front (side), out rear (top); moved +300 mm in y for the pipe lane",
+   "material": "bought in",
+   "mass_kg": 2500.0,
+   "step": "../A1000_exh/EX_460_Recuperator__bought_in.step",
+   "dx": 0.0
+  },
+  {
+   "name": "EX-470 Economizer + stack DN800 (bought in)",
+   "group": "recup",
+   "inst": [
+    0.0
+   ],
+   "desc": "hot-water economizer 95/75 C (~1 MW) on the recuperator gas outlet, stack DN800 to z 5000 with silencer",
+   "material": "bought in",
+   "mass_kg": 1400.0,
+   "step": "../A1000_exh/EX_470_Economizer___stack_DN800__bought_in.step",
    "dx": 0.0
   },
   {
