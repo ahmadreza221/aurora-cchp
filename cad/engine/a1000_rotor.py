@@ -20,7 +20,8 @@ through the turbine. The stack is therefore built in two parts:
                models stay as they are; the ring section (r 60-88) is ~5 x stiffer in bending than the thin arm tube
                (r 58-66) it replaces; the seal fins are on a wrought, replaceable part; and over the added length studs
                and ring are both IN718 (no expansion mismatch). Cost: one more curvic interface and ~1.7 kg more than arms.
-Bearings: tilting-pad journals (5 pads, load between pads) in integral S-spring squeeze-film damper rings (ISFD),
+Bearings: tilting-pad journals (5 pads, load between pads) in integral spring squeeze-film damper rings (ISFD; phase 4:
+4 hairpin springs + 4 damper pads, docs/08 sec. 21),
 double-acting tilting-pad thrust bearing on the integral collar, at the cold end.
                rotor rev 1.3 (bearing losses, docs/08 sec. 13.10): journals D100 x L45 -> D90 x L36, thrust pads r 56-78 -> 52-68 with
                8 pads on the loaded (aft) side and 4 on the inactive (forward) side, collar r 82 -> 72; the stub and rear-stub
@@ -111,7 +112,10 @@ TIE = dict(d=42.0, pitch=3.0, shank=28.0, pre_kN=185.0, land=45.8, x_nut=(18.0, 
            lands=(266.0, 353.0, 446.0))
 BORE_IMP = 46.0
 # curvic bands after the impeller detail design (inducer hubs r 60 / 80, sim/a1000_impeller_design.json)
-CURVIC_C = dict(stub_I1=dict(ri=44.0, ro=58.0, N=36), I1_spc=dict(ri=50.0, ro=70.0, N=36),
+# phase 4 (docs/08 sec. 21): stub - I1 band r 44-58 -> 35-47. The stub is a tube r 23-48 (seal land) behind a thin nose
+# flare to r 60, boxed in by the front bearing housing up to x 201: the outer teeth sat on the flare, the contact ran to
+# the inner radius (3D FEA: tooth root 1,120 MPa, 3,100 starts). Inside the tube the band has a solid backing.
+CURVIC_C = dict(stub_I1=dict(ri=35.0, ro=47.0, N=36), I1_spc=dict(ri=50.0, ro=70.0, N=36),
                 spc_I2=dict(ri=52.0, ro=72.0, N=36), I2_drum=dict(ri=55.0, ro=75.0, N=36))
 R_HUB_IN = (60.0, 80.0)                                           # impeller inducer hub radii (flow-path hub at the faces)
 JOURNAL = dict(D=90.0, L=36.0, n_pad=4, arc=65.0)               # tilting-pad journals (sim/engine/a1000_rotor_stack.py), rev 1.3;
@@ -123,9 +127,17 @@ THRUST = dict(ri=52.0, ro=68.0, n=8, n_in=4, t=12.0)             # thrust pads (
 BACKFACE = dict(r_seal=200.0, r_feed=120.0)                      # impeller 2 back face: labyrinth at r 200, compressor-delivery
                                                                  # air fed at r 120 (pressurised back-face cavity, thrust balance)
 BAL_SEAL_R = 85.0                                               # drum balance-piston labyrinth radius (thrust balance)
-SFD = dict(R=80.0, L=35.0, c=0.13)                               # squeeze-film damper land radius, length, radial clearance
-ISFD = dict(n=8, l=43.0, t=4.2, ri=74.0, ro=92.0, span=30.0)      # integral S-spring damper ring (wire EDM): springs, beam
-                                                                 # length / radial thickness, ring radii, spring arc [deg]
+# phase 4 (docs/08 sec. 21, sim/engine/a1000_joint_fea.py): the drawn ISFD (8 single circumferential beams, short webs) was
+# 1.36e9 N/m in the 2D FE, 43 x the 3.1e7 of the rotor dynamics (a beam loaded along its arc acts as a strut), and had no
+# film gap. Now 4 hairpin springs (inner arm from a web on the inner ring, U-turn, outer arm back to a web on the outer
+# ring: radial and tangential load both bend the arms) and 4 damper pads on the inner ring between them (film on the
+# outer-ring bore, open ends, fed from the housing groove); same envelope r 74-92 x 43 mm, same housings
+SFD = dict(R=89.0, L=43.0, c=0.13, pad=53.0)                      # damper pads: film radius (outer-ring bore), length, radial
+                                                                  # clearance, arc of each of the 4 pads [deg]
+ISFD = dict(n=4, kind='hairpin', t=2.56, span=34.0, gap=1.6, w_web=4.0, w_u=4.0, t_ring=3.0, ri=74.0, ro=92.0, Lf=43.0)
+                                                                  # integral hairpin-spring damper ring (wire EDM): springs,
+                                                                  # arm thickness, arm arc [deg], arm-ring gaps, web / U-turn
+                                                                  # widths [deg], ring thickness, ring radii, axial length
 X_BRG = (65.0, RD.rotor('A')['brg'][1])                          # journal 1 at x 65: the thrust bearing behind it ends at
                                                                  # x 156, so the stage-1 radial inlet has x 156-205 to turn
 # inlet hub fairing (rear of the thrust housing = hub wall of the stage-1 radial inlet bend): (x, r) points from the
@@ -395,7 +407,9 @@ def build_blisk_arms(row):
 LUBE_JSON = os.path.join(ROOT, 'sim', 'engine', 'fea', 'a1000_lube_piping.json')
 PAD = dict(t=10.0, pivot=0.60, stop_deg=12.0)                   # pad thickness, pivot offset (fraction of the arc), stop pin
 SPRAY = dict(w=8.0, r0=46.5, jets=2, d_jet=1.5, aim=15.0)        # spray bar width, inner radius, jets per bar, jet d, inward aim
-ISFD_CLOCK = 7.5                                                 # spring k from 7.5 + 45 k: gaps at 0 / 45 / ... / 180 deg
+ISFD_FEED_D = 1.4                                                # pad feed orifices (2 per ring, sec. 21)
+ISFD_CLOCK = 28.0                                                # spring k from 28 + 90 k (centres 45 / 135 / 225 / 315 deg): the pads
+                                                                 # sit at 0 / 90 / 180 / 270, the split plane runs through two pads
 SEAL_C = dict(jb1=0.20, tb=0.15, jb2=0.20)                       # radial clearance of the oil / buffer labyrinths
 FBH = dict(x0=27.0, ro=130.0, lug=(125.0, 165.0, 20.0), foot=200.0, x_max=141.0)   # front bearing housing: front face, OD,
 # split lugs, feet; x_max: nothing of FB-1 / FB-2 at r > 130 aft of x 141 (inlet casing hub wall x 143-157 over the OD, its
@@ -476,7 +490,7 @@ def _windback(x0, x1, r_bore, pitch=2.5, depth=0.8):
 
 def journal_parts(xb, tag):
     """4-pad tilting-pad journal (load between pads, 60 % pivot) in a split carrier with 4 spray bars, in a split ISFD ring
-    (8 S-springs, piston-ring land seals, O-rings on the OD, 2 transfer tubes): {name: (shape, material, group)}"""
+    (4 hairpin springs + 4 open-ended damper pads, O-rings on the OD, 2 transfer tubes; sec. 21): {name: (shape, material, group)}"""
     App, Part, V = _fc()
     D, L, arc = JOURNAL['D'], JOURNAL['L'], JOURNAL['arc']; R = D / 2
     r_pad, r_car = R + PAD['t'], ISFD['ri']
@@ -515,32 +529,36 @@ def journal_parts(xb, tag):
         car = car.cut(Part.makeCylinder(d / 2, 16.0, V(xb + sy * 12.0, sy * 66.5, -8.0), V(0, 0, 1)))
     car = car.cut(_radial_hole(xb + 10.0, 60.0, r_car + 1, 135.0, 6.0))                  # anti-rotation pin from the ISFD ring
     out['%s pad carrier + end plates (split)' % tag] = (Part.makeCompound(_splitz(car)), 'steel', 'carrier')
-    # ISFD ring, split: inner ring r 74-78, outer r 86-92, 8 S-springs clocked so the split runs through two spring gaps
-    q = ISFD; Lf = SFD['L'] + 8.0; x0, x1 = xb - Lf / 2, xb + Lf / 2
-    r1, r2 = q['ri'] + 4.0, q['ro'] - 6.0
-    rb0 = 0.5 * (r1 + r2) - q['t'] / 2; rb1 = rb0 + q['t']
+    # ISFD ring, split: inner ring r 74-77 with 4 damper pads (to the film radius - c), outer ring r 89-92, 4 hairpin
+    # springs (sec. 21); the split plane runs through the pads at 0 / 180 deg
+    q = ISFD; Lf = ISFD['Lf']; x0, x1 = xb - Lf / 2, xb + Lf / 2
+    r1, r2 = q['ri'] + q['t_ring'], q['ro'] - q['t_ring']
+    gm = (r2 - r1) - 2 * q['t'] - 2 * q['gap']
+    rA0 = r1 + q['gap']; rA1 = rA0 + q['t']; rB0 = rA1 + gm; rB1 = rB0 + q['t']
     isfd = tube(x0, x1, r1, q['ri']).fuse(tube(x0, x1, q['ro'], r2))
     for k in range(q['n']):
-        a = ISFD_CLOCK + 360.0 / q['n'] * k
-        beam = tube(x0, x1, rb1, rb0).common(_sector(xb, r2 + 1, a, q['span'], Lf))
-        w_in = tube(x0, x1, rb0 + 0.5, r1 - 0.5).common(_sector(xb, r2 + 1, a, 3.0, Lf))
-        w_out = tube(x0, x1, r2 + 0.5, rb1 - 0.5).common(_sector(xb, r2 + 1, a + q['span'] - 3.0, 3.0, Lf))
-        isfd = isfd.fuse([beam, w_in, w_out])
-    isfd = isfd.cut(tube(x0 + 2, x0 + 5, q['ro'] + 0.1, q['ro'] - 2.4)).cut(tube(x1 - 5, x1 - 2, q['ro'] + 0.1, q['ro'] - 2.4))   # O-rings
-    isfd = isfd.cut(tube(x0 + 4, x0 + 6, r2 + 0.01, r2 + 1.6)).cut(tube(x1 - 6, x1 - 4, r2 + 0.01, r2 + 1.6))                   # piston rings
-    for deg in (90.0, 270.0):                                                          # transfer-tube bores (spring gaps)
-        isfd = isfd.cut(_radial_hole(xb, q['ri'] - 1, q['ro'] + 1, deg, 12.2))
-    for deg in (225.0, 315.0):                                                         # land feed orifices d 1.1
-        isfd = isfd.cut(_radial_hole(xb, r2 - 0.5, q['ro'] + 0.5, deg, 1.1))
+        a = ISFD_CLOCK + 360.0 / q['n'] * k; sp, w, wu = q['span'], q['w_web'], q['w_u']
+        def arc(ra, rb, a0, a1): return tube(x0, x1, rb, ra).common(_sector(xb, q['ro'] + 2, a0, a1 - a0, Lf + 2))
+        pad0, pad1 = a + sp + 1.5, a + 360.0 / q['n'] - 1.5                      # pad between this spring and the next
+        isfd = isfd.fuse([arc(rA0, rA1, a, a + sp), arc(rB0, rB1, a, a + sp), arc(rA0, rB1, a + sp - wu, a + sp),
+                          arc(r1 - 0.5, rA0 + 0.5, a, a + w), arc(rB1 - 0.5, r2 + 0.5, a, a + w),
+                          arc(r1 - 0.5, SFD['R'] - SFD['c'], pad0, pad1)])
+    isfd = isfd.cut(tube(x0 + 2, x0 + 5, q['ro'] + 0.1, q['ro'] - 1.8)).cut(tube(x1 - 5, x1 - 2, q['ro'] + 0.1, q['ro'] - 1.8))   # O-rings
+    # (open-ended pads: no piston rings; the pad films drain at their ends into the bearing cavity)
+    for deg in (90.0, 270.0):                                                          # transfer-tube bores through the 90 / 270 pads;
+        isfd = isfd.cut(_radial_hole(xb, q['ri'] - 1, q['ro'] + 1, deg, 12.2))           # 13 in the outer ring: the pad moves c
+        isfd = isfd.cut(_radial_hole(xb, r2 - 0.5, q['ro'] + 1, deg, 13.0))
+    for deg in (0.0 + 9.0, 180.0 + 9.0):                                               # pad feed orifices (beside the split)
+        isfd = isfd.cut(_radial_hole(xb, r2 - 0.5, q['ro'] + 0.5, deg, ISFD_FEED_D))
     isfd = isfd.cut(_radial_hole(xb + 10.0, q['ri'] - 1, r1 + 0.5, 135.0, 6.0))            # carrier anti-rotation pin
-    isfd = isfd.cut(_radial_hole(xb - 10.0, r2 - 0.5, q['ro'] + 0.5, 45.0, 8.0))            # pin from the housing
+    isfd = isfd.cut(_radial_hole(xb - 10.0, r2 - 0.5, q['ro'] + 0.5, 45.0, 8.0))            # pin from the housing (outer ring)
     tubes = []
     for deg in (90.0, 270.0):
         tt = Part.makeCylinder(6.0, q['ro'] - 1.0 - q['ri'] - 0.05, _polar(xb, q['ri'] + 0.05, deg), _radial(deg)).cut(
             Part.makeCylinder(4.0, 21.0, _polar(xb, q['ri'] - 1.0, deg), _radial(deg)))     # seats on the carrier OD (O-ring)
         tubes.append(tt)
     isfd_h = _splitz(isfd)
-    out['%s integral S-spring damper ring (ISFD, %d springs, split) + transfer tubes' % (tag, q['n'])] = (
+    out['%s integral hairpin-spring damper ring (ISFD, %d springs + %d pads, split) + transfer tubes' % (tag, q['n'], q['n'])] = (
         Part.makeCompound(isfd_h + tubes), '17-4PH H1100', 'cage')
     return out
 
@@ -553,7 +571,7 @@ def front_bearing_housing():
     App, Part, V = _fc()
     xb, L = X_BRG[0], JOURNAL['L']; c0, c1 = COLLAR['x0'], COLLAR['x1']; t = THRUST['t']; e = 0.15; tc = 8.0
     xr1 = c1 + e + t + tc; xf1 = c0 - e - t - tc                     # aft / forward base-ring outer faces
-    Lf = SFD['L'] + 8.0; xi0, xi1 = xb - Lf / 2, xb + Lf / 2
+    Lf = ISFD['Lf']; xi0, xi1 = xb - Lf / 2, xb + Lf / 2
     x_n = INLET_HUB[-1][0]; ro = FBH['ro']; rq = ISFD['ro']
     sep0 = xb + L / 2 + 6.5                                          # separator wall between JB1 and the thrust chamber
     prof = [(FBH['x0'], 44.0), (FBH['x0'], ro), (INLET_HUB[0][0], ro)] + INLET_HUB + [(x_n, 49.0), (xr1, 49.0), (xr1, 74.05),
@@ -638,7 +656,7 @@ def jb2_cartridge():
     support ring and the hub bore, slotted for the 8 frame keys"""
     App, Part, V = _fc()
     xb, L = X_BRG[1], JOURNAL['L']; q = JB2C; rq = ISFD['ro']; ro = q['ro']
-    Lf = SFD['L'] + 8.0; xi0, xi1 = xb - Lf / 2, xb + Lf / 2
+    Lf = ISFD['Lf']; xi0, xi1 = xb - Lf / 2, xb + Lf / 2
     s0, s1 = q['seal']; sh0, sh1, r_sh = q['shoulder']
     prof = [(q['x0'], 61.55), (q['x0'], ro), (sh0, ro), (sh0, r_sh), (sh1, r_sh), (sh1, ro), (q['x1'], ro), (q['x1'], rq),
             (xi1, rq), (xi1, rq + 0.02), (xi0, rq + 0.02), (xi0, rq), (s1 + 0.5, rq), (s1 + 0.5, 60.05), (s0 + 3.5, 60.05),
@@ -749,13 +767,23 @@ def build_all():
 
 
 def main_cad():
+    """export every part, or with --only=<text> the parts whose name contains it (parts.json is merged, the replaced
+    parts' old entries with the same name prefix up to the first '(' are dropped)"""
     out_c = os.path.join(ROOT, 'cad_out', 'engine', 'A1000_rotor'); out_f = os.path.join(ROOT, 'fusion', 'A1000_rotor')
     os.makedirs(out_c, exist_ok=True); os.makedirs(out_f, exist_ok=True)
+    only = [a.split('=', 1)[1] for a in sys.argv if a.startswith('--only=')]
     rho = {'MAR-M247': 8540, 'IN718': 8190, '34CrNiMo6 QT': 7850, '17-4PH H1025': 7800, '17-4PH H1100': 7800, 'EN-GJS-400-18': 7100,
            '1.4313': 7700, 'ceramic fibre + 1.4828 foil': 700}
     info = {}
     App, Part, V = _fc()
-    for name, (s, mat, grp) in build_all().items():
+    if only:
+        allp = dict(build_rotor()) if any(o.startswith('RT-') for o in only) else {}
+        for xb, tag in ((X_BRG[0], 'JB1'), (X_BRG[1], 'JB2')):
+            allp.update(journal_parts(xb, tag))
+        built = {k: v for k, v in allp.items() if any(o in k for o in only)}
+    else:
+        built = build_all()
+    for name, (s, mat, grp) in built.items():
         fn = ''.join(c if c.isalnum() else '_' for c in name).strip('_') + '.step'
         s.exportStep(os.path.join(out_c, fn)); s.exportStep(os.path.join(out_f, fn))
         rt = Part.Shape(); rt.read(os.path.join(out_f, fn))          # valid in memory is not enough: read the STEP back
@@ -765,6 +793,10 @@ def main_cad():
                           r=round(max(bb.YMax, bb.ZMax), 2))
         print('%-50s %-6s solids %3d  %8.2f kg  x %.1f..%.1f  r %.1f' % (name, info[name]['valid'], len(s.Solids), info[name]['mass_kg'],
                                                                            bb.XMin, bb.XMax, info[name]['r']), flush=True)
+    if only:                                                           # merge into the existing list
+        old = json.load(open(os.path.join(out_f, 'parts.json')))['parts']
+        new_pref = {k.split('(')[0] for k in info}
+        info = dict({k: v for k, v in old.items() if k.split('(')[0] not in new_pref}, **info)
     json.dump(dict(frame='rotor frame mm, x = engine axis from the gearbox coupling face', x_offset_turbine=X_OFF,
                    joints=X_J, parts=info), open(os.path.join(out_f, 'parts.json'), 'w'), indent=1)
 

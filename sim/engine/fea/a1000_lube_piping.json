@@ -31,12 +31,12 @@
  },
  "isfd": {
   "feed_orifices": 2,
-  "d_orifice_mm": 1.1,
-  "Q_lpm": 0.6,
-  "end_seals": "2 piston rings (cast iron), gap 0.15 mm",
-  "p_land_barg": 1.5094080837165165,
-  "e_normal": 0.06636229865541243,
-  "p_dynamic_normal_bar": 1.33975940842552,
+  "d_orifice_mm": 1.4,
+  "Q_lpm": 2.0987758864191868,
+  "end_seals": "none: 4 open-ended pads, the film drains into the bearing cavity",
+  "p_land_barg": 0.6,
+  "e_normal": 0.015154466933787782,
+  "p_dynamic_normal_bar": 0.39343923370722284,
   "film": "full film at the normal orbit; pi-film at large orbits (both in the rotor model)"
  },
  "anti_rotation": {
@@ -104,11 +104,11 @@
  },
  "drains": {
   "FBH (JB1 + TB)": {
-   "oil_lpm": 21.46754940264015,
-   "design_m3s": 0.0004651302370572032,
+   "oil_lpm": 22.966325289059334,
+   "design_m3s": 0.0004976037145962856,
    "DN": 65,
    "ID_mm": 72.1,
-   "v_half_full": 0.22784744230380893,
+   "v_half_full": 0.24375481234881452,
    "slope_min": "1:50",
    "air_g_s": 6.217531515043709,
    "vent_DN": 25,
@@ -116,11 +116,11 @@
    "outlets": "2 x DN40 vertical sockets, joined into the DN65 below FB-2"
   },
   "JB2": {
-   "oil_lpm": 11.92987927295336,
-   "design_m3s": 0.00025848071758065614,
+   "oil_lpm": 13.428655159372546,
+   "design_m3s": 0.0002909541951197385,
    "DN": 50,
    "ID_mm": 56.3,
-   "v_half_full": 0.20765934282230303,
+   "v_half_full": 0.23374802389700042,
    "slope_min": "1:50",
    "air_g_s": 7.544093358984298,
    "vent_DN": 25,
@@ -136,8 +136,8 @@
  },
  "reservoir": {
   "location": "in the base frame between the beams at x -540 and 200 (under the couplings, the plenum front and the gearbox front), top z -715",
-  "working_l": 260,
-  "volume_l": 338,
+  "working_l": 272,
+  "volume_l": 354,
   "retention_min": 4,
   "heater_kW": 3.0,
   "note": "gearbox drains straight down through the deck"
@@ -191,10 +191,10 @@
   "header": "DN50 PN16 from the gas train (shut-off, vent, 4 staging valves on the skid) to the valve block"
  },
  "oil_header": {
-  "Q_lpm": 33.3974286755935,
+  "Q_lpm": 36.39498044843188,
   "tube_OD": 35,
-  "v": 0.7374770531085284,
-  "dp_bar": 0.03232863362525595
+  "v": 0.8036685455568255,
+  "dp_bar": 0.03706019990441213
  },
  "air_lines": {
   "TB_buffer": {
@@ -222,8 +222,8 @@
    "P_friction_kW": 4.364197528415749,
    "P_soak_kW": 0.0,
    "Q_heat_lpm": 7.611972433283284,
-   "Q_isfd_lpm": 0.6,
-   "Q_design_lpm": 9.353768298275774,
+   "Q_isfd_lpm": 2.0987758864191868,
+   "Q_design_lpm": 10.852544184694962,
    "jets": {
     "bars": 4,
     "per_bar": 2,
@@ -233,17 +233,17 @@
     "aim": "leading edge of the next pad, 15 deg to the surface, with rotation"
    },
    "p_bearing_bar": 0.9346202709662529,
-   "supply_tube_OD": 15,
-   "supply_v": 1.378424501117459,
-   "line_dp_bar": 0.19059191628348351,
-   "p_groove_barg": 1.8094080837165165,
-   "orifice_dp_bar": 0.8747878127502637,
+   "supply_tube_OD": 18,
+   "supply_v": 1.0235472901436482,
+   "line_dp_bar": 0.09430806732021325,
+   "p_groove_barg": 1.9056919326797868,
+   "orifice_dp_bar": 0.9710716617135339,
    "orifices": 2,
    "orifice_mm": 3.2,
    "orifice_at": "transfer tubes",
    "galleries": {
     "housing_groove_mm": "10 x 6",
-    "v_groove": 1.2991344858716354,
+    "v_groove": 1.5072978034298556,
     "transfer_tubes": "2 x OD 12 / ID 8, FKM O-rings",
     "v_transfer": 1.4512557243247068,
     "carrier_groove_mm": "8 x 5",
@@ -255,8 +255,8 @@
    "P_friction_kW": 4.364197528415749,
    "P_soak_kW": 1.2843219931725929,
    "Q_heat_lpm": 9.852068933002922,
-   "Q_isfd_lpm": 0.6,
-   "Q_design_lpm": 11.92987927295336,
+   "Q_isfd_lpm": 2.0987758864191868,
+   "Q_design_lpm": 13.428655159372546,
    "jets": {
     "bars": 4,
     "per_bar": 2,
@@ -267,16 +267,16 @@
    },
    "p_bearing_bar": 0.9489973877341459,
    "supply_tube_OD": 18,
-   "supply_v": 1.1251551151289325,
-   "line_dp_bar": 0.17667300523683302,
-   "p_groove_barg": 1.823326994763167,
-   "orifice_dp_bar": 0.874329607029021,
+   "supply_v": 1.266510724557407,
+   "line_dp_bar": 0.20502738418695549,
+   "p_groove_barg": 1.7949726158130446,
+   "orifice_dp_bar": 0.8459752280788987,
    "orifices": 2,
    "orifice_mm": 3.7,
    "orifice_at": "transfer tubes",
    "galleries": {
     "housing_groove_mm": "10 x 6",
-    "v_groove": 1.6569276767990777,
+    "v_groove": 1.865090994357298,
     "transfer_tubes": "2 x OD 12 / ID 8, FKM O-rings",
     "v_transfer": 1.8783398863801422,
     "carrier_groove_mm": "8 x 5",
@@ -309,7 +309,7 @@
   }
  },
  "lube_module": {
-  "flow_lpm": 65,
+  "flow_lpm": 68,
   "header_barg": 2.0,
   "T_supply_C": 50.0,
   "filter": "duplex 10 um abs, beta 200",
@@ -368,7 +368,7 @@
   },
   {
    "name": "JB1 flow orifice diameter (>= 3 mm, no clogging)",
-   "value": 3.2408,
+   "value": 3.1573,
    "limit": 3.0,
    "unit": "mm",
    "ok": true,
@@ -384,7 +384,7 @@
   },
   {
    "name": "JB2 flow orifice diameter (>= 3 mm, no clogging)",
-   "value": 3.6875,
+   "value": 3.718,
    "limit": 3.0,
    "unit": "mm",
    "ok": true,
@@ -392,7 +392,7 @@
   },
   {
    "name": "JB1 gallery / transfer-tube velocity",
-   "value": 1.4513,
+   "value": 1.5073,
    "limit": 2.0,
    "unit": "m/s",
    "ok": true,
@@ -408,7 +408,7 @@
   },
   {
    "name": "ISFD full film at 2 x the API orbit (land / squeeze pressure)",
-   "value": 1.1266,
+   "value": 1.525,
    "limit": 1.0,
    "unit": "-",
    "ok": true,
@@ -488,7 +488,7 @@
   },
   {
    "name": "drain FBH (JB1 + TB): velocity half full",
-   "value": 0.2278,
+   "value": 0.2438,
    "limit": 0.3,
    "unit": "m/s",
    "ok": true,
@@ -504,7 +504,7 @@
   },
   {
    "name": "drain JB2: velocity half full",
-   "value": 0.2077,
+   "value": 0.2337,
    "limit": 0.3,
    "unit": "m/s",
    "ok": true,
@@ -520,7 +520,7 @@
   },
   {
    "name": "FB-2 drain outlets 2 x DN40: capacity at a 12 mm pool / design flow with foam",
-   "value": 1.9035,
+   "value": 1.7792,
    "limit": 1.3,
    "unit": "-",
    "ok": true,

@@ -8,10 +8,12 @@
   4. hot joints (16 x M10 studs through bolted curvics on the cast arm flanges): preload, thermal change, torque
   5. disc FEA (CalculiX CAX6) of both blisks with the new cast arms: hub, arm root, flange hoop at the stud holes, LCF
   6. tilting-pad journals and thrust bearing: film, temperature rise, oil flow, power loss; squeeze-film dampers and
-     integral S-spring damper rings; rotor dynamics of the detailed stack (sim/engine/a1000_rotordynamics.py solver)
+     integral spring damper rings (ISFD, phase 4: hairpin springs + pads); rotor dynamics of the detailed stack (sim/engine/a1000_rotordynamics.py solver)
   7. bearing losses against the cycle's mechanical-loss allowance
   8. transient axial thrust through trips, surge, start and stop (sim/engine/a1000_thrust_transient.py, run from here
      after the steady results are written): its checks join this list
+  9. 3D FEA of the curvic joints and stud flanges and the 2D FEA of the ISFD rings (sim/engine/a1000_joint_fea.py, phase 4):
+     its checks (sim/engine/fea/a1000_joint_fea.json) join this list
  10. transient thermal-structural analysis (phase 5, sim/engine/a1000_tiebolt_thermal.py, run on its own): its checks
      (tie-bolt and stud preload, joint clamp and lift-off, disc LCF per cycle) are read from its JSON and join this list
 Run:    python sim/engine/a1000_rotor_stack.py [--bore-study]    (numpy, scipy, matplotlib; CCX = ccx path, gmsh for the FEA)
@@ -303,22 +305,26 @@ def thrust_bearing(W, ri=None, ro=None, n=None, n_in=None, fill=0.80, dT_oil=20.
 
 
 def sfd_cage():
-    """squeeze-film damper (short bearing, full film with O-ring end seals; pi-film / cavitated = half) and the integral
-    S-spring centring springs of the ISFD ring: n curved beams (length l, radial thickness t, axial width = the land),
-    fixed-guided, radial stiffness n / 2 x E w t^3 / l^3 (to be confirmed by a FE model of the EDM ring)"""
+    """integral spring squeeze-film damper (ISFD) ring, phase 4 design (docs/08 sec. 21): 4 hairpin springs, radial stiffness
+    from the 2D FE of sim/engine/a1000_joint_fea.py (--isfd, in its JSON; 3.12e7 N/m when the JSON is absent), and 4
+    open-ended damper pads of arc G.SFD['pad'] on the outer-ring bore: short bearing per pad, C = mu R L^3 / c^3 sum of
+    int cos^2 over the pads (full film), pi film / cavitated = half. (The drawn 8-beam ring of rev 1.3 was 43 x stiffer.)"""
     s, q = G.SFD, G.ISFD; mu = visc(70.0)
     R, L, cl = s['R'] * 1e-3, s['L'] * 1e-3, s['c'] * 1e-3
-    C_full = math.pi * mu * R * L ** 3 / cl ** 3
-    E = 196e9; t = q['t'] * 1e-3; l = q['l'] * 1e-3; w = (s['L'] + 8.0) * 1e-3
-    k = q['n'] / 2 * E * w * t ** 3 / l ** 3
-    return dict(C_full=C_full, C_pi=0.5 * C_full, k=k, mu=mu, E=E, t=t, l=l, c=cl)
+    b = math.radians(s['pad'])
+    th = [math.radians(G.ISFD_CLOCK + q['span'] + 360.0 / q['n'] * (k + 0.5) - q['span'] / 2) for k in range(q['n'])]
+    C_full = mu * R * L ** 3 / cl ** 3 * sum(b / 2 + math.sin(b) * math.cos(2 * t) / 2 for t in th)
+    k = 3.12e7
+    jf = os.path.join(HERE, 'fea', 'a1000_joint_fea.json')
+    if os.path.exists(jf):
+        k = json.load(open(jf)).get('isfd', {}).get('design', {}).get('k_N_m', k)
+    G_leak = q['n'] * 2 * cl ** 3 * R * b / (12 * mu * L / 2)              # open pad ends: m3 / (s Pa) of land pressure
+    return dict(C_full=C_full, C_pi=0.5 * C_full, k=k, mu=mu, c=cl, pads=q['n'], pad_deg=s['pad'], R=R, L=L, G_leak=G_leak)
 
 
 def cage_stress(k_info, W_static, orbit):
-    E, t, l = k_info['E'], k_info['t'], k_info['l']
-    d_static = W_static / k_info['k']                            # sag (taken out by an eccentric ring bore at assembly)
-    s_alt = 3 * E * t * orbit / l ** 2 / 1e6                      # fixed-guided beam, end deflection = orbit radius
-    return dict(sag_um=d_static * 1e6, s_alt_MPa=s_alt, s_mean_MPa=3 * E * t * d_static / l ** 2 / 1e6)
+    """static sag [um] of the ISFD springs (the spring stresses come from the 2D FE, sim/engine/a1000_joint_fea.py)"""
+    return dict(sag_um=W_static / k_info['k'] * 1e6)
 
 
 # ================================================================================================ rotor dynamics
@@ -622,14 +628,11 @@ def main():
     check('thrust bearing min film, back-face feed lost', tb_f['h_min_um'], 10.0, 'um', tb_f['h_min_um'] >= 10.0, '')
     for i, b in enumerate(jb):
         check('journal %d min film' % (i + 1), b['h_min_um'], 25.0, 'um', b['h_min_um'] >= 25.0, '%.2f MPa' % b['unit_load_MPa'])
-    # squeeze-film damper + integral S-springs
-    orbit = 0.8 * G.SFD['c'] * 1e-3
-    cs = [cage_stress(sfd, w * 9.81, orbit) for w in (W1, W2)]
-    s_cage = max(c['s_alt_MPa'] for c in cs)
-    check('ISFD spring alternating stress / endurance (17-4PH H1100, 500 MPa / 2)', s_cage / 250.0, 1.0, '-', s_cage <= 250.0,
-          'orbit 80 %% of the damper clearance, %d springs t %.1f l %.0f mm' % (G.ISFD['n'], G.ISFD['t'], G.ISFD['l']))
-    print('   SFD R %.0f L %.0f c %.2f: C %.2e (full film) / %.2e (pi film) Ns/m; ISFD k %.2e N/m, sag %.0f / %.0f um, spring stress %.0f MPa alt' % (
-        G.SFD['R'], G.SFD['L'], G.SFD['c'], sfd['C_full'], sfd['C_pi'], sfd['k'], cs[0]['sag_um'], cs[1]['sag_um'], s_cage))
+    # squeeze-film damper pads + integral hairpin springs (stresses and fatigue: the joint / ISFD FE checks below)
+    cs = [cage_stress(sfd, w * 9.81, 0.0) for w in (W1, W2)]
+    print('   ISFD %d hairpin springs, k %.3e N/m (2D FE); %d pads R %.0f L %.0f c %.2f x %.0f deg: C %.2e (full film) / %.2e (pi film) Ns/m; '
+          'sag %.0f / %.0f um' % (G.ISFD['n'], sfd['k'], sfd['pads'], G.SFD['R'], G.SFD['L'], G.SFD['c'], G.SFD['pad'], sfd['C_full'], sfd['C_pi'],
+                                cs[0]['sag_um'], cs[1]['sag_um']))
     res['bearings'] = dict(journal=jb, thrust_sized=tb, thrust_design=tb_d, thrust_feed_lost=tb_f, sfd=sfd, cage=cs, journal_loads_kg=[W1, W2],
                            U_api_gmm=U_api)
     # ------------------------------------------------------------------ rotor dynamics of the detailed stack
@@ -681,6 +684,12 @@ def main():
     for c in tr['checks']:
         check(c['test'], c['value'], c['limit'], c['unit'], c['ok'], c['note'])
     res['thrust_transient'] = dict(worst=tr['worst'], bound=tr['bound'], bov=tr['bov'], results='sim/engine/fea/a1000_thrust_transient.json')
+    # ------------------------------------------------------------------ joint and ISFD FEA (phase 4, docs/08 sec. 21)
+    jf = os.path.join(HERE, 'fea', 'a1000_joint_fea.json')
+    if os.path.exists(jf):
+        print('9. rotor joints and ISFD rings, 3D / 2D FEA (sim/engine/a1000_joint_fea.py)')
+        for c in json.load(open(jf)).get('checks', []):
+            check(c['test'], c['value'], c['limit'], c['unit'], c['ok'], c['note'])
     # ------------------------------------------------------------------ transient thermal-structural (phase 5)
     tj = os.path.join(HERE, 'fea', 'a1000_tiebolt_thermal.json')
     if os.path.exists(tj):                                    # heavy CalculiX runs: python sim/engine/a1000_tiebolt_thermal.py
@@ -725,7 +734,8 @@ def plot(res, Rd):
         for sg in (1, -1):
             R_j = G.JOURNAL['D'] / 2
             ax.add_patch(Rectangle((xb - G.JOURNAL['L'] / 2, sg * R_j if sg > 0 else -R_j - 10), G.JOURNAL['L'], 10, fc='#2e7d32', ec='k', lw=0.5))
-            ax.add_patch(Rectangle((xb - G.SFD['L'] / 2, sg * 74 if sg > 0 else -80), G.SFD['L'], 6, fc='#f9a825', ec='k', lw=0.5))
+            ax.add_patch(Rectangle((xb - G.SFD['L'] / 2, sg * G.ISFD['ri'] if sg > 0 else -G.ISFD['ro']), G.SFD['L'], G.ISFD['ro'] - G.ISFD['ri'],
+                               fc='#f9a825', ec='k', lw=0.5))
     for sg in (1, -1):
         ax.add_patch(Rectangle((G.COLLAR['x0'] - 14, sg * G.THRUST['ri'] if sg > 0 else -G.THRUST['ro']), 14, G.THRUST['ro'] - G.THRUST['ri'], fc='#2e7d32', ec='k', lw=0.5))
         ax.add_patch(Rectangle((G.COLLAR['x1'], sg * G.THRUST['ri'] if sg > 0 else -G.THRUST['ro']), 14, G.THRUST['ro'] - G.THRUST['ri'], fc='#2e7d32', ec='k', lw=0.5))

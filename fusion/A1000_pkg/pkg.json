@@ -893,7 +893,7 @@
    "material": "34CrNiMo6 QT",
    "step": "../A1000_rotor/RT_101_Front_stub_shaft___thrust_collar.step",
    "dx": 0.0,
-   "mass_kg": 10.224
+   "mass_kg": 10.229
   },
   {
    "name": "RT-102 Tie bolt M42 IN718",
@@ -1039,15 +1039,15 @@
    "mass_kg": 2.655
   },
   {
-   "name": "JB1 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes",
+   "name": "JB1 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes",
    "group": "bearing",
    "inst": [
     0.0
    ],
    "material": "17-4PH H1100",
-   "step": "../A1000_rotor/JB1_integral_S_spring_damper_ring__ISFD__8_springs__split____transfer_tubes.step",
+   "step": "../A1000_rotor/JB1_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
    "dx": 0.0,
-   "mass_kg": 2.198
+   "mass_kg": 2.596
   },
   {
    "name": "JB2 tilting pads x4 (steel + babbitt)",
@@ -1072,15 +1072,15 @@
    "mass_kg": 2.654
   },
   {
-   "name": "JB2 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes",
+   "name": "JB2 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes",
    "group": "bearing",
    "inst": [
     0.0
    ],
    "material": "17-4PH H1100",
-   "step": "../A1000_rotor/JB2_integral_S_spring_damper_ring__ISFD__8_springs__split____transfer_tubes.step",
+   "step": "../A1000_rotor/JB2_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
    "dx": 0.0,
-   "mass_kg": 2.198
+   "mass_kg": 2.596
   },
   {
    "name": "TB thrust pads 8 + 4 (steel + babbitt)",

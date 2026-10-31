@@ -199,8 +199,10 @@ for name, P_kW, extra_kW in (('JB1', jb[0]['P_kW'], 0.0), ('JB2', jb[1]['P_kW'],
                              ('TB', tbs['P_kW'], 0.0)):
     Qh = (P_kW + extra_kW) * 1e3 / (RHO_OIL * CP_OIL * DT_OIL)
     brg[name] = dict(P_friction_kW=P_kW, P_soak_kW=extra_kW, Q_heat_lpm=lpm(Qh))
-# ISFD: feed into the land through 2 orifices, end seals = two piston rings (gap 0.15 mm, ~0.6 l/min each damper at 1.0 bar)
-Q_isfd = m3s(0.6)
+# ISFD (phase 4, docs/08 sec. 21): 4 open-ended damper pads fed through 2 orifices; the land pressure P_LAND_ISFD above the
+# cavity sets the flow through the pad ends (leak conductance of the rotor stack's ISFD model)
+P_LAND_ISFD = 0.60e5
+Q_isfd = RS['bearings']['sfd'].get('G_leak', 0.6 / 6e4 / 1.0e5) * P_LAND_ISFD
 for name in ('JB1', 'JB2'):
     brg[name]['Q_isfd_lpm'] = lpm(Q_isfd)
 # design flow: heat flow x 1.15 (pad-temperature margin, filter / orifice tolerance) + the ISFD flow
@@ -269,20 +271,23 @@ for name in ('JB1', 'JB2'):
     brg[name]['galleries'] = dict(housing_groove_mm='10 x 6', v_groove=v_gal, transfer_tubes='2 x OD 12 / ID 8, FKM O-rings',
                                   v_transfer=v_tt, carrier_groove_mm='8 x 5', v_carrier=v_cg, spray_bar_bore_mm=4.0)
     check('%s gallery / transfer-tube velocity' % name, max(v_gal, v_tt, v_cg), 2.0, 'm/s', max(v_gal, v_tt, v_cg) <= 2.0)
-# ISFD feed: 2 orifices from the housing groove into the squeeze-film land (r 80, L 35, c 0.13), the land ends sealed by
-# piston rings (cast iron, gap 0.15 mm); supply 1.0 bar above the cavity keeps a full film at the normal orbit
+# ISFD feed: 2 orifices from the housing groove onto the pads (film r 89, L 43, c 0.13, 4 x 53 deg, open ends); the land
+# pressure P_LAND_ISFD above the cavity keeps a full film at the normal orbit
 sfd = RS['bearings']['sfd']
 mu70 = visc(70.0)
-# normal orbit in the damper <= 2 x the API unbalance response of the rotor (the damper moves less than the journal)
+# normal orbit in the damper: 2 x the damper's own API unbalance response (phase 4: housing DOF of the rotor model,
+# sim/engine/fea/a1000_joint_fea.json); without that file, 2 x the API response at the journals (pk-pk, conservative)
 api_um = max(c['value'] for c in RS['checks'] if c['test'].startswith('API unbalance response'))
-e_norm = 2 * api_um / (sfd['c'] * 1e6)
-p_dyn = 6 * mu70 * OM * e_norm * (0.035 / 2) ** 2 / (0.13e-3) ** 2 / (1 - e_norm) ** 3
-p_isfd = brg['JB1']['p_groove_barg'] * 1e5 - 0.3e5               # land pressure after the feed orifices
-d_isfd = orifice_d(Q_isfd / 2, 0.3e5)
-res['isfd'] = dict(feed_orifices=2, d_orifice_mm=round(d_isfd, 1), Q_lpm=lpm(Q_isfd), end_seals='2 piston rings (cast iron), gap 0.15 mm',
+_jf = os.path.join(FEA, 'a1000_joint_fea.json')
+_orb = json.load(open(_jf)).get('isfd', {}).get('orbits') if os.path.exists(_jf) else None
+e_norm = 2 * (max(_orb['JB1'], _orb['JB2']) * 1e3 if _orb else api_um) / (sfd['c'] * 1e6)
+p_dyn = 6 * mu70 * OM * e_norm * (sfd.get('L', 0.035) / 2) ** 2 / sfd['c'] ** 2 / (1 - e_norm) ** 3
+p_isfd = P_LAND_ISFD                                              # land pressure after the feed orifices
+d_isfd = orifice_d(Q_isfd / 2, brg['JB1']['p_groove_barg'] * 1e5 - P_LAND_ISFD)
+res['isfd'] = dict(feed_orifices=2, d_orifice_mm=round(d_isfd, 1), Q_lpm=lpm(Q_isfd), end_seals='none: 4 open-ended pads, the film drains into the bearing cavity',
                    p_land_barg=p_isfd / 1e5, e_normal=e_norm, p_dynamic_normal_bar=p_dyn / 1e5,
                    film='full film at the normal orbit; pi-film at large orbits (both in the rotor model)')
-print('   ISFD: fed from the housing groove at line pressure, 2 orifices d %.1f mm, %.1f l/min, piston-ring end seals; land %.2f bar(g),'
+print('   ISFD: fed from the housing groove at line pressure, 2 orifices d %.1f mm, %.1f l/min, open-ended pads; land %.2f bar(g),'
       ' squeeze pressure at 2 x the API orbit (e %.2f) %.2f bar' % (d_isfd, lpm(Q_isfd), p_isfd / 1e5, e_norm, p_dyn / 1e5))
 check('ISFD full film at 2 x the API orbit (land / squeeze pressure)', p_isfd / p_dyn, 1.0, '-', p_isfd >= p_dyn)
 

@@ -14,8 +14,8 @@
    "group": "shaft",
    "valid": true,
    "solids": 1,
-   "vol_cm3": 1302.43,
-   "mass_kg": 10.224,
+   "vol_cm3": 1303.03,
+   "mass_kg": 10.229,
    "x": [
     0.0,
     206.2
@@ -204,14 +204,14 @@
    ],
    "r": 74.0
   },
-  "JB1 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes": {
-   "step": "JB1_integral_S_spring_damper_ring__ISFD__8_springs__split____transfer_tubes.step",
+  "JB1 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes": {
+   "step": "JB1_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
    "material": "17-4PH H1100",
    "group": "cage",
    "valid": true,
    "solids": 4,
-   "vol_cm3": 281.74,
-   "mass_kg": 2.198,
+   "vol_cm3": 332.82,
+   "mass_kg": 2.596,
    "x": [
     43.5,
     86.5
@@ -246,14 +246,14 @@
    ],
    "r": 74.0
   },
-  "JB2 integral S-spring damper ring (ISFD, 8 springs, split) + transfer tubes": {
-   "step": "JB2_integral_S_spring_damper_ring__ISFD__8_springs__split____transfer_tubes.step",
+  "JB2 integral hairpin-spring damper ring (ISFD, 4 springs + 4 pads, split) + transfer tubes": {
+   "step": "JB2_integral_hairpin_spring_damper_ring__ISFD__4_springs___4_pads__split____transfer_tubes.step",
    "material": "17-4PH H1100",
    "group": "cage",
    "valid": true,
    "solids": 4,
-   "vol_cm3": 281.74,
-   "mass_kg": 2.198,
+   "vol_cm3": 332.82,
+   "mass_kg": 2.596,
    "x": [
     933.75,
     976.75
