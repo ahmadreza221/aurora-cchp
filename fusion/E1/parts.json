@@ -1,0 +1,44 @@
+{
+ "E1_disc_boreless_final": {
+  "valid": true,
+  "solids": 1
+ },
+ "E1_blade_final": {
+  "valid": true,
+  "solids": 1
+ },
+ "E1_disc_boreless_cast": {
+  "valid": true,
+  "solids": 1
+ },
+ "E1_blade_cast": {
+  "valid": true,
+  "solids": 1
+ },
+ "E1_shaft_welded": {
+  "valid": true,
+  "solids": 1
+ },
+ "E1_ngv_rings_final": {
+  "valid": true,
+  "solids": 2
+ },
+ "E1_ngv_vane_final": {
+  "valid": true,
+  "solids": 1
+ },
+ "E1_ngv_rings_cast": {
+  "valid": true,
+  "solids": 2
+ },
+ "E1_ngv_vane_cast": {
+  "valid": true,
+  "solids": 1
+ },
+ "pattern": {
+  "blades": 29,
+  "vanes": 21,
+  "axis": "x",
+  "units": "mm"
+ }
+}

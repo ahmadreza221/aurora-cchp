@@ -1,0 +1,382 @@
+{
+ "sequence": "v12 (fusion/AURORA1000_Animate as committed in 356c328, package v12 pkg.json)",
+ "moves_checked": [
+  0,
+  8,
+  14,
+  15,
+  16,
+  24
+ ],
+ "note": "subset of the 40 moves: the moves that show the faults (studs + nuts, bearing cartridges, pins); the split rings flown whole from below and the scroll halves after the upper casing are wrong by construction (sec. 19.2)",
+ "vol_tol_mm3": 5.0,
+ "moves_with_clash": 4,
+ "results": [
+  {
+   "label": "1 front stub + collar",
+   "parts": [
+    "RT-101 Front stub shaft + thrust collar"
+   ],
+   "path": [
+    [
+     -650,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 25,
+   "n_moving": 1,
+   "n_installed": 0,
+   "s": 0.0,
+   "k": 0
+  },
+  {
+   "label": "2 studs + nuts drum - R1",
+   "parts": [
+    "RT-111 Studs + nuts drum - R1 (16 x M10)"
+   ],
+   "path": [
+    [
+     300,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [
+    {
+     "a": "RT-111 Studs + nuts drum - R1 (16 x M10)",
+     "b": "A1000_R1 disc with arms (cast MAR-M247)",
+     "vol_mm3": 2042.0,
+     "at": [
+      60.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 60.0
+    }
+   ],
+   "final_overlaps": [],
+   "n_positions": 16,
+   "n_moving": 32,
+   "n_installed": 119,
+   "s": 756.4,
+   "k": 8
+  },
+  {
+   "label": "3 thrust bearing (axial from the front)",
+   "parts": [
+    "TB carrier rings (split)",
+    "TB thrust housing + inlet hub fairing",
+    "TB thrust pads 8 + 4 (steel + babbitt)"
+   ],
+   "path": [
+    [
+     -600,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [
+    {
+     "a": "TB thrust housing + inlet hub fairing",
+     "b": "RT-101 Front stub shaft + thrust collar",
+     "vol_mm3": 173756.1,
+     "at": [
+      -40.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 40.0
+    },
+    {
+     "a": "TB carrier rings (split)",
+     "b": "RT-101 Front stub shaft + thrust collar",
+     "vol_mm3": 69944.4,
+     "at": [
+      -30.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 30.0
+    },
+    {
+     "a": "TB thrust pads 8 + 4 (steel + babbitt)",
+     "b": "RT-101 Front stub shaft + thrust collar",
+     "vol_mm3": 7841.4,
+     "at": [
+      -15.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 15.0
+    }
+   ],
+   "final_overlaps": [],
+   "n_positions": 24,
+   "n_moving": 15,
+   "n_installed": 254,
+   "s": 96.3,
+   "k": 14
+  },
+  {
+   "label": "3 journal bearing 1 (axial from the front)",
+   "parts": [
+    "JB1 bearing cartridge housing",
+    "JB1 integral S-spring damper ring (ISFD, 8 springs)",
+    "JB1 pad carrier + end plates (split)",
+    "JB1 tilting pads x5 (steel + babbitt)"
+   ],
+   "path": [
+    [
+     -700,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [
+    {
+     "a": "JB1 bearing cartridge housing",
+     "b": "RT-101 Front stub shaft + thrust collar",
+     "vol_mm3": 119110.1,
+     "at": [
+      -30.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 30.0
+    },
+    {
+     "a": "JB1 pad carrier + end plates (split)",
+     "b": "RT-101 Front stub shaft + thrust collar",
+     "vol_mm3": 65068.4,
+     "at": [
+      -60.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 60.0
+    },
+    {
+     "a": "JB1 integral S-spring damper ring (ISFD, 8 springs)",
+     "b": "RT-101 Front stub shaft + thrust collar",
+     "vol_mm3": 28089.8,
+     "at": [
+      -60.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 60.0
+    },
+    {
+     "a": "JB1 tilting pads x5 (steel + babbitt)",
+     "b": "RT-101 Front stub shaft + thrust collar",
+     "vol_mm3": 6571.5,
+     "at": [
+      -60.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "before_end_mm": 60.0
+    }
+   ],
+   "final_overlaps": [],
+   "n_positions": 26,
+   "n_moving": 8,
+   "n_installed": 269,
+   "s": 45.8,
+   "k": 15
+  },
+  {
+   "label": "3 journal bearing 2 (axial from the rear)",
+   "parts": [
+    "JB2 bearing cartridge housing",
+    "JB2 integral S-spring damper ring (ISFD, 8 springs)",
+    "JB2 pad carrier + end plates (split)",
+    "JB2 tilting pads x5 (steel + babbitt)"
+   ],
+   "path": [
+    [
+     700,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 26,
+   "n_moving": 8,
+   "n_installed": 277,
+   "s": 69.2,
+   "k": 16
+  },
+  {
+   "label": "4 radial pins x8 (from above)",
+   "parts": [
+    "HS-240 Radial centring pins x8 (1.4980)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     600
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "clashes": [
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "A1000_R1 disc with arms (cast MAR-M247)",
+     "vol_mm3": 16371.4,
+     "at": [
+      0.0,
+      0.0,
+      280.0,
+      0.0
+     ],
+     "before_end_mm": 280.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "HS-202 Outer casing lower half (EN-GJS-400-18LT)",
+     "vol_mm3": 8939.4,
+     "at": [
+      0.0,
+      0.0,
+      20.0,
+      0.0
+     ],
+     "before_end_mm": 20.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "HS-210 Shroud carrier C1 (NGV1 + R1, 1.4828)",
+     "vol_mm3": 7437.6,
+     "at": [
+      0.0,
+      0.0,
+      560.0,
+      0.0
+     ],
+     "before_end_mm": 560.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "HS-220 Shroud carrier C2 (NGV2 + R2, 1.4828)",
+     "vol_mm3": 4925.9,
+     "at": [
+      0.0,
+      0.0,
+      200.0,
+      0.0
+     ],
+     "before_end_mm": 200.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "HS-222 Gap liner R1 - NGV2, outer (Hastelloy X)",
+     "vol_mm3": 867.1,
+     "at": [
+      0.0,
+      0.0,
+      520.0,
+      0.0
+     ],
+     "before_end_mm": 520.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "HS-211 Honeycomb shroud R1 (Hastelloy X)",
+     "vol_mm3": 827.7,
+     "at": [
+      0.0,
+      0.0,
+      520.0,
+      0.0
+     ],
+     "before_end_mm": 520.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)",
+     "vol_mm3": 783.0,
+     "at": [
+      0.0,
+      0.0,
+      480.0,
+      0.0
+     ],
+     "before_end_mm": 480.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "HS-211 Shroud backing R1",
+     "vol_mm3": 679.0,
+     "at": [
+      0.0,
+      0.0,
+      120.0,
+      0.0
+     ],
+     "before_end_mm": 120.0
+    },
+    {
+     "a": "HS-240 Radial centring pins x8 (1.4980)",
+     "b": "Blisk 1 blade x59",
+     "vol_mm3": 489.0,
+     "at": [
+      0.0,
+      0.0,
+      520.0,
+      0.0
+     ],
+     "before_end_mm": 520.0
+    }
+   ],
+   "final_overlaps": [],
+   "n_positions": 24,
+   "n_moving": 16,
+   "n_installed": 437,
+   "s": 502.4,
+   "k": 24
+  }
+ ]
+}

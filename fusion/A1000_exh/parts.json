@@ -1,0 +1,343 @@
+{
+ "frame": "rotor frame mm, x = engine axis, z up",
+ "geometry": {
+  "x_in": 868.0,
+  "r_hub": 200.4,
+  "r_cas_in": 264.0,
+  "cone_deg": 8.5,
+  "x_bend": 1150.0,
+  "R_hub": 180.0,
+  "R_cas": 120.0,
+  "b_rad": 80.0,
+  "r_exit": 500.0,
+  "rear_rise": 20.0,
+  "struts": {
+   "n": 4,
+   "theta0": 0.0,
+   "x_le": 920.0,
+   "chord": 225.0,
+   "t_c": 0.22,
+   "t_te": 4.0,
+   "alpha_le": -12.0,
+   "r_in": 180.0,
+   "r_out": 330.0
+  },
+  "box": {
+   "x0": 1170.0,
+   "x1": 1750.0,
+   "y0": -850.0,
+   "y1": 700.0,
+   "z0": -580.0,
+   "z1": 950.0
+  },
+  "out_ext": 1000.0,
+  "derived": {
+   "hub_c": [
+    1150.0,
+    380.4
+   ],
+   "x_rw": 1330.0,
+   "x_fw": 1250.0,
+   "x_cb": 1147.7371293355532,
+   "r_cb": 305.8069940937289,
+   "cas_c": [
+    1130.0,
+    424.4888976971589
+   ],
+   "r_fw0": 424.4888976971589,
+   "r_rw0": 380.4,
+   "x_rw_exit": 1350.0,
+   "tan_cone": 0.1494510013491278
+  }
+ },
+ "manifold": {
+  "x0": 928.0,
+  "x1": 1100.0,
+  "r_o": 500.0,
+  "t": 14.0,
+  "rim_ri": 340.0,
+  "rim_ro": 400.0,
+  "rim_x": [
+   1070.0,
+   1100.0
+  ],
+  "x_pin": 1085.0,
+  "n_pin": 7,
+  "d_pin": 24.0,
+  "r_seal_front": 283.0,
+  "r_seal_rear": 330.0,
+  "shield_gap": 10.0,
+  "r_bore": 322.0,
+  "r_bolt": 535.0,
+  "port": [
+   150.0,
+   600.0
+  ],
+  "pin_deg": [
+   22.5,
+   67.5,
+   112.5,
+   157.5,
+   202.5,
+   247.5,
+   292.5
+  ]
+ },
+ "parts": {
+  "EX-401 Air manifold casing (EN-GJS-400-18LT)": {
+   "step": "EX_401_Air_manifold_casing__EN_GJS_400_18LT.step",
+   "material": "EN-GJS-400-18LT",
+   "group": "casing",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 138.05,
+   "desc": "compressor-air manifold: bolted on the scroll-casing rear plate (24 x M16 on r 535), port 150 x 600 to the DN350 pipe, 7 pin sleeves, rear rim with the rear leaf seal; 3.8 bar, 185 C",
+   "bbox": [
+    928.0,
+    1110.0,
+    -560.0,
+    649.5,
+    -560.0,
+    560.0
+   ]
+  },
+  "EX-402 Frame pins x7 (A286)": {
+   "step": "EX_402_Frame_pins_x7__A286.step",
+   "material": "A286",
+   "group": "casing",
+   "valid": true,
+   "solids": 7,
+   "mass_kg": 6.43,
+   "desc": "7 radial pins dia 24 (45 deg pitch, none under the air port), put in from outside: centre the hot frame, carry the 25 kN aft air load and the torque, let it grow 3.3 mm radially",
+   "bbox": [
+    1065.0,
+    1105.0,
+    -506.5,
+    506.5,
+    -506.5,
+    506.5
+   ]
+  },
+  "EX-410 Exhaust frame, 4 struts (1.4848 cast)": {
+   "step": "EX_410_Exhaust_frame__4_struts__1_4848_cast.step",
+   "material": "1.4848 cast",
+   "group": "exhaust",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 101.94,
+   "desc": "hot one-piece frame: R2 exit -> 8.5 deg cone with 4 cambered hollow struts (top oil in, bottom = drain, -y vent, +y sensors, buffer air d 4 orifices) -> R120 axial-radial bend; hub carries JB2 on keys; floats on 7 radial pins",
+   "bbox": [
+    872.0,
+    1250.0,
+    -440.0,
+    440.0,
+    -440.0,
+    440.0
+   ]
+  },
+  "EX-411 Frame heat shield (1.4828)": {
+   "step": "EX_411_Frame_heat_shield__1_4828.step",
+   "material": "1.4828",
+   "group": "exhaust",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 2.23,
+   "desc": "keeps the frame cone hot (uniform with the struts) in the manifold air; ceramic paper behind",
+   "bbox": [
+    895.0,
+    1060.0,
+    -311.9,
+    311.9,
+    -311.9,
+    311.9
+   ]
+  },
+  "EX-412 JB2 support ring + 8 keys (1.4313)": {
+   "step": "EX_412_JB2_support_ring___8_keys__1_4313.step",
+   "material": "1.4313",
+   "group": "bearing",
+   "valid": true,
+   "solids": 17,
+   "mass_kg": 9.42,
+   "desc": "clamps the JB2 cartridge housing; 8 radial keys on 3 mm mica pads in through-slots of the hub (frame slides on from the rear), retaining ring; JB2 drain / vent bosses behind the ring (x >= 1004)",
+   "bbox": [
+    925.0,
+    985.0,
+    -177.7,
+    177.7,
+    -177.7,
+    177.7
+   ]
+  },
+  "EX-413 Front leaf seal (Haynes 25)": {
+   "step": "EX_413_Front_leaf_seal__Haynes_25.step",
+   "material": "Haynes 25",
+   "group": "exhaust",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1.05,
+   "desc": "C2 rear face <-> frame: 2.9 mm axial closure hot, radial sliding",
+   "bbox": [
+    876.0,
+    885.0,
+    -299.0,
+    299.0,
+    -299.0,
+    299.0
+   ]
+  },
+  "EX-414 Rear leaf seal (Haynes 25)": {
+   "step": "EX_414_Rear_leaf_seal__Haynes_25.step",
+   "material": "Haynes 25",
+   "group": "exhaust",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 0.14,
+   "desc": "manifold rim <-> frame rear flange: radial sliding 3.2 mm",
+   "bbox": [
+    1100.0,
+    1101.9,
+    -352.0,
+    352.0,
+    -352.0,
+    352.0
+   ]
+  },
+  "EX-420 Exhaust collector (1.4828)": {
+   "step": "EX_420_Exhaust_collector__1_4828.step",
+   "material": "1.4828",
+   "group": "exhaust",
+   "valid": true,
+   "solids": 2,
+   "mass_kg": 446.82,
+   "desc": "collector box 0.58 x 1.55 x 1.53 m with front / rear wells, hub cap (R180 bend + rear cone), radial diffuser to r 500, open +y face; centre-line lugs, bottom key; 100 mm external insulation (not modelled)",
+   "bbox": [
+    1114.0,
+    1806.0,
+    -976.0,
+    832.0,
+    -646.0,
+    1006.0
+   ]
+  },
+  "EX-421 Hub access cover (1.4828)": {
+   "step": "EX_421_Hub_access_cover__1_4828.step",
+   "material": "1.4828",
+   "group": "exhaust",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 5.57,
+   "desc": "bolted cover in the hub cap, reached from the rear well: JB2 rear inspection without removing the collector",
+   "bbox": [
+    1168.0,
+    1174.0,
+    -193.4,
+    193.4,
+    -193.4,
+    193.4
+   ]
+  },
+  "EX-430 Exhaust transition + fabric joint": {
+   "step": "EX_430_Exhaust_transition___fabric_joint.step",
+   "material": "1.4828",
+   "group": "recup",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 130.47,
+   "desc": "collector +y face -> recuperator gas inlet hood, 300 mm fabric expansion joint",
+   "bbox": [
+    1114.0,
+    1806.0,
+    712.0,
+    1150.0,
+    -636.0,
+    1006.0
+   ]
+  },
+  "EX-440 Cold air pipe DN350 + BOV tee (P265GH)": {
+   "step": "EX_440_Cold_air_pipe_DN350___BOV_tee__P265GH.step",
+   "material": "P265GH",
+   "group": "recup",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 197.95,
+   "desc": "manifold port -> rect-round elbow -> DN350 run at y 760 / z -360 -> recuperator air inlet; pressure-balanced joint",
+   "bbox": [
+    -877.8,
+    1102.8,
+    384.1,
+    1120.0,
+    -562.8,
+    32.5
+   ]
+  },
+  "EX-441 BOV DN125 + dump line DN200": {
+   "step": "EX_441_BOV_DN125___dump_line_DN200.step",
+   "material": "1.4541",
+   "group": "recup",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 180.99,
+   "desc": "blow-off / start-bleed valve DN125 on the cold pipe; dump DN200 into the economizer inlet plenum (sparger)",
+   "bbox": [
+    -580.0,
+    -320.0,
+    650.0,
+    1150.0,
+    -100.0,
+    1159.5
+   ]
+  },
+  "EX-450 Hot air pipe DN450 + gimbal pair (1.4948)": {
+   "step": "EX_450_Hot_air_pipe_DN450___gimbal_pair__1_4948.step",
+   "material": "1.4948",
+   "group": "recup",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 338.25,
+   "desc": "recuperator air outlet (top, rear) -> can nozzle DN450; 3 elbows R/D 1, gimbal pair in the vertical leg; 626 C",
+   "bbox": [
+    436.5,
+    1758.5,
+    590.0,
+    1908.5,
+    911.5,
+    2278.5
+   ]
+  },
+  "EX-460 Recuperator (bought in)": {
+   "step": "EX_460_Recuperator__bought_in.step",
+   "material": "bought in",
+   "group": "recup",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 2500.0,
+   "desc": "primary-surface counterflow core, eff 0.90, 3.0 MW; gas in at the rear (side hood), out at the front (top); air in front (side), out rear (top); moved +300 mm in y for the pipe lane",
+   "bbox": [
+    -917.8,
+    1900.0,
+    1120.0,
+    2350.0,
+    -700.0,
+    1010.0
+   ]
+  },
+  "EX-470 Economizer + stack DN800 (bought in)": {
+   "step": "EX_470_Economizer___stack_DN800__bought_in.step",
+   "material": "bought in",
+   "group": "recup",
+   "valid": true,
+   "solids": 1,
+   "mass_kg": 1400.0,
+   "desc": "hot-water economizer 95/75 C (~1 MW) on the recuperator gas outlet, stack DN800 to z 5000 with silencer",
+   "bbox": [
+    -1106.5,
+    106.5,
+    1143.5,
+    2356.5,
+    900.0,
+    5000.0
+   ]
+  }
+ }
+}

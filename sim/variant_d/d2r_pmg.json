@@ -1,0 +1,82 @@
+{
+ "title": "GR180 D2R PMG sizing (front pod, 115k rpm)",
+ "date": "2026-10-23",
+ "script": "sim/variant_d/d2r_pmg.py",
+ "rating": {
+  "P_shaft_rated_kW": 28.0,
+  "P_shaft_peak_kW": 31.0,
+  "torque_Nm": 2.33,
+  "poles": 2,
+  "f_Hz": 1916.7,
+  "note": "rated = 30 C site (turbine study 25.9 kW shaft); peak 31 kW at 15 C chilled intake; above that limit TIT / power"
+ },
+ "geometry": {
+  "rotor_OD_mm": 36.00000000000001,
+  "magnet_mm": [
+   20.0,
+   30.0
+  ],
+  "sleeve_t_mm": 3.0000000000000027,
+  "gap_mech_mm": 1.5,
+  "stator_ID_mm": 39.0,
+  "stator_OD_mm": 88.0,
+  "stack_mm": 80.0,
+  "slots": 12,
+  "tooth_mm": 3.63,
+  "yoke_mm": 7.15,
+  "slot_depth_mm": 17.35,
+  "slot_area_mm2": 193.0,
+  "jacket": "Al 6082-T6 sleeve ID 88 / OD 98 with a 3 mm deep helical glycol groove, pressed in the pod bore 98, 2 O-rings each end",
+  "pod_OD_mm": 110
+ },
+ "magnetics": {
+  "Br_at_150C": 1.031,
+  "B_gap_peak_T": 0.515,
+  "flux_Wb": 0.0015449767697457166,
+  "kw": 0.933,
+  "turns_per_phase": 20,
+  "E_ph_V": 245.3,
+  "E_ll_V": 424.9,
+  "I_ph_rated_A": 38.0,
+  "I_ph_peak_A": 42.1,
+  "A_rms_kA_m": 37.3,
+  "shear_stress_kPa": 12.7,
+  "J_A_mm2": 5.48,
+  "R_ph_mOhm": 24.7,
+  "winding": "3-ph double layer, 12 coils x 5 turns, 5/6 pitch, Litz 0.1 mm strands, class H, vacuum-potted"
+ },
+ "losses_W": {
+  "copper": 107,
+  "iron": 71,
+  "rotor_eddy": 80.0,
+  "windage": 289,
+  "bearings": 360.0
+ },
+ "efficiency": {
+  "electromagnetic": 0.9909,
+  "incl_windage_bearings": 0.9686,
+  "cycle_uses": 0.95
+ },
+ "cooling": {
+  "jacket_heat_W": 362,
+  "glycol_L_min": 1.8,
+  "dT_K": 3.4,
+  "inlet_C": "35-40",
+  "rotor": "rotor heat (eddy + half the windage) crosses the gap to the stator; magnet ~130-150 C (est) - Sm2Co17 good to 300 C"
+ },
+ "rotor": {
+  "U_tip_m_s": 217,
+  "magnet_pressure_MPa_115k": 64.3,
+  "sleeve_hoop_MPa_115k": 417,
+  "sleeve_hoop_MPa_138k": 600,
+  "sleeve_allowable_MPa": 1600.0,
+  "SF_138k": 2.67,
+  "sleeve_interference_mm": 0.08,
+  "build": "Sm2Co17 ring segments (2 halves x 4 axial pieces, diametral magnetisation), bonded on the d20 carrier; T700 carbon sleeve wound with pre-tension or pressed on a 1:200 taper; Ti6Al4V end rings; balance G1 as an assembly"
+ },
+ "converter": {
+  "type": "4-quadrant machine-side AFE (motoring start), sensorless FOC, f_out >= 2 kHz, f_sw >= 24 kHz (SiC)",
+  "DC_link_V": "~650-750 V",
+  "start": "motoring 5-8 kW short-time (01 section 6)"
+ }
+}

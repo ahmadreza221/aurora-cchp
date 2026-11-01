@@ -106,7 +106,8 @@ G = dict(
     # combustor (liner located axially by 3 radial pins at x 50 through the casing; slip joints at the hub bore and the NGV)
     x_dome=42.9, t_dome=1.2, t_liner=1.0, r_li_o=21.1, r_lo_i=54.0, x_li_front=24.0, x_li_end=98.0,
     x_lo_cyl_end=82.0, x_lo_cone_end=92.0, r_lo_sleeve_i=36.5, x_lo_end=106.5,
-    n_inj=8, r_inj=37.5, inj_a0_deg=22.5, x_liner_pins=50.0, n_liner_pins=3,
+    n_inj=7, r_inj=37.5,          # 7 (was 8): EO8 x rotor blade 2F at 113.8k (sim/engine/e1_blade_modal.py); 7 -> no crossing 100-125k
+    inj_a0_deg=22.5, x_liner_pins=50.0, n_liner_pins=3,
     r_baffle=68.0, t_baffle=0.8, x_baffle=(54.0, 99.0),
     # tunnel heat shield (IN625 0.5 polished, dead-air gap r10.5..17.1 to the aluminium tunnel, dimple spacers)
     r_shield_i=17.1, t_shield=0.5, x_shield=(21.0, 92.0),
@@ -183,10 +184,10 @@ R['pressure'] = dict(P2=P2 / 1e5, P_C1=(P2 - dP_coll) / 1e5, P_C2=P_C2 / 1e5, dP
 # fractions of compressor air MA.  'src' hot = recuperated (566 C) air, cold = compressor air (165 C, bypasses recuperator)
 SPLIT = dict(
     injectors=dict(f=0.140, src='hot', Cd=0.75, n=G['n_inj']),          # radial swirlers, partially premixed
-    dome_cool=dict(f=0.030, src='hot', Cd=0.65, n=64),                    # effusion around the 8 cups (8 x 8)
+    dome_cool=dict(f=0.030, src='hot', Cd=0.65, n=8 * G['n_inj']),        # effusion, 8 holes around each cup
     outer_film=dict(f=0.100, src='hot', Cd=0.65, n=4 * 56),               # 4 splash-cooled film rings
-    secondary=dict(f=0.120, src='hot', Cd=0.61, n=24),                    # 3 per injector
-    dilution=dict(f=None, src='hot', Cd=0.61, n=2 * 24),                  # remainder of hot air
+    secondary=dict(f=0.120, src='hot', Cd=0.61, n=3 * G['n_inj']),        # 3 per injector (21 = NGV count; 24 was 1.7 % from blade F5)
+    dilution=dict(f=None, src='hot', Cd=0.61, n=6 * G['n_inj']),          # remainder of hot air, 2 rows x 3 per injector
     inner_film=dict(f=0.040, src='cold', Cd=0.65, n=4 * 16),              # cold bypass air (inner liner), 4 rows x 16
     leak_cold=dict(f=0.004, src='cold'),                                  # bulkhead piston ring 0.15 %, 8 stem grommets 0.15 %, UV purge 0.1 %
     ngv_purge=dict(f=0.008, src='cold'),                                  # inner cavity -> NGV inner ring / disc (as original GR180)

@@ -1,0 +1,10 @@
+{
+	"autodeskProduct": "Fusion",
+	"type": "script",
+	"author": "GR180-CCHP",
+	"description": {
+		"": "Original GR180 v12 turbojet from the repo-root STEP/STL files"
+	},
+	"supportedOS": "windows|mac",
+	"editEnabled": true
+}

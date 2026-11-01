@@ -1,0 +1,13 @@
+{
+	"autodeskProduct":	"Fusion",
+	"type":	"addin",
+	"id":	"7175ae96-f65a-41d4-a4ab-6f808a211e15",
+	"author":	"GR180 / AURORA-1000",
+	"description":	{
+		"":	"AURORA-1000 panel in the Design workspace: assembly sequence, spin rotor, reset (for AURORA-1000 Package rev5)."
+	},
+	"version":	"1.0.0",
+	"runOnStartup":	true,
+	"supportedOS":	"windows|mac",
+	"editEnabled":	true
+}

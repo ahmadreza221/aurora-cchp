@@ -1,0 +1,5 @@
+{
+ "note": "ND 0 solved in Ti-6Al-4V; ND 1-6 from the Al 2618 run on the identical geometry and mesh, scaled: f^2 = cal^2 (k^2 f0_Al^2 + S_Al N^2), k^2 = (E/rho)_Ti / (E/rho)_Al, Southwell term S unchanged (stress ~ rho)",
+ "k": 0.9790299993044719,
+ "cal": 1.002400892516729
+}

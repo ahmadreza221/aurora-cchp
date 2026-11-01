@@ -1,92 +1,584 @@
 {
   "GR180Tools/InitGui.py": {
-    "mtime": 1792578880.4876115,
-    "seen": 1792581505.089807,
+    "mtime": 1792643697.5745153,
+    "seen": 1792669252.7720423,
     "ast_hash": "a8b9a1c3563a4e67515ea14d13ff0240",
     "semantic_hash": "a8b9a1c3563a4e67515ea14d13ff0240"
   },
   "GR180Tools/gr180_anim.py": {
-    "mtime": 1792578880.4856935,
-    "seen": 1792581505.0898108,
+    "mtime": 1792643697.5745153,
+    "seen": 1792669252.772046,
     "ast_hash": "83c09285abb8562d9b821396fdf9f066",
     "semantic_hash": "83c09285abb8562d9b821396fdf9f066"
   },
   "_v12/dbg.py": {
-    "mtime": 1792578880.8958242,
-    "seen": 1792581505.089812,
+    "mtime": 1792643697.5757425,
+    "seen": 1792669252.772049,
     "ast_hash": "0b50d84213eba956da22e1cd74882a27",
     "semantic_hash": "0b50d84213eba956da22e1cd74882a27"
   },
   "_v12/dbg2.py": {
-    "mtime": 1792578880.895433,
-    "seen": 1792581505.089813,
+    "mtime": 1792643697.576643,
+    "seen": 1792669252.7720516,
     "ast_hash": "6c5048003eb52df692aabd30c36a446d",
     "semantic_hash": "6c5048003eb52df692aabd30c36a446d"
   },
   "_v12/dbg3.py": {
-    "mtime": 1792578880.895038,
-    "seen": 1792581505.089814,
+    "mtime": 1792643697.576643,
+    "seen": 1792669252.7720542,
     "ast_hash": "7a9db59883bfa1518386169bf4f73967",
     "semantic_hash": "7a9db59883bfa1518386169bf4f73967"
   },
   "_v12/dbg4.py": {
-    "mtime": 1792578880.899208,
-    "seen": 1792581505.089816,
+    "mtime": 1792643697.576643,
+    "seen": 1792669252.7720563,
     "ast_hash": "820b640d039a8ef4c5a6c164814e28c9",
     "semantic_hash": "820b640d039a8ef4c5a6c164814e28c9"
   },
   "_v12/stl_extra.py": {
-    "mtime": 1792578880.898923,
-    "seen": 1792581505.089817,
+    "mtime": 1792643697.576643,
+    "seen": 1792669252.7720585,
     "ast_hash": "3a0ba153efa593bf7a67d476b1fa2ea9",
     "semantic_hash": "3a0ba153efa593bf7a67d476b1fa2ea9"
   },
   "_v12/thr.py": {
-    "mtime": 1792578880.8986201,
-    "seen": 1792581505.089819,
+    "mtime": 1792643697.576643,
+    "seen": 1792669252.7720602,
     "ast_hash": "375c302c7a1ebdccd2d2848e0ffe8923",
     "semantic_hash": "375c302c7a1ebdccd2d2848e0ffe8923"
   },
   "build_gr180.py": {
-    "mtime": 1792578880.674772,
-    "seen": 1792581505.08982,
-    "ast_hash": "04ac03ce003251e0791a50adeba57673",
-    "semantic_hash": "04ac03ce003251e0791a50adeba57673"
+    "mtime": 1792643697.576643,
+    "seen": 1792669252.772062,
+    "ast_hash": "e1ed4bdbc2acfd902a22fad56c4fcc69",
+    "semantic_hash": ""
   },
   "sim/gr180_cycle.py": {
-    "mtime": 1792580638.5722501,
-    "seen": 1792581505.0898209,
-    "ast_hash": "f5d7ae03a49f6019a9b6f468e57470b2",
-    "semantic_hash": "f5d7ae03a49f6019a9b6f468e57470b2"
+    "mtime": 1792643697.7037425,
+    "seen": 1792669252.7721145,
+    "ast_hash": "a90900cf41fc6f0a6e84ec3a105e9dbc",
+    "semantic_hash": ""
   },
   "sim/gr180_rotor.py": {
-    "mtime": 1792580728.9351027,
-    "seen": 1792581505.089822,
-    "ast_hash": "a0fc8a7659969a3ad5acdb1c18fa1d03",
-    "semantic_hash": "a0fc8a7659969a3ad5acdb1c18fa1d03"
+    "mtime": 1792643697.7037425,
+    "seen": 1792669252.7721157,
+    "ast_hash": "26170becc015e175b5097f9b8038a19b",
+    "semantic_hash": ""
   },
   "sim/measure_geometry.py": {
-    "mtime": 1792580314.042219,
-    "seen": 1792581505.089823,
-    "ast_hash": "e9ea04fe90d72391eacc7478d3e2c5fa",
-    "semantic_hash": "e9ea04fe90d72391eacc7478d3e2c5fa"
+    "mtime": 1792643697.7051995,
+    "seen": 1792669252.772125,
+    "ast_hash": "036982783cd46eff04eb95083fe02380",
+    "semantic_hash": ""
   },
   "verify_gr180.py": {
-    "mtime": 1792578880.3752058,
-    "seen": 1792581505.089824,
-    "ast_hash": "8cf80efd13afcad5e5f0124e8fa6401f",
-    "semantic_hash": "8cf80efd13afcad5e5f0124e8fa6401f"
+    "mtime": 1792643697.7064147,
+    "seen": 1792669252.7721298,
+    "ast_hash": "c65d7bfa499ed828adf60931895cd675",
+    "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1792578880.4997787,
-    "seen": 1792581505.089825,
-    "ast_hash": "3f31a3d9ea572cbbb5a04d52e5707363",
-    "semantic_hash": "3f31a3d9ea572cbbb5a04d52e5707363"
+    "mtime": 1792643697.5745153,
+    "seen": 1792669252.7721317,
+    "ast_hash": "c8d0871b37fc8826f9ff86dbfcc88551",
+    "semantic_hash": ""
   },
   "docs/01_analysis_review_v12.md": {
-    "mtime": 1792580889.7324786,
-    "seen": 1792581505.089826,
-    "ast_hash": "723c082c42e607fcabaa755b3d310d30",
-    "semantic_hash": "723c082c42e607fcabaa755b3d310d30"
+    "mtime": 1792643697.5837424,
+    "seen": 1792669252.772133,
+    "ast_hash": "c03acaf7c74db025225652b32c870e87",
+    "semantic_hash": ""
+  },
+  ".mcp.json": {
+    "mtime": 1792643697.5717423,
+    "seen": 1792669252.7720318,
+    "ast_hash": "649deef04e3df50b01645ab0c0c7a208",
+    "semantic_hash": ""
+  },
+  "cad/electrical/el_bom.py": {
+    "mtime": 1792643697.5807638,
+    "seen": 1792669252.772064,
+    "ast_hash": "f955f540127a20fe9dd11df651cb9010",
+    "semantic_hash": ""
+  },
+  "cad/electrical/el_build.py": {
+    "mtime": 1792643697.580988,
+    "seen": 1792669252.772066,
+    "ast_hash": "cf371d5076c2c4562f473356dcd28231",
+    "semantic_hash": ""
+  },
+  "cad/electrical/el_items.py": {
+    "mtime": 1792643697.580988,
+    "seen": 1792669252.772067,
+    "ast_hash": "2860ad419995487830c81b42135eea31",
+    "semantic_hash": ""
+  },
+  "cad/engine/fpt_pmg.py": {
+    "mtime": 1792643697.580988,
+    "seen": 1792669252.7720685,
+    "ast_hash": "4074083239dd3a9cadfd1bd97bddd31f",
+    "semantic_hash": ""
+  },
+  "cad/engine/gg_turbine.py": {
+    "mtime": 1792665996.4668853,
+    "seen": 1792669252.7720702,
+    "ast_hash": "395477816cba921c4ec4f0e67fcdef1b",
+    "semantic_hash": ""
+  },
+  "cad/engine/recuperator.py": {
+    "mtime": 1792643697.5820444,
+    "seen": 1792669252.7720714,
+    "ast_hash": "101d0e729bba7a21fc730173f2c71841",
+    "semantic_hash": ""
+  },
+  "cad/plant/build_plant.py": {
+    "mtime": 1792653240.1131098,
+    "seen": 1792669252.7720728,
+    "ast_hash": "880d8407dbd25689b1614bd3bb0cb096",
+    "semantic_hash": ""
+  },
+  "cad/plant/plant_items.py": {
+    "mtime": 1792653324.417879,
+    "seen": 1792669252.772074,
+    "ast_hash": "942f6ccf21fd34ed791e3b3317644d54",
+    "semantic_hash": ""
+  },
+  "cad/plant/plant_lib.py": {
+    "mtime": 1792653239.983089,
+    "seen": 1792669252.772075,
+    "ast_hash": "0f9dd527a3307dd02bb36275dfa2554b",
+    "semantic_hash": ""
+  },
+  "docs/electrical/calc/electrical_sizing.py": {
+    "mtime": 1792643697.5877423,
+    "seen": 1792669252.7720761,
+    "ast_hash": "6bc0482af6c55c4614b3122da58440f7",
+    "semantic_hash": ""
+  },
+  "docs/electrical/calc/ems_results.json": {
+    "mtime": 1792643697.5900002,
+    "seen": 1792669252.7720773,
+    "ast_hash": "1c37def0ad4595a39ca7b6b8c4b5f38d",
+    "semantic_hash": ""
+  },
+  "docs/electrical/calc/ems_study.py": {
+    "mtime": 1792643697.5900002,
+    "seen": 1792669252.7720783,
+    "ast_hash": "b82c653c78f8314862f710aad9ff6b10",
+    "semantic_hash": ""
+  },
+  "docs/electrical/calc/io_list.py": {
+    "mtime": 1792643697.5900002,
+    "seen": 1792669252.7720795,
+    "ast_hash": "30625ad649ca2e943e638d55f3438685",
+    "semantic_hash": ""
+  },
+  "electronics/b1_ecu/b1_ecu_spec.py": {
+    "mtime": 1792643697.5939903,
+    "seen": 1792669252.7720807,
+    "ast_hash": "0fb09f30274dce06ee324e4a298434fa",
+    "semantic_hash": ""
+  },
+  "electronics/b1_ecu/out/b1_ecu_erc.json": {
+    "mtime": 1792643697.5997424,
+    "seen": 1792669252.7720819,
+    "ast_hash": "2ecd557240f2b3a90db6d105729b6533",
+    "semantic_hash": ""
+  },
+  "electronics/b1_ecu/out/b1_ecu_report.json": {
+    "mtime": 1792643697.6037424,
+    "seen": 1792669252.7720833,
+    "ast_hash": "3a1acbabd41fe898e6e942ace0c213ea",
+    "semantic_hash": ""
+  },
+  "electronics/b2_sio/b2_sio_spec.py": {
+    "mtime": 1792643697.6237423,
+    "seen": 1792669252.7720845,
+    "ast_hash": "2edfbe49e3b6538cbe5924e3e3ef49a1",
+    "semantic_hash": ""
+  },
+  "electronics/b2_sio/out/b2_sio_erc.json": {
+    "mtime": 1792643697.6317425,
+    "seen": 1792669252.7720854,
+    "ast_hash": "834e5b4b0edf082d7b905365d1e2a5fb",
+    "semantic_hash": ""
+  },
+  "electronics/b2_sio/out/b2_sio_report.json": {
+    "mtime": 1792643697.6397424,
+    "seen": 1792669252.7720869,
+    "ast_hash": "429b0166a764570b54203d1af6afaa94",
+    "semantic_hash": ""
+  },
+  "electronics/common/gr180_parts.py": {
+    "mtime": 1792643697.6517425,
+    "seen": 1792669252.7720878,
+    "ast_hash": "20c7e1cee9dd9b349b2999cefda90d5a",
+    "semantic_hash": ""
+  },
+  "electronics/tools/example/example_spec.py": {
+    "mtime": 1792643697.6583056,
+    "seen": 1792669252.772089,
+    "ast_hash": "eb90c527cc593e8f86851912c007688d",
+    "semantic_hash": ""
+  },
+  "electronics/tools/example/out/schgen_example_erc.json": {
+    "mtime": 1792643697.6597424,
+    "seen": 1792669252.7720907,
+    "ast_hash": "06a8b77661d45c22df0405beae5ee3c5",
+    "semantic_hash": ""
+  },
+  "electronics/tools/example/out/schgen_example_report.json": {
+    "mtime": 1792643697.6637423,
+    "seen": 1792669252.7720916,
+    "ast_hash": "43f9a4e0554939510873a5e8519ca999",
+    "semantic_hash": ""
+  },
+  "electronics/tools/schgen.py": {
+    "mtime": 1792643697.6637423,
+    "seen": 1792669252.7720926,
+    "ast_hash": "c2b7b99b48f44453b4034b192eb194da",
+    "semantic_hash": ""
+  },
+  "sim/cchp_study.py": {
+    "mtime": 1792643697.6957424,
+    "seen": 1792669252.772094,
+    "ast_hash": "84a5f65e45e2804755b8f3e9977f58e3",
+    "semantic_hash": ""
+  },
+  "sim/concept_study.py": {
+    "mtime": 1792643697.6997423,
+    "seen": 1792669252.772095,
+    "ast_hash": "521536dbb7475d301a00e1adedd3030b",
+    "semantic_hash": ""
+  },
+  "sim/engine/e1_disc_thermal_study.py": {
+    "mtime": 1792668089.3901484,
+    "seen": 1792669252.7720962,
+    "ast_hash": "c66dddf0e9895dc348910e18716b573f",
+    "semantic_hash": ""
+  },
+  "sim/engine/e1_turbine_fea.py": {
+    "mtime": 1792667427.7410667,
+    "seen": 1792669252.7721004,
+    "ast_hash": "3656bfe6eceedd4432491b8b257ca4de",
+    "semantic_hash": ""
+  },
+  "sim/engine/e2_combustor_calc.py": {
+    "mtime": 1792643697.7001352,
+    "seen": 1792669252.7721014,
+    "ast_hash": "63a90910d1380bca01306bf84431fdb2",
+    "semantic_hash": ""
+  },
+  "sim/engine/e2_design.json": {
+    "mtime": 1792643697.7001352,
+    "seen": 1792669252.7721024,
+    "ast_hash": "5edcff4cb0a2c87fe00f5b5ddc5b28c3",
+    "semantic_hash": ""
+  },
+  "sim/engine/e2_results.json": {
+    "mtime": 1792643697.7001352,
+    "seen": 1792669252.7721033,
+    "ast_hash": "bff73578ecc120229ef40ae1562d94db",
+    "semantic_hash": ""
+  },
+  "sim/engine/e3_fpt_pmg_calc.py": {
+    "mtime": 1792643697.7001352,
+    "seen": 1792669252.7721045,
+    "ast_hash": "9769781c22f91d17a4668bb3031bd143",
+    "semantic_hash": ""
+  },
+  "sim/engine/e4_recuperator_calc.py": {
+    "mtime": 1792643697.7001352,
+    "seen": 1792669252.7721057,
+    "ast_hash": "d59194875cceda676600bbc3f37f45e5",
+    "semantic_hash": ""
+  },
+  "sim/engine/fea/axisym_study.json": {
+    "mtime": 1792643697.7001352,
+    "seen": 1792669252.7721071,
+    "ast_hash": "33e60f433dcea2d160f82f8c423a0075",
+    "semantic_hash": ""
+  },
+  "sim/engine/fea/axisym_study_stage2.json": {
+    "mtime": 1792643697.7023335,
+    "seen": 1792669252.772108,
+    "ast_hash": "6304bc74119e0bd6f318488136929c01",
+    "semantic_hash": ""
+  },
+  "sim/engine/fea/rear_cooling_study.json": {
+    "mtime": 1792667300.7330003,
+    "seen": 1792669252.7721093,
+    "ast_hash": "3238e1b0e89c1bb0713868b6afe029f5",
+    "semantic_hash": ""
+  },
+  "sim/engine/fea/sector_boundary.json": {
+    "mtime": 1792643697.7023335,
+    "seen": 1792669252.7721102,
+    "ast_hash": "0bf9b892528ead9246a618f29c96764b",
+    "semantic_hash": ""
+  },
+  "sim/engine/fea/thermo_study.json": {
+    "mtime": 1792665261.6979492,
+    "seen": 1792669252.7721117,
+    "ast_hash": "509a7c5a978e1c844acba7226dcd6ac9",
+    "semantic_hash": ""
+  },
+  "sim/gg_turbine_meanline.py": {
+    "mtime": 1792643697.7023335,
+    "seen": 1792669252.7721126,
+    "ast_hash": "8515d74830ece347472832cf06fa83b6",
+    "semantic_hash": ""
+  },
+  "sim/hvac/hvac_design.py": {
+    "mtime": 1792643697.7037425,
+    "seen": 1792669252.772117,
+    "ast_hash": "ebdfef713c110e65e7d83c7586356e65",
+    "semantic_hash": ""
+  },
+  "sim/hvac/hvac_results.json": {
+    "mtime": 1792644164.4077702,
+    "seen": 1792669252.7721183,
+    "ast_hash": "fcae374314a63fd695a804e7be4f5369",
+    "semantic_hash": ""
+  },
+  "sim/hvac/io_list.py": {
+    "mtime": 1792653204.7590978,
+    "seen": 1792669252.7721193,
+    "ast_hash": "6774467ea995609f10583d1317ffd7d8",
+    "semantic_hash": ""
+  },
+  "sim/hvac/roof_layout.json": {
+    "mtime": 1792644164.4077702,
+    "seen": 1792669252.7721205,
+    "ast_hash": "5b5cdc7ffad3ab3e9ca6eba8352a0c6d",
+    "semantic_hash": ""
+  },
+  "sim/hvac/roof_layout.py": {
+    "mtime": 1792643697.7051995,
+    "seen": 1792669252.772122,
+    "ast_hash": "1dd5aeaf5d23bea0bf559c1778465113",
+    "semantic_hash": ""
+  },
+  "sim/life_study.py": {
+    "mtime": 1792643697.7051995,
+    "seen": 1792669252.772123,
+    "ast_hash": "9914ab9d21f294c2a4fff7932020b091",
+    "semantic_hash": ""
+  },
+  "sim/roof_site_study.py": {
+    "mtime": 1792643697.7051995,
+    "seen": 1792669252.772126,
+    "ast_hash": "57c91da67fd3ac7bb82e81e868f52f74",
+    "semantic_hash": ""
+  },
+  "sim/scaleup_210kw_study.py": {
+    "mtime": 1792643697.7051995,
+    "seen": 1792669252.7721272,
+    "ast_hash": "68f22815d5d0bd233854bca723afd537",
+    "semantic_hash": ""
+  },
+  "sim/section_plot.py": {
+    "mtime": 1792643697.7051995,
+    "seen": 1792669252.772128,
+    "ast_hash": "d9be9d15d357e104e5402a88a3af5f8f",
+    "semantic_hash": ""
+  },
+  "docs/02_concept_decision.md": {
+    "mtime": 1792643697.5842626,
+    "seen": 1792669252.772134,
+    "ast_hash": "412e0316708e324e3f777627f140c146",
+    "semantic_hash": ""
+  },
+  "docs/03_system_spec.md": {
+    "mtime": 1792643697.5842626,
+    "seen": 1792669252.7721357,
+    "ast_hash": "1fc6295c761efe2fb387a26dc7d7db5c",
+    "semantic_hash": ""
+  },
+  "docs/04_drawings_vs_cad.md": {
+    "mtime": 1792643697.5842626,
+    "seen": 1792669252.772137,
+    "ast_hash": "3799869e8220cbd141bfdf20a19d880f",
+    "semantic_hash": ""
+  },
+  "docs/05_phase1_core_v13A.md": {
+    "mtime": 1792643697.5842626,
+    "seen": 1792669252.7721384,
+    "ast_hash": "7e6b9cccc2fb4211f67cce98f9c09b03",
+    "semantic_hash": ""
+  },
+  "docs/06_master_design.md": {
+    "mtime": 1792643697.5842626,
+    "seen": 1792669252.7721395,
+    "ast_hash": "2653d02acc2c5364eb22398c5afbfba0",
+    "semantic_hash": ""
+  },
+  "docs/07_scaleup_210kW.md": {
+    "mtime": 1792643697.5842626,
+    "seen": 1792669252.7721407,
+    "ast_hash": "7415cc885748432af69556f02cc017bf",
+    "semantic_hash": ""
+  },
+  "docs/electrical/00_electrical_control_architecture.md": {
+    "mtime": 1792643697.585642,
+    "seen": 1792669252.772142,
+    "ast_hash": "335f31b745090dd46ffdb3fb9daa1793",
+    "semantic_hash": ""
+  },
+  "docs/electrical/01_power_single_line.md": {
+    "mtime": 1792643697.5868988,
+    "seen": 1792669252.772143,
+    "ast_hash": "3d3edab840754d4dfd61d50b6239c84b",
+    "semantic_hash": ""
+  },
+  "docs/electrical/02_io_list.md": {
+    "mtime": 1792653204.7574043,
+    "seen": 1792669252.7721438,
+    "ast_hash": "0f7cb3ddb0b0bc7472e1186dcc4ac14d",
+    "semantic_hash": ""
+  },
+  "docs/electrical/03_control_philosophy.md": {
+    "mtime": 1792643697.5877423,
+    "seen": 1792669252.7721448,
+    "ast_hash": "2e8b3289406ba84527017228d1fea089",
+    "semantic_hash": ""
+  },
+  "docs/electrical/04_component_selection.md": {
+    "mtime": 1792643697.5877423,
+    "seen": 1792669252.772146,
+    "ast_hash": "64609b21751f2c5aa81b2eb0ee8fbd77",
+    "semantic_hash": ""
+  },
+  "docs/electrical/05_cable_schedule.md": {
+    "mtime": 1792643697.5877423,
+    "seen": 1792669252.772147,
+    "ast_hash": "b50606d20675e0ca42316b081c0a92d9",
+    "semantic_hash": ""
+  },
+  "docs/electrical/06_energy_management.md": {
+    "mtime": 1792643697.5877423,
+    "seen": 1792669252.7721481,
+    "ast_hash": "de393868e38235e91aee1ac0698f4f0d",
+    "semantic_hash": ""
+  },
+  "docs/electrical/07_fire_protection.md": {
+    "mtime": 1792643697.5877423,
+    "seen": 1792669252.7721493,
+    "ast_hash": "71b7e58cd8c3a3826d5a50e08e65b8d0",
+    "semantic_hash": ""
+  },
+  "docs/electrical/08_b6_bop_controller.md": {
+    "mtime": 1792643697.5877423,
+    "seen": 1792669252.7721503,
+    "ast_hash": "69daf4061c0dc298f076efa5cacdde5a",
+    "semantic_hash": ""
+  },
+  "docs/electrical/calc/electrical_sizing_out.txt": {
+    "mtime": 1792643697.5900002,
+    "seen": 1792669252.7721515,
+    "ast_hash": "58b099929cb51e7821f42c352f715bb0",
+    "semantic_hash": ""
+  },
+  "docs/electrical/calc/ems_study_out.txt": {
+    "mtime": 1792643697.5900002,
+    "seen": 1792669252.772153,
+    "ast_hash": "e8a0415b6107e10bb4fd9f7727af30f8",
+    "semantic_hash": ""
+  },
+  "docs/engine/E3_fpt_pmg.md": {
+    "mtime": 1792643697.5900002,
+    "seen": 1792669252.7721539,
+    "ast_hash": "28f558c35b1dde410533cee66c5e9ad2",
+    "semantic_hash": ""
+  },
+  "docs/hvac/00_summary.md": {
+    "mtime": 1792653204.810789,
+    "seen": 1792669252.7721548,
+    "ast_hash": "c9e17d481fae6cf66a70858c35f2548b",
+    "semantic_hash": ""
+  },
+  "docs/hvac/01_pid.md": {
+    "mtime": 1792643697.591308,
+    "seen": 1792669252.7721562,
+    "ast_hash": "21640c52140e417d40ba6791ee2d09b5",
+    "semantic_hash": ""
+  },
+  "docs/hvac/02_equipment_sizing.md": {
+    "mtime": 1792643697.591308,
+    "seen": 1792669252.7721574,
+    "ast_hash": "444a2d324820c3ed2974f8650fe1dbe6",
+    "semantic_hash": ""
+  },
+  "docs/hvac/03_water_treatment.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.7721584,
+    "ast_hash": "3c86bf53972b523ba9f11190ad7ac130",
+    "semantic_hash": ""
+  },
+  "docs/hvac/04_roof_layout.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.7721605,
+    "ast_hash": "deb67e31dd640271f1f66e298e60510a",
+    "semantic_hash": ""
+  },
+  "docs/hvac/05_controls_io.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.7721615,
+    "ast_hash": "603bfbc258a24819d182204f99044515",
+    "semantic_hash": ""
+  },
+  "docs/hvac/06_bom_electrical.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.772163,
+    "ast_hash": "e92c2a6972549feca483139132c3c3c8",
+    "semantic_hash": ""
+  },
+  "docs/hvac/07_power_modes.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.7721639,
+    "ast_hash": "7a10e30811810523ad3ed550b66d62c4",
+    "semantic_hash": ""
+  },
+  "docs/hvac/08_fire_suppression.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.772165,
+    "ast_hash": "0c24f30a961a514a6f49434a42df7997",
+    "semantic_hash": ""
+  },
+  "docs/hvac/09_recheck_insulated_hall.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.7721663,
+    "ast_hash": "9c1ee95154311c02791c670cdfb00f9b",
+    "semantic_hash": ""
+  },
+  "electronics/README.md": {
+    "mtime": 1792643697.5917423,
+    "seen": 1792669252.7721672,
+    "ast_hash": "9ef3641f66c14a3b828efa8b0f5c6d3b",
+    "semantic_hash": ""
+  },
+  "electronics/tools/README.md": {
+    "mtime": 1792643697.6557424,
+    "seen": 1792669252.7721682,
+    "ast_hash": "a3d3784ca5f17875717c10a9cc2f5e4f",
+    "semantic_hash": ""
+  },
+  "electronics/b1_ecu/out/b1_ecu.pdf": {
+    "mtime": 1792643697.5997424,
+    "seen": 1792669252.772169,
+    "ast_hash": "31a03225d3016ccd68d0935351e61361",
+    "semantic_hash": ""
+  },
+  "electronics/tools/example/out/schgen_example.pdf": {
+    "mtime": 1792643697.6597424,
+    "seen": 1792669252.7721703,
+    "ast_hash": "a4ac32b071d96a4fae52bbfbe8bd2390",
+    "semantic_hash": ""
+  },
+  "docs/hvac/roof_layout.svg": {
+    "mtime": 1792644155.7214441,
+    "seen": 1792669252.7721715,
+    "ast_hash": "09f5feb8bd9ee81d3ae8f7f534757a44",
+    "semantic_hash": ""
   }
 }

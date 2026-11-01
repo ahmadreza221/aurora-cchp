@@ -1,0 +1,415 @@
+{
+ "title": "GR180 D2 auxiliary systems 1-D sizing (fuel / oil / glycol / electrical)",
+ "date": "2026-10-23",
+ "script": "sim/variant_d/d2a_aux_calc.py",
+ "basis": {
+  "LHV_MJ_kg": 50.0,
+  "rho_n": 0.717,
+  "gas": "project basis methane; Iranian city gas LHV/rho within ~5 %",
+  "supply": "4 barg nominal, 3.5 barg min"
+ },
+ "fuel_vs_ambient": [
+  {
+   "T_amb_C": 0,
+   "PR": 3.268,
+   "P2_bara": 3.274,
+   "fuel_kW": 325.1,
+   "fuel_g_s": 6.5,
+   "gas_Nm3_h": 32.6,
+   "P_el_net_kW_diffuser": 32.85,
+   "P_el_net_kW_bare": 27.37,
+   "eta_el_pct_diffuser": 10.1,
+   "T_exhaust_C": 592.0
+  },
+  {
+   "T_amb_C": 15,
+   "PR": 3.1,
+   "P2_bara": 3.106,
+   "fuel_kW": 301.1,
+   "fuel_g_s": 6.02,
+   "gas_Nm3_h": 30.2,
+   "P_el_net_kW_diffuser": 27.61,
+   "P_el_net_kW_bare": 22.63,
+   "eta_el_pct_diffuser": 9.17,
+   "T_exhaust_C": 600.0
+  },
+  {
+   "T_amb_C": 30,
+   "PR": 2.954,
+   "P2_bara": 2.96,
+   "fuel_kW": 279.4,
+   "fuel_g_s": 5.59,
+   "gas_Nm3_h": 28.1,
+   "P_el_net_kW_diffuser": 23.04,
+   "P_el_net_kW_bare": 18.5,
+   "eta_el_pct_diffuser": 8.25,
+   "T_exhaust_C": 608.0
+  },
+  {
+   "T_amb_C": 40,
+   "PR": 2.867,
+   "P2_bara": 2.873,
+   "fuel_kW": 266.1,
+   "fuel_g_s": 5.32,
+   "gas_Nm3_h": 26.7,
+   "P_el_net_kW_diffuser": 20.31,
+   "P_el_net_kW_bare": 16.03,
+   "eta_el_pct_diffuser": 7.63,
+   "T_exhaust_C": 613.0
+  },
+  {
+   "T_amb_C": 45,
+   "PR": 2.826,
+   "P2_bara": 2.831,
+   "fuel_kW": 259.8,
+   "fuel_g_s": 5.2,
+   "gas_Nm3_h": 26.1,
+   "P_el_net_kW_diffuser": 19.03,
+   "P_el_net_kW_bare": 14.88,
+   "eta_el_pct_diffuser": 7.33,
+   "T_exhaust_C": 616.0
+  }
+ ],
+ "fuel_design_max_g_s": 7.15,
+ "fuel_design_max_Nm3_h": 35.9,
+ "injector": {
+  "spec": "12 needles 2.0 x 0.2 1.4301 precision tube (ID 1.6), 10 mm into each vaporiser-stick mouth (x 17.3)",
+  "cases": {
+   "0_C": {
+    "m_needle_g_s": 0.542,
+    "P_manifold_bara": 3.534,
+    "dP_bar": 0.292,
+    "dP_over_P": 0.09,
+    "v_m_s": 119.8,
+    "Mach": 0.26,
+    "Re": 39186,
+    "K": 1.72
+   },
+   "15_C": {
+    "m_needle_g_s": 0.502,
+    "P_manifold_bara": 3.34,
+    "dP_bar": 0.265,
+    "dP_over_P": 0.086,
+    "v_m_s": 117.4,
+    "Mach": 0.26,
+    "Re": 36292,
+    "K": 1.72
+   },
+   "30_C": {
+    "m_needle_g_s": 0.466,
+    "P_manifold_bara": 3.171,
+    "dP_bar": 0.241,
+    "dP_over_P": 0.082,
+    "v_m_s": 114.8,
+    "Mach": 0.25,
+    "Re": 33700,
+    "K": 1.73
+   },
+   "40_C": {
+    "m_needle_g_s": 0.443,
+    "P_manifold_bara": 3.07,
+    "dP_bar": 0.226,
+    "dP_over_P": 0.079,
+    "v_m_s": 112.9,
+    "Mach": 0.25,
+    "Re": 32072,
+    "K": 1.73
+   },
+   "45_C": {
+    "m_needle_g_s": 0.433,
+    "P_manifold_bara": 3.022,
+    "dP_bar": 0.219,
+    "dP_over_P": 0.078,
+    "v_m_s": 112.1,
+    "Mach": 0.25,
+    "Re": 31349,
+    "K": 1.73
+   },
+   "max_design": {
+    "m_needle_g_s": 0.596,
+    "P_manifold_bara": 3.592,
+    "dP_bar": 0.35,
+    "dP_over_P": 0.108,
+    "v_m_s": 129.6,
+    "Mach": 0.29,
+    "Re": 43104,
+    "K": 1.71
+   },
+   "light_off": {
+    "m_needle_g_s": 0.058,
+    "P_manifold_bara": 1.184,
+    "dP_bar": 0.011,
+    "dP_over_P": 0.009,
+    "v_m_s": 38.5,
+    "Mach": 0.08,
+    "Re": 4220,
+    "K": 1.88
+   },
+   "v13A_needles_id1.1_at_max": {
+    "m_needle_g_s": 0.596,
+    "P_manifold_bara": 4.682,
+    "dP_bar": 1.44,
+    "dP_over_P": 0.444,
+    "v_m_s": 210.4,
+    "Mach": 0.46,
+    "Re": 62697,
+    "K": 1.78
+   }
+  },
+  "ring": {
+   "ring": "ring 7 x 0.5 1.4571 (ID 6) at r 42.1, x 11.7",
+   "v_ring_m_s": 55.3,
+   "q_ring_Pa": 3497,
+   "needle_dp_Pa": 35000,
+   "maldistribution_pct_est": 5.0,
+   "v13A_ring_d5_v_m_s": 124.4
+  },
+  "premix_stick": {
+   "stick_id_mm": 5.4,
+   "m_air_per_stick_g_s": 3.92,
+   "phi_in_stick_at_max": 2.6,
+   "note": "phi in the stick is far above the methane rich limit (~1.7): no flame inside the stick, it burns at the stick exit with the primary-zone air (vaporiser-stick practice); the gas jet also entrains air (ejector)"
+  },
+  "feed": "feed 8 x 0.5 1.4571 through the v13A M12x1 bulkhead (bore 8), 7 x 0.5 joggle inside, joins the ring at 60 deg"
+ },
+ "gas_system": {
+  "Qn_max_Nm3_h": 35.9,
+  "m_max_g_s": 7.15,
+  "supply_min_barg": 3.5,
+  "regulator_set_barg": 3.2,
+  "train_at_max_flow_min_supply": [
+   {
+    "item": "HV-601 ball valve DN15",
+    "Kv": 20.0,
+    "dp_bar": 0.0006,
+    "p_out_barg": 3.499
+   },
+   {
+    "item": "FG-602 filter DN15 20 um",
+    "Kv": 6.0,
+    "dp_bar": 0.0065,
+    "p_out_barg": 3.493
+   },
+   {
+    "item": "PCV-605 regulator",
+    "dp_bar": 0.293,
+    "p_out_barg": 3.2,
+    "note": "needs >= 0.3 bar to regulate"
+   },
+   {
+    "item": "XV-611 SSV1 DN15",
+    "Kv": 4.5,
+    "dp_bar": 0.0124,
+    "p_out_barg": 3.188
+   },
+   {
+    "item": "XV-612 SSV2 DN15",
+    "Kv": 4.5,
+    "dp_bar": 0.0125,
+    "p_out_barg": 3.175
+   },
+   {
+    "item": "piping/fittings DN15",
+    "Kv": 8.0,
+    "dp_bar": 0.004,
+    "p_out_barg": 3.171
+   },
+   {
+    "item": "FCV-620",
+    "dp_bar": null,
+    "p_in_barg": 3.171
+   }
+  ],
+  "line_engine": {
+   "spec": "1.4571 tube 15 x 1, DIN 2353 / ISO 8434-1 24 deg cone fittings (VOSS, DE); last 0.4 m DN12 stainless braided gas hose (Witzenmann, DE) to an 8/15 reducing union on the bulkhead tube",
+   "v_m_s": 23.6,
+   "dp_bar": 0.035,
+   "flex_hose_dp_bar": 0.014,
+   "feed_d8_dp_bar": 0.148,
+   "feed_v_m_s": 94.3
+  },
+  "manifold_max_bara": 3.592,
+  "FCV_inlet_barg": 3.171,
+  "FCV_dp_available_bar": 0.389,
+  "FCV_Kv_required": 0.85,
+  "FCV_Kv_selected": 1.6,
+  "FCV_authority_ok": true,
+  "light_off_Nm3_h": 3.5,
+  "turndown": 10.2,
+  "v_train_DN15_m_s": 12.2,
+  "valve_proving": {
+   "volume_between_SSV_L": 0.08,
+   "test": "close SSV2, open SSV1 2 s, close: PT-613 must hold (SSV2 tight); vent via FCV->engine during pre-purge, then PT-613 must stay ~0 (SSV1 tight); 10 s each, every start (EN 1643 principle, burner-control logic in B1/SR1)"
+  },
+  "pressure_switch_settings": {
+   "PSL_602_barg": 3.3,
+   "PSH_603_barg": 3.8,
+   "note": "PSL before the regulator (supply), PSH after it (regulator failure); manual reset"
+  },
+  "note": "regulator set 3.2 barg leaves 0.3 bar to the 3.5 barg supply minimum (PSL-602 trips at 3.3); the FCV meters the flow (speed/power governor in B1), manifold pressure PT-605 is the fuel-flow observer (needles calibrated on the rig)"
+ },
+ "oil": {
+  "oil": "ISO VG 32 synthetic turbine oil (e.g. FUCHS Renolin / Shell Turbo S4 class; EU blender)",
+  "bearing_friction_W_each_est": {
+   "f0_2": 138,
+   "f0_3": 198
+  },
+  "jet": {
+   "d_mm": 0.8,
+   "Cd": 0.7,
+   "p_barg": 2.5,
+   "L_min_each": 0.51,
+   "note": "0.5 L/min per jet at 2.5 barg; for the D2R target 0.3 L/min run ~0.9 barg or use d0.6 jets (set on the rig)"
+  },
+  "feed_L_min": 2.04,
+  "heat_W": {
+   "bearing_friction_W": 792,
+   "core_hot_end_soak_W_est": 400,
+   "core_buffer_air_W_est": 196,
+   "generator_W_est": 50
+  },
+  "heat_total_W": 1438,
+  "design_cooler_W": 2000,
+  "dT_oil_K": 24.6,
+  "T_supply_C": 60,
+  "T_return_mean_C": 85,
+  "pressure_pump": {
+   "type": "external gear pump ~1.0 cm3/rev on a 24 V BLDC motor, submerged in the tank",
+   "Q_L_min": 2.5,
+   "p_barg": 3.0,
+   "hydraulic_W": 12,
+   "motor_W": 60,
+   "control": "speed loop on PT-701 (2.5 barg), relief 4 bar"
+  },
+  "scavenge_pump": {
+   "type": "gear pump ~2.5 cm3/rev, 24 V BLDC, on the tank lid, suction from the drain collector",
+   "Q_L_min": 6.1,
+   "scavenge_ratio": 3.0,
+   "motor_W": 60
+  },
+  "tank": {
+   "gross_L": 3.85,
+   "oil_charge_L": 3.0,
+   "dwell_min": 0.98,
+   "heater_W": 200,
+   "note": "baffle, sight glass, float LSL-707, TE-704, drain"
+  },
+  "filter": {
+   "rating": "10 um, beta10 >= 200, bypass 2.5 bar, electrical clogging switch PDS-703",
+   "dp_clean_bar": 0.1
+  },
+  "cooler": {
+   "type": "oil-to-glycol tube cooler (Laminova C43 class, SE)",
+   "UA_W_K_needed_at_30C": 58,
+   "LMTD_K": 25.9,
+   "oil_supply_at_46C_air_C_est": 69.0
+  },
+  "breather": {
+   "air_in_g_s_labyrinths": 7.3,
+   "m3_h_at_80C": 26.4,
+   "air_in_g_s_with_core_piston_rings": 2.4,
+   "separator": "coalescing oil-mist separator >= 30 m3/h, drain to the scavenge collector, vent outside the enclosure"
+  },
+  "core_vent": {
+   "passage": "one tube 5 x 0.5 (ID 4) in the re-drilled 272 deg diffuser land (\u00d85.2 in a 9.2 mm land)",
+   "air_g_s_at_10kPa": 0.99,
+   "core_labyrinth_air_g_s": 6.0,
+   "chamber_overpressure_kPa_with_labyrinths": 362,
+   "area_needed_mm2_at_5kPa": 107,
+   "verdict": "NOT OK with the D2R labyrinths (6 g/s): the chamber would pressurise and stop the buffer flow. D2R must cut the core seal air to <= ~1 g/s (turbo piston rings / carbon ring on the d14 runner and the compressor boss) or open a vent passage of >= ~90 mm2 (not possible through one diffuser land)"
+  }
+ },
+ "glycol": {
+  "fluid": "40 % inhibited propylene glycol (Clariant Antifrogen L class)",
+  "flow_L_min": 2.5,
+  "heat_W": {
+   "PMG_jacket": 398,
+   "oil_cooler": 1500,
+   "total": 1898
+  },
+  "dT_K": 11.9,
+  "order": "pump -> PMG jacket (coldest) -> oil cooler -> radiator -> expansion tank / pump suction",
+  "jacket": {
+   "turns": 8,
+   "pitch_mm": 10.5,
+   "groove": "8 x 3 mm",
+   "v_m_s": 1.74,
+   "Re": 3444,
+   "dp_kPa": 37.2
+  },
+  "dp_kPa": {
+   "jacket_helix": 37.2,
+   "hoses_fittings": 11.5,
+   "laminova_glycol_side": 5.0,
+   "radiator": 6.0,
+   "pod_ports_G1_4": 4.5
+  },
+  "dp_total_kPa": 64.2,
+  "head_m": 6.33,
+  "pump": {
+   "type": "wet-rotor circulator with PWM input (Grundfos UPM3 FLEX AS 15-75 130 class, DK), 230 V",
+   "head_max_m": 7.5,
+   "P_W": "4-52"
+  },
+  "radiator": {
+   "core_mm": "280 x 320 x 52",
+   "air_m3_h": 1300.0,
+   "UA_W_K_est": 168,
+   "NTU": 1.05,
+   "eps": 0.58,
+   "ITD_K": 20.5,
+   "fan": "305 mm 24 V axial fan, brushless PWM (SPAL class, IT), 30-150 W"
+  },
+  "temperatures": [
+   {
+    "T_amb_C": 30.0,
+    "T_glycol_supply_C": 38.7,
+    "T_after_PMG_C": 41.1,
+    "T_radiator_in_C": 50.5
+   },
+   {
+    "T_amb_C": 46.0,
+    "T_glycol_supply_C": 54.7,
+    "T_after_PMG_C": 57.1,
+    "T_radiator_in_C": 66.5
+   }
+  ],
+  "volume_L_est": 1.5,
+  "expansion": {
+   "dV_cm3": 63,
+   "tank_L": 1.0,
+   "cap_bar": 1.0
+  },
+  "note": "supply 38-39 C at the 30 C site (PMG design 35-40 C); 54-55 C at 46 C roof air: stator/magnet run ~15 K warmer (Sm2Co17 OK, EMF -0.5 %); connect to the plant glycol loop (DC-1/HX-4) later if wanted"
+ },
+ "electrical": {
+  "continuous_W": {
+   "oil_pressure_pump": 40,
+   "oil_scavenge_pump": 40,
+   "glycol_pump": 25,
+   "radiator_fan_avg": 70,
+   "SSV_holding_2x": 80,
+   "FCV_PWM": 12,
+   "sensors_JB_transmitters": 25,
+   "UV_flame_cell": 5,
+   "n1_speed_electronics": 5
+  },
+  "continuous_total_W": 302,
+  "peak_W": {
+   "oil_pressure_pump": 60,
+   "oil_scavenge_pump": 60,
+   "glycol_pump": 52,
+   "radiator_fan": 150,
+   "SSV_2x": 80,
+   "FCV": 24,
+   "sensors": 25,
+   "UV": 5,
+   "n1": 5,
+   "oil_heater": 200,
+   "ignition_transformer_start": 120
+  },
+  "peak_total_W": 781,
+  "cycle_allowance_W": 600,
+  "note": "cycle P_net already subtracts 0.6 kW aux (d2r_turbine.json cycle_basis): the D2A load fits"
+ }
+}

@@ -1,0 +1,315 @@
+{
+ "sequence": "new",
+ "moves": 11,
+ "moves_with_clash": 0,
+ "moves_with_final_overlap": 1,
+ "vol_tol_mm3": 5.0,
+ "results": [
+  {
+   "label": "A5 drum RT-105",
+   "parts": [
+    "RT-105 Drum IN718"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [
+    {
+     "a": "RT-105 Drum IN718",
+     "b": "Impeller 2 hub",
+     "vol_mm3": 9.0
+    }
+   ],
+   "n_positions": 19,
+   "n_moving": 1,
+   "n_installed": 56,
+   "s": 28.8,
+   "k": 4
+  },
+  {
+   "label": "A8 studs drum - R1 into the drum flange",
+   "parts": [
+    "RT-111 Studs + nuts drum - R1 (16 x M10)"
+   ],
+   "path": [
+    [
+     80,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 11,
+   "n_moving": 16,
+   "n_installed": 59,
+   "s": 143.7,
+   "k": 7
+  },
+  {
+   "label": "A9 R1 blisk onto the studs, parked 6 mm short",
+   "parts": [
+    "A1000_R1 disc with arms (cast MAR-M247)",
+    "Blisk 1 blade x59"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     6,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 19,
+   "n_moving": 60,
+   "n_installed": 75,
+   "s": 187.5,
+   "k": 8
+  },
+  {
+   "label": "A10 nuts drum - R1 in radially behind the stud tips, then 3 mm onto them",
+   "parts": [
+    "RT-111 Studs + nuts drum - R1 (16 x M10)"
+   ],
+   "path": [
+    [
+     9,
+     0,
+     1500,
+     150
+    ],
+    [
+     9,
+     0,
+     1500,
+     0
+    ],
+    [
+     6,
+     0,
+     1500,
+     0
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 16,
+   "n_moving": 16,
+   "n_installed": 135,
+   "s": 466.5,
+   "k": 9
+  },
+  {
+   "label": "A11 R1 pulled home by the nuts",
+   "parts": [
+    "A1000_R1 disc with arms (cast MAR-M247)",
+    "Blisk 1 blade x59",
+    "RT-111 Studs + nuts drum - R1 (16 x M10)"
+   ],
+   "path": [
+    [
+     6,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 5,
+   "n_moving": 76,
+   "n_installed": 75,
+   "s": 198.1,
+   "k": 10
+  },
+  {
+   "label": "A12 R2 blisk with the R1 - R2 studs, parked 20 mm short (stud tips at the R1 flange back)",
+   "parts": [
+    "A1000_R2 disc with arms (cast MAR-M247)",
+    "Blisk 2 blade x36",
+    "RT-112 Studs + nuts R1 - R2 (16 x M10)"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     20,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 18,
+   "n_moving": 53,
+   "n_installed": 151,
+   "s": 192.3,
+   "k": 11
+  },
+  {
+   "label": "A13 expansion nuts R1 - R2 in radially (R1 aft cavity), seated on the R1 flange",
+   "parts": [
+    "RT-112 Studs + nuts R1 - R2 (16 x M10)"
+   ],
+   "path": [
+    [
+     0,
+     0,
+     1500,
+     150
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 12,
+   "n_moving": 16,
+   "n_installed": 204,
+   "s": 347.4,
+   "k": 12
+  },
+  {
+   "label": "A14 R2 pushed until the studs reach the nut threads (8 mm), then pulled home by the nuts",
+   "parts": [
+    "A1000_R2 disc with arms (cast MAR-M247)",
+    "Blisk 2 blade x36",
+    "RT-112 Studs + nuts R1 - R2 (16 x M10)"
+   ],
+   "path": [
+    [
+     20,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 8,
+   "n_moving": 53,
+   "n_installed": 167,
+   "s": 275.6,
+   "k": 13
+  },
+  {
+   "label": "A15 rear stub with the R2 - stub studs, parked 6 mm short",
+   "parts": [
+    "RT-106 Rear stub shaft",
+    "RT-113 Studs + nuts R2 - rear stub (16 x M10)"
+   ],
+   "path": [
+    [
+     400,
+     0,
+     1500
+    ],
+    [
+     6,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 19,
+   "n_moving": 17,
+   "n_installed": 220,
+   "s": 194.2,
+   "k": 14
+  },
+  {
+   "label": "A16 nuts R2 - stub in radially (R2 aft cavity), then 3 mm onto the stud tips (they seat on R2)",
+   "parts": [
+    "RT-113 Studs + nuts R2 - rear stub (16 x M10)"
+   ],
+   "path": [
+    [
+     -3,
+     0,
+     1500,
+     150
+    ],
+    [
+     -3,
+     0,
+     1500,
+     0
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 16,
+   "n_moving": 16,
+   "n_installed": 237,
+   "s": 436.9,
+   "k": 15
+  },
+  {
+   "label": "A17 rear stub pulled home (rotor balanced as one unit)",
+   "parts": [
+    "RT-106 Rear stub shaft",
+    "RT-113 Studs + nuts R2 - rear stub (16 x M10)"
+   ],
+   "path": [
+    [
+     6,
+     0,
+     1500
+    ],
+    [
+     0,
+     0,
+     1500
+    ]
+   ],
+   "clashes": [],
+   "final_overlaps": [],
+   "n_positions": 5,
+   "n_moving": 17,
+   "n_installed": 236,
+   "s": 185.8,
+   "k": 16
+  }
+ ]
+}

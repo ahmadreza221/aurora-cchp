@@ -1,0 +1,10 @@
+{
+	"autodeskProduct": "Fusion",
+	"type": "script",
+	"author": "GR180-CCHP",
+	"description": {
+		"": "CAM helpers for the GR180 E1 turbine stage: turning setups and operations for the rotor unit, NGV ring and shaft"
+	},
+	"supportedOS": "windows|mac",
+	"editEnabled": true
+}

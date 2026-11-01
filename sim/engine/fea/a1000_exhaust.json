@@ -1,0 +1,997 @@
+{
+ "station4": {
+  "m_kg_s": 6.275984732487032,
+  "m_air_kg_s": 6.316885928017208,
+  "T0_K": 959.1452762898996,
+  "P0_Pa": 105761.24999999999,
+  "T_K": 943.4688234303494,
+  "p_Pa": 98978.68614242782,
+  "rho": 0.3609130404625462,
+  "cp": 1169.1087569154333,
+  "R": 290.677593986937,
+  "gamma": 1.330905375690318,
+  "cx": 187.40453789125016,
+  "c_theta_mean": -39.17264107398457,
+  "swirl_span": [
+   0.0,
+   0.2499999999999999,
+   0.5000000000000002,
+   0.7500000000000001,
+   1.0
+  ],
+  "swirl_deg": [
+   -12.510748875164616,
+   -12.088857501948432,
+   -11.742443829911274,
+   -11.458664035879115,
+   -11.227410665069673
+  ],
+  "c_theta": [
+   -41.58347299204479,
+   -40.13793315976551,
+   -38.95441645852236,
+   -37.98710561450139,
+   -37.20027714508882
+  ],
+  "mach": 0.31690070851909874,
+  "q_Pa": 6614.625922848427,
+  "mu": 4.0092422416215215e-05,
+  "nu": 0.00011108610086472011,
+  "area_m2": 0.09278957796160354,
+  "TIT_C": 970.3060123917822,
+  "T5_K": 951.955922642845,
+  "m_ex_kg_s": 6.3707380214072895,
+  "P_ATM": 100725.0,
+  "P2_Pa": 379461.2022110995,
+  "T2_K": 451.8548967369305,
+  "T2r_K": 901.941014445526,
+  "T6_K": 526.9030654317293,
+  "P3_Pa": 355543.5536095543
+ },
+ "station4_new": {
+  "m_kg_s": 6.275667280949849,
+  "m_air_kg_s": 6.316885928017208,
+  "T0_K": 961.4779885896465,
+  "P0_Pa": 106679.37950831497,
+  "T_K": 946.1241124745839,
+  "p_Pa": 99988.95827682136,
+  "rho": 0.3635880302316441,
+  "cp": 1169.4617836335674,
+  "R": 290.6660813260738,
+  "gamma": 1.3307550100243535,
+  "cx": 186.01635604424993,
+  "c_theta_mean": -36.18643362420222,
+  "swirl_span": [
+   0.0,
+   0.2499999999999999,
+   0.5000000000000002,
+   0.7500000000000001,
+   1.0
+  ],
+  "swirl_deg": [
+   -11.815435890481792,
+   -11.341966351044162,
+   -10.944163846165328,
+   -10.609164378332563,
+   -10.326844836415114
+  ],
+  "c_theta": [
+   -38.91314568687977,
+   -37.3114444777579,
+   -35.96982548747184,
+   -34.84281082944176,
+   -33.89494163945983
+  ],
+  "mach": 0.31325408478128985,
+  "q_Pa": 6528.503535421871,
+  "mu": 4.0160607817318356e-05,
+  "nu": 0.00011045635300956358,
+  "area_m2": 0.09278957796160354,
+  "TIT_C": 970.3060123917822,
+  "T5_K": 954.256759248758,
+  "m_ex_kg_s": 6.370420569870107,
+  "P_ATM": 100725.0,
+  "P2_Pa": 379461.2022110995,
+  "T2_K": 451.8548967369305,
+  "T2r_K": 904.0116123524335,
+  "T6_K": 527.2018178291629,
+  "P3_Pa": 354558.06944315205
+ },
+ "geometry": {
+  "x_in": 868.0,
+  "r_hub": 200.4,
+  "r_cas_in": 264.0,
+  "cone_deg": 8.5,
+  "x_bend": 1150.0,
+  "R_hub": 180.0,
+  "R_cas": 120.0,
+  "b_rad": 80.0,
+  "r_exit": 500.0,
+  "rear_rise": 20.0,
+  "struts": {
+   "n": 4,
+   "theta0": 0.0,
+   "x_le": 920.0,
+   "chord": 225.0,
+   "t_c": 0.22,
+   "t_te": 4.0,
+   "alpha_le": -12.0,
+   "r_in": 180.0,
+   "r_out": 330.0
+  },
+  "box": {
+   "x0": 1170.0,
+   "x1": 1750.0,
+   "y0": -850.0,
+   "y1": 700.0,
+   "z0": -580.0,
+   "z1": 950.0
+  },
+  "out_ext": 1000.0,
+  "derived": {
+   "hub_c": [
+    1150.0,
+    380.4
+   ],
+   "x_rw": 1330.0,
+   "x_fw": 1250.0,
+   "x_cb": 1147.7371293355532,
+   "r_cb": 305.8069940937289,
+   "cas_c": [
+    1130.0,
+    424.4888976971589
+   ],
+   "r_fw0": 424.4888976971589,
+   "r_rw0": 380.4,
+   "x_rw_exit": 1350.0,
+   "tan_cone": 0.1494510013491278
+  },
+  "area_in_m2": 0.09278957796160354,
+  "area_strut_te_m2": 0.16684286712192378,
+  "area_exit_m2": 0.3141592653589793,
+  "AR_exit": 3.3857171490636464
+ },
+ "cfd": {
+  "meshes": {
+   "coarse": {
+    "iterations": 580.0,
+    "zeta_total": 0.4639989191015028,
+    "zeta_last": 0.4706047062524007,
+    "zeta_tail_min": 0.44965367074219403,
+    "zeta_tail_max": 0.47120184721263636,
+    "q_kin": 18327.47831547212,
+    "p_in": -9110.88671,
+    "p0_in": 9211.47018,
+    "p_out": 0.0,
+    "p0_out": 586.472631,
+    "cp_static": 0.49711621823655683,
+    "Q_inlet_m3_s": 17.3795071,
+    "cells": 354204,
+    "mesh_ok": true,
+    "yplus": {},
+    "stations": {
+     "x0900": {
+      "x_mm": 900.0,
+      "area_m2": 0.10078000963947714,
+      "Q_m3s": 15.643908534422069,
+      "p0": 8436.223616291678,
+      "p": -7042.215273846521,
+      "swirl_deg": -12.46045200404418,
+      "reverse_area": 0.00010307778269581955,
+      "n_tri": 3080,
+      "zeta_from_inlet": 0.04229968522477293
+     },
+     "x1148": {
+      "x_mm": 1148.0,
+      "area_m2": 0.16772747613290903,
+      "Q_m3s": 16.459491775659234,
+      "p0": 7973.729835145363,
+      "p": -2617.549186189388,
+      "swirl_deg": -16.443615551466262,
+      "reverse_area": 0.10908072292535505,
+      "n_tri": 6687,
+      "zeta_from_inlet": 0.06753467790545592
+     },
+     "x1000": {
+      "x_mm": 1000.0,
+      "area_m2": 0.10974557656686244,
+      "Q_m3s": 15.993176255601364,
+      "p0": 8256.84404732961,
+      "p": -5978.101786815798,
+      "swirl_deg": -13.100360593834237,
+      "reverse_area": 0.0008337606754509841,
+      "n_tri": 4608,
+      "zeta_from_inlet": 0.052087151120211186
+     },
+     "xbox": {
+      "x_mm": 1380.0,
+      "area_m2": 0.007375526638601036,
+      "Q_m3s": 1.7616176115713316e-17,
+      "p0": -489.91825371366133,
+      "p": -0.1176027190452319,
+      "swirl_deg": 51.07136730344982,
+      "reverse_area": 0.5070851245662965,
+      "n_tri": 315,
+      "zeta_from_inlet": 0.5293356929263814
+     }
+    }
+   },
+   "medium": {
+    "iterations": 1200.0,
+    "zeta_total": 0.4751268728996638,
+    "zeta_last": 0.4826563592511406,
+    "zeta_tail_min": 0.4610778608787739,
+    "zeta_tail_max": 0.48969911940494926,
+    "q_kin": 18327.47831547212,
+    "p_in": -8856.54003,
+    "p0_in": 9465.88023,
+    "p_out": 0.0,
+    "p0_out": 620.006272,
+    "cp_static": 0.48323833085773066,
+    "Q_inlet_m3_s": 17.3757951,
+    "cells": 832024,
+    "mesh_ok": true,
+    "yplus": {
+     "collector": {
+      "min": 2.002844,
+      "max": 1235.8947,
+      "avg": 167.19358
+     },
+     "diffuser": {
+      "min": 1.0044355,
+      "max": 567.37191,
+      "avg": 125.05806
+     },
+     "struts": {
+      "min": 1.7187,
+      "max": 168.12152,
+      "avg": 81.149031
+     }
+    },
+    "stations": {
+     "x0900": {
+      "x_mm": 900.0,
+      "area_m2": 0.10079162610063672,
+      "Q_m3s": 16.119530413243314,
+      "p0": 8778.592855390025,
+      "p": -6963.269772513925,
+      "swirl_deg": -12.446126360606561,
+      "reverse_area": 0.0,
+      "n_tri": 5460,
+      "zeta_from_inlet": 0.03750037854524512
+     },
+     "x1148": {
+      "x_mm": 1148.0,
+      "area_m2": 0.16772223265185088,
+      "Q_m3s": 16.856490858049487,
+      "p0": 8168.301121498593,
+      "p": -2648.6969945179058,
+      "swirl_deg": -15.523354511126184,
+      "reverse_area": 0.10366810194111524,
+      "n_tri": 11635,
+      "zeta_from_inlet": 0.07079965318556602
+     },
+     "x1000": {
+      "x_mm": 1000.0,
+      "area_m2": 0.10973648495673377,
+      "Q_m3s": 16.373233931840275,
+      "p0": 8493.217458530886,
+      "p": -6107.337500100421,
+      "swirl_deg": -13.274054028863873,
+      "reverse_area": 0.0037924013780651733,
+      "n_tri": 7270,
+      "zeta_from_inlet": 0.05307128207856013
+     },
+     "xbox": {
+      "x_mm": 1380.0,
+      "area_m2": 0.004466812054151468,
+      "Q_m3s": -2.2175042845297767e-18,
+      "p0": 6126.974830219722,
+      "p": 170.8793074163616,
+      "swirl_deg": 47.92043205336401,
+      "reverse_area": 0.5318557649716796,
+      "n_tri": 422,
+      "zeta_from_inlet": 0.18218029465415125
+     }
+    }
+   },
+   "fine": {
+    "iterations": 1500.0,
+    "zeta_total": 0.48296602571734804,
+    "zeta_last": 0.4896068269481866,
+    "zeta_tail_min": 0.469557192586334,
+    "zeta_tail_max": 0.49679852444913136,
+    "q_kin": 18327.47831547212,
+    "p_in": -8762.02136,
+    "p0_in": 9560.3422,
+    "p_out": 0.0,
+    "p0_out": 587.083696,
+    "cp_static": 0.4780811200089143,
+    "Q_inlet_m3_s": 17.3888169,
+    "cells": 1826449,
+    "mesh_ok": true,
+    "yplus": {
+     "collector": {
+      "min": 2.1088144,
+      "max": 892.49812,
+      "avg": 133.82259
+     },
+     "diffuser": {
+      "min": 0.96481,
+      "max": 378.59396,
+      "avg": 92.330927
+     },
+     "struts": {
+      "min": 1.4096857,
+      "max": 148.11209,
+      "avg": 61.410356
+     }
+    },
+    "stations": {
+     "x0900": {
+      "x_mm": 900.0,
+      "area_m2": 0.10079324689597297,
+      "Q_m3s": 16.465501794272473,
+      "p0": 9182.480688019956,
+      "p": -6691.472700986957,
+      "swirl_deg": -12.456590157178534,
+      "reverse_area": 3.4561375645411194e-07,
+      "n_tri": 9818,
+      "zeta_from_inlet": 0.020617212334173185
+     },
+     "x1000": {
+      "x_mm": 1000.0,
+      "area_m2": 0.1097344745341431,
+      "Q_m3s": 16.638102745045806,
+      "p0": 8858.937484946675,
+      "p": -6048.110294431826,
+      "swirl_deg": -13.913388589182244,
+      "reverse_area": 0.008488836110069444,
+      "n_tri": 12419,
+      "zeta_from_inlet": 0.03827066129775181
+     },
+     "x1148": {
+      "x_mm": 1148.0,
+      "area_m2": 0.16774655437708788,
+      "Q_m3s": 17.08389345188958,
+      "p0": 8481.325055272371,
+      "p": -2938.3291600195566,
+      "swirl_deg": -16.1373719462616,
+      "reverse_area": 0.11392791504157153,
+      "n_tri": 20021,
+      "zeta_from_inlet": 0.0588742829839672
+     },
+     "xbox": {
+      "x_mm": 1380.0,
+      "area_m2": 0.002334659462788731,
+      "Q_m3s": 3.7684114786122665e-18,
+      "p0": -6481.958238169397,
+      "p": 249.04117610603925,
+      "swirl_deg": 2.6949691899219443,
+      "reverse_area": 0.5807061134856213,
+      "n_tri": 561,
+      "zeta_from_inlet": 0.8753141137057809
+     }
+    }
+   }
+  },
+  "zeta": {
+   "coarse": 0.4639989191015028,
+   "medium": 0.4751268728996638,
+   "fine": 0.48296602571734804
+  },
+  "order": 1.2177663008941122,
+  "zeta_extrapolated": 0.5016513512398725,
+  "gci_fine": 0.04836086941822453,
+  "zeta_design": 0.48296602571734804,
+  "convergence": "monotonic"
+ },
+ "zeta_used": 0.48296602571734804,
+ "hot": {
+  "items_Pa": {
+   "diffuser + struts + bend + radial diffuser + collector + transition (CFD)": 3153.0454063843567,
+   "recuperator gas side (vendor, assumed 2.0 %)": 2070.5266820386123,
+   "hot-water economizer (vendor, assumed)": 500.0,
+   "stack DN800 + silencer + exit - draft": 230.79069067987166
+  },
+  "total_Pa": 5954.362779102841,
+  "dp_exh": 0.038558809601034784,
+  "dp_rec_h": 0.020556234122994413,
+  "stack": {
+   "V": 13.565739254084423,
+   "q_Pa": 86.61139837109972,
+   "H_m": 3.5,
+   "draft_Pa": 11.120296366815815
+  }
+ },
+ "cold": {
+  "items": {
+   "scroll casing -> C1 channel entry (turn round the casing front flange)": {
+    "K": 0.5,
+    "q_Pa": 2577.495253062041,
+    "note": "channel_entry",
+    "dp_Pa": 1288.7476265310204
+   },
+   "C1 + C2 channels (sec. 14)": {
+    "K": null,
+    "q_Pa": null,
+    "dp_Pa": 231.53303075150825,
+    "note": "a1000_hot_section.json"
+   },
+   "C2 exit -> manifold (annulus over the frame heat shield, partly diffused)": {
+    "K": 0.6,
+    "q_Pa": 1506.964482389943,
+    "note": "plenum",
+    "V": 32.18930280079571,
+    "dp_Pa": 904.1786894339658
+   },
+   "manifold -> port 150 x 600 -> rect-round elbow -> DN350 (collection 1.5 q, elbow 0.3 q)": {
+    "K": 1.8,
+    "q_Pa": 840.4317541388192,
+    "note": "plenum",
+    "V": 24.038717211142604,
+    "V_port": 23.76768503834572,
+    "dp_Pa": 1512.7771574498745
+   },
+   "cold pipe DN350 (2.0 m, R/D 1 elbow, BOV tee, pressure-balanced joint)": {
+    "V": 24.038717211142604,
+    "q_Pa": 840.4317541388192,
+    "Re": 944957.9969364578,
+    "f": 0.01404041462382642,
+    "L_m": 1.985,
+    "elbows": 1,
+    "K_elbows": 0.2594531361467867,
+    "K": 0.4422523727133211,
+    "dp_Pa": 371.6829373715113,
+    "note": "BOV tee run, pressure-balanced joint"
+   }
+  },
+  "items_hot": {
+   "hot air pipe DN450 (3.5 m, 3 elbows R/D 1, gimbal pair)": {
+    "V": 29.1668723710463,
+    "q_Pa": 602.2281169370374,
+    "Re": 462989.2925868399,
+    "f": 0.014544991301855803,
+    "L_m": 3.5092055512721783,
+    "elbows": 3,
+    "K_elbows": 0.7396014382847764,
+    "K": 0.9561342333068721,
+    "dp_Pa": 575.8109188634355,
+    "note": "two gimbal joints with sleeves"
+   }
+  },
+  "core_Pa": 5627.284241543424,
+  "ducts_Pa": 4884.730360401316,
+  "total_Pa": 10512.01460194474,
+  "P2_Pa": 379461.2022110995,
+  "dp_rec_c": 0.027702475353716824,
+  "ducts_pct": 1.2872805788676844,
+  "core_pct": 1.482966956503998,
+  "m_kg_s": 6.22213263909695,
+  "rho2": 2.9087732772265458,
+  "V_annulus": 32.18930280079571
+ },
+ "dps_new": {
+  "dp_exh": 0.038558809601034784,
+  "dp_rec_h": 0.020556234122994413,
+  "dp_rec_c": 0.027702475353716824
+ },
+ "dps_old": {
+  "dp_exh": 0.015,
+  "dp_rec_h": 0.035,
+  "dp_rec_c": 0.025
+ },
+ "struts": {
+  "count": {
+   "4": {
+    "rows": [
+     {
+      "EO": 4,
+      "ND": 4,
+      "ND_used": 4,
+      "margin": -0.5472431770212596,
+      "family": 1,
+      "f_Hz": 2252.865,
+      "need": 0.1,
+      "ok": true
+     },
+     {
+      "EO": 8,
+      "ND": 8,
+      "ND_used": 8,
+      "margin": -0.2003189316260926,
+      "family": 1,
+      "f_Hz": 2551.017,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 12,
+      "ND": 12,
+      "ND_used": 12,
+      "margin": 0.14143727918624072,
+      "family": 1,
+      "f_Hz": 2575.7,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 16,
+      "ND": 16,
+      "ND_used": 14,
+      "margin": -0.09869410053316227,
+      "family": 2,
+      "f_Hz": 4526.765,
+      "need": 0.05,
+      "ok": true
+     }
+    ],
+    "ok": true
+   },
+   "5": {
+    "rows": [
+     {
+      "EO": 5,
+      "ND": 5,
+      "ND_used": 5,
+      "margin": -0.47640151913372586,
+      "family": 1,
+      "f_Hz": 2435.072,
+      "need": 0.1,
+      "ok": true
+     },
+     {
+      "EO": 10,
+      "ND": 10,
+      "ND_used": 10,
+      "margin": -0.0069207884971051485,
+      "family": 1,
+      "f_Hz": 2567.771,
+      "need": 0.05,
+      "ok": false
+     },
+     {
+      "EO": 15,
+      "ND": 15,
+      "ND_used": 14,
+      "margin": -0.15502571924983963,
+      "family": 2,
+      "f_Hz": 4526.765,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 20,
+      "ND": 16,
+      "ND_used": 14,
+      "margin": 0.08245071259497669,
+      "family": 2,
+      "f_Hz": 4526.765,
+      "need": 0.05,
+      "ok": true
+     }
+    ],
+    "ok": false
+   },
+   "6": {
+    "rows": [
+     {
+      "EO": 6,
+      "ND": 6,
+      "ND_used": 6,
+      "margin": -0.38875720757126075,
+      "family": 1,
+      "f_Hz": 2503.097,
+      "need": 0.1,
+      "ok": true
+     },
+     {
+      "EO": 12,
+      "ND": 12,
+      "ND_used": 12,
+      "margin": 0.14143727918624072,
+      "family": 1,
+      "f_Hz": 2575.7,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 18,
+      "ND": 18,
+      "ND_used": 14,
+      "margin": 0.013969136900192448,
+      "family": 2,
+      "f_Hz": 4526.765,
+      "need": 0.05,
+      "ok": false
+     },
+     {
+      "EO": 24,
+      "ND": 12,
+      "ND_used": 12,
+      "margin": -0.1539081218875535,
+      "family": 3,
+      "f_Hz": 7233.257,
+      "need": 0.05,
+      "ok": true
+     }
+    ],
+    "ok": false
+   },
+   "7": {
+    "rows": [
+     {
+      "EO": 7,
+      "ND": 7,
+      "ND_used": 7,
+      "margin": -0.2956420962164734,
+      "family": 1,
+      "f_Hz": 2534.223,
+      "need": 0.1,
+      "ok": true
+     },
+     {
+      "EO": 14,
+      "ND": 14,
+      "ND_used": 14,
+      "margin": -0.21135733796651698,
+      "family": 2,
+      "f_Hz": 4526.765,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 21,
+      "ND": 15,
+      "ND_used": 14,
+      "margin": 0.13657324822472552,
+      "family": 2,
+      "f_Hz": 4526.765,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 28,
+      "ND": 8,
+      "ND_used": 8,
+      "margin": 0.0907809610066477,
+      "family": 3,
+      "f_Hz": 6289.072,
+      "need": 0.05,
+      "ok": true
+     }
+    ],
+    "ok": true
+   },
+   "8": {
+    "rows": [
+     {
+      "EO": 8,
+      "ND": 8,
+      "ND_used": 8,
+      "margin": -0.2003189316260926,
+      "family": 1,
+      "f_Hz": 2551.017,
+      "need": 0.1,
+      "ok": true
+     },
+     {
+      "EO": 16,
+      "ND": 16,
+      "ND_used": 14,
+      "margin": -0.09869410053316227,
+      "family": 2,
+      "f_Hz": 4526.765,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 24,
+      "ND": 12,
+      "ND_used": 12,
+      "margin": -0.1539081218875535,
+      "family": 3,
+      "f_Hz": 7233.257,
+      "need": 0.05,
+      "ok": true
+     },
+     {
+      "EO": 32,
+      "ND": 4,
+      "ND_used": 4,
+      "margin": 0.718890386096983,
+      "family": 3,
+      "f_Hz": 4561.082,
+      "need": 0.05,
+      "ok": true
+     }
+    ],
+    "ok": true
+   }
+  },
+  "design": {
+   "n": 4,
+   "chord_mm": 225.0,
+   "t_mm": 49.5,
+   "t_c": 0.22,
+   "cavity_mm": 36.5,
+   "wall_mm": 6.5,
+   "services": {
+    "+z (top)": "oil supply DN15 (OD 21.3) to the JB2 inlet boss (pads + ISFD, ~10 l/min)",
+    "-z (bottom)": "the strut cavity itself is the JB2 oil drain (36 x ~120 mm, vertical, no buffer orifice), short DN25 sleeve from the JB2 drain boss, DN50 drain from the strut root through the manifold",
+    "-y": "bearing-chamber vent DN25 (OD 33.7) to the oil-tank demister",
+    "+y": "sensor leads in a 12 mm conduit (2 proximity probes, 2 pad thermocouples, spare)",
+    "+z, +y, -y": "buffer / cooling air from the manifold, one d 4 mm orifice in each strut root (sec. buffer_air)"
+   },
+   "load_N": 10036.75,
+   "sigma_MPa": 2.2875783475783478,
+   "k_frame_N_m": 8079178623.129447,
+   "k_jb2_keys_N_m": 764268221.5743438,
+   "k_rim_keys_N_m": 10133521263.419239,
+   "k_support_N_m": 653211169.2904314,
+   "k_isfd_N_m": 31000000.0,
+   "stiffness_ratio": 21.07132804162682,
+   "blockage_max": 0.13068767174284873
+  }
+ },
+ "buffer_air": {
+  "orifices": "3 x d 4.0 mm",
+  "feed_g_s": 21.730535548318503,
+  "feed_pct_air": 0.3493655232848635,
+  "cavity_bar": {
+   "c_0.25_mm": 1.509839661927696,
+   "c_0.50_mm": 1.1586219724560398
+  },
+  "labyrinth": "5 teeth on the R2 rear flange r 92, honeycomb land in the hub front wall",
+  "note": "inside the 0.66 % joint share of the 1.5 % cycle leakage allowance (sec. 17)"
+ },
+ "frame": {
+  "dP_Pa": 279472.24393427814,
+  "F_axial_aft_N": 25295.710782106744,
+  "F_pin_N": 8289.080202890938,
+  "tau_pin_MPa": 18.32289011076755
+ },
+ "manifold": {
+  "x0": 928.0,
+  "x1": 1100.0,
+  "r_o": 500.0,
+  "t": 14.0,
+  "rim_ri": 340.0,
+  "rim_ro": 400.0,
+  "rim_x": [
+   1070.0,
+   1100.0
+  ],
+  "x_pin": 1085.0,
+  "n_pin": 7,
+  "d_pin": 24.0,
+  "r_seal_front": 283.0,
+  "r_seal_rear": 330.0,
+  "shield_gap": 10.0,
+  "r_bore": 322.0,
+  "r_bolt": 535.0,
+  "port": [
+   150.0,
+   600.0
+  ],
+  "pin_deg": [
+   22.5,
+   67.5,
+   112.5,
+   157.5,
+   202.5,
+   247.5,
+   292.5
+  ]
+ },
+ "jb2_mount": {
+  "r_ring_i": 130.0,
+  "r_ring_o": 150.0,
+  "r_hub_bore": 185.0,
+  "n_key": 8,
+  "key_w": 16.0,
+  "x": [
+   925.0,
+   985.0
+  ],
+  "x_brg": 955.25,
+  "pad": 3.0
+ },
+ "layout": {
+  "recuperator": {
+   "x0": -900.0,
+   "x1": 1900.0,
+   "y0": 1150.0,
+   "y1": 2350.0,
+   "z0": -700.0,
+   "z1": 900.0,
+   "moved_y": 300.0
+  },
+  "cold_pipe": {
+   "DN": 350,
+   "pts": [
+    [
+     1017.0,
+     451.8689194467694,
+     -214.04317236952232
+    ],
+    [
+     925.0,
+     760.0,
+     -360.0
+    ],
+    [
+     -700.0,
+     760.0,
+     -360.0
+    ],
+    [
+     -700.0,
+     1120.0,
+     -360.0
+    ]
+   ],
+   "RD": [
+    1.0,
+    1.0
+   ],
+   "insul": 30.0,
+   "x_bov": -450.0
+  },
+  "hot_pipe": {
+   "DN": 450,
+   "pts": [
+    [
+     665.0,
+     590.0,
+     1140.0
+    ],
+    [
+     665.0,
+     1028.0,
+     1140.0
+    ],
+    [
+     665.0,
+     1028.0,
+     2050.0
+    ],
+    [
+     1500.0,
+     1650.0,
+     2050.0
+    ],
+    [
+     1500.0,
+     1650.0,
+     930.0
+    ]
+   ],
+   "RD": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "insul": 50.0
+  },
+  "bov": {
+   "DN": 200,
+   "valve_DN": 125,
+   "pts": [
+    [
+     -450.0,
+     760.0,
+     -360.0
+    ],
+    [
+     -450.0,
+     760.0,
+     1050.0
+    ],
+    [
+     -450.0,
+     1150.0,
+     1050.0
+    ]
+   ],
+   "RD": [
+    1.5
+   ]
+  },
+  "stack": {
+   "DN": 800,
+   "x": -500.0,
+   "y": 1750.0,
+   "z0": 1500.0,
+   "z1": 5000.0,
+   "econ": {
+    "x0": -900.0,
+    "x1": -100.0,
+    "z0": 900.0,
+    "z1": 1500.0
+   }
+  }
+ },
+ "thermal": {
+  "displacements_mm": {
+   "frame on the radial pins: radial slide": 3.2537999999999996,
+   "front leaf seal on the C2 rear face: axial closure": 2.882625,
+   "front leaf seal: radial slide": 0.9593699999999997,
+   "rear leaf seal on the manifold rim: radial slide (pins 15 mm ahead, ~0 axial)": 3.1580999999999997,
+   "frame rear end (x 1250) -> collector front ring: axial": 3.6580500000000002,
+   "collector +y face (centre-line supported, keyed at y 0)": 7.853999999999999,
+   "cold pipe run 1.7 m: own growth": 3.35412,
+   "recuperator cold inlet relative to its rear fixed point (x 1700 -> -700, ~250 K mean rise)": 10.200000000000001,
+   "hot air pipe own growth (1.4948 at 626 C)": 37.21512487124144,
+   "can nozzle up (scroll casing + can casing)": 5.39256
+  },
+  "joints": [
+   [
+    "frame <-> manifold casing",
+    "7 radial pins A286 dia 24 (x 1085), put in from outside through sleeves: centre + torque + 25 kN aft air load",
+    "radial 3.3"
+   ],
+   [
+    "frame front <-> C2 rear face",
+    "leaf seal Haynes 25 (as CB-350), travel 4 mm",
+    "axial 2.9, radial 1.0"
+   ],
+   [
+    "frame <-> manifold rear rim",
+    "leaf seal Haynes 25, radial sliding",
+    "radial 3.2"
+   ],
+   [
+    "frame rear flange <-> collector front ring",
+    "spigot slip joint 25 mm engagement + ceramic rope",
+    "axial 3.7"
+   ],
+   [
+    "collector -> recuperator gas inlet",
+    "rectangular fabric expansion joint 540 x 1480, 300 mm long",
+    "y 8 + recuperator ~10, x ~4"
+   ],
+   [
+    "cold pipe DN350",
+    "one pressure-balanced in-line joint (no thrust on the manifold)",
+    "axial 9"
+   ],
+   [
+    "hot air pipe DN450",
+    "gimbal pair (tied, takes the 3.6 bar thrust) in the 1.15 m vertical leg",
+    "pipe growth 37, nozzle up 5.4"
+   ],
+   [
+    "BOV dump line DN200",
+    "one tied lateral joint at the economizer inlet",
+    "small (cold except during a trip)"
+   ],
+   [
+    "recuperator gas outlet -> economizer / stack",
+    "fabric joint (vendor scope)",
+    "~10"
+   ]
+  ]
+ },
+ "volumes": {
+  "manifold_m3": 0.08645662982679111,
+  "cold_pipe_m3": 0.20806055223424366,
+  "hot_pipe_m3": 0.5287457749502206,
+  "scroll_casing_free_m3_est": 0.22919262695434003,
+  "A_estimate_m3": 0.5537098090153748,
+  "A_phase1_m3": 0.9,
+  "B_ducts_m3": 0.5287457749502206,
+  "B_phase1_m3": 2.4,
+  "note": "A = manifold + cold pipe + scroll-casing free volume (estimate) + compressor collector 0.03; B needs the recuperator air-side volume from the vendor (+ hot pipe, can, scroll)"
+ },
+ "refs": {
+  "friction": "Darcy-Weisbach, Haaland (1983) friction factor, roughness 0.05 mm (drawn stainless / new steel pipe)",
+  "elbow": "Crane TP-410 (2009): 90 deg long-radius elbow R/D 1.5, K = 14 f_T",
+  "tee_bellows": "Idelchik (2008) diagram 7-21 (run of a tee, branch closed) K 0.05; EJMA: bellows with internal sleeve K 0.05",
+  "plenum": "Idelchik (2008) ch. 7: annular collecting plenum with one side outlet, K 1.2 on the nozzle head; partly diffused entry 0.6 of the entry head (Idelchik ch. 5, short annular diffuser into a chamber)",
+  "channel_entry": "Idelchik (2008) diagram 6-? (180 deg turn into an annular channel round a rounded flange) K 0.5 on the channel head",
+  "stack": "exit loss 1.0 q, absorptive splitter silencer 150 Pa (vendor design value), stack draft (rho_amb - rho_gas) g H",
+  "recuperator": "vendor flange-to-flange value, ASSUMED: air side 1.5 %, gas side 2.0 % of the inlet total pressure (primary-surface counterflow core at effectiveness 0.90; microturbine practice sum 3-5 %: McDonald 2003, Utriainen & Sunden 2002)",
+  "economizer": "hot-water economizer gas side ASSUMED 500 Pa (finned tube, ~8 m/s face velocity; vendor to confirm)"
+ }
+}

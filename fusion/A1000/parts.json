@@ -1,0 +1,88 @@
+{
+ "A1000_R1_blade": {
+  "mass_kg": 0.0346,
+  "vol_cm3": 4.05,
+  "valid": true,
+  "solids": 1
+ },
+ "A1000_R1_disc": {
+  "mass_kg": 42.3409,
+  "vol_cm3": 4957.949,
+  "valid": true,
+  "solids": 1
+ },
+ "A1000_R2_blade": {
+  "mass_kg": 0.1393,
+  "vol_cm3": 16.316,
+  "valid": true,
+  "solids": 1
+ },
+ "A1000_R2_disc": {
+  "mass_kg": 47.4837,
+  "vol_cm3": 5560.155,
+  "valid": true,
+  "solids": 1
+ },
+ "A1000_N1_vane": {
+  "mass_kg": 0.0406,
+  "vol_cm3": 4.75,
+  "valid": true,
+  "solids": 1
+ },
+ "A1000_N1_rings": {
+  "mass_kg": 5.2892,
+  "vol_cm3": 619.349,
+  "valid": true,
+  "solids": 2
+ },
+ "A1000_N2_vane": {
+  "mass_kg": 0.2901,
+  "vol_cm3": 33.972,
+  "valid": true,
+  "solids": 1
+ },
+ "A1000_N2_rings": {
+  "mass_kg": 10.0987,
+  "vol_cm3": 1182.517,
+  "valid": true,
+  "solids": 2
+ },
+ "pattern": {
+  "Z": {
+   "N1": 48,
+   "R1": 59,
+   "N2": 24,
+   "R2": 36
+  },
+  "axis": "x",
+  "units": "mm",
+  "density_g_cc": 8.54,
+  "alloy": "MAR-M247",
+  "revision": "rev 6 (R1 - NGV2 gap +25 mm)",
+  "rows": {
+   "N1": {
+    "x_le": 0.0,
+    "x_te": 22.0
+   },
+   "R1": {
+    "x_le": 30.0,
+    "x_te": 55.96
+   },
+   "N2": {
+    "x_le": 89.96,
+    "x_te": 138.96
+   },
+   "R2": {
+    "x_le": 149.96,
+    "x_te": 191.96
+   }
+  },
+  "note": "blade / vane pieces at 0 deg; disc seam and NGV rings rotated by half a pitch (cad/engine/a1000_turbine.py)"
+ },
+ "expected": {
+  "blisk1_kg": 44.38,
+  "blisk2_kg": 52.5,
+  "ngv1_kg": 7.24,
+  "ngv2_kg": 17.06
+ }
+}

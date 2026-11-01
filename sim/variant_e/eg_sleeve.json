@@ -1,0 +1,1359 @@
+{
+ "title": "GR180 version E generator rotor retention: CFRP vs Inconel 718 sleeve",
+ "date": "2026-10-24",
+ "script": "sim/variant_e/eg_sleeve.py",
+ "geometry_mm": {
+  "shaft_r": 35.5,
+  "screen": [
+   35.5,
+   37.0
+  ],
+  "magnet": [
+   37.0,
+   53.0
+  ],
+  "sleeve": [
+   53.0,
+   60.0
+  ],
+  "U_tip_m_s": 219.9
+ },
+ "materials": {
+  "42CrMo4": {
+   "Er": 205000000000.0,
+   "Et": 205000000000.0,
+   "nu": 0.29,
+   "rho": 7850,
+   "ar": 1.15e-05,
+   "at": 1.15e-05,
+   "Rp": 750
+  },
+  "CuCr1Zr": {
+   "Er": 125000000000.0,
+   "Et": 125000000000.0,
+   "nu": 0.34,
+   "rho": 8890,
+   "ar": 1.7e-05,
+   "at": 1.7e-05,
+   "Rp": 300
+  },
+  "SmCo_seg": {
+   "Er": 140000000000.0,
+   "Et": 1000000.0,
+   "nu": 0.0,
+   "rho": 8400,
+   "ar": 1e-05,
+   "at": 1e-05,
+   "comp": 800,
+   "tens": 35
+  },
+  "SmCo_arch": {
+   "Er": 140000000000.0,
+   "Et": 140000000000.0,
+   "nu": 0.27,
+   "rho": 8400,
+   "ar": 1e-05,
+   "at": 1e-05,
+   "comp": 800,
+   "tens": 35
+  },
+  "T700S": {
+   "Er": 9000000000.0,
+   "Et": 135000000000.0,
+   "nu": 0.02,
+   "rho": 1580,
+   "ar": 3e-05,
+   "at": -3e-07,
+   "UTS": 2450,
+   "Ttr": 60,
+   "Ctr": 200
+  },
+  "T800S": {
+   "Er": 9000000000.0,
+   "Et": 155000000000.0,
+   "nu": 0.02,
+   "rho": 1580,
+   "ar": 3e-05,
+   "at": -4e-07,
+   "UTS": 2800,
+   "Ttr": 60,
+   "Ctr": 200
+  },
+  "IN718": {
+   "Er": 200000000000.0,
+   "Et": 200000000000.0,
+   "nu": 0.29,
+   "rho": 8190,
+   "ar": 1.3e-05,
+   "at": 1.3e-05,
+   "Rp": 1030,
+   "UTS": 1240
+  }
+ },
+ "cases": [
+  "standstill 20 C (as assembled)",
+  "standstill hot (shut-down soak)",
+  "100 % hot (35,000 rpm)",
+  "108 % trip hot (37,800 rpm)",
+  "108 % trip cold rotor 0 C",
+  "120 % spin test HOT (42,000 rpm, rotor 100 C, vacuum pit)",
+  "120 % cold 20 C (information: not the test condition)",
+  "cold start 0 C, 100 %"
+ ],
+ "cfrp_options": {
+  "T700S t6": {
+   "t_mm": 6.0,
+   "d_min_mm": 0.777,
+   "d_design_mm": 0.797,
+   "sleeve_hoop_100hot_MPa": 1164.9,
+   "sleeve_hoop_spin120_MPa": 1202.9,
+   "sleeve_hoop_max_MPa": 1202.9,
+   "p_magnet_screen_100hot": 53.39,
+   "p_magnet_screen_trip108": 13.3,
+   "p_magnet_screen_spin120": 6.6,
+   "p_magnet_screen_120cold_info": "OPEN",
+   "sleeve_radial_max_MPa": -1.0,
+   "magnet_radial_range_MPa": [
+    -162.3,
+    -1.3
+   ],
+   "UTS_eff_MPa": 2254.0,
+   "SF_UTS_100hot": 1.93,
+   "SF_UTS_spin": 1.87,
+   "ratio_100hot": 0.517,
+   "ok_long_term": false,
+   "ok_spin": true
+  },
+  "T700S t7": {
+   "t_mm": 7.0,
+   "d_min_mm": 0.623,
+   "d_design_mm": 0.643,
+   "sleeve_hoop_100hot_MPa": 990.5,
+   "sleeve_hoop_spin120_MPa": 1027.0,
+   "sleeve_hoop_max_MPa": 1027.0,
+   "p_magnet_screen_100hot": 55.51,
+   "p_magnet_screen_trip108": 13.64,
+   "p_magnet_screen_spin120": 12.51,
+   "p_magnet_screen_120cold_info": "OPEN",
+   "sleeve_radial_max_MPa": -0.9,
+   "magnet_radial_range_MPa": [
+    -156.4,
+    -1.2
+   ],
+   "UTS_eff_MPa": 2254.0,
+   "SF_UTS_100hot": 2.28,
+   "SF_UTS_spin": 2.19,
+   "ratio_100hot": 0.439,
+   "ok_long_term": false,
+   "ok_spin": true
+  },
+  "T700S t8": {
+   "t_mm": 8.0,
+   "d_min_mm": 0.51,
+   "d_design_mm": 0.53,
+   "sleeve_hoop_100hot_MPa": 862.5,
+   "sleeve_hoop_spin120_MPa": 897.6,
+   "sleeve_hoop_max_MPa": 897.6,
+   "p_magnet_screen_100hot": 57.77,
+   "p_magnet_screen_trip108": 14.24,
+   "p_magnet_screen_spin120": 18.39,
+   "p_magnet_screen_120cold_info": "OPEN",
+   "sleeve_radial_max_MPa": -0.8,
+   "magnet_radial_range_MPa": [
+    -151.0,
+    -1.1
+   ],
+   "UTS_eff_MPa": 2254.0,
+   "SF_UTS_100hot": 2.61,
+   "SF_UTS_spin": 2.51,
+   "ratio_100hot": 0.383,
+   "ok_long_term": true,
+   "ok_spin": true
+  },
+  "T800S t6": {
+   "t_mm": 6.0,
+   "d_min_mm": 0.676,
+   "d_design_mm": 0.696,
+   "sleeve_hoop_100hot_MPa": 1191.1,
+   "sleeve_hoop_spin120_MPa": 1234.2,
+   "sleeve_hoop_max_MPa": 1234.2,
+   "p_magnet_screen_100hot": 56.36,
+   "p_magnet_screen_trip108": 13.59,
+   "p_magnet_screen_spin120": 10.3,
+   "p_magnet_screen_120cold_info": "OPEN",
+   "sleeve_radial_max_MPa": -1.0,
+   "magnet_radial_range_MPa": [
+    -164.0,
+    -1.3
+   ],
+   "UTS_eff_MPa": 2576.0,
+   "SF_UTS_100hot": 2.16,
+   "SF_UTS_spin": 2.09,
+   "ratio_100hot": 0.462,
+   "ok_long_term": false,
+   "ok_spin": true
+  },
+  "T800S t7": {
+   "t_mm": 7.0,
+   "d_min_mm": 0.543,
+   "d_design_mm": 0.563,
+   "sleeve_hoop_100hot_MPa": 1018.4,
+   "sleeve_hoop_spin120_MPa": 1059.7,
+   "sleeve_hoop_max_MPa": 1059.7,
+   "p_magnet_screen_100hot": 59.01,
+   "p_magnet_screen_trip108": 14.18,
+   "p_magnet_screen_spin120": 16.8,
+   "p_magnet_screen_120cold_info": "OPEN",
+   "sleeve_radial_max_MPa": -0.9,
+   "magnet_radial_range_MPa": [
+    -158.6,
+    -1.2
+   ],
+   "UTS_eff_MPa": 2576.0,
+   "SF_UTS_100hot": 2.53,
+   "SF_UTS_spin": 2.43,
+   "ratio_100hot": 0.395,
+   "ok_long_term": true,
+   "ok_spin": true
+  },
+  "T800S t8": {
+   "t_mm": 8.0,
+   "d_min_mm": 0.444,
+   "d_design_mm": 0.464,
+   "sleeve_hoop_100hot_MPa": 889.9,
+   "sleeve_hoop_spin120_MPa": 929.5,
+   "sleeve_hoop_max_MPa": 929.5,
+   "p_magnet_screen_100hot": 61.42,
+   "p_magnet_screen_trip108": 14.7,
+   "p_magnet_screen_spin120": 22.87,
+   "p_magnet_screen_120cold_info": "OPEN",
+   "sleeve_radial_max_MPa": -0.8,
+   "magnet_radial_range_MPa": [
+    -153.3,
+    -1.1
+   ],
+   "UTS_eff_MPa": 2576.0,
+   "SF_UTS_100hot": 2.89,
+   "SF_UTS_spin": 2.77,
+   "ratio_100hot": 0.345,
+   "ok_long_term": true,
+   "ok_spin": true
+  }
+ },
+ "selected": {
+  "option": "T800S t7",
+  "t_mm": 7.0,
+  "d_min_mm": 0.543,
+  "d_design_mm": 0.563,
+  "sleeve_hoop_100hot_MPa": 1018.4,
+  "sleeve_hoop_spin120_MPa": 1059.7,
+  "sleeve_hoop_max_MPa": 1059.7,
+  "p_magnet_screen_100hot": 59.01,
+  "p_magnet_screen_trip108": 14.18,
+  "p_magnet_screen_spin120": 16.8,
+  "p_magnet_screen_120cold_info": "OPEN",
+  "sleeve_radial_max_MPa": -0.9,
+  "magnet_radial_range_MPa": [
+   -158.6,
+   -1.2
+  ],
+  "UTS_eff_MPa": 2576.0,
+  "SF_UTS_100hot": 2.53,
+  "SF_UTS_spin": 2.43,
+  "ratio_100hot": 0.395,
+  "ok_long_term": true,
+  "ok_spin": true
+ },
+ "selected_cases": [
+  {
+   "case": "standstill 20 C (as assembled)",
+   "speed_pct": 0,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      -145.8,
+      -145.7
+     ],
+     "st_MPa": [
+      -145.7,
+      -145.6
+     ],
+     "st_inner": -145.6,
+     "st_outer": -145.7,
+     "vm_max": 145.7,
+     "u_out_um": -17.91
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      -145.6,
+      -137.5
+     ],
+     "st_MPa": [
+      55.2,
+      63.3
+     ],
+     "st_inner": 63.3,
+     "st_outer": 55.2,
+     "vm_max": 185.5,
+     "u_out_um": 30.15
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -136.6,
+      -96.3
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 136.6,
+     "u_out_um": 17.1
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -94.4,
+      -1.0
+     ],
+     "st_MPa": [
+      654.6,
+      836.2
+     ],
+     "st_inner": 836.2,
+     "st_outer": 654.6,
+     "vm_max": 887.1,
+     "u_out_um": 253.03
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": 145.69,
+    "screen/magnet": 137.38,
+    "magnet/sleeve": 95.91
+   }
+  },
+  {
+   "case": "standstill hot (shut-down soak)",
+   "speed_pct": 0,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      -165.6,
+      -165.6
+     ],
+     "st_MPa": [
+      -165.7,
+      -165.6
+     ],
+     "st_inner": -165.7,
+     "st_outer": -165.6,
+     "vm_max": 165.6,
+     "u_out_um": 8.21
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      -165.5,
+      -159.5
+     ],
+     "st_MPa": [
+      -16.8,
+      -10.8
+     ],
+     "st_inner": -10.8,
+     "st_outer": -16.8,
+     "vm_max": 160.4,
+     "u_out_um": 58.23
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -158.6,
+      -111.8
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 158.6,
+     "u_out_um": 55.89
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -109.6,
+      -1.1
+     ],
+     "st_MPa": [
+      780.0,
+      948.9
+     ],
+     "st_inner": 948.9,
+     "st_outer": 780.0,
+     "vm_max": 1008.2,
+     "u_out_um": 299.89
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": 165.63,
+    "screen/magnet": 159.47,
+    "magnet/sleeve": 111.33
+   }
+  },
+  {
+   "case": "100 % hot (35,000 rpm)",
+   "speed_pct": 100,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      -57.0,
+      -3.6
+     ],
+     "st_MPa": [
+      -34.0,
+      -3.7
+     ],
+     "st_inner": -3.8,
+     "st_outer": -34.0,
+     "vm_max": 49.7,
+     "u_out_um": 25.49
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      -59.0,
+      -58.4
+     ],
+     "st_MPa": [
+      78.6,
+      86.5
+     ],
+     "st_inner": 86.5,
+     "st_outer": 78.6,
+     "vm_max": 126.2,
+     "u_out_um": 76.36
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -110.1,
+      -59.5
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 110.1,
+     "u_out_um": 79.65
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -109.1,
+      -1.1
+     ],
+     "st_MPa": [
+      839.9,
+      1018.4
+     ],
+     "st_inner": 1018.4,
+     "st_outer": 839.9,
+     "vm_max": 1077.1,
+     "u_out_um": 323.02
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": 58.36,
+    "screen/magnet": 59.01,
+    "magnet/sleeve": 110.91
+   }
+  },
+  {
+   "case": "108 % trip hot (37,800 rpm)",
+   "speed_pct": 108,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      -38.9,
+      23.4
+     ],
+     "st_MPa": [
+      -12.1,
+      23.2
+     ],
+     "st_inner": 23.1,
+     "st_outer": -12.1,
+     "vm_max": 34.5,
+     "u_out_um": 28.36
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      -42.3,
+      -40.5
+     ],
+     "st_MPa": [
+      94.5,
+      102.7
+     ],
+     "st_inner": 102.7,
+     "st_outer": 94.5,
+     "vm_max": 127.8,
+     "u_out_um": 79.38
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -109.9,
+      -43.0
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 109.9,
+     "u_out_um": 83.6
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -109.1,
+      -1.1
+     ],
+     "st_MPa": [
+      849.9,
+      1030.0
+     ],
+     "st_inner": 1030.0,
+     "st_outer": 849.9,
+     "vm_max": 1088.6,
+     "u_out_um": 326.87
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": 40.51,
+    "screen/magnet": 42.3,
+    "magnet/sleeve": 110.84
+   }
+  },
+  {
+   "case": "108 % trip cold rotor 0 C",
+   "speed_pct": 108,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      -13.5,
+      48.7
+     ],
+     "st_MPa": [
+      13.4,
+      48.7
+     ],
+     "st_inner": 48.7,
+     "st_outer": 13.4,
+     "vm_max": 48.7,
+     "u_out_um": -5.25
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      -15.0,
+      -14.2
+     ],
+     "st_MPa": [
+      184.1,
+      194.8
+     ],
+     "st_inner": 194.8,
+     "st_outer": 184.1,
+     "vm_max": 202.7,
+     "u_out_um": 43.29
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -90.2,
+      -15.1
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 90.2,
+     "u_out_um": 34.19
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -89.7,
+      -0.9
+     ],
+     "st_MPa": [
+      690.4,
+      886.4
+     ],
+     "st_inner": 886.4,
+     "st_outer": 690.4,
+     "vm_max": 934.5,
+     "u_out_um": 267.27
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": 15.05,
+    "screen/magnet": 14.18,
+    "magnet/sleeve": 91.21
+   }
+  },
+  {
+   "case": "120 % spin test HOT (42,000 rpm, rotor 100 C, vacuum pit)",
+   "speed_pct": 120,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      -11.4,
+      65.6
+     ],
+     "st_MPa": [
+      21.7,
+      65.3
+     ],
+     "st_inner": 65.2,
+     "st_outer": 21.7,
+     "vm_max": 65.4,
+     "u_out_um": 36.9
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      -16.8,
+      -13.4
+     ],
+     "st_MPa": [
+      122.5,
+      131.4
+     ],
+     "st_inner": 131.4,
+     "st_outer": 122.5,
+     "vm_max": 138.5,
+     "u_out_um": 88.25
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -110.8,
+      -17.9
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 110.8,
+     "u_out_um": 93.83
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -110.3,
+      -1.1
+     ],
+     "st_MPa": [
+      877.1,
+      1059.7
+     ],
+     "st_inner": 1059.7,
+     "st_outer": 877.1,
+     "vm_max": 1118.9,
+     "u_out_um": 337.28
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": 13.33,
+    "screen/magnet": 16.8,
+    "magnet/sleeve": 112.11
+   }
+  },
+  {
+   "case": "120 % cold 20 C (information: not the test condition)",
+   "speed_pct": 120,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      1.9,
+      78.8
+     ],
+     "st_MPa": [
+      35.1,
+      78.7
+     ],
+     "st_inner": 78.7,
+     "st_outer": 35.1,
+     "vm_max": 78.7,
+     "u_out_um": 5.88
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      0.0,
+      0.2
+     ],
+     "st_MPa": [
+      220.0,
+      232.2
+     ],
+     "st_inner": 232.2,
+     "st_outer": 220.0,
+     "vm_max": 232.2,
+     "u_out_um": 65.06
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -99.0,
+      -1.2
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 99.0,
+     "u_out_um": 67.15
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -98.7,
+      -1.0
+     ],
+     "st_MPa": [
+      775.6,
+      980.6
+     ],
+     "st_inner": 980.6,
+     "st_outer": 775.6,
+     "vm_max": 1033.5,
+     "u_out_um": 299.75
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": "OPEN",
+    "screen/magnet": "OPEN",
+    "magnet/sleeve": 100.38
+   }
+  },
+  {
+   "case": "cold start 0 C, 100 %",
+   "speed_pct": 100,
+   "stresses": [
+    {
+     "layer": "shaft",
+     "material": "42CrMo4",
+     "r_mm": [
+      0.44,
+      35.06
+     ],
+     "sr_MPa": [
+      -31.5,
+      21.7
+     ],
+     "st_MPa": [
+      -8.5,
+      21.8
+     ],
+     "st_inner": 21.8,
+     "st_outer": -8.5,
+     "vm_max": 28.3,
+     "u_out_um": -8.12
+    },
+    {
+     "layer": "screen",
+     "material": "CuCr1Zr",
+     "r_mm": [
+      35.52,
+      36.98
+     ],
+     "sr_MPa": [
+      -32.9,
+      -30.9
+     ],
+     "st_MPa": [
+      168.2,
+      178.6
+     ],
+     "st_inner": 178.6,
+     "st_outer": 168.2,
+     "vm_max": 197.1,
+     "u_out_um": 40.28
+    },
+    {
+     "layer": "magnet",
+     "material": "SmCo_seg",
+     "r_mm": [
+      37.2,
+      52.8
+     ],
+     "sr_MPa": [
+      -90.4,
+      -31.6
+     ],
+     "st_MPa": [
+      0.0,
+      0.0
+     ],
+     "st_inner": 0.0,
+     "st_outer": 0.0,
+     "vm_max": 90.4,
+     "u_out_um": 30.24
+    },
+    {
+     "layer": "sleeve",
+     "material": "T800S",
+     "r_mm": [
+      53.09,
+      59.91
+     ],
+     "sr_MPa": [
+      -89.8,
+      -0.9
+     ],
+     "st_MPa": [
+      680.4,
+      874.8
+     ],
+     "st_inner": 874.8,
+     "st_outer": 680.4,
+     "vm_max": 923.0,
+     "u_out_um": 263.42
+    }
+   ],
+   "interface_MPa": {
+    "shaft/screen": 32.9,
+    "screen/magnet": 30.9,
+    "magnet/sleeve": 91.28
+   }
+  }
+ ],
+ "selected_cases_arch_magnets": [
+  {
+   "case": "standstill 20 C (as assembled)",
+   "interface": {
+    "shaft/screen": 159.02,
+    "screen/magnet": 150.59,
+    "magnet/sleeve": 94.87
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -93.4,
+     -0.9
+    ],
+    "st_MPa": [
+     647.6,
+     827.2
+    ],
+    "st_inner": 827.2,
+    "st_outer": 647.6,
+    "vm_max": 877.6,
+    "u_out_um": 250.3
+   }
+  },
+  {
+   "case": "standstill hot (shut-down soak)",
+   "interface": {
+    "shaft/screen": 175.01,
+    "screen/magnet": 168.78,
+    "magnet/sleeve": 110.62
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -108.9,
+     -1.1
+    ],
+    "st_MPa": [
+     775.2,
+     942.7
+    ],
+    "st_inner": 942.7,
+    "st_outer": 775.2,
+    "vm_max": 1001.6,
+    "u_out_um": 298.03
+   }
+  },
+  {
+   "case": "100 % hot (35,000 rpm)",
+   "interface": {
+    "shaft/screen": 92.57,
+    "screen/magnet": 92.92,
+    "magnet/sleeve": 108.2
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -106.5,
+     -1.1
+    ],
+    "st_MPa": [
+     821.4,
+     994.8
+    ],
+    "st_inner": 994.8,
+    "st_outer": 821.4,
+    "vm_max": 1052.1,
+    "u_out_um": 315.87
+   }
+  },
+  {
+   "case": "108 % trip hot (37,800 rpm)",
+   "interface": {
+    "shaft/screen": 78.85,
+    "screen/magnet": 80.29,
+    "magnet/sleeve": 107.79
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -106.1,
+     -1.1
+    ],
+    "st_MPa": [
+     829.1,
+     1003.4
+    ],
+    "st_inner": 1003.4,
+    "st_outer": 829.1,
+    "vm_max": 1060.5,
+    "u_out_um": 318.84
+   }
+  },
+  {
+   "case": "108 % trip cold rotor 0 C",
+   "interface": {
+    "shaft/screen": 57.44,
+    "screen/magnet": 56.19,
+    "magnet/sleeve": 87.83
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -86.4,
+     -0.8
+    ],
+    "st_MPa": [
+     667.3,
+     856.9
+    ],
+    "st_inner": 856.9,
+    "st_outer": 667.3,
+    "vm_max": 903.2,
+    "u_out_um": 258.35
+   }
+  },
+  {
+   "case": "120 % spin test HOT (42,000 rpm, rotor 100 C, vacuum pit)",
+   "interface": {
+    "shaft/screen": 61.98,
+    "screen/magnet": 65.02,
+    "magnet/sleeve": 108.24
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -106.5,
+     -1.1
+    ],
+    "st_MPa": [
+     850.6,
+     1025.9
+    ],
+    "st_inner": 1025.9,
+    "st_outer": 850.6,
+    "vm_max": 1083.1,
+    "u_out_um": 327.06
+   }
+  },
+  {
+   "case": "120 % cold 20 C (information: not the test condition)",
+   "interface": {
+    "shaft/screen": 40.3,
+    "screen/magnet": 41.35,
+    "magnet/sleeve": 91.38
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -89.9,
+     -0.9
+    ],
+    "st_MPa": [
+     714.1,
+     902.1
+    ],
+    "st_inner": 902.1,
+    "st_outer": 714.1,
+    "vm_max": 950.2,
+    "u_out_um": 275.99
+   }
+  },
+  {
+   "case": "cold start 0 C, 100 %",
+   "interface": {
+    "shaft/screen": 71.16,
+    "screen/magnet": 68.81,
+    "magnet/sleeve": 88.23
+   },
+   "sleeve": {
+    "layer": "sleeve",
+    "material": "T800S",
+    "r_mm": [
+     53.09,
+     59.91
+    ],
+    "sr_MPa": [
+     -86.8,
+     -0.9
+    ],
+    "st_MPa": [
+     659.6,
+     848.2
+    ],
+    "st_inner": 848.2,
+    "st_outer": 659.6,
+    "vm_max": 894.8,
+    "u_out_um": 255.38
+   }
+  }
+ ],
+ "interference_tolerance_check": {
+  "0.543": {
+   "sleeve_hoop_100hot_MPa": 993.1,
+   "sleeve_hoop_spin120_MPa": 1034.3,
+   "sleeve_hoop_max_MPa": 1034.3,
+   "p_magnet_screen_100hot": 54.85,
+   "p_magnet_screen_trip108": 10.02,
+   "p_magnet_screen_spin120": 12.64,
+   "p_magnet_screen_120cold_info": "OPEN",
+   "sleeve_radial_max_MPa": -0.8,
+   "magnet_radial_range_MPa": [
+    -154.5,
+    -1.2
+   ],
+   "UTS_eff_MPa": 2576.0,
+   "SF_UTS_100hot": 2.59,
+   "SF_UTS_spin": 2.49,
+   "ratio_100hot": 0.386,
+   "ok_long_term": true,
+   "ok_spin": true
+  },
+  "0.603": {
+   "sleeve_hoop_100hot_MPa": 1069.1,
+   "sleeve_hoop_spin120_MPa": 1110.4,
+   "sleeve_hoop_max_MPa": 1110.4,
+   "p_magnet_screen_100hot": 67.34,
+   "p_magnet_screen_trip108": 22.51,
+   "p_magnet_screen_spin120": 25.13,
+   "p_magnet_screen_120cold_info": 1.32,
+   "sleeve_radial_max_MPa": -0.9,
+   "magnet_radial_range_MPa": [
+    -166.9,
+    -2.5
+   ],
+   "UTS_eff_MPa": 2576.0,
+   "SF_UTS_100hot": 2.41,
+   "SF_UTS_spin": 2.32,
+   "ratio_100hot": 0.415,
+   "ok_long_term": false,
+   "ok_spin": true
+  }
+ },
+ "inconel_options": {
+  "IN718 t5": {
+   "t_mm": 5.0,
+   "d_min_mm": 0.964,
+   "d_design_mm": 0.984,
+   "sleeve_hoop_100hot_MPa": 1835.3,
+   "sleeve_hoop_spin120_MPa": 1896.6,
+   "sleeve_hoop_max_MPa": 1920.9,
+   "p_magnet_screen_100hot": 69.8,
+   "p_magnet_screen_trip108": 49.03,
+   "p_magnet_screen_spin120": 4.1,
+   "p_magnet_screen_120cold_info": 7.24,
+   "sleeve_radial_max_MPa": -1.2,
+   "magnet_radial_range_MPa": [
+    -221.7,
+    -5.4
+   ],
+   "vm_operation_MPa": 1954.7,
+   "vm_spin_MPa": 1956.6,
+   "SF_yield_operation": 0.53,
+   "SF_yield_spin": 0.53,
+   "self_hoop_100_MPa": 396,
+   "self_hoop_120_MPa": 570
+  },
+  "IN718 t7": {
+   "t_mm": 7.0,
+   "d_min_mm": 0.652,
+   "d_design_mm": 0.672,
+   "sleeve_hoop_100hot_MPa": 1329.0,
+   "sleeve_hoop_spin120_MPa": 1390.7,
+   "sleeve_hoop_max_MPa": 1413.2,
+   "p_magnet_screen_100hot": 68.25,
+   "p_magnet_screen_trip108": 49.83,
+   "p_magnet_screen_spin120": 5.64,
+   "p_magnet_screen_120cold_info": 9.64,
+   "sleeve_radial_max_MPa": -0.9,
+   "magnet_radial_range_MPa": [
+    -214.7,
+    -6.8
+   ],
+   "vm_operation_MPa": 1442.5,
+   "vm_spin_MPa": 1444.7,
+   "SF_yield_operation": 0.71,
+   "SF_yield_spin": 0.71,
+   "self_hoop_100_MPa": 396,
+   "self_hoop_120_MPa": 570
+  },
+  "IN718 t9": {
+   "t_mm": 9.0,
+   "d_min_mm": 0.476,
+   "d_design_mm": 0.496,
+   "sleeve_hoop_100hot_MPa": 1048.9,
+   "sleeve_hoop_spin120_MPa": 1111.0,
+   "sleeve_hoop_max_MPa": 1132.0,
+   "p_magnet_screen_100hot": 66.55,
+   "p_magnet_screen_trip108": 50.22,
+   "p_magnet_screen_spin120": 6.9,
+   "p_magnet_screen_120cold_info": 11.58,
+   "sleeve_radial_max_MPa": -0.7,
+   "magnet_radial_range_MPa": [
+    -207.8,
+    -7.9
+   ],
+   "vm_operation_MPa": 1156.5,
+   "vm_spin_MPa": 1158.8,
+   "SF_yield_operation": 0.89,
+   "SF_yield_spin": 0.89,
+   "self_hoop_100_MPa": 396,
+   "self_hoop_120_MPa": 570
+  }
+ },
+ "inconel_eddy_loss": {
+  "current_harmonics_W": 419,
+  "screen_with_inconel_W": 4,
+  "slot_harmonics_W": 6781,
+  "total_W": 7200,
+  "note": "2D, infinite length (conservative for the slot part, end paths ignored); CFRP: < 5 W"
+ },
+ "assembly": {
+  "method": "CFRP sleeve wound on a ground 1:500 tapered steel mandrel (filament winding, wet T800S / high-Tg epoxy, Tg >= 190 C, post-cure 180 C), ID ground if needed; rotor magnet OD + end rings ground to the same 1:500 taper after bonding; rotor chilled to -150 C in LN2 vapour (no immersion: SmCo thermal shock), sleeve at 20 C pushed on axially with a servo-hydraulic press (force + stroke recorded) to the stroke that gives the interference; dry-film PTFE lubricant on the magnet OD",
+  "taper": "1:500 on diameter",
+  "interference_mm": 0.563,
+  "press_stroke_mm": 281.5,
+  "chill_shrink_mm": 0.179,
+  "remaining_press_interference_mm": 0.384,
+  "contact_pressure_20C_MPa": 94.4,
+  "mu_assembly": 0.05,
+  "F_press_warm_kN": 465,
+  "F_press_chilled_kN": 317,
+  "sleeve_axial_stress_at_push_end_MPa": 127.7,
+  "layup": "88 % hoop (88-89 deg) + 12 % +/-15 deg helical (inner 0.4 mm + outer 0.4 mm) -> axial compressive strength of the laminate ~350 MPa",
+  "note": "push on a split steel ring against the full sleeve end face; axial stress at the pushed end must stay < 0.5 x 350 MPa -> chilling + PTFE dry film are mandatory; final checks: OD growth vs. stroke, magnet / sleeve contact by ultrasonics, OD ground cylindrical 120 h6"
+ },
+ "decision": "CFRP (T800S-class, 7 mm, hoop-wound) sleeve with a 0.563 mm diametral interference: magnets stay in contact at the 108 % trip (cold) and the hot 120 % spin test, hoop stress 1018 MPa at 100 % hot (40 % UTS_eff) and 1060 MPa at the spin test (38 % UTS); non-conducting -> no sleeve eddy loss; light (220 m/s self-stress 76 MPa). Inconel 718 rejected: self-stress 396 MPa at 100 % / 570 MPa at 120 % leaves no margin for the magnet load (von Mises over Rp0.2 at the spin test for every thickness that fits) and a conducting sleeve adds 7200 W of eddy loss in the rotor."
+}

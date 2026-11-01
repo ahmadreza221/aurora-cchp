@@ -1,0 +1,216 @@
+{
+ "title": "GR180 version E ducts: intake plenum + filter interface, casing path, transition / plenum, exhaust diffuser",
+ "date": "2026-10-23",
+ "script": "sim/variant_e/e_ducts.py",
+ "intake_30C": {
+  "T_C": 30.0,
+  "Q_m3_s": 2.608360021840563,
+  "cells": 9,
+  "per_cell_m3_h": 1043.344008736225,
+  "elements": [
+   {
+    "item": "weather hood + louvres (plant scope, allowance)",
+    "clean_Pa": 20.0,
+    "mid_life_Pa": 20.0,
+    "change_out_Pa": 20.0
+   },
+   {
+    "item": "ISO coarse 60 % (G4) panel 592x592x48 x 9 at 1043 m3/h (31 % of rating)",
+    "clean_Pa": 13.8,
+    "mid_life_Pa": 36.9,
+    "change_out_Pa": 60.0
+   },
+   {
+    "item": "ISO ePM1 55 % (F7) compact V-cell 592x592x292 (Camfil Opakfil / Hi-Flo, Freudenberg Viledon, MANN+HUMMEL) x 9 at 1043 m3/h (31 % of rating)",
+    "clean_Pa": 29.2,
+    "mid_life_Pa": 74.6,
+    "change_out_Pa": 120.0
+   },
+   {
+    "item": "clean chamber dump (V 0.7 m/s, K 1.0)",
+    "clean_Pa": 0.3,
+    "mid_life_Pa": 0.3,
+    "change_out_Pa": 0.3
+   },
+   {
+    "item": "round the pod + radial gap pod tail -> bellmouth (V 5.6 m/s, K 0.5)",
+    "clean_Pa": 9.1,
+    "mid_life_Pa": 9.1,
+    "change_out_Pa": 9.1
+   },
+   {
+    "item": "bellmouth + annular contraction to the eye (V 153 m/s, K 0.006)",
+    "clean_Pa": 80.6,
+    "mid_life_Pa": 80.6,
+    "change_out_Pa": 80.6
+   },
+   {
+    "item": "quill guard tube / hub fairing friction (K 0.002)",
+    "clean_Pa": 26.9,
+    "mid_life_Pa": 26.9,
+    "change_out_Pa": 26.9
+   }
+  ],
+  "total_Pa": {
+   "clean": 179.8,
+   "mid_life": 248.4,
+   "change_out": 316.9
+  },
+  "total_pct": {
+   "clean": 0.179,
+   "mid_life": 0.247,
+   "change_out": 0.315
+  },
+  "cycle_budget_pct": 0.25,
+  "filter_flange": {
+   "opening_mm": [
+    1830,
+    1830
+   ],
+   "face": "top of the plenum (+z)",
+   "frame": "EN ISO 16890 / EN 1822 holding frames 610 x 610 pitch, 9 cells, knife-edge seals, filter house + hood = plant scope"
+  }
+ },
+ "intake_0C_max_flow": {
+  "T_C": 0.0,
+  "Q_m3_s": 2.7153040733644387,
+  "cells": 9,
+  "per_cell_m3_h": 1086.1216293457755,
+  "elements": [
+   {
+    "item": "weather hood + louvres (plant scope, allowance)",
+    "clean_Pa": 20.0,
+    "mid_life_Pa": 20.0,
+    "change_out_Pa": 20.0
+   },
+   {
+    "item": "ISO coarse 60 % (G4) panel 592x592x48 x 9 at 1086 m3/h (32 % of rating)",
+    "clean_Pa": 14.4,
+    "mid_life_Pa": 37.2,
+    "change_out_Pa": 60.0
+   },
+   {
+    "item": "ISO ePM1 55 % (F7) compact V-cell 592x592x292 (Camfil Opakfil / Hi-Flo, Freudenberg Viledon, MANN+HUMMEL) x 9 at 1086 m3/h (32 % of rating)",
+    "clean_Pa": 30.3,
+    "mid_life_Pa": 75.2,
+    "change_out_Pa": 120.0
+   },
+   {
+    "item": "clean chamber dump (V 0.8 m/s, K 1.0)",
+    "clean_Pa": 0.4,
+    "mid_life_Pa": 0.4,
+    "change_out_Pa": 0.4
+   },
+   {
+    "item": "round the pod + radial gap pod tail -> bellmouth (V 5.9 m/s, K 0.5)",
+    "clean_Pa": 11.0,
+    "mid_life_Pa": 11.0,
+    "change_out_Pa": 11.0
+   },
+   {
+    "item": "bellmouth + annular contraction to the eye (V 159 m/s, K 0.006)",
+    "clean_Pa": 96.9,
+    "mid_life_Pa": 96.9,
+    "change_out_Pa": 96.9
+   },
+   {
+    "item": "quill guard tube / hub fairing friction (K 0.002)",
+    "clean_Pa": 32.3,
+    "mid_life_Pa": 32.3,
+    "change_out_Pa": 32.3
+   }
+  ],
+  "total_Pa": {
+   "clean": 205.3,
+   "mid_life": 272.9,
+   "change_out": 340.6
+  },
+  "total_pct": {
+   "clean": 0.204,
+   "mid_life": 0.271,
+   "change_out": 0.338
+  },
+  "cycle_budget_pct": 0.25,
+  "filter_flange": {
+   "opening_mm": [
+    1830,
+    1830
+   ],
+   "face": "top of the plenum (+z)",
+   "frame": "EN ISO 16890 / EN 1822 holding frames 610 x 610 pitch, 9 cells, knife-edge seals, filter house + hood = plant scope"
+  }
+ },
+ "casing_path": {
+  "elements": [
+   {
+    "item": "deswirl-annulus exit r 261..305 (V 13.4 m/s) dumped into the cool pressure casing (K 1.0) - bend + deswirl are in eta_c",
+    "dp_Pa": 256
+   },
+   {
+    "item": "flow round the floating hot plenum (gap ~27 mm, V ~9 m/s, K 1.5)",
+    "dp_Pa": 174
+   },
+   {
+    "item": "entry into the combustor annulus + annulus friction + 180 deg turn at the dome (V 26 m/s, K 1.6)",
+    "dp_Pa": 1591
+   }
+  ],
+  "total_Pa": 2022,
+  "total_pct": 0.503,
+  "cycle_budget_pct": 0.8,
+  "annulus_velocity_m_s": 13.4
+ },
+ "transition_plenum": {
+  "elements": [
+   {
+    "item": "liner exit -> diffusing conical transition (d210 -> d270, AR 1.65, half angle 9 deg, K 0.25 on the head drop)",
+    "dp_Pa": 629
+   },
+   {
+    "item": "dump into the 360 deg hot plenum (K 0.95)",
+    "dp_Pa": 1048
+   },
+   {
+    "item": "plenum distribution round the nozzle ring (V ~15 m/s, K 1.0)",
+    "dp_Pa": 141
+   }
+  ],
+  "total_Pa": 1818,
+  "total_pct": 0.475,
+  "cycle_budget_pct": 1.0,
+  "V_liner_m_s": 69.3,
+  "V_transition_m_s": 41.9,
+  "note": "single-entry plenum: circumferential TIT / pressure non-uniformity to be checked by CFD (OpenFOAM, as D2 open item)"
+ },
+ "exhaust": {
+  "L_mm": 1074,
+  "AR": 3.66,
+  "Cp_ideal": 0.925,
+  "Cp": 0.648,
+  "q6_Pa": 8109,
+  "recovery_Pa": 5252,
+  "diffuser_loss_Pa": 2251,
+  "exit_V_m_s": 52.9,
+  "exit_q_Pa": 611,
+  "elbow_dp_Pa": 73,
+  "cycle_assumed": {
+   "Cp": 0.62,
+   "AR": 3.4,
+   "K_elbow": 0.2,
+   "dp_down_Pa": 1200.0
+  },
+  "p6_vs_ambient_Pa": -3979,
+  "geometry": {
+   "D_in": 232.0,
+   "D_hub": 75.0,
+   "two_theta": 10.0,
+   "D_out": 420.0,
+   "eta_d": 0.7,
+   "K_elbow": 0.12,
+   "elbow": "90 deg, R/D 1.5, 5 segments + 2 turning vanes, DN450 (457 x 6.3) 1.4828",
+   "flange": "DN450 PN6 EN 1092-1 (verify)"
+  },
+  "tail_cone": "rotating nose cone on the turbine nut (d75 -> 0 over 90 mm) - no stationary struts in the hot exhaust",
+  "build": "2 rolled 1.4828 3 mm cone sections, PN6-type ring flanges, piston-ring slip joint to the exducer shroud, sliding feet; outside: 100 mm ceramic-fibre blanket + 1.4301 cladding (touch < 60 C)"
+ }
+}

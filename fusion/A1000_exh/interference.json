@@ -1,0 +1,22 @@
+[
+ {
+  "a": "EX-401 Air manifold casing (EN-GJS-400-18LT)",
+  "b": "A1000_comb/CB_340_Scroll_pressure_casing_upper_half__P355NH.step",
+  "mm3": 142085.50479190817
+ },
+ {
+  "a": "EX-401 Air manifold casing (EN-GJS-400-18LT)",
+  "b": "A1000_comb/CB_341_Scroll_pressure_casing_lower_half__P355NH.step",
+  "mm3": 136272.3624550706
+ },
+ {
+  "a": "EX-440 Cold air pipe DN350 + BOV tee (P265GH)",
+  "b": "A1000_comb/CB_340_Scroll_pressure_casing_upper_half__P355NH.step",
+  "mm3": 36.78602439440037
+ },
+ {
+  "a": "EX-440 Cold air pipe DN350 + BOV tee (P265GH)",
+  "b": "A1000_comb/CB_341_Scroll_pressure_casing_lower_half__P355NH.step",
+  "mm3": 49209.71242339834
+ }
+]
