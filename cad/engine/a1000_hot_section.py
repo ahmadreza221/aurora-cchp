@@ -22,6 +22,8 @@ must open around it):
                  (x 678-903), the pin plane and C1 stay behind R1; the open gap gets an outer liner (HS-222, in C2) and an
                  inner gap ring (HS-234, on the NGV2 inner ring) on the annulus lines; the interstage seal runs on the four
                  knife edges of the rotor's R1 - R2 spacer ring (RT-107)
+  phase 4        rotor arm redesign (docs/08 sec. 21.11): one R1 - R2 joint, the 4 knife edges on the two flange rims; the
+                 interstage honeycomb is r 96.6-100 (SEAL12) over x 771-787, the front seal follows the drum - R1 joint
 Frame: rotor frame mm (x = engine axis, z up). Run:
   freecadcmd -c "import sys; sys.argv=['a1000_hot_section.py','--cad']; exec(open('cad/engine/a1000_hot_section.py').read())"
   -> cad_out/engine/A1000_hot/*.step, fusion/A1000_hot/*.step + parts.json
@@ -57,6 +59,9 @@ KEY = dict(n=4, w=20.0, t=16.0, r_v0=286.0, slot_v=278.0, r_s=(292.0, 334.0), sl
 DOWEL = dict(d=(12.0, 16.0), x=(731.0, 863.0))                    # split-flange dowels (+y d 12, -y d 16: one way only)
 FLANGE_C = dict(t=8.0, ro=300.0)                                 # C1 / C2 bolted flange
 SEAL = dict(ri=92.6, ro=96.0, hc=3.4)                            # diaphragm honeycomb seal over the 92 mm rotor flanges
+# phase 4 redesign (docs/08 sec. 21.11): one R1 - R2 joint, the 4 knife edges sit on the two flange rims (r 92 -> 96.3), so
+# the interstage honeycomb is 4 mm larger
+SEAL12 = dict(ri=96.6, ro=100.0, hc=3.4)
 
 
 def shroud_r(row, x):
@@ -162,10 +167,11 @@ def outer_casing():
     return half(shell.copy(), True).removeSplitter(), half(shell.copy(), False).removeSplitter()
 
 
-def diaphragm(x_ring, r_ring, x_seal, x_seal_len, t=3.0):
+def diaphragm(x_ring, r_ring, x_seal, x_seal_len, t=3.0, seal=SEAL):
     """conical Hastelloy X diaphragm from the NGV inner ring (x_ring, r_ring) down to the seal carrier at x_seal, plus the
-    honeycomb land r SEAL ri..ro over x_seal .. x_seal + x_seal_len"""
+    honeycomb land r seal ri..ro over x_seal .. x_seal + x_seal_len"""
     App, Part, V = _fc()
+    SEAL = seal
     r_in = SEAL['ro'] + 2.0
     r_ring -= 1.0                                                           # flange under the NGV inner ring (bolted)
     cone = revolve([(x_ring, r_ring), (x_ring + t, r_ring), (x_seal + t + 4, r_in + 4), (x_seal + t + 4, r_in), (x_seal + 4, r_in),
@@ -225,7 +231,8 @@ def build_all():
     out['HS-230 Front diaphragm (Hastelloy X)'] = (d1, 'Hastelloy X', 'diaphragm')
     out['HS-231 Front seal honeycomb'] = (h1, 'Hastelloy X honeycomb', 'honeycomb')
     n2_in = A.r_hub(0.5 * (A.X_LE['N2'] + A.X_TE['N2'])) - 6.0
-    d2, h2 = diaphragm(0.5 * (X('N2', 'le') + X('N2', 'te')) - 4.0, n2_in, G.X_J['R1_spc'] + 2.0, G.L_TSPC - 4.0)   # over the spacer fins
+    d2, h2 = diaphragm(0.5 * (X('N2', 'le') + X('N2', 'te')) - 4.0, n2_in, G.X_J['R1_R2'] - G.ARM['tf'] + 1.0, 2 * G.ARM['tf'] - 2.0,
+                       seal=SEAL12)                                        # over the fins on the R1 aft / R2 forward flange rims
     out['HS-232 Interstage diaphragm (Hastelloy X)'] = (d2, 'Hastelloy X', 'diaphragm')
     out['HS-233 Interstage seal honeycomb'] = (h2, 'Hastelloy X honeycomb', 'honeycomb')
     out['HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)'] = (li, 'Hastelloy X', 'diaphragm')

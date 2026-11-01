@@ -4,9 +4,10 @@
 Curvic couplings (all seven): CalculiX, C3D10, frictional surface-to-surface contact, cyclic sector
   compressor  stub - I1, I1 - spacer, spacer - I2, I2 - drum (36 teeth, central M42 tie bolt): one tooth pitch (10 deg)
               plus a hub segment on each side; the tie-bolt clamp is a load on the far face (a1000_rotor_stack.py states)
-  turbine     drum - R1, R1 - spacer - R2, R2 - rear stub (48 teeth, 16 x M10 IN718 studs through the teeth): 3 teeth
+  turbine     drum - R1, R1 - R2, R2 - rear stub (48 teeth, 16 x M10 IN718 / Waspaloy studs through the teeth): 3 teeth
               and 1 stud per 22.5 deg sector; the stud is a solid with a pre-tension section, fused into the threaded
-              part over 0.4 d, nut bonded to the flange; R1 - R2 is one model with both curvic faces of the RT-107 ring
+              part over 0.4 d, nut bonded to the flange. Phase 4 redesign (sec. 21.11): thin arms r 45-51, one R1 - R2
+              joint (the rev 6 model had both curvic faces of the RT-107 spacer ring)
   Tooth form: Gleason-type flanks at 30 deg to the axis, constant whole depth h (cad/engine/a1000_rotor.py), straight
   radial teeth with half the circular pitch as the thickness at the pitch plane, root clearance 0.3 mm, root fillet,
   tip chamfer. (The CAD teeth are schematic: their tops sit on the opposite root land and the flanks do not touch.)
@@ -118,20 +119,21 @@ _DISC = {}
 
 
 def disc_arm_growth(row, side, r, N):
-    """radial growth [mm] of the cast blisk hub face at the arm root (r 58-66) from the axisymmetric disc FEA with arms
+    """radial growth [mm] of the cast blisk hub face at the arm root (r 45-51) from the axisymmetric disc FEA with arms
     (a1000_rotor_stack.py: cad_out/fea_rotor/a1000_disc_<row>_arms_<op|trip>.frd); thermal + centrifugal, the
     centrifugal part (op vs trip) scaled with N^2. side 'f' / 'a' = forward / aft hub face"""
     key = (row, side)
     if key not in _DISC:
         import e1_turbine_fea as F
-        xf, xa = G.HUB[row]; xo = G.X_J['drum_R1'] if row == 'R1' else G.X_J['spc_R2']
+        xf, xa = G.HUB[row]; xo = G.X_J['drum_R1'] if row == 'R1' else G.X_J['R1_R2']
         fits = {}
         for tag in ('op', 'trip'):
             nodes, bl = F.read_frd(DISC_FRD % (row, tag))
             U = [b for b in bl if b['name'].startswith('DISP')][-1]['data']
             y0 = min(p[1] for p in nodes.values())                     # local axial of the forward joint face
             yf = (xf if side == 'f' else xa) - xo + y0
-            pts = [(p[0], U[n][0]) for n, p in nodes.items() if abs(p[1] - yf) < 1.2 and 57.0 < p[0] < 67.0]
+            ri_, ro_ = G.arm_r(row, side)
+            pts = [(p[0], U[n][0]) for n, p in nodes.items() if abs(p[1] - yf) < 1.2 and ri_ - 1 < p[0] < ro_ + 1]
             rr, uu = np.array(pts).T
             fits[tag] = np.polyfit(rr, uu, 1)
         _DISC[key] = fits
@@ -142,6 +144,14 @@ def disc_arm_growth(row, side, r, N):
 
 
 # ================================================================================================ joint definitions
+def hot_temps():
+    """steady joint temperatures [C] of the hot joints from phase 5 (stud grip, C1 initial state = full-load steady)"""
+    tj = os.path.join(HERE, 'fea', 'a1000_tiebolt_thermal.json')
+    if not os.path.exists(tj): return {}
+    hj = json.load(open(tj)).get('configs', {}).get('fix', {}).get('hot_joints', {})
+    return {k: float(v['T_ss']) for k, v in hj.items() if v.get('T_ss') is not None}
+
+
 def stack():
     return json.load(open(STACK_JSON))
 
@@ -176,49 +186,44 @@ def joints():
     comp('I1_spc', xi1[1], cc['I1_spc'], hc['I1_spc'], (23.0, 76.0, 24.0), (23.0, 72.0, 24.0), 75.0, 120.0, 'Ti64', '17-4PH', b1, 75.0)
     comp('spc_I2', xi2[0], cc['spc_I2'], hc['spc_I2'], (23.0, 80.0, 24.0), (23.0, 80.0, 24.0), 120.0, 160.0, '17-4PH', 'Ti64', 80.0, b2)
     comp('I2_drum', xi2[1], cc['I2_drum'], hc['I2_drum'], (23.0, 90.0, 24.0), (50.0, 77.0, 24.0), 160.0, 230.0, 'Ti64', 'IN718', b2, 77.0)
-    # hot joints: the cast blisk flange r 58-92 (9 mm) on its arm r 58-66 (13 mm cavity) to the hub face (far face);
-    # drum flange r 50-92 on the drum neck r 50-60; rear-stub flange r 25-92 on its neck r 25(60)-60
+    # hot joints (phase 4 redesign, docs/08 sec. 21.11): the cast blisk flange r 45-92 (9 mm; 8 mm at R2 - rear stub) on its
+    # thin arm r 45-51 (22 / 25.5 / 25.5 / 15 mm) to the hub face (far face); drum flange r 50-92 on the drum neck r 50-60;
+    # rear-stub flange r 25-92 (8 mm) on its neck r 25(60)-60. Temperatures: phase 5 steady (C1 initial state) when present
     h = ch['h']
+    T5 = hot_temps()
     def blisk_side(xp, sign, row, side):
-        # sign +1: the blisk lies at x > xp; its root plane xp + h/2, flange back face xp + tf (CAD), arm root (hub face,
-        # far face) xp + tf + cavity
-        x0 = xp + sign * h / 2; x1 = xp + sign * tf; x2 = x1 + sign * G.ARM['cav']
-        poly = [(x0, G.ARM['ri']), (x0, rf), (x1, rf), (x1, G.ARM['ro']), (x2, G.ARM['ro']), (x2, G.ARM['ri'])]
+        # sign +1: the blisk lies at x > xp; its root plane xp + h/2, flange back face xp + tf, arm root (hub face, far face)
+        xh, _, tfl, L = G.joint_side(row, side); ri_a, ro_a = G.arm_r(row, side)
+        x0 = xp + sign * h / 2; x1 = xp + sign * tfl; x2 = xh
+        poly = [(x0, ri_a), (x0, rf), (x1, rf), (x1, ro_a), (x2, ro_a), (x2, ri_a)]
         if sign < 0: poly = poly[::-1]
-        return dict(name=row, mat='MAR-M247', poly=poly, far=x2, row=row, side=side, a=G.ARM['ri'], back=x1)
+        return dict(name=row, mat='MAR-M247', poly=poly, far=x2, row=row, side=side, a=ri_a, back=x1)
     # drum - R1: drum (lo, threaded, studs from it) | R1 (hi, nuts aft of its flange in the cavity)
-    xp = xj['drum_R1']
+    xp = xj['drum_R1']; Td = T5.get('drum_R1', 400.0)
     drum = dict(name='drum', mat='IN718', far=xp - tf - 22.0, a=50.0, b=60.0,
                 poly=[(xp - tf - 22.0, 50.0), (xp - h / 2, 50.0), (xp - h / 2, rf), (xp - tf, rf), (xp - tf, 60.0), (xp - tf - 22.0, 60.0)])
-    J['drum_R1'] = dict(kind='hot', N=ch['N'], n_sec=G.STUD['n'], ri=ch['ri'], ro=ch['ro'], h=h, xp=xp, T=480.0,
-                        parts=[dict(drum, T=480.0), dict(blisk_side(xp, +1, 'R1', 'f'), T=480.0)],
+    J['drum_R1'] = dict(kind='hot', N=ch['N'], n_sec=G.STUD['n'], ri=ch['ri'], ro=ch['ro'], h=h, xp=xp, T=Td,
+                        parts=[dict(drum, T=Td), dict(blisk_side(xp, +1, 'R1', 'f'), T=Td)],
                         curvics=[dict(xp=xp, ri=ch['ri'], ro=ch['ro'], N=ch['N'], h=h, lo=0, hi=1)],
                         stud=dict(thread_part=0, nut_part=1, x_anchor=xp - h / 2 - 0.4 * G.STUD['d'], x_nut=xp + tf, dir=+1))
-    # R1 - spacer - R2: R1 flange (lo, nut side, nut in front of it in the R1 aft cavity) | RT-107 ring | R2 flange (hi,
-    # Heli-Coil, threaded)
-    xa, xb = xj['R1_spc'], xj['spc_R2']; land = G.TSPC['land']
-    ring = dict(name='spacer', mat='IN718', far=None, a=60.0, b=92.0,
-                poly=[(xa + h / 2, 60.0), (xb - h / 2, 60.0), (xb - h / 2, rf), (xb - h / 2 - land, rf), (xb - h / 2 - land - 1.0, G.TSPC['ro']),
-                      (xa + h / 2 + land + 1.0, G.TSPC['ro']), (xa + h / 2 + land, rf), (xa + h / 2, rf)])
-    # phase 5 (docs/08 sec. 22): the interstage cavity runs ~730 C, so the RT-107 ring and the R1 - R2 studs / nuts are
-    # Waspaloy with 20 kN preload (G.STUD_R12 when present)
-    s12 = getattr(G, 'STUD_R12', dict(mat='Waspaloy', pre_kN=24.0)); T12 = 730.0      # (phase 5: 24 kN, 711 C steady)
-    ring['mat'] = 'Waspaloy'
-    J['R1_R2'] = dict(kind='hot', N=ch['N'], n_sec=G.STUD['n'], ri=ch['ri'], ro=ch['ro'], h=h, xp=xa, T=T12,
-                      parts=[dict(blisk_side(xa, -1, 'R1', 'a'), T=T12), dict(ring, T=T12), dict(blisk_side(xb, +1, 'R2', 'f'), T=T12)],
-                      curvics=[dict(xp=xa, ri=ch['ri'], ro=ch['ro'], N=ch['N'], h=h, lo=0, hi=1),
-                               dict(xp=xb, ri=ch['ri'], ro=ch['ro'], N=ch['N'], h=h, lo=1, hi=2)],
-                      stud=dict(thread_part=2, nut_part=0, x_anchor=xb + h / 2 + 0.4 * G.STUD['d'], x_nut=xa - tf, dir=-1,
-                                mat=s12['mat'], pre_kN=s12['pre_kN']))
-    # R2 - rear stub: R2 flange (lo, nut side) | rear stub (hi, threaded, studs from it)
-    xp = xj['R2_stub']
-    rs = dict(name='rear stub', mat='IN718', far=xp + tf + 14.0, a=25.0, b=60.0,
-              poly=[(xp + h / 2, 25.0), (xp + tf + 14.0, 25.0), (xp + tf + 14.0, 50.0), (xp + tf + 3.0, 60.0),
-                    (xp + tf, 60.0), (xp + tf, rf), (xp + h / 2, rf)])
-    J['R2_stub'] = dict(kind='hot', N=ch['N'], n_sec=G.STUD['n'], ri=ch['ri'], ro=ch['ro'], h=h, xp=xp, T=485.0,     # phase 5: 470-500 C
-                        parts=[dict(blisk_side(xp, -1, 'R2', 'a'), T=485.0), dict(rs, T=485.0)],
+    # R1 - R2 (one joint, no spacer ring): R1 aft flange (lo, nut side, nut in the R1 aft cavity) | R2 forward flange (hi,
+    # Heli-Coil, threaded); Waspaloy studs (phase 5, G.STUD_R12)
+    s12 = getattr(G, 'STUD_R12', dict(mat='Waspaloy', pre_kN=24.0)); T12 = T5.get('R1_R2', 715.0)
+    xp = xj['R1_R2']
+    J['R1_R2'] = dict(kind='hot', N=ch['N'], n_sec=G.STUD['n'], ri=ch['ri'], ro=ch['ro'], h=h, xp=xp, T=T12, faces=1,
+                      parts=[dict(blisk_side(xp, -1, 'R1', 'a'), T=T12), dict(blisk_side(xp, +1, 'R2', 'f'), T=T12)],
+                      curvics=[dict(xp=xp, ri=ch['ri'], ro=ch['ro'], N=ch['N'], h=h, lo=0, hi=1)],
+                      stud=dict(thread_part=1, nut_part=0, x_anchor=xp + h / 2 + 0.4 * G.STUD['d'], x_nut=xp - tf, dir=-1,
+                                mat=s12['mat'], pre_kN=s12['pre_kN'], h_nut=G.STUD['nut_h'] + s12.get('sleeve', 0.0)))   # sleeve + nut
+    # R2 - rear stub: R2 flange (lo, nut side) | rear stub (hi, threaded, studs from it); 8 mm flanges
+    xp = xj['R2_stub']; tr = G.ARM['tf_rear']; Tr = T5.get('R2_stub', 485.0)
+    rs = dict(name='rear stub', mat='IN718', far=xp + tr + 14.0, a=25.0, b=60.0,
+              poly=[(xp + h / 2, 25.0), (xp + tr + 14.0, 25.0), (xp + tr + 14.0, 50.0), (xp + tr + 3.0, 60.0),
+                    (xp + tr, 60.0), (xp + tr, rf), (xp + h / 2, rf)])
+    J['R2_stub'] = dict(kind='hot', N=ch['N'], n_sec=G.STUD['n'], ri=ch['ri'], ro=ch['ro'], h=h, xp=xp, T=Tr,
+                        parts=[dict(blisk_side(xp, -1, 'R2', 'a'), T=Tr), dict(rs, T=Tr)],
                         curvics=[dict(xp=xp, ri=ch['ri'], ro=ch['ro'], N=ch['N'], h=h, lo=0, hi=1)],
-                        stud=dict(thread_part=1, nut_part=0, x_anchor=xp + h / 2 + 0.4 * G.STUD['d'], x_nut=xp - tf, dir=-1))
+                        stud=dict(thread_part=1, nut_part=0, x_anchor=xp + h / 2 + 0.4 * G.STUD['d'], x_nut=xp - tr, dir=-1))
     return J
 
 
@@ -357,8 +362,9 @@ def build_mesh(name, J, level, solid_band=False):
     stud_vols = []
     if J['stud']:
         st = J['stud']; d_eq = math.sqrt(4 * 61.2 / math.pi)         # MJ10x1.25 stress area 61.2 mm2
-        sv = section_prism(d_eq / 2, st['x_anchor'], st['x_nut'] + st['dir'] * (G.STUD['nut_h'] + 2.0))
-        nut = section_prism(7.0, st['x_nut'], st['x_nut'] + st['dir'] * G.STUD['nut_h'])
+        hn = st.get('h_nut', G.STUD['nut_h'])                        # R1 - R2: expansion sleeve + nut as one body
+        sv = section_prism(d_eq / 2, st['x_anchor'], st['x_nut'] + st['dir'] * (hn + 2.0))
+        nut = section_prism(7.0, st['x_nut'], st['x_nut'] + st['dir'] * hn)
         sv, _ = occ.fuse(sv, nut)
         xpre = 0.5 * (st['x_anchor'] + st['x_nut'])
         disk = occ.addDisk(xpre, G.STUD['r'], 0.0, 5.0, 5.0, zAxis=[1, 0, 0], xAxis=[0, 1, 0])
@@ -526,7 +532,7 @@ def bending_moments():
     crit = [c['N'] for c in R['rotordynamics']['nominal']['criticals']][:2]
     nh = len(Rd['brg']); hdof = [2 * len(x) + i for i in range(nh)]
     xj = dict(stub_I1=G.X_I1[0], I1_spc=G.X_I1[1], spc_I2=G.X_I2[0], I2_drum=G.X_I2[1], drum_R1=G.X_J['drum_R1'],
-              R1_spc=G.X_J['R1_spc'], spc_R2=G.X_J['spc_R2'], R2_stub=G.X_J['R2_stub'])
+              R1_R2=G.X_J['R1_R2'], R2_stub=G.X_J['R2_stub'])
     E_hot = dict(marm247=170e9, in718=175e9)
     def moment_at(q, xx):
         i = int(np.searchsorted(x, xx)) - 1; i = min(max(i, 0), len(x) - 2)
@@ -764,7 +770,7 @@ def joint_loads(name, J, Mb=None):
     T_5 = tq['max_short_circuit'].get(key, 0.0)
     T_sc = T_r + SC_FACTOR / 5.0 * (T_5 - T_r)                         # stack: 5 x rated at the coupling, shared by inertia
     if Mb is None: Mb = json.load(open(OUT_JSON)).get('bending_moments', {}) if os.path.exists(OUT_JSON) else {}
-    mk = ['R1_spc', 'spc_R2'] if name == 'R1_R2' else [name]
+    mk = [name]
     M_e = max(Mb[k]['total'] for k in mk) if Mb else 0.0
     a, b = J['ri'], J['ro']; A_r = math.pi * (b * b - a * a); I = math.pi / 4 * (b ** 4 - a ** 4)
     F_bend = M_e * 1e3 * b * A_r / I                                     # equivalent ring force, outer fibre [N]
@@ -899,7 +905,7 @@ def post_joint(tag, J, ld):
     faces = {k[2:]: z[k] for k in z.files if k.startswith('f_')}
     names = meta['steps']; R = read_frd_steps(os.path.join(d, 'job.frd'))
     st = {nm: R[i + 1] for i, nm in enumerate(names) if (i + 1) in R}
-    n = J['n_sec']; res = dict(level=meta['level'], n_nodes=meta['n_nodes'], steps={})
+    n = J['n_sec']; res = dict(level=meta['level'], n_nodes=meta['n_nodes'], steps={}, faces=len(J['curvics']))
     # case e by superposition: e = b + (F_bend / dF) (b_dF - b), where b_dF is the computed 15k state with the extra axial
     # tension dF (contact stays closed there). Used when the run carried no bending (M_e = 0 at run time) - all runs of
     # 2026-10-31 except the direct check spc_I2 'e' run
@@ -1514,12 +1520,12 @@ def rd_joints(R, check):
     segments of the beam model, the hot joints on the flanges)"""
     out = R['joints']
     xj = dict(stub_I1=[G.X_I1[0]], I1_spc=[G.X_I1[1]], spc_I2=[G.X_I2[0]], I2_drum=[G.X_I2[1]], drum_R1=[G.X_J['drum_R1']],
-              R1_R2=[G.X_J['R1_spc'], G.X_J['spc_R2']], R2_stub=[G.X_J['R2_stub']])
+              R1_R2=[G.X_J['R1_R2']], R2_stub=[G.X_J['R2_stub']])
     kb = {}
     for nm, xs in xj.items():
         k_ = out.get(nm, {}).get('stiffness', {}).get('interface_bending_b')
         if k_ and math.isfinite(k_):
-            for x in xs: kb[x] = k_ * (2.0 if nm == 'R1_R2' else 1.0)            # R1 - R2: two faces in the model's one value
+            for x in xs: kb[x] = k_
     if kb:
         cr = rd_with_joints(kb); R['rd_with_joints'] = dict(k_theta=kb, criticals=cr)
         base = stack()['rotordynamics']['nominal']['criticals']

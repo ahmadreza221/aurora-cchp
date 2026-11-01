@@ -127,7 +127,8 @@ def thrust(S, r_bp, scale=1.0):
     (part load ~ (load)^1 on the pressure ratios, rough)"""
     c1, c2, t1, t2 = S['c1'], S['c2'], S['t1'], S['t2']
     r_seal_in, r_spc = 48.0, 75.0                              # inlet seal on the stub, interstage seal on the spacer
-    r_s2 = G.ARM['rf'] + 1.0                                     # interstage (under NGV2) labyrinth: rev 6 fins on the R1 - R2 spacer
+    r_s2 = G.FIN12['r_fin'] if hasattr(G, 'FIN12') else G.ARM['rf'] + 1.0   # interstage labyrinth (phase 4: fins on the R1 - R2
+                                                                             # flange rims, r 96.3; rev 6: on the spacer ring)
     r_rear = 56.0                                               # rear oil/air seal on the rear stub
     rh1, rt1 = A.row_radius('R1', 0.0), A.row_radius('R1', 1.0); rh2, rt2 = A.row_radius('R2', 0.0), A.row_radius('R2', 1.0)
     p_cf = t1['p_ngv'] * 1.04                                   # turbine front cavity: purge 4 % above the NGV1 exit static
@@ -333,8 +334,11 @@ def detailed_rotor(sup):
     R = RD.rotor('A')
     xi1, xi2 = G.X_I1, G.X_I2; xj = G.X_J; b1, b2 = G.HUB['R1'], G.HUB['R2']
     D, L = G.JOURNAL['D'], G.JOURNAL['L']; xb1, xb2 = G.X_BRG; c1, c2 = ML['compressor']
-    af, fl = 2 * G.ARM['ro'], 2 * G.ARM['rf']
+    af, fl, ai = 2 * G.ARM['ro'], 2 * G.ARM['rf'], 2 * G.ARM['ri']
+    L1f, L1a, L2f, L2a = (G.joint_side(r_, s_)[3] for r_, s_ in (('R1', 'f'), ('R1', 'a'), ('R2', 'f'), ('R2', 'a')))
+    tr_ = G.ARM['tf_rear']; air_, aor_ = (2 * v for v in G.arm_r('R2', 'a'))
     xn = G.TIE['x_nut'][1]                                       # end of the nut pocket (bore 70 in front of it)
+    xbh = G.TIE['x_end'] + 2.0                                   # aft end of the drum bulkhead (tie-bolt thread)
     dc = 2 * (G.THRUST['ri'] - 4.0)                              # collar shoulders (the collar itself is a lumped disc)
     seg = [(0.0, 14.0, 160.0, 70.0, 'steel', True), (14.0, xb1 - L / 2 - 6, D - 4, 70.0, 'steel', True),
            (xb1 - L / 2 - 6, xn, D, 70.0, 'steel', True), (xn, xb1 + L / 2 + 6, D, 46.0, 'steel', True),
@@ -343,17 +347,17 @@ def detailed_rotor(sup):
            (xi1[0], xi1[1], 2 * 0.5 * (c1['r1h'] * 1e3 + 60.0), 46.0, 'al2618', False),
            (xi1[1], xi2[0], 124.0, 46.0, 'steel', True),
            (xi2[0], xi2[1], 2 * 0.5 * (c2['r1h'] * 1e3 + 65.0), 46.0, 'ti64', False),
-           (xi2[1], xi2[1] + 20, 170.0, 100.0, 'in718', True), (xi2[1] + 20, xj['drum_R1'] - 78, 170.0, 140.0, 'in718', True),
-           (xj['drum_R1'] - 78, xj['drum_R1'] - 38, 140.0, 42.0, 'in718', True), (xj['drum_R1'] - 38, xj['drum_R1'] - 9, 120.0, 100.0, 'in718', True),
+           (xi2[1], xi2[1] + 20, 170.0, 100.0, 'in718', True), (xi2[1] + 20, xbh - 40, 170.0, 140.0, 'in718', True),
+           (xbh - 40, xbh, 140.0, 42.0, 'in718', True), (xbh, xj['drum_R1'] - 9, 120.0, 100.0, 'in718', True),   # bulkhead, neck
            (xj['drum_R1'] - 9, xj['drum_R1'], fl, 100.0, 'in718', True),
-           (xj['drum_R1'], xj['drum_R1'] + 9, fl, 116.0, 'marm247', True), (xj['drum_R1'] + 9, b1[0], af, 116.0, 'marm247', True),
+           (xj['drum_R1'], xj['drum_R1'] + 9, fl, ai, 'marm247', True), (xj['drum_R1'] + 9, b1[0], af, ai, 'marm247', True),
            (b1[0], b1[1], 170.0, 0.0, 'marm247', False),
-           (b1[1], b1[1] + 13, af, 116.0, 'marm247', True), (b1[1] + 13, xj['R1_spc'], fl, 116.0, 'marm247', True),
-           (xj['R1_spc'], xj['spc_R2'], 2 * G.TSPC['ro'], 2 * G.TSPC['ri'], 'in718', True),       # rev 6 spacer ring (waist)
-           (xj['spc_R2'], b2[0] - 13, fl, 116.0, 'marm247', True), (b2[0] - 13, b2[0], af, 116.0, 'marm247', True),
+           (b1[1], b1[1] + L1a, af, ai, 'marm247', True), (b1[1] + L1a, xj['R1_R2'], fl, ai, 'marm247', True),   # phase 4: one
+           (xj['R1_R2'], b2[0] - L2f, fl, ai, 'marm247', True), (b2[0] - L2f, b2[0], af, ai, 'marm247', True),   # R1 - R2 joint
            (b2[0], b2[1], 170.0, 0.0, 'marm247', False),
-           (b2[1], b2[1] + 13, af, 116.0, 'marm247', True), (b2[1] + 13, xj['R2_stub'] + 9, fl, 100.0, 'in718', True),
-           (xj['R2_stub'] + 9, xj['R2_stub'] + 14, 120.0, 50.0, 'in718', True), (xj['R2_stub'] + 14, xb2 - L / 2 - 6, D - 1, 50.0, 'in718', True),
+           (b2[1], b2[1] + L2a, aor_, air_, 'marm247', True), (b2[1] + L2a, xj['R2_stub'], fl, air_, 'marm247', True),
+           (xj['R2_stub'], xj['R2_stub'] + tr_, fl, 50.0, 'in718', True),
+           (xj['R2_stub'] + tr_, xj['R2_stub'] + tr_ + 5, 120.0, 50.0, 'in718', True), (xj['R2_stub'] + tr_ + 5, xb2 - L / 2 - 6, D - 1, 50.0, 'in718', True),
            (xb2 - L / 2 - 6, xb2 + L / 2 + 6, D, 50.0, 'in718', True), (xb2 + L / 2 + 6, xb2 + L / 2 + 30, D - 8, 50.0, 'in718', True)]
     if 'marm247' not in RD.MAT: RD.MAT['marm247'] = (8540., 180e9)
     discs = dict(R['discs'])
@@ -385,9 +389,11 @@ def disc_fea(rows=('R1', 'R2')):
                 Tn = lambda k: Tc + (Tp - Tc) * (nodes[k][0] / rh) ** ne
                 # arm region: nodes outside the hub faces (|x - xm| > hw), r < flange OD
                 xm = 0.5 * (A.X_LE[row] + A.X_TE[row]); hw = A.DISC[row]['hub_w'] / 2
-                arm = [k for k in S if abs(nodes[k][1] - xm) > hw - 4.0 and nodes[k][0] < G.ARM['rf'] + 1 and nodes[k][0] > G.ARM['ri'] - 1]
+                arm = [k for k in S if abs(nodes[k][1] - xm) > hw - 4.0 and nodes[k][0] < G.ARM['rf'] + 1 and nodes[k][0] > min(G.ARM['ri'], G.ARM['r_rear'][0]) - 1
+                       and abs(nodes[k][1] - xm) < hw + 30.0]
                 k_arm = max(arm, key=lambda k: vm[k])
-                fl = [k for k in S if abs(nodes[k][1] - xm) > hw + G.ARM['cav'] + 0.5 and abs(nodes[k][0] - G.STUD['r']) < 1.5]
+                Lmin = min(G.joint_side(row, s_)[3] for s_ in 'fa')
+                fl = [k for k in S if abs(nodes[k][1] - xm) > hw + Lmin + 0.5 and abs(nodes[k][0] - G.STUD['r']) < 1.5]
                 hoop_fl = max(S[k][2] for k in fl)
                 hub = [k for k in S if abs(nodes[k][1] - xm) <= hw - 4.0 and nodes[k][0] < 60.0]
                 k_hub = max(hub, key=lambda k: vm[k])
@@ -463,7 +469,7 @@ def main():
     def ip_aft(x): return sum(ip for m, xx, ip, n in it if xx > x)
     dT_sc = 5.0 * tq['stub_I1']
     xjoint = dict(stub_I1=G.X_I1[0], I1_spc=G.X_I1[1], spc_I2=G.X_I2[0], I2_drum=G.X_I2[1], drum_R1=G.X_J['drum_R1'],
-                  R1_R2=G.X_J['R1_spc'], R2_stub=G.X_J['R2_stub'])            # R1 - R2: the front curvic of the spacer (more aft inertia)
+                  R1_R2=G.X_J['R1_R2'], R2_stub=G.X_J['R2_stub'])
     tq_max = {k: tq.get(k, 0.0) + dT_sc * ip_aft(x) / Ip_tot for k, x in xjoint.items()}
     res['torque_Nm'] = dict(rated=tq, max_short_circuit=tq_max, P_kW=dict(c1=P_c1 / 1e3, c2=P_c2 / 1e3, t1=P_t1 / 1e3, t2=P_t2 / 1e3,
                                                                            shaft=(P_t1 + P_t2 - P_c1 - P_c2) / 1e3))
@@ -562,19 +568,19 @@ def main():
         q = p5.get(j)
         if q and q.get('T_ss') is not None: T_j = q['T_ss']
         Fs = pre * 1e3; F_hot = st['n'] * Fs
-        # grip: the two flanges; R1 - R2 (rev 6) also the spacer ring, same alloy as its studs (no mismatch over its length)
-        L_spc = G.L_TSPC if j == 'R1_R2' else 0.0
-        Lg = 2 * G.ARM['tf'] + L_spc; Lst = Lg + 0.8 * st['d']; ks = mp(sm, 'E', T_j) * As / Lst
+        # grip: the two flanges (phase 4 redesign: R1 - R2 without the spacer ring; rear flanges 8 mm)
+        sl = G.STUD_R12.get('sleeve', 0.0) if j == 'R1_R2' else 0.0          # R1 - R2: Waspaloy expansion sleeve
+        Lg = 2 * (G.ARM['tf_rear'] if j == 'R2_stub' else G.ARM['tf']) + sl; Lst = Lg + 0.8 * st['d']; ks = mp(sm, 'E', T_j) * As / Lst
         kf = 3.0 * ks
         dmis = (mp(sm, 'a', T_j) - 0.5 * (mp('IN718', 'a', T_j) + mp('MAR-M247', 'a', T_j))) * (T_j - 20) * Lg
-        if j == 'R1_R2': dmis = (mp(sm, 'a', T_j) - mp('MAR-M247', 'a', T_j)) * (T_j - 20) * (Lg - L_spc)
+        if j == 'R1_R2': dmis = (mp(sm, 'a', T_j) - mp('MAR-M247', 'a', T_j)) * (T_j - 20) * (Lg - sl)
         dF_ss = -dmis / (1 / ks + 1 / kf)
         dF_tr = -(mp(sm, 'a', T_j) * 60.0 * Lg) / (1 / ks + 1 / kf)                # studs 60 K hotter than the flanges
         if q and q.get('F_ss') is not None:                     # phase 5: FE steady change and the worst transient swing
             dF_ss = q['F_ss'] - Fs; dF_tr = q['F_min'] - q['F_ss']
         relax = rel * Fs                                          # stress relaxation over the inspection interval (re-torque at HSI)
         F_min_s = Fs + min(0.0, dF_ss) + dF_tr - relax
-        M = max(gravity_moment(x) for x in ((G.X_J['R1_spc'], G.X_J['spc_R2']) if j == 'R1_R2' else (xjoint[j],)))
+        M = gravity_moment(xjoint[j])
         F_r, br = curvic_ring_clamp(G.CURVIC_HOT['ri'], G.CURVIC_HOT['ro'], M, tq_max[j], max(0.0, fax[j]))
         x0s, x1s = G.STUD_SETS[dict(drum_R1='drum - R1', R1_R2='R1 - R2', R2_stub='R2 - rear stub')[j]][:2]
         hot[j] = dict(T=T_j, material=sm, pre_kN=pre, relax=rel, grip_mm=Lg, stud_mm=x1s - x0s,
@@ -674,7 +680,8 @@ def main():
         clamp_kN=dict(assembly=Fpre / 1e3, min=F_min / 1e3, max=F_max / 1e3), torque_Nm=dict(I1=tq['stub_I1'], I2=tq['spc_I2'],
                                                                                             short_circuit_factor=5.0),
         tie_bolt='M42x3 IN718, shank %.0f mm, lands %.1f mm at x %s' % (G.TIE['shank'], G.TIE['land'], list(G.TIE['lands'])),
-        blisk_arms=dict(ri=G.ARM['ri'], ro=G.ARM['ro'], flange_od=2 * G.ARM['rf'], flange_t=G.ARM['tf'], cavity=G.ARM['cav'], joints_x=G.X_J,
+        blisk_arms=dict(ri=G.ARM['ri'], ro=G.ARM['ro'], r_rear=G.ARM['r_rear'], flange_od=2 * G.ARM['rf'], flange_t=G.ARM['tf'], flange_t_rear=G.ARM['tf_rear'],
+                        arm_length={'%s%s' % (r_, s_): G.joint_side(r_, s_)[3] for r_ in ('R1', 'R2') for s_ in 'fa'}, joints_x=G.X_J,
                         studs='16 x MJ10x1.25 on PCD %.0f: IN718, R1 - R2 %s %.0f kN' % (2 * G.STUD['r'], G.STUD_R12['mat'], G.STUD_R12['pre_kN'])))
     json.dump(res, open(os.path.join(HERE, 'fea', 'a1000_rotor_stack.json'), 'w'), indent=1, default=float)   # read by the transient
     # ------------------------------------------------------------------ transient thrust

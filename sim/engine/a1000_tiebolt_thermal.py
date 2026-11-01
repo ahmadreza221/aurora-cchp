@@ -162,14 +162,14 @@ def joints():
         'I1_spc':  (G.X_I1[1], 'imp1', 'spacer', (23.0, 72.0), c['I1_spc']['ri'], c['I1_spc']['ro'], JOINT_H['I1_spc']),
         'spc_I2':  (G.X_I2[0], 'spacer', 'imp2', (23.0, 80.5), c['spc_I2']['ri'], c['spc_I2']['ro'], JOINT_H['spc_I2']),
         'I2_drum': (G.X_I2[1], 'imp2', 'drum', (50.0, 77.0), c['I2_drum']['ri'], c['I2_drum']['ro'], JOINT_H['I2_drum']),
-        'drum_R1': (xj['drum_R1'], 'drum', 'R1', (58.0, 92.0), h['ri'], h['ro'], h['h']),
-        'R1_spc':  (xj['R1_spc'], 'R1', 'tspc', (60.0, 92.0), h['ri'], h['ro'], h['h']),
-        'spc_R2':  (xj['spc_R2'], 'tspc', 'R2', (60.0, 92.0), h['ri'], h['ro'], h['h']),
-        'R2_stub': (xj['R2_stub'], 'R2', 'rstub', (58.0, 92.0), h['ri'], h['ro'], h['h']),
+        # phase 4 redesign (docs/08 sec. 21.11): arms r 45-51, one R1 - R2 joint (the RT-107 spacer ring is gone)
+        'drum_R1': (xj['drum_R1'], 'drum', 'R1', (50.0, 92.0), h['ri'], h['ro'], h['h']),
+        'R1_R2':   (xj['R1_R2'], 'R1', 'R2', (G.ARM['ri'], 92.0), h['ri'], h['ro'], h['h']),
+        'R2_stub': (xj['R2_stub'], 'R2', 'rstub', (max(G.arm_r('R2', 'a')[0], 25.0), 92.0), h['ri'], h['ro'], h['h']),
     }
 
 
-PART_MAT = dict(stub='34CrNiMo6', imp1='Ti64', spacer='17-4PH', imp2='Ti64', drum='IN718', R1='MAR-M247', tspc='IN718',
+PART_MAT = dict(stub='34CrNiMo6', imp1='Ti64', spacer='17-4PH', imp2='Ti64', drum='IN718', R1='MAR-M247',
                 R2='MAR-M247', rstub='IN718', bolt='IN718')
 
 
@@ -185,7 +185,7 @@ def bolt_profile():
 def part_polys():
     R = G._R
     P = dict(stub=G.stub_profile(), imp1=R['discs']['impeller1']['poly'], spacer=G.spacer_profile(), imp2=R['discs']['impeller2']['poly'],
-             drum=G.drum_profile(), R1=G.disc_profile_arms('R1'), tspc=G.turbine_spacer_profile(), R2=G.disc_profile_arms('R2'),
+             drum=G.drum_profile(), R1=G.disc_profile_arms('R1'), R2=G.disc_profile_arms('R2'),
              rstub=G.rear_stub_profile(), bolt=bolt_profile())
     return {k: [(float(x), float(r)) for x, r in v] for k, v in P.items()}
 
@@ -199,15 +199,18 @@ def air_envelopes():
         top += [(x - d, 25.0), (x - d, ri + 1.0), (x + d, ri + 1.0), (x + d, 25.0)]
     xi2 = J['I2_drum'][0]
     top += [(xi2 - 2.3, 25.0), (xi2 - 2.3, 72.0), (590.0, 72.0), (590.0, 0.0), (47.0, 0.0)]
-    xdr = J['drum_R1'][0]; xr1 = G.HUB['R1']; xr2 = G.HUB['R2']
+    xdr = J['drum_R1'][0]; xr1 = G.HUB['R1']; xr2 = G.HUB['R2']; x12 = J['R1_R2'][0]; xrs = G.X_J['R2_stub']
+    ra = G.ARM['ri'] + 3.0                                     # inside the arm walls (r 45-51)
+    rr2 = G.arm_r('R2', 'a')[0] + 2.5                           # inside the R2 aft arm wall
     return dict(
         pocket=([(0.0, 0.0), (47.0, 0.0), (47.0, 32.0), (49.0, 32.0), (49.0, 37.0), (0.0, 37.0)], 'AIR_POCKET'),
         bore=(top, 'AIR_DRUM'),
-        drumaft=([(625.0, 0.0), (xr1[0] + 1.7, 0.0), (xr1[0] + 1.7, 60.0), (xdr + 1.7, 60.0), (xdr + 1.7, 63.0), (xdr - 1.8, 63.0),
+        drumaft=([(625.0, 0.0), (xr1[0] + 1.7, 0.0), (xr1[0] + 1.7, ra), (xdr + 1.7, ra), (xdr + 1.7, 63.0), (xdr - 1.8, 63.0),
                   (xdr - 1.8, 52.0), (625.0, 52.0)], 'AIR_DRUM'),
-        r12=([(xr1[1] - 2.0, 0.0), (xr2[0] + 2.0, 0.0), (xr2[0] + 2.0, 63.0), (xr1[1] - 2.0, 63.0)], 'AIR_TURB'),
+        r12=([(xr1[1] - 2.0, 0.0), (xr2[0] + 2.0, 0.0), (xr2[0] + 2.0, ra), (x12 + 1.7, ra), (x12 + 1.7, 63.0), (x12 - 1.8, 63.0),
+              (x12 - 1.8, ra), (xr1[1] - 2.0, ra)], 'AIR_TURB'),
         r2s=([(xr2[1] - 2.0, 0.0), (G.X_J['R2_stub'] + 106.0, 0.0), (G.X_J['R2_stub'] + 106.0, 27.0), (G.X_J['R2_stub'] + 2.8, 27.0),
-              (G.X_J['R2_stub'] + 2.8, 63.0), (xr2[1] - 2.0, 63.0)], 'AIR_TURB'))
+              (xrs + 2.8, 63.0), (xrs - 1.8, 63.0), (xrs - 1.8, rr2), (xr2[1] - 2.0, rr2)], 'AIR_TURB'))
 
 
 def build_mesh(scale=1.0, path=None):
@@ -386,6 +389,8 @@ def zone_of(region, r, x):
     if region in ('R1', 'R2'):
         n = region[1]; xm = xm1 if n == '1' else xm2; rh = rh1 if n == '1' else rh2; hub = G.HUB[region]
         if r >= rh - 0.3: return 'R%s_PLAT' % n
+        if r > G.ARM['rf'] + 0.2 and abs(x - G.X_J['R1_R2']) < G.ARM['tf'] + 0.5: return 'TS_FIN'   # interstage seal fins on
+                                                                                                      # the R1 aft / R2 front rims
         front = x < xm
         if r >= rh - 26.0: return 'R%s_RIM%s' % (n, 'F' if front else 'A')
         band = 0 if r < 110 else 1 if r < 160 else 2
@@ -394,7 +399,6 @@ def zone_of(region, r, x):
             return 'IS_A' if x > hub[1] + 0.2 else 'IS_1_%d' % band
         if front: return 'IS_A' if x < hub[0] - 0.2 else 'IS_2_%d' % band
         return 'R2A_A' if x > hub[1] + 0.2 else 'R2A_%d' % band
-    if region == 'tspc': return 'TS_FIN' if r > G.TSPC['ro'] - 0.2 else 'IS_A'
     if region == 'rstub':
         xj = G.X_J['R2_stub']; xb = G.X_BRG[1]; L = G.JOURNAL['L']
         if x < xj + 12.5: return 'R2A_A'
@@ -479,7 +483,7 @@ CFG = dict(CONFIGS['baseline'], name='baseline')
 
 def set_config(name):
     c = CONFIGS[name]; CFG.clear(); CFG.update(c, name=name)
-    PURGE['on'] = c['purge']; TBC['R1'] = c['tbc']; PART_MAT['tspc'] = c['r12']
+    PURGE['on'] = c['purge']; TBC['R1'] = c['tbc']
     return c['tag']
 
 
@@ -1127,7 +1131,7 @@ def probes(M):
                 I1_bore=near('imp1', 25.0, 270.0), I1_tip=near('imp1', 205.0, 324.0), I2_bore=near('imp2', 25.0, 450.0),
                 I2_tip=near('imp2', 230.0, 509.0), drum=near('drum', 78.0, 560.0), bulkhead=near('drum', 40.0, 608.0),
                 stub=near('stub', 35.0, 150.0), bolt_mid=near('bolt', 7.0, 400.0), bolt_front=near('bolt', 7.0, 100.0),
-                bolt_aft=near('bolt', 7.0, 560.0), tspc=near('tspc', 76.0, 0.5 * (G.X_J['R1_spc'] + G.X_J['spc_R2'])),
+                bolt_aft=near('bolt', 7.0, 560.0), tspc=near('R1', G.STUD['r'], G.X_J['R1_R2'] - 0.5 * G.ARM['tf']),   # R1 - R2 flange
                 rstub_j2=near('rstub', 40.0, G.X_BRG[1]))
 
 
@@ -1142,7 +1146,7 @@ STUD_AS = 61.2                                                  # MJ10x1.25 stre
 STUD_TAU = 45.0                                                 # stud in its hole (0.25 mm gap, threads, nut face) [s]
 
 
-GRIP = dict(drum_R1=('drum_R1',), R1_R2=('R1_spc', 'spc_R2'), R2_stub=('R2_stub',))
+GRIP = dict(drum_R1=('drum_R1',), R1_R2=('R1_R2',), R2_stub=('R2_stub',))
 
 
 def grip_material(j, x):
@@ -1153,7 +1157,7 @@ def grip_material(j, x):
         if abs(x - xb) <= h / 2: return 'BAND_' + b
     if j == 'drum_R1': return 'IN718' if x < J['drum_R1'][0] else 'MAR-M247'
     if j == 'R2_stub': return 'MAR-M247' if x < J['R2_stub'][0] else 'IN718'
-    return 'MAR-M247' if (x < J['R1_spc'][0] or x > J['spc_R2'][0]) else PART_MAT['tspc']
+    return 'MAR-M247' if x >= J['R1_R2'][0] - G.ARM['tf'] else G.STUD_R12['mat']   # R1 - R2: two cast flanges + sleeve
 
 
 def stud_model(j, t, Te_hist, P, M, mats, dx=0.5):
@@ -1205,8 +1209,8 @@ def load_joint_stiffness():
         k = r.get('stiffness', {})
         v = [k[q] for q in ('interface_axial_a', 'interface_axial_b') if q in k and np.isfinite(k[q]) and k[q] > 0]
         if not v: continue
-        if name == 'R1_R2': out['R1_spc'] = out['spc_R2'] = 2 * float(np.mean(v))
-        else: out[name] = float(np.mean(v))
+        # R1_R2: the rev 6 model had two faces in series (spacer ring), each face 2 x the pair; the redesign has one face
+        out[name] = (2.0 if (name == 'R1_R2' and r.get('faces', 2) == 2) else 1.0) * float(np.mean(v))
     return out
 
 
@@ -1564,7 +1568,7 @@ def stage_mech(M, cases, meta, tag='', max_par=8, threads=2, cal=None):
 
 
 # ================================================================================================ joints, LCF, checks
-HOT_SETS = dict(drum_R1=('drum_R1',), R1_R2=('R1_spc', 'spc_R2'), R2_stub=('R2_stub',))
+HOT_SETS = dict(drum_R1=('drum_R1',), R1_R2=('R1_R2',), R2_stub=('R2_stub',))
 COMP_J = ('stub_I1', 'I1_spc', 'spc_I2', 'I2_drum')
 RELAX = 0.10                                                    # long-term stud relaxation allowance (stack model)
 
@@ -1604,7 +1608,7 @@ def joint_margins(d, cal, st_at, req):
     return out
 
 
-LCF_PARTS = dict(R1='MAR-M247', R2='MAR-M247', imp1='Ti64', imp2='Ti64', drum='IN718', tspc='IN718', rstub='IN718')
+LCF_PARTS = dict(R1='MAR-M247', R2='MAR-M247', imp1='Ti64', imp2='Ti64', drum='IN718', rstub='IN718')
 CYCLES = dict(standard=('AS', 'BS'), standard_fast=('A', 'B'), trip=('AS', 'C1'), trip_noBOV=('AS', 'C2'), load_rejection=('AS', 'C3'),
               hot_restart_15=('AS', 'D15'), hot_restart_30=('AS', 'D30'), hot_restart_60=('AS', 'D60'), load_step=('E',))
 
@@ -1719,7 +1723,7 @@ def stress_peaks(S, M):
     for im in ('imp1', 'imp2'):
         nd = np.array(sorted(nr[im])); r = nodes[nd, 0]; b = nd[r < 23.5]
         out[im + '_bore_hoop'] = float(np.nanmax(S[b, 2])); out[im + '_vm_max'] = float(np.nanmax(vm6(S[inner(im)])))
-    for part in ('drum', 'tspc'):
+    for part in ('drum',):
         out[part + '_vm_max'] = float(np.nanmax(vm6(S[inner(part)])))
     nd = inner('bolt'); x = nodes[nd, 1]
     nd = nd[((x < PRE_SEG[0] - 10) | (x > PRE_SEG[1] + 10)) & (x > G.TIE['x_nut'][1] + 12) & (x < G.TIE['x_end'] - G.TIE['thread_len'] - 10)]
@@ -1960,7 +1964,7 @@ def main():
     M = load_mesh(mp) if (os.path.exists(mp) and '--remesh' not in args) else build_mesh(1.0, mp)
     print('   %d nodes, %d CAX6 elements, %d regions' % (len(M['ids']), len(M['elems']), len(M['regions'])), flush=True)
     req, _ = stack_required()
-    res = dict(rev='rotor rev 1.3, phase 5', work=WORK, mesh=dict(nodes=len(M['ids']), elements=len(M['elems'])), configs={},
+    res = dict(rev='rotor rev 1.4, phase 4 arm redesign', work=WORK, mesh=dict(nodes=len(M['ids']), elements=len(M['elems'])), configs={},
                model=dict(T_inlet=T_AMB, T_enclosure=T_ENCL, post_lube_s=POST_LUBE, cavities=CAVITY, land_gap_model_mm=1.0, land_gap_mm=0.15,
                           stud_lag_s=STUD_TAU, km_factor=KM_FAC, k_curvic_per_mm2=K_CURVIC, k_joint=K_JOINT, relaxation=RELAX,
                           dt_rel=DT_REL, purge=PURGE))

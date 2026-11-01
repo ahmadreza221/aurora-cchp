@@ -2,10 +2,9 @@
  "frame": "rotor frame mm, x = engine axis from the gearbox coupling face",
  "x_offset_turbine": 673.2888416633899,
  "joints": {
-  "drum_R1": 666.268042120347,
-  "R1_spc": 766.268042120347,
-  "spc_R2": 791.2491059693687,
-  "R2_stub": 897.2491059693687
+  "drum_R1": 657.268042120347,
+  "R1_R2": 778.7585740448578,
+  "R2_stub": 898.2491059693687
  },
  "parts": {
   "RT-101 Front stub shaft + thrust collar": {
@@ -63,118 +62,6 @@
     380.06
    ],
    "r": 80.0
-  },
-  "RT-105 Drum IN718": {
-   "step": "RT_105_Drum_IN718.step",
-   "material": "IN718",
-   "group": "drum",
-   "valid": true,
-   "solids": 1,
-   "vol_cm3": 1620.39,
-   "mass_kg": 13.271,
-   "x": [
-    511.67,
-    667.57
-   ],
-   "r": 92.0
-  },
-  "RT-106 Rear stub shaft": {
-   "step": "RT_106_Rear_stub_shaft.step",
-   "material": "IN718",
-   "group": "shaft",
-   "valid": true,
-   "solids": 1,
-   "vol_cm3": 627.94,
-   "mass_kg": 5.143,
-   "x": [
-    895.95,
-    1003.25
-   ],
-   "r": 92.0
-  },
-  "RT-107 Turbine spacer ring R1 - R2": {
-   "step": "RT_107_Turbine_spacer_ring_R1___R2.step",
-   "material": "Waspaloy",
-   "group": "shaft",
-   "valid": true,
-   "solids": 1,
-   "vol_cm3": 319.49,
-   "mass_kg": 2.617,
-   "x": [
-    764.97,
-    792.55
-   ],
-   "r": 92.3
-  },
-  "RT-111 Studs + nuts drum - R1 (16 x M10)": {
-   "step": "RT_111_Studs___nuts_drum___R1__16_x_M10.step",
-   "material": "IN718 / Waspaloy nuts",
-   "group": "studs",
-   "valid": true,
-   "solids": 32,
-   "vol_cm3": 41.43,
-   "mass_kg": 0.325,
-   "x": [
-    657.27,
-    683.27
-   ],
-   "r": 82.47
-  },
-  "RT-112 Studs + nuts R1 - R2 (16 x M10)": {
-   "step": "RT_112_Studs___nuts_R1___R2__16_x_M10.step",
-   "material": "Waspaloy studs + nuts",
-   "group": "studs",
-   "valid": true,
-   "solids": 32,
-   "vol_cm3": 72.82,
-   "mass_kg": 0.572,
-   "x": [
-    749.27,
-    800.25
-   ],
-   "r": 82.47
-  },
-  "RT-113 Studs + nuts R2 - rear stub (16 x M10)": {
-   "step": "RT_113_Studs___nuts_R2___rear_stub__16_x_M10.step",
-   "material": "IN718 / Waspaloy nuts",
-   "group": "studs",
-   "valid": true,
-   "solids": 32,
-   "vol_cm3": 41.43,
-   "mass_kg": 0.325,
-   "x": [
-    880.25,
-    906.25
-   ],
-   "r": 82.47
-  },
-  "A1000_R1 disc with arms (cast MAR-M247)": {
-   "step": "A1000_R1_disc_with_arms__cast_MAR_M247.step",
-   "material": "MAR-M247",
-   "group": "blisk",
-   "valid": true,
-   "solids": 1,
-   "vol_cm3": 5308.02,
-   "mass_kg": 45.331,
-   "x": [
-    664.97,
-    767.57
-   ],
-   "r": 214.24
-  },
-  "A1000_R2 disc with arms (cast MAR-M247)": {
-   "step": "A1000_R2_disc_with_arms__cast_MAR_M247.step",
-   "material": "MAR-M247",
-   "group": "blisk",
-   "valid": true,
-   "solids": 1,
-   "vol_cm3": 5910.34,
-   "mass_kg": 50.474,
-   "x": [
-    789.95,
-    898.55
-   ],
-   "r": 203.02
   },
   "JB1 tilting pads x4 (steel + babbitt)": {
    "step": "JB1_tilting_pads_x4__steel___babbitt.step",
@@ -371,6 +258,104 @@
     1027.0
    ],
    "r": 181.0
+  },
+  "RT-105 Drum IN718": {
+   "step": "RT_105_Drum_IN718.step",
+   "material": "IN718",
+   "group": "drum",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 1481.29,
+   "mass_kg": 12.132,
+   "x": [
+    511.67,
+    658.57
+   ],
+   "r": 92.0
+  },
+  "RT-106 Rear stub shaft": {
+   "step": "RT_106_Rear_stub_shaft.step",
+   "material": "IN718",
+   "group": "shaft",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 604.7,
+   "mass_kg": 4.953,
+   "x": [
+    896.95,
+    1003.25
+   ],
+   "r": 92.0
+  },
+  "RT-111 Studs + nuts drum - R1 (16 x M10)": {
+   "step": "RT_111_Studs___nuts_drum___R1__16_x_M10.step",
+   "material": "IN718 / Waspaloy nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 41.43,
+   "mass_kg": 0.325,
+   "x": [
+    648.27,
+    674.27
+   ],
+   "r": 82.47
+  },
+  "RT-113 Studs + nuts R2 - rear stub (16 x M10)": {
+   "step": "RT_113_Studs___nuts_R2___rear_stub__16_x_M10.step",
+   "material": "IN718 / Waspaloy nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 38.91,
+   "mass_kg": 0.305,
+   "x": [
+    882.25,
+    906.25
+   ],
+   "r": 82.47
+  },
+  "A1000_R1 disc with arms (cast MAR-M247)": {
+   "step": "A1000_R1_disc_with_arms__cast_MAR_M247.step",
+   "material": "MAR-M247",
+   "group": "blisk",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 5396.59,
+   "mass_kg": 46.087,
+   "x": [
+    655.97,
+    780.06
+   ],
+   "r": 214.24
+  },
+  "A1000_R2 disc with arms (cast MAR-M247)": {
+   "step": "A1000_R2_disc_with_arms__cast_MAR_M247.step",
+   "material": "MAR-M247",
+   "group": "blisk",
+   "valid": true,
+   "solids": 1,
+   "vol_cm3": 5984.2,
+   "mass_kg": 51.105,
+   "x": [
+    777.46,
+    899.55
+   ],
+   "r": 203.02
+  },
+  "RT-112 Studs + nuts R1 - R2 (16 x M10)": {
+   "step": "RT_112_Studs___nuts_R1___R2__16_x_M10.step",
+   "material": "Waspaloy studs + expansion nuts",
+   "group": "studs",
+   "valid": true,
+   "solids": 32,
+   "vol_cm3": 73.81,
+   "mass_kg": 0.579,
+   "x": [
+    749.76,
+    787.76
+   ],
+   "r": 82.47
   }
  }
 }

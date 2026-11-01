@@ -3,10 +3,12 @@ by the Fusion add-in fusion/AURORA1000_Animate.
 
 Each move: (label, [(part-name prefix, half)], path). half None = whole part, 'L' / 'U' = the part cut at z = 0 (lower /
 upper half: the machine splits it there), 'Sa:b' = solids a..b-1 of a compound (studs 0:16, nuts 16:32 of RT-11x).
-path = offsets (dx, dy, dz[, dr]) from home, start first; the last point is where the parts stay (0 = home; R1, R2 and
-the rear stub are parked 6 mm short so that a 6 mm nut fits in the 13 mm cavity and can be started on the stud tips, then
-the nuts pull the part home; the drum - R1 nuts seat on R1 and move with it, the R1 - R2 and R2 - stub nuts seat on the
-part already home); dr moves every solid along its own radial direction (nuts into the rotor cavities, scroll pins).
+path = offsets (dx, dy, dz[, dr]) from home, start first; the last point is where the parts stay (0 = home; R1 and the
+rear stub are parked 6 mm short so that a 6 mm nut can be started on the stud tips, then the nuts pull the part home; the
+drum - R1 nuts seat on R1 and move with it, the R2 - stub nuts seat on R2, which is already home; phase 4 redesign: the
+R1 - R2 expansion nuts (18 mm with the skirt) are placed on the R1 flange with R2 parked 20 mm short, then R2 is pushed to
+the threads and pulled home); dr moves every solid along its own radial direction (nuts into the rotor cavities, scroll
+pins).
 
 Build stand frame, gravity -z:
   A  rotor stack, balanced as one unit outside the engine
@@ -51,15 +53,16 @@ SEQ = [
     ('A10 nuts drum - R1 in radially behind the stud tips, then 3 mm onto them', [('RT-111', 'S16:32')],
      [(9, 0, 1500, 150), (9, 0, 1500, 0), (6, 0, 1500, 0)]),
     ('A11 R1 pulled home by the nuts', R1U + [('RT-111', 'S16:32')], [(6, 0, 1500), ST]),
-    ('A12 turbine spacer ring RT-107', [('RT-107', None)], [(400, 0, 1500), ST]),
-    ('A13 R2 blisk with the R1 - R2 studs, parked 6 mm short', R2U + [('RT-112', 'S0:16')], [(400, 0, 1500), (6, 0, 1500)]),
-    ('A14 nuts R1 - R2 in radially (R1 aft cavity), then 3 mm onto the stud tips (they seat on R1)', [('RT-112', 'S16:32')],
+    ('A12 R2 blisk with the R1 - R2 studs, parked 20 mm short (stud tips at the R1 flange back)', R2U + [('RT-112', 'S0:16')],
+     [(400, 0, 1500), (20, 0, 1500)]),
+    ('A13 expansion nuts R1 - R2 in radially (R1 aft cavity), seated on the R1 flange', [('RT-112', 'S16:32')],
+     [(0, 0, 1500, 150), ST]),
+    ('A14 R2 pushed until the studs reach the nut threads (8 mm), then pulled home by the nuts', R2U + [('RT-112', 'S0:16')],
+     [(20, 0, 1500), ST]),
+    ('A15 rear stub with the R2 - stub studs, parked 6 mm short', [('RT-106', None), ('RT-113', 'S0:16')], [(400, 0, 1500), (6, 0, 1500)]),
+    ('A16 nuts R2 - stub in radially (R2 aft cavity), then 3 mm onto the stud tips (they seat on R2)', [('RT-113', 'S16:32')],
      [(-3, 0, 1500, 150), (-3, 0, 1500, 0), ST]),
-    ('A15 R2 pulled home by the nuts', R2U + [('RT-112', 'S0:16')], [(6, 0, 1500), ST]),
-    ('A16 rear stub with the R2 - stub studs, parked 6 mm short', [('RT-106', None), ('RT-113', 'S0:16')], [(400, 0, 1500), (6, 0, 1500)]),
-    ('A17 nuts R2 - stub in radially (R2 aft cavity), then 3 mm onto the stud tips (they seat on R2)', [('RT-113', 'S16:32')],
-     [(-3, 0, 1500, 150), (-3, 0, 1500, 0), ST]),
-    ('A18 rear stub pulled home (rotor balanced as one unit)', [('RT-106', None), ('RT-113', 'S0:16')], [(6, 0, 1500), ST]),
+    ('A17 rear stub pulled home (rotor balanced as one unit)', [('RT-106', None), ('RT-113', 'S0:16')], [(6, 0, 1500), ST]),
     # B lower shell on the build stand
     ('B1 scroll pressure casing, lower half CB-341', [('CB-341', None)], [UP, Z0]),
     ('B2 hot-gas scroll lower half, deswirl vanes, insulation', [('CB-331', None), ('CB-332', 'L'), ('CB-333', 'L')], [UP, Z0]),

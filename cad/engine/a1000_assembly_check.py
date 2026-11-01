@@ -59,7 +59,6 @@ SEQ_V12 = [
     ('1 tie-bolt nut', [('RT-103', None)], [(-450, 0, 0), (0, 0, 0)]),
     ('2 R1 blisk', [('A1000_R1 disc', None), ('Blisk 1 blade', None)], [XA, (0, 0, 0)]),
     ('2 studs + nuts drum - R1', [('RT-111', None)], [(300, 0, 0), (0, 0, 0)]),
-    ('2 spacer ring RT-107', [('RT-107', None)], [XA, (0, 0, 0)]),
     ('2 R2 blisk', [('A1000_R2 disc', None), ('Blisk 2 blade', None)], [XA, (0, 0, 0)]),
     ('2 studs + nuts R1 - R2', [('RT-112', None)], [(300, 0, 0), (0, 0, 0)]),
     ('2 rear stub', [('RT-106', None)], [XA, (0, 0, 0)]),

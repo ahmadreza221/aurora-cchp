@@ -177,7 +177,7 @@ def main():
     flows = dict(
         drum_balance_seal=labyrinth(p_feed, th['p_cf'], T_CD, G.BAL_SEAL_R, 0.30, 6),
         backface_seal_r200=labyrinth(p_feed, p2s, T_CD, G.BACKFACE['r_seal'], 0.30, 4),
-        interstage_seal=labyrinth(th['p_12'], th['p_2f'], S1['T0_out'] - 30, H.SEAL['ri'], 0.30, 4))
+        interstage_seal=labyrinth(th['p_12'], th['p_2f'], S1['T0_out'] - 30, getattr(H, 'SEAL12', H.SEAL)['ri'], 0.30, 4))
     res['secondary_air'] = {k: dict(kg_s=v, pct=100 * v / M_AIR) for k, v in flows.items()}
     for k, v in flows.items():
         print('   %-22s %.3f kg/s = %.2f %% of the air' % (k, v, 100 * v / M_AIR))

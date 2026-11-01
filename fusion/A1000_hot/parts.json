@@ -125,10 +125,10 @@
    "group": "diaphragm",
    "valid": true,
    "solids": 1,
-   "mass_kg": 2.81,
+   "mass_kg": 2.67,
    "x": [
-    654.3,
-    678.3
+    645.3,
+    672.3
    ],
    "r": 212.4
   },
@@ -140,8 +140,8 @@
    "solids": 1,
    "mass_kg": 0.03,
    "x": [
-    654.3,
-    678.3
+    645.3,
+    669.3
    ],
    "r": 96.0
   },
@@ -151,10 +151,10 @@
    "group": "diaphragm",
    "valid": true,
    "solids": 1,
-   "mass_kg": 2.47,
+   "mass_kg": 2.4,
    "x": [
-    768.3,
-    789.2
+    770.8,
+    786.8
    ],
    "r": 202.6
   },
@@ -164,12 +164,12 @@
    "group": "honeycomb",
    "valid": true,
    "solids": 1,
-   "mass_kg": 0.03,
+   "mass_kg": 0.02,
    "x": [
-    768.3,
-    789.2
+    770.8,
+    786.8
    ],
-   "r": 96.0
+   "r": 100.0
   },
   "HS-234 Gap ring R1 - NGV2, inner (Hastelloy X)": {
    "step": "HS_234_Gap_ring_R1___NGV2__inner__Hastelloy_X.step",

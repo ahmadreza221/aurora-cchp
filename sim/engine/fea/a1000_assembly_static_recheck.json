@@ -1,0 +1,37 @@
+{
+ "vol_tol_mm3": 5.0,
+ "overlaps": [
+  {
+   "a": "Compressor casing",
+   "b": "RT-104 Compressor spacer",
+   "vol_mm3": 8977.4
+  },
+  {
+   "a": "Compressor casing",
+   "b": "RT-105 Drum IN718",
+   "vol_mm3": 863.3
+  },
+  {
+   "a": "Impeller 2 hub",
+   "b": "RT-105 Drum IN718",
+   "vol_mm3": 9.0
+  },
+  {
+   "a": "Impeller 1 hub",
+   "b": "RT-104 Compressor spacer",
+   "vol_mm3": 7.3
+  },
+  {
+   "a": "Impeller 2 hub",
+   "b": "RT-104 Compressor spacer",
+   "vol_mm3": 5.5
+  }
+ ],
+ "s": 384,
+ "only": [
+  "RT-1",
+  "A1000_R",
+  "HS-23",
+  "Impeller 1"
+ ]
+}
